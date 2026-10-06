@@ -1,13 +1,30 @@
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
+
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
-  host: {
-    'id': 'sidebar',
-    'class': 'sidebar'
-  },
-  imports: [],
+  standalone: true,
+  imports: [
+    RouterModule
+  ],
   templateUrl: './sidebar.html',
-  styleUrl: './sidebar.css',
+  styleUrl: './sidebar.css'
 })
-export class Sidebar {}
+export class Sidebar {
+
+  organisationName = 'Fondation Espoir';
+
+  constructor(
+    private authService: AuthService
+  ) {}
+
+  get role(): string | null {
+    return this.authService.getRole();
+  }
+
+  logout(): void {
+    this.authService.logout();
+  }
+}
