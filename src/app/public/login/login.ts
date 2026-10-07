@@ -63,7 +63,6 @@ export class Login {
 
         const token = this.authService.getAccessToken();
 
-        console.log('Token :', token);
 
         if (token) {
           const payload = JSON.parse(
@@ -95,7 +94,6 @@ export class Login {
 
       error: (err) => {
 
-        console.error('Erreur login :', err);
 
         this.error = 'Téléphone ou mot de passe incorrect.';
         this.loading = false;
