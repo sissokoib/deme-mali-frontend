@@ -1,9 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  tap,
+  catchError,
+  throwError
+} from 'rxjs';
 import { Router } from '@angular/router';
-import { User } from '../models/utilisateur.model';
-import { LoginRequest, AuthResponse } from '../models/utilisateur.model';
+import { User, LoginRequest, AuthResponse } from '../models/utilisateur.model';
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +45,7 @@ export class AuthService {
     );
   }
 
-  refreshToken(): Observable<{ accessToken: string; expiresIn: number }> {
+  refreshToken(): Observable<any> {
 
     const refreshToken = this.getRefreshToken();
 
@@ -55,10 +60,23 @@ export class AuthService {
     ).pipe(
 
       tap(response => {
+
         localStorage.setItem(
           'access_token',
           response.accessToken
         );
+
+        if (response.user) {
+
+          localStorage.setItem(
+            'current_user',
+            JSON.stringify(response.user)
+          );
+
+          this.currentUserSubject.next(
+            response.user
+          );
+        }
       }),
 
       catchError(error => {
@@ -107,6 +125,17 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
+  getCurrentUserId(): number | null {
+
+    const user = this.getCurrentUser();
+
+    if (!user) {
+      return null;
+    }
+
+    return user.id;
+  }
+
   private storeAuthData(response: AuthResponse): void {
 
     localStorage.setItem(
@@ -117,6 +146,15 @@ export class AuthService {
     localStorage.setItem(
       'refresh_token',
       response.refreshToken
+    );
+
+    localStorage.setItem(
+      'current_user',
+      JSON.stringify(response.user)
+    );
+
+    this.currentUserSubject.next(
+      response.user
     );
   }
 
