@@ -4,6 +4,8 @@ export interface User {
   prenom: string;
   telephone: string;
   role: 'DONATEUR' | 'BENEFICIAIRE' | 'ADMIN'|'ORGANISATIONPARTENAIRE';
+    typeOrganisation?: 'ONG' | 'ASSOCIATION' | 'FONDATION';
+
 }
 
 export interface AuthResponse {

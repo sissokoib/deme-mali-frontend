@@ -8,13 +8,13 @@
         Tableau de bord · {{ currentDate | date:'dd MMMM yyyy':'':'fr-FR' }}
       </p>
 
-      @if (currentUser$ | async; as user) {
+     
 
         <h1 class="page-title">
           Bonjour {{ user.prenom }} {{ user.nom }}
         </h1>
 
-      }
+      
 
       <p class="page-sub">
         Bienvenue sur votre espace de gestion de l'organisation.
