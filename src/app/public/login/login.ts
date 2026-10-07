@@ -56,15 +56,52 @@ export class Login {
       telephone: this.form.value.telephone.trim(),
       motDePasse: this.form.value.motDePasse
     }).subscribe({
+
       next: (response) => {
+
         console.log('Réponse login :', response);
-        this.router.navigate(['/organisations/dashboard']);
+
+        const token = this.authService.getAccessToken();
+
+        console.log('Token :', token);
+
+        if (token) {
+          const payload = JSON.parse(
+            atob(token.split('.')[1])
+          );
+
+          console.log('Payload JWT :', payload);
+        }
+
+        const role = this.authService.getRole();
+
+        console.log('Rôle :', role);
+
+        if (role === 'ORGANISATIONPARTENAIRE') {
+
+          this.router.navigate(['/organisation/dashboard']);
+
+        } /*else if (role === 'ADMIN') {
+
+          this.router.navigate(['/admin/dashboard']);
+
+        } */else {
+
+          this.error = 'Rôle utilisateur non reconnu.';
+          this.loading = false;
+
+        }
       },
-      error: (err: Error) => {
+
+      error: (err) => {
+
         console.error('Erreur login :', err);
-        this.error = err.message;
+
+        this.error = 'Téléphone ou mot de passe incorrect.';
         this.loading = false;
+
       }
+
     });
   }
 }
