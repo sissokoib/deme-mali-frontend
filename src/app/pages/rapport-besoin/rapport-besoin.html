@@ -1,0 +1,28 @@
+<div class="container mt-4">
+  <h2>Rapport de Besoin</h2>
+  <form (ngSubmit)="creerRapport()">
+    <div class="mb-3">
+      <label>Titre</label>
+      <input type="text" class="form-control" [(ngModel)]="rapport.titre" name="titre">
+    </div>
+    <div class="mb-3">
+      <label>Besoin Identifié</label>
+      <input type="text" class="form-control" [(ngModel)]="rapport.besoinIdentifie" name="besoinIdentifie">
+    </div>
+    <div class="mb-3">
+      <label>Description Situation</label>
+      <textarea class="form-control" [(ngModel)]="rapport.descriptionSituation" name="descriptionSituation"></textarea>
+    </div>
+    <div class="mb-3">
+      <label>Solution Proposée</label>
+      <textarea class="form-control" [(ngModel)]="rapport.solutionProposee" name="solutionProposee"></textarea>
+    </div>
+    <div class="mb-3">
+      <label>Montant Estimé</label>
+      <input type="number" class="form-control" [(ngModel)]="rapport.montantEstime" name="montantEstime">
+    </div>
+    <button type="submit" class="btn btn-primary">Créer Rapport</button>
+    <button type="button" class="btn btn-warning ms-2" (click)="modifierRapport()">Modifier</button>
+    <button type="button" class="btn btn-success ms-2" (click)="validerRapport()">Valider</button>
+  </form>
+</div>
