@@ -10,7 +10,7 @@ import { LoginRequest, AuthResponse } from '../models/utilisateur.model';
 })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:8081/api/auth';
+  private apiUrl = 'http://localhost:8080/api/auth';
 
   private currentUserSubject = new BehaviorSubject<User | null>(
     this.getStoredUser()
