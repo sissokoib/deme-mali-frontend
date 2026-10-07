@@ -1,0 +1,252 @@
+<div class="page">
+
+  <div class="header">
+
+    <div>
+      <h1>Demandes d'aide</h1>
+      <p>Les demandes à traiter</p>
+    </div>
+
+    <div class="header-icons">
+      <button class="notification">🔔</button>
+      <div class="avatar">👨🏾</div>
+    </div>
+
+  </div>
+
+  <div class="stats">
+
+    <div class="stat-card">
+      <div class="stat-icon green">▣</div>
+      <div>
+        <span>Demandes</span>
+        <strong>{{ total }}</strong>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon red">ⓧ</div>
+      <div>
+        <span>Demandes refusées</span>
+        <strong>{{ refusees }}</strong>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon orange">⏳</div>
+      <div>
+        <span>Demandes en attente</span>
+        <strong>{{ enAttente }}</strong>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon green">✓</div>
+      <div>
+        <span>Demandes traitées</span>
+        <strong>{{ traitees }}</strong>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="search-zone">
+
+    <input
+      type="text"
+      [(ngModel)]="recherche"
+      placeholder="🔍 Rechercher une demande..."
+    >
+
+    <select [(ngModel)]="categorieSelectionnee">
+
+      <option value="">
+        Toutes les catégories
+      </option>
+
+      <option
+        *ngFor="let categorie of categories"
+        [value]="categorie.id"
+      >
+        {{ categorie.libelle }}
+      </option>
+
+    </select>
+
+    <select [(ngModel)]="urgenceSelectionnee">
+
+      <option value="">
+        Toutes les urgences
+      </option>
+
+      <option
+        *ngFor="let urgence of urgences"
+        [value]="urgence.id"
+      >
+        {{ urgence.libelle }}
+      </option>
+
+    </select>
+
+    <select [(ngModel)]="statutSelectionne">
+
+      <option value="">
+        Tous les statuts
+      </option>
+
+      <option
+        *ngFor="let statut of statuts"
+        [value]="statut.id"
+      >
+        {{ statut.libelle }}
+      </option>
+
+    </select>
+
+    <button
+      class="filter-button"
+      (click)="filtrer()"
+    >
+      Filtrer
+    </button>
+
+  </div>
+
+  <div class="new-button-zone">
+
+    <button
+      class="new-button"
+      (click)="nouvelleDemande()"
+    >
+      + Nouvelle demande
+    </button>
+
+  </div>
+
+  <div class="table-container">
+
+    <h2>Demandes reçues</h2>
+
+    <div
+      class="loading"
+      *ngIf="chargement"
+    >
+      Chargement des demandes...
+    </div>
+
+    <table *ngIf="!chargement">
+
+      <thead>
+
+        <tr>
+          <th>DEMANDE</th>
+          <th>BÉNÉFICIAIRE</th>
+          <th>CATÉGORIE</th>
+          <th>URGENCE</th>
+          <th>DATE</th>
+          <th>STATUT</th>
+          <th>ACTION</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        <tr
+          *ngFor="let demande of demandes"
+        >
+
+          <td>
+            <strong>
+              {{ demande.titre }}
+            </strong>
+          </td>
+
+          <td>
+            {{ demande.beneficiaire }}
+          </td>
+
+          <td>
+            <span class="badge category">
+              {{ demande.categorie }}
+            </span>
+          </td>
+
+          <td>
+
+            <span
+              class="badge"
+              [ngClass]="{
+                'urgence-elevee':
+                  demande.urgence === 'ELEVE',
+                'urgence-moyenne':
+                  demande.urgence === 'MOYEN',
+                'urgence-faible':
+                  demande.urgence === 'FAIBLE'
+              }"
+            >
+              {{ demande.urgence }}
+            </span>
+
+          </td>
+
+          <td>
+            {{ demande.date | date:'dd/MM/yyyy' }}
+          </td>
+
+          <td>
+
+            <span
+              class="badge statut"
+              [ngClass]="{
+                'attente':
+                  demande.statut === 'EN_ATTENTE',
+                'valide':
+                  demande.statut === 'VALIDEE',
+                'refuse':
+                  demande.statut === 'REFUSEE',
+                'traite':
+                  demande.statut === 'TRAITEE'
+              }"
+            >
+              {{ demande.statut }}
+            </span>
+
+          </td>
+
+          <td>
+
+            <button
+              class="view-button"
+              (click)="voirDemande(demande)"
+            >
+              Voir
+            </button>
+
+          </td>
+
+        </tr>
+
+        <tr
+          *ngIf="
+            !chargement &&
+            demandes.length === 0
+          "
+        >
+
+          <td
+            colspan="7"
+            class="empty"
+          >
+            Aucune demande trouvée.
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

@@ -18,10 +18,11 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './login.css',
 })
 export class Login {
+
   form: FormGroup;
   loading = false;
   error: string | null = null;
-  showPassword = false; // Basculer visibilité mot de passe
+  showPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -30,12 +31,19 @@ export class Login {
   ) {
     this.form = this.fb.group({
       telephone: ['', [Validators.required]],
-  motDePasse: ['', [Validators.required, Validators.minLength(8)]]
-
+      motDePasse: ['', [
+        Validators.required,
+        Validators.minLength(8)
+      ]]
     });
   }
 
+  get f() {
+    return this.form.controls;
+  }
+
   onSubmit(): void {
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -44,17 +52,19 @@ export class Login {
     this.loading = true;
     this.error = null;
 
-    this.authService.login(this.form.value).subscribe({
-      next: () => {
-        // Rediriger vers la page principale après connexion réussie
-        this.router.navigate(['/todos']);
+    this.authService.login({
+      telephone: this.form.value.telephone.trim(),
+      motDePasse: this.form.value.motDePasse
+    }).subscribe({
+      next: (response) => {
+        console.log('Réponse login :', response);
+        this.router.navigate(['/organisations/dashboard']);
       },
       error: (err: Error) => {
+        console.error('Erreur login :', err);
         this.error = err.message;
         this.loading = false;
       }
     });
   }
-
-  get f() { return this.form.controls; }
 }

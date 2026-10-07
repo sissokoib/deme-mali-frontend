@@ -37,7 +37,7 @@ export const routes: Routes = [
     component: Main,
     canActivate: [AuthGuard, RoleGuard],
     data: {
-      role: 'ORGANISATION_PARTENAIRE'
+      role: 'ORGANISATIONPARTENAIRE'
     },
 
     children: [
