@@ -39,6 +39,27 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/organisations/dashboard/dashboard')
             .then(m => m.Dashboard)
+      },
+
+      {
+        path: 'etudes-terrain',
+        loadComponent: () =>
+          import('./pages/etude-terrain/etude-terrain')
+            .then(m => m.EtudeTerrainComponent)
+      },
+
+      {
+        path: 'rapports-besoin',
+        loadComponent: () =>
+          import('./pages/rapport-besoin/rapport-besoin')
+            .then(m => m.RapportBesoinComponent)
+      },
+
+      {
+        path: 'rapports-technique',
+        loadComponent: () =>
+          import('./pages/rapport-technique/rapport-technique')
+            .then(m => m.RapportTechniqueComponent)
       }
 
     ]
