@@ -95,10 +95,21 @@ export class AuthService {
     this.currentUserSubject.next(response.user);
   }
 
-  private getStoredUser(): User | null {
-    const stored = localStorage.getItem('current_user');
-    return stored ? JSON.parse(stored) : null;
+private getStoredUser(): User | null {
+  const stored = localStorage.getItem('current_user');
+
+  if (!stored || stored === 'undefined' || stored === 'null') {
+    return null;
   }
+
+  try {
+    return JSON.parse(stored);
+  } catch (error) {
+    console.error('Utilisateur enregistré invalide :', error);
+    localStorage.removeItem('current_user');
+    return null;
+  }
+}
   getRole(): string | null {
   const user = this.getCurrentUser();
 
