@@ -63,7 +63,6 @@ export class Login {
 
         const token = this.authService.getAccessToken();
 
-        console.log('Token :', token);
 
         if (token) {
           const payload = JSON.parse(
@@ -78,9 +77,9 @@ export class Login {
         console.log('Rôle :', role);
 
         if (role === 'ORGANISATIONPARTENAIRE') {
-
+          
           this.router.navigate(['/organisation/dashboard']);
-
+          
         } /*else if (role === 'ADMIN') {
 
           this.router.navigate(['/admin/dashboard']);
@@ -95,7 +94,6 @@ export class Login {
 
       error: (err) => {
 
-        console.error('Erreur login :', err);
 
         this.error = 'Téléphone ou mot de passe incorrect.';
         this.loading = false;
