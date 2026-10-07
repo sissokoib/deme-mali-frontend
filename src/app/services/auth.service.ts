@@ -11,7 +11,7 @@ import { AuthResponse } from '../models/utilisateur.model';
   providedIn: 'root',
 })
 export class AuthService {
- private apiUrl = 'http://localhost:8081/api';
+ private apiUrl = 'http://localhost:8081/api/auth';
   // BehaviorSubject : stocke l'utilisateur actuel et notifie les composants abonnés
   private currentUserSubject = new BehaviorSubject<User | null>(this.getStoredUser());
 
@@ -20,13 +20,19 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) { }
   // Connexion
-  login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials)
-      .pipe(
-        tap(response => this.storeAuthData(response)),
-        catchError(this.handleError)
-      );
-  }
+login(credentials: LoginRequest): Observable<AuthResponse> {
+  return this.http.post<AuthResponse>(
+    `${this.apiUrl}/login`,
+    credentials
+  ).pipe(
+    tap(response => {
+      this.storeAuthData(response);
+    }),
+    catchError(error => {
+      return throwError(() => error);
+    })
+  );
+}
 
   // Renouveler l'access token via le refresh token
   refreshToken(): Observable<{ accessToken: string; expiresIn: number }> {
@@ -95,10 +101,21 @@ export class AuthService {
     this.currentUserSubject.next(response.user);
   }
 
-  private getStoredUser(): User | null {
-    const stored = localStorage.getItem('current_user');
-    return stored ? JSON.parse(stored) : null;
+private getStoredUser(): User | null {
+  const stored = localStorage.getItem('current_user');
+
+  if (!stored || stored === 'undefined' || stored === 'null') {
+    return null;
   }
+
+  try {
+    return JSON.parse(stored);
+  } catch (error) {
+    console.error('Utilisateur enregistré invalide :', error);
+    localStorage.removeItem('current_user');
+    return null;
+  }
+}
   getRole(): string | null {
   const user = this.getCurrentUser();
 

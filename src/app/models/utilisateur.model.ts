@@ -16,12 +16,12 @@ export interface AuthResponse {
 
 export interface LoginRequest {
   telephone: string;
-  motDepasse: string;
+  motDePasse: string;
 }
 
 export interface RegisterRequest {
     nom: string;
   prenom: string;
   telephone: string;
-  motDepasse: string;
+  motDePasse: string;
 }
