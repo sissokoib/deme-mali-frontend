@@ -18,22 +18,15 @@ export class RoleGuard implements CanActivate {
     private router: Router
   ) {}
 
-  canActivate(
-    route: ActivatedRouteSnapshot
-  ): boolean | UrlTree {
+  canActivate(route: ActivatedRouteSnapshot): boolean | UrlTree {
 
-    // Récupérer le rôle autorisé par la route
     const roleAutorise = route.data['role'];
-
-    // Récupérer le rôle de l'utilisateur connecté
     const roleUtilisateur = this.authService.getRole();
 
-    // Vérifier si le rôle correspond
     if (roleUtilisateur === roleAutorise) {
       return true;
     }
 
-    // Rôle incorrect → accès interdit
-    return this.router.createUrlTree(['/404']);
+    return this.router.createUrlTree(['/login']);
   }
 }

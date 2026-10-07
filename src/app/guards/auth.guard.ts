@@ -7,28 +7,47 @@ import { AuthService } from '../services/auth.service';
 })
 export class AuthGuard implements CanActivate {
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   canActivate(): boolean | UrlTree {
+
     if (this.authService.isLoggedIn()) {
-      // Utilisateur connecté → autoriser l'accès
       return true;
     }
-    // Utilisateur non connecté → rediriger vers /login
+
     return this.router.createUrlTree(['/login']);
   }
 }
 
-// Guard pour les pages "invitées" uniquement (ex: /login ne doit pas être accessible si connecté)
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class GuestGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) { }
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   canActivate(): boolean | UrlTree {
+
     if (!this.authService.isLoggedIn()) {
       return true;
     }
-    // Déjà connecté → rediriger vers le tableau de bord
-    return this.router.createUrlTree(['/todos']);
+
+    const role = this.authService.getRole();
+
+    if (role === 'ORGANISATIONPARTENAIRE') {
+      return this.router.createUrlTree(['/organisation/dashboard']);
+    }
+
+    /*if (role === 'ADMIN') {
+      return this.router.createUrlTree(['/admin/dashboard']);
+    }*/
+
+    return this.router.createUrlTree(['/login']);
   }
 }
