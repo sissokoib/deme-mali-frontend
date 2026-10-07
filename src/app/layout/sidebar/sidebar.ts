@@ -1,28 +1,20 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-
+import { Component, inject } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
   imports: [
-    RouterModule
+    RouterLink,
+    RouterLinkActive
   ],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css'
 })
 export class Sidebar {
 
-  organisationName = 'Fondation Espoir';
-
-  constructor(
-    private authService: AuthService
-  ) {}
-
-  get role(): string | null {
-    return this.authService.getRole();
-  }
+  private readonly authService = inject(AuthService);
 
   logout(): void {
     this.authService.logout();
