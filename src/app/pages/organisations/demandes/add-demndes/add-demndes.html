@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Créer une demande d'aide</title>
+
+</head>
+
+<body>
+
+    <div class="page">
+
+        <!-- EN-TÊTE -->
+        <div class="entete">
+
+            <div>
+                <h1>Créer une demande d'aide</h1>
+
+                <p>
+                    Créez une demande d'aide pour un bénéficiaire accompagné
+                    par votre organisation.
+                </p>
+            </div>
+
+            <div class="actions">
+
+                <button class="notification">
+                    ♧
+                </button>
+
+                <div class="profil">
+                    👨🏾
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FORMULAIRE -->
+        <div class="formulaire">
+
+
+            <!-- INFORMATIONS DE LA DEMANDE -->
+            <div class="section">
+
+                <h2>Informations de la demande</h2>
+
+                <div class="ligne">
+
+                    <div class="champ">
+                        <label>Bénéficiaire *</label>
+
+                        <select>
+                            <option>Awa Traoré</option>
+                            <option>Famille Diallo</option>
+                            <option>Famille Coulibaly</option>
+                        </select>
+                    </div>
+
+
+                    <div class="champ">
+                        <label>Type de demande *</label>
+
+                        <select>
+                            <option>Aide alimentaire</option>
+                            <option>Aide scolaire</option>
+                            <option>Aide médicale</option>
+                            <option>Aide au logement</option>
+                        </select>
+                    </div>
+
+                </div>
+
+
+                <div class="champ champ-complet">
+
+                    <label>Titre de la demande *</label>
+
+                    <input
+                        type="text"
+                        value="Aide alimentaire pour une famille"
+                    >
+
+                </div>
+
+
+                <div class="ligne">
+
+                    <div class="champ">
+                        <label>Motif *</label>
+
+                        <input
+                            type="text"
+                            value="Difficultés financières"
+                        >
+                    </div>
+
+
+                    <div class="champ">
+                        <label>Nombre de personnes concernées *</label>
+
+                        <input
+                            type="text"
+                            value="6 personnes"
+                        >
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- SITUATION ET URGENCE -->
+            <div class="section">
+
+                <h2>Situation et urgence</h2>
+
+                <div class="ligne">
+
+                    <div class="champ description">
+
+                        <label>Description de la situation *</label>
+
+                        <textarea>La famille rencontre des difficultés financières et ne dispose pas de ressources suffisantes pour couvrir ses besoins alimentaires.</textarea>
+
+                    </div>
+
+
+                    <div class="champ urgence">
+
+                        <label>Niveau d'urgence *</label>
+
+                        <select>
+                            <option>Élevé</option>
+                            <option>Moyen</option>
+                            <option>Faible</option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BESOIN FINANCIER -->
+            <div class="section">
+
+                <h2>Besoin financier</h2>
+
+                <div class="champ montant">
+
+                    <label>Montant nécessaire *</label>
+
+                    <input
+                        type="text"
+                        value="250 000 FCFA"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- IMAGE -->
+            <div class="section">
+
+                <h2>Image illustrative</h2>
+
+                <p class="petit-texte">
+                    Cette image sera affichée sur la carte et la page publique
+                    de la demande.
+                </p>
+
+
+                <div class="image-container">
+
+                    <div class="image-icon">
+                        🖼️
+                    </div>
+
+                    <div class="image-zone">
+
+                        <span>Images</span>
+
+                        <button>
+                            Choisir une image
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- JUSTIFICATIFS -->
+            <div class="section">
+
+                <h2>Justificatifs</h2>
+
+
+                <div class="justificatif-container">
+
+                    <div class="fichier">
+
+                        <span class="fichier-icon">
+                            ▤
+                        </span>
+
+                        <span>
+                            Certificat_social.pdf
+                        </span>
+
+                        <button class="voir">
+                            Voir
+                        </button>
+
+                    </div>
+
+
+                    <button class="ajouter">
+                        + Ajouter un justificatif
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- BOUTONS -->
+            <div class="boutons">
+
+                <button class="annuler">
+                    Annuler
+                </button>
+
+                <button class="creer">
+                    Créer la demande
+                </button>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>

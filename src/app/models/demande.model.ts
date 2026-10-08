@@ -1,36 +1,28 @@
-export interface Demande {
-
+export interface Beneficiaire {
   id: number;
-
-  titre: string;
-
-  beneficiaire: string;
-
-  categorie: string;
-
-  urgence: string;
-
-  date: string;
-
-  statut: string;
-
-  motif?: string;
-
-  description?: string;
-
-  nombrePersonnes?: number;
-
-  montantNecessaire: number;
+  nom: string;
+  prenom: string;
 }
-export interface DemandesResponse {
 
-  total: number;
+export interface CategorieDemande {
+  id: number;
+  nom: string;
+}
 
-  refusees: number;
-
-  enAttente: number;
-
-  traitees: number;
-
-  demandes: Demande[];
+export interface Demande {
+  id: number;
+  titre: string;
+  descriptionSituation: string;
+  niveauUrgence: string;
+  statut: string;
+  dateCreation: string;
+  motif: string;
+  nombrePersonne: number;
+  montantNecessaire: number;
+  dateValidation?: string;
+  statutCollecte: string;
+  montantCollecte: number;
+  typeDemande: string;
+  beneficiaire: Beneficiaire;
+  categorie: CategorieDemande;
 }

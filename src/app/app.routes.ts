@@ -26,6 +26,7 @@ export const routes: Routes = [
     data: {
       role: 'ORGANISATIONPARTENAIRE'
     },
+
     children: [
 
       {
@@ -39,10 +40,25 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/organisations/dashboard/dashboard')
             .then(m => m.Dashboard)
-      }
+      },
+          {
+        path: 'demandes-aide',
+        loadComponent: () =>
+          import('./pages/organisations/demandes/list-demandes/list-demandes')
+            .then(m => m.ListDemandes)
+      },
+         {
+        path: 'add-demandes-aide',
+        loadComponent: () =>
+          import('./pages/organisations/demandes/add-demndes/add-demndes')
+            .then(m => m.AddDemndes)
+      },
+
 
     ]
   },
+  
+  
 
   {
     path: '**',

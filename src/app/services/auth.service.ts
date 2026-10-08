@@ -106,19 +106,25 @@ export class AuthService {
   getCurrentUser(): User | null {
     return this.currentUserSubject.value;
   }
+private storeAuthData(response: AuthResponse): void {
 
-  private storeAuthData(response: AuthResponse): void {
+  localStorage.setItem(
+    'access_token',
+    response.accessToken
+  );
 
-    localStorage.setItem(
-      'access_token',
-      response.accessToken
-    );
+  localStorage.setItem(
+    'refresh_token',
+    response.refreshToken
+  );
 
-    localStorage.setItem(
-      'refresh_token',
-      response.refreshToken
-    );
-  }
+  localStorage.setItem(
+    'current_user',
+    JSON.stringify(response.user)
+  );
+
+  this.currentUserSubject.next(response.user);
+}
 
   private getStoredUser(): User | null {
 

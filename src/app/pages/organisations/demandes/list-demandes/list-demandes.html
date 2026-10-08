@@ -1,252 +1,335 @@
-<div class="page">
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demandes d'aide</title>
 
-  <div class="header">
+    
+</head>
 
-    <div>
-      <h1>Demandes d'aide</h1>
-      <p>Les demandes à traiter</p>
-    </div>
+<body>
 
-    <div class="header-icons">
-      <button class="notification">🔔</button>
-      <div class="avatar">👨🏾</div>
-    </div>
+    <div class="contenu">
 
-  </div>
+        <!-- EN-TÊTE -->
+        <div class="entete">
 
-  <div class="stats">
+            <div>
+                <h1>Demandes d’aide</h1>
+                <p>Les demandes à traiter</p>
+            </div>
 
-    <div class="stat-card">
-      <div class="stat-icon green">▣</div>
-      <div>
-        <span>Demandes</span>
-        <strong>{{ total }}</strong>
-      </div>
-    </div>
+            <div class="actions">
+                <button>♧</button>
+                <div class="profil">👨🏾</div>
+            </div>
 
-    <div class="stat-card">
-      <div class="stat-icon red">ⓧ</div>
-      <div>
-        <span>Demandes refusées</span>
-        <strong>{{ refusees }}</strong>
-      </div>
-    </div>
+        </div>
 
-    <div class="stat-card">
-      <div class="stat-icon orange">⏳</div>
-      <div>
-        <span>Demandes en attente</span>
-        <strong>{{ enAttente }}</strong>
-      </div>
-    </div>
 
-    <div class="stat-card">
-      <div class="stat-icon green">✓</div>
-      <div>
-        <span>Demandes traitées</span>
-        <strong>{{ traitees }}</strong>
-      </div>
-    </div>
+        <!-- LES 4 CARTES -->
+        <div class="statistiques">
 
-  </div>
+            <div class="carte">
+                <div class="icone">□</div>
 
-  <div class="search-zone">
+                <div>
+                    <p>Demandes</p>
+                    <h2>20</h2>
+                </div>
+            </div>
 
-    <input
-      type="text"
-      [(ngModel)]="recherche"
-      placeholder="🔍 Rechercher une demande..."
-    >
 
-    <select [(ngModel)]="categorieSelectionnee">
+            <div class="carte">
+                <div class="icone">⊗</div>
 
-      <option value="">
-        Toutes les catégories
-      </option>
+                <div>
+                    <p>Demandes refusées</p>
+                    <h2>05</h2>
+                </div>
+            </div>
 
-      <option
-        *ngFor="let categorie of categories"
-        [value]="categorie.id"
-      >
-        {{ categorie.libelle }}
-      </option>
 
-    </select>
+            <div class="carte">
+                <div class="icone">⌛</div>
 
-    <select [(ngModel)]="urgenceSelectionnee">
+                <div>
+                    <p>Demandes en attente</p>
+                    <h2>12</h2>
+                </div>
+            </div>
 
-      <option value="">
-        Toutes les urgences
-      </option>
 
-      <option
-        *ngFor="let urgence of urgences"
-        [value]="urgence.id"
-      >
-        {{ urgence.libelle }}
-      </option>
+            <div class="carte">
+                <div class="icone">✓</div>
 
-    </select>
+                <div>
+                    <p>Demandes traitées</p>
+                    <h2>18</h2>
+                </div>
+            </div>
 
-    <select [(ngModel)]="statutSelectionne">
+        </div>
 
-      <option value="">
-        Tous les statuts
-      </option>
 
-      <option
-        *ngFor="let statut of statuts"
-        [value]="statut.id"
-      >
-        {{ statut.libelle }}
-      </option>
+        <!-- RECHERCHE ET FILTRES -->
+        <div class="filtres">
 
-    </select>
+            <div class="recherche">
+                <span>⌕</span>
 
-    <button
-      class="filter-button"
-      (click)="filtrer()"
-    >
-      Filtrer
-    </button>
+                <input
+                    type="text"
+                    placeholder="Rechercher une demande..."
+                >
+            </div>
 
-  </div>
+            <select>
+                <option>Toutes les catégories</option>
+                <option>Alimentaire</option>
+                <option>Éducation</option>
+                <option>Santé</option>
+                <option>Logement</option>
+                <option>Vêtements</option>
+            </select>
 
-  <div class="new-button-zone">
+            <select>
+                <option>Toutes les urgences</option>
+                <option>Élevée</option>
+                <option>Moyenne</option>
+                <option>Faible</option>
+            </select>
 
-    <button
-      class="new-button"
-      (click)="nouvelleDemande()"
-    >
-      + Nouvelle demande
-    </button>
+            <select>
+                <option>Tous les statuts</option>
+                <option>En attente</option>
+                <option>Validé</option>
+                <option>Refusé</option>
+            </select>
 
-  </div>
+        </div>
 
-  <div class="table-container">
 
-    <h2>Demandes reçues</h2>
-
-    <div
-      class="loading"
-      *ngIf="chargement"
-    >
-      Chargement des demandes...
-    </div>
-
-    <table *ngIf="!chargement">
-
-      <thead>
-
-        <tr>
-          <th>DEMANDE</th>
-          <th>BÉNÉFICIAIRE</th>
-          <th>CATÉGORIE</th>
-          <th>URGENCE</th>
-          <th>DATE</th>
-          <th>STATUT</th>
-          <th>ACTION</th>
-        </tr>
-
-      </thead>
-
-      <tbody>
-
-        <tr
-          *ngFor="let demande of demandes"
-        >
-
-          <td>
-            <strong>
-              {{ demande.titre }}
-            </strong>
-          </td>
-
-          <td>
-            {{ demande.beneficiaire }}
-          </td>
-
-          <td>
-            <span class="badge category">
-              {{ demande.categorie }}
-            </span>
-          </td>
-
-          <td>
-
-            <span
-              class="badge"
-              [ngClass]="{
-                'urgence-elevee':
-                  demande.urgence === 'ELEVE',
-                'urgence-moyenne':
-                  demande.urgence === 'MOYEN',
-                'urgence-faible':
-                  demande.urgence === 'FAIBLE'
-              }"
-            >
-              {{ demande.urgence }}
-            </span>
-
-          </td>
-
-          <td>
-            {{ demande.date | date:'dd/MM/yyyy' }}
-          </td>
-
-          <td>
-
-            <span
-              class="badge statut"
-              [ngClass]="{
-                'attente':
-                  demande.statut === 'EN_ATTENTE',
-                'valide':
-                  demande.statut === 'VALIDEE',
-                'refuse':
-                  demande.statut === 'REFUSEE',
-                'traite':
-                  demande.statut === 'TRAITEE'
-              }"
-            >
-              {{ demande.statut }}
-            </span>
-
-          </td>
-
-          <td>
-
-            <button
-              class="view-button"
-              (click)="voirDemande(demande)"
-            >
-              Voir
+        <!-- BOUTON -->
+        <div class="bouton-container">
+            <button class="nouvelle">
+                Nouvelle demande
             </button>
+        </div>
 
-          </td>
 
-        </tr>
+        <!-- TABLEAU -->
+        <div class="tableau">
 
-        <tr
-          *ngIf="
-            !chargement &&
-            demandes.length === 0
-          "
-        >
+            <h2>Demandes reçues</h2>
 
-          <td
-            colspan="7"
-            class="empty"
-          >
-            Aucune demande trouvée.
-          </td>
+            <!-- EN-TÊTE DU TABLEAU -->
+            <div class="ligne ligne-titre">
 
-        </tr>
+                <div>DEMANDE</div>
+                <div>BÉNÉFICIAIRE</div>
+                <div>CATÉGORIE</div>
+                <div>URGENCE</div>
+                <div>DATE</div>
+                <div>STATUT</div>
+                <div>ACTION</div>
 
-      </tbody>
+            </div>
 
-    </table>
 
-  </div>
+            <!-- LIGNE 1 -->
+            <div class="ligne">
 
-</div>
+                <div>
+                    <strong>
+                        Aide alimentaire pour la famille Diallo
+                    </strong>
+                </div>
+
+                <div>Famille Traoré</div>
+
+                <div>
+                    <span class="categorie">
+                        Alimentaire
+                    </span>
+                </div>
+
+                <div>
+                    <span class="urgence elevee">
+                        Élevée
+                    </span>
+                </div>
+
+                <div>25 sept. 2026</div>
+
+                <div>
+                    <span class="statut attente">
+                        En attente
+                    </span>
+                </div>
+
+                <div>
+                    <button class="voir">Voir</button>
+                </div>
+
+            </div>
+
+
+            <!-- LIGNE 2 -->
+            <div class="ligne">
+
+                <div>
+                    <strong>
+                        Fournitures scolaires pour enfants
+                    </strong>
+                </div>
+
+                <div>Famille Diallo</div>
+
+                <div>
+                    <span class="categorie">
+                        Éducation
+                    </span>
+                </div>
+
+                <div>
+                    <span class="urgence moyenne">
+                        Moyenne
+                    </span>
+                </div>
+
+                <div>24 sept. 2026</div>
+
+                <div>
+                    <span class="statut valide">
+                        Validé
+                    </span>
+                </div>
+
+                <div>
+                    <button class="voir">Voir</button>
+                </div>
+
+            </div>
+
+
+            <!-- LIGNE 3 -->
+            <div class="ligne">
+
+                <div>
+                    <strong>
+                        Équipement pour centre de santé
+                    </strong>
+                </div>
+
+                <div>Centre de santé</div>
+
+                <div>
+                    <span class="categorie">
+                        Santé
+                    </span>
+                </div>
+
+                <div>
+                    <span class="urgence elevee">
+                        Élevée
+                    </span>
+                </div>
+
+                <div>23 sept. 2026</div>
+
+                <div>
+                    <span class="statut valide">
+                        Validé
+                    </span>
+                </div>
+
+                <div>
+                    <button class="voir">Voir</button>
+                </div>
+
+            </div>
+
+
+            <!-- LIGNE 4 -->
+            <div class="ligne">
+
+                <div>
+                    <strong>
+                        Aide au logement
+                    </strong>
+                </div>
+
+                <div>Famille Coulibaly</div>
+
+                <div>
+                    <span class="categorie">
+                        Logement
+                    </span>
+                </div>
+
+                <div>
+                    <span class="urgence moyenne">
+                        Moyenne
+                    </span>
+                </div>
+
+                <div>22 sept. 2026</div>
+
+                <div>
+                    <span class="statut valide">
+                        Validé
+                    </span>
+                </div>
+
+                <div>
+                    <button class="voir">Voir</button>
+                </div>
+
+            </div>
+
+
+            <!-- LIGNE 5 -->
+            <div class="ligne">
+
+                <div>
+                    <strong>
+                        Vêtements pour enfants
+                    </strong>
+                </div>
+
+                <div>Famille Traoré</div>
+
+                <div>
+                    <span class="categorie">
+                        Vêtements
+                    </span>
+                </div>
+
+                <div>
+                    <span class="urgence faible">
+                        Faible
+                    </span>
+                </div>
+
+                <div>21 sept. 2026</div>
+
+                <div>
+                    <span class="statut valide">
+                        Validé
+                    </span>
+                </div>
+
+                <div>
+                    <button class="voir">Voir</button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
