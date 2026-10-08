@@ -1,0 +1,13 @@
+.logos-image {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  display: block;
+}
+.sidebar {
+  background: #0F7A4B;
+}
+
+.sidebar-inner {
+  background: #0F7A4B;
+}
