@@ -10,7 +10,7 @@ import { AuthService } from '../../services/auth.service';
   },
   imports: [RouterModule, CommonModule],
   templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
+  styleUrl: './navbar.css'
 })
 export class Navbar {
   showDropdown = false;
