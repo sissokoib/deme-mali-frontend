@@ -18,10 +18,11 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './login.css',
 })
 export class Login {
+
   form: FormGroup;
   loading = false;
   error: string | null = null;
-  showPassword = false; // Basculer visibilité mot de passe
+  showPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -30,12 +31,19 @@ export class Login {
   ) {
     this.form = this.fb.group({
       telephone: ['', [Validators.required]],
-  motDePasse: ['', [Validators.required, Validators.minLength(8)]]
-
+      motDePasse: ['', [
+        Validators.required,
+        Validators.minLength(8)
+      ]]
     });
   }
 
+  get f() {
+    return this.form.controls;
+  }
+
   onSubmit(): void {
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -44,17 +52,55 @@ export class Login {
     this.loading = true;
     this.error = null;
 
-    this.authService.login(this.form.value).subscribe({
-      next: () => {
-        // Rediriger vers la page principale après connexion réussie
-        this.router.navigate(['/todos']);
+    this.authService.login({
+      telephone: this.form.value.telephone.trim(),
+      motDePasse: this.form.value.motDePasse
+    }).subscribe({
+
+      next: (response) => {
+        
+
+        console.log('Réponse login :', response);
+
+        const token = this.authService.getAccessToken();
+
+
+        if (token) {
+          const payload = JSON.parse(
+            atob(token.split('.')[1])
+          );
+
+          console.log('Payload JWT :', payload);
+        }
+
+        const role = this.authService.getRole();
+
+        console.log('Rôle :', role);
+
+        if (role === 'ORGANISATIONPARTENAIRE') {
+
+          this.router.navigate(['/organisation/dashboard']);
+
+        } /*else if (role === 'ADMIN') {
+
+          this.router.navigate(['/admin/dashboard']);
+
+        } */else {
+
+          this.error = 'Rôle utilisateur non reconnu.';
+          this.loading = false;
+
+        }
       },
-      error: (err: Error) => {
-        this.error = err.message;
+
+      error: (err) => {
+
+
+        this.error = 'Téléphone ou mot de passe incorrect.';
         this.loading = false;
+
       }
+
     });
   }
-
-  get f() { return this.form.controls; }
 }

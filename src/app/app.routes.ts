@@ -3,14 +3,10 @@ import { Routes } from '@angular/router';
 import { Main } from './layout/main/main';
 import { Login } from './public/login/login';
 
-import { AuthGuard, GuestGuard } from './guards/auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
-
-  // ============================================================
-  // ROUTE PAR DÉFAUT
-  // ============================================================
 
   {
     path: '',
@@ -18,19 +14,10 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
 
-  // ============================================================
-  // CONNEXION
-  // ============================================================
-
   {
     path: 'login',
-    component: Login,
-    canActivate: [GuestGuard]
+    component: Login
   },
-
-  // ============================================================
-  // ESPACE ORGANISATION PARTENAIRE
-  // ============================================================
 
   {
     path: 'organisation',
@@ -42,31 +29,36 @@ export const routes: Routes = [
 
     children: [
 
-      // /organisation
       {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full'
       },
 
-      // /organisation/dashboard
       {
         path: 'dashboard',
         loadComponent: () =>
           import('./pages/organisations/dashboard/dashboard')
-            .then(m => m.Dashboard),
+            .then(m => m.Dashboard)
+      },
+          {
+        path: 'demandes-aide',
+        loadComponent: () =>
+          import('./pages/organisations/demandes/list-demandes/list-demandes')
+            .then(m => m.ListDemandes)
+      },
+         {
+        path: 'add-demandes-aide',
+        loadComponent: () =>
+          import('./pages/organisations/demandes/add-demndes/add-demndes')
+            .then(m => m.AddDemndes)
+      },
 
-        data: {
-          title: 'Tableau de bord'
-        }
-      }
 
     ]
   },
-
-  // ============================================================
-  // ROUTE INCONNUE
-  // ============================================================
+  
+  
 
   {
     path: '**',

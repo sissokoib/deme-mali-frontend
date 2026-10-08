@@ -4,6 +4,8 @@ export interface User {
   prenom: string;
   telephone: string;
   role: 'DONATEUR' | 'BENEFICIAIRE' | 'ADMIN'|'ORGANISATIONPARTENAIRE';
+    typeOrganisation?: 'ONG' | 'ASSOCIATION' | 'FONDATION';
+
 }
 
 export interface AuthResponse {
@@ -16,12 +18,12 @@ export interface AuthResponse {
 
 export interface LoginRequest {
   telephone: string;
-  motDepasse: string;
+  motDePasse: string;
 }
 
 export interface RegisterRequest {
     nom: string;
   prenom: string;
   telephone: string;
-  motDepasse: string;
+  motDePasse: string;
 }

@@ -1,127 +1,148 @@
-/*import { Component } from '@angular/core';
+
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+import { Demande } from '../../../../models/demande.model';
+import { demandeAideService } from '../../../../services/demande-aide';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list-demandes',
-  imports: [],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule
+  ],
   templateUrl: './list-demandes.html',
-  styleUrl: './list-demandes.css',
+  styleUrl: './list-demandes.css'
 })
 export class ListDemandes {
+
   demandes: Demande[] = [];
+  demandesFiltrees: Demande[] = [];
 
-  categories: any[] = [];
-  urgences: any[] = [];
-  statuts: any[] = [];
-
+  recherche = '';
   categorieSelectionnee = '';
   urgenceSelectionnee = '';
   statutSelectionne = '';
-  recherche = '';
 
-  total = 0;
-  refusees = 0;
-  enAttente = 0;
-  traitees = 0;
-
-  chargement = false;
-
-  organisationId = 1;
+  totalDemandes = 0;
+  demandesRefusees = 0;
+  demandesAttente = 0;
+  demandesTraitees = 0;
 
   constructor(
-    private demandeService: DemandeService,
+    private demandeAideService: demandeAideService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.chargerDemandes();
-    this.chargerFiltres();
   }
 
   chargerDemandes(): void {
-
-    this.chargement = true;
-
-    this.demandeService
-      .getDemandes(this.organisationId)
-      .subscribe({
-        next: (response) => {
-
-          this.demandes = response.demandes;
-          this.total = response.total;
-          this.refusees = response.refusees;
-          this.enAttente = response.enAttente;
-          this.traitees = response.traitees;
-
-          this.chargement = false;
-        },
-        error: (error) => {
-
-          console.error(error);
-
-          this.chargement = false;
-        }
-      });
+    this.demandeAideService.getDemandes().subscribe({
+      next: (data) => {
+        this.demandes = data;
+        this.demandesFiltrees = data;
+        this.calculerStatistiques();
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
-  chargerFiltres(): void {
+  calculerStatistiques(): void {
+    this.totalDemandes = this.demandes.length;
 
-    this.demandeService
-      .getFiltres(this.organisationId)
-      .subscribe({
-        next: (response: DemandeFiltres) => {
+    this.demandesRefusees = this.demandes.filter(
+      demande => demande.statut === 'REJETEE'
+    ).length;
 
-          this.categories = response.categories;
-          this.urgences = response.urgences;
-          this.statuts = response.statuts;
-        },
-        error: (error) => {
-          console.error(error);
-        }
-      });
+    this.demandesAttente = this.demandes.filter(
+      demande => demande.statut === 'EN_ATTENTE'
+    ).length;
+
+    this.demandesTraitees = this.demandes.filter(
+      demande =>
+        demande.statut === 'VALIDEE' ||
+        demande.statut === 'PUBLIEE'
+    ).length;
   }
 
   filtrer(): void {
+    this.demandesFiltrees = this.demandes.filter(demande => {
 
-    this.chargement = true;
+      const recherche = this.recherche.toLowerCase();
 
-    this.demandeService
-      .filtrerDemandes(
-        this.organisationId,
-        this.categorieSelectionnee,
-        this.urgenceSelectionnee,
-        this.statutSelectionne,
-        this.recherche
-      )
-      .subscribe({
-        next: (response) => {
+      const correspondRecherche =
+        demande.titre.toLowerCase().includes(recherche) ||
+        demande.beneficiaire?.nom?.toLowerCase().includes(recherche) ||
+        demande.beneficiaire?.prenom?.toLowerCase().includes(recherche);
 
-          this.demandes = response.demandes;
-          this.total = response.total;
-          this.refusees = response.refusees;
-          this.enAttente = response.enAttente;
-          this.traitees = response.traitees;
+      const correspondCategorie =
+        !this.categorieSelectionnee ||
+        demande.categorie?.nom === this.categorieSelectionnee;
 
-          this.chargement = false;
-        },
-        error: (error) => {
+      const correspondUrgence =
+        !this.urgenceSelectionnee ||
+        demande.niveauUrgence === this.urgenceSelectionnee;
 
-          console.error(error);
+      const correspondStatut =
+        !this.statutSelectionne ||
+        demande.statut === this.statutSelectionne;
 
-          this.chargement = false;
-        }
-      });
+      return (
+        correspondRecherche &&
+        correspondCategorie &&
+        correspondUrgence &&
+        correspondStatut
+      );
+    });
   }
 
   nouvelleDemande(): void {
-
-    this.router.navigate([
-      '/ajouter-demande'
-    ]);
+    this.router.navigate(['/organisation/demandes-aide/nouvelle']);
   }
 
-  voirDemande(demande: Demande): void {
+  voirDemande(id: number): void {
+    this.router.navigate(['/organisation/demandes-aide', id]);
+  }
 
-    console.log(demande);
+  getClasseStatut(statut: string): string {
+    switch (statut) {
+      case 'EN_ATTENTE':
+        return 'attente';
+
+      case 'VALIDEE':
+        return 'validee';
+
+      case 'REJETEE':
+        return 'rejetee';
+
+      case 'PUBLIEE':
+        return 'publiee';
+
+      default:
+        return '';
+    }
+  }
+
+  getClasseUrgence(urgence: string): string {
+    switch (urgence) {
+      case 'ELEVE':
+        return 'elevee';
+
+      case 'MOYEN':
+        return 'moyenne';
+
+      case 'FAIBLE':
+        return 'faible';
+
+      default:
+        return '';
+    }
   }
 }
-*/
