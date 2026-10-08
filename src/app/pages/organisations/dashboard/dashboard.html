@@ -38,11 +38,11 @@
       </div>
 
       <p class="kpi-value">
-        24
+        {{ kpiStats.demandesAttente }}
       </p>
 
       <p class="kpi-note">
-        8 nouvelles demandes
+        Nouvelles demandes
       </p>
 
     </div>
@@ -76,11 +76,11 @@
       </div>
 
       <p class="kpi-value">
-        16
+        {{ kpiStats.etudesRealiser }}
       </p>
 
       <p class="kpi-note">
-        67 % des demandes traitées
+        Études à réaliser
       </p>
 
     </div>
@@ -116,11 +116,11 @@
       </div>
 
       <p class="kpi-value">
-        3,2 M FCFA
+        {{ impactStats.montantFCFA }}
       </p>
 
       <p class="kpi-note">
-        18 aides distribuées
+        {{ kpiStats.aidesDistribuees }} aides distribuées
       </p>
 
     </div>
@@ -156,20 +156,70 @@
       </div>
 
       <p class="kpi-value">
-        20
+        {{ impactStats.projets }}
       </p>
 
       <p class="kpi-note">
-        5 en cours · 12 terminés
+        {{ kpiStats.projetsLances }} en cours
       </p>
 
     </div>
 
   </section>
 
+  <!-- Charts -->
+  <div class="row g-3 g-xxl-4 mb-4">
+    <!-- Line Chart -->
+    <div class="col-xl-8">
+      <section class="panel h-100">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Évolution des aides</h2>
+            <p class="panel-sub">Montants collectés et distribués</p>
+          </div>
+          <div class="db-chart-legend" style="display: flex; gap: 15px; font-size: 14px; align-items: center;">
+            <div class="db-legend-item" style="display: flex; align-items: center; gap: 5px;">
+              <span class="db-legend-dot" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #117b48;"></span> Collecté
+            </div>
+            <div class="db-legend-item" style="display: flex; align-items: center; gap: 5px;">
+              <span class="db-legend-dot" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #fdba12;"></span> Distribué
+            </div>
+          </div>
+        </div>
+        <div class="panel-body" style="position: relative; height: 280px;">
+          <canvas id="evolutionChart"></canvas>
+        </div>
+      </section>
+    </div>
+
+    <!-- Horizontal Bar Chart -->
+    <div class="col-xl-4">
+      <section class="panel h-100">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Répartition des demandes</h2>
+            <p class="panel-sub">Par catégorie d'aide</p>
+          </div>
+        </div>
+        <div class="panel-body">
+          @for (item of repartition; track item.label) {
+            <div class="db-progress-item" style="margin-bottom: 20px;">
+              <div class="db-progress-labels" style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; font-weight: 500;">
+                <span>{{ item.label }}</span>
+                <strong>{{ item.percent }}%</strong>
+              </div>
+              <div class="db-progress-track" style="height: 8px; background-color: #f0f0f0; border-radius: 4px; overflow: hidden;">
+                <div class="db-progress-fill" [style.width.%]="item.percent" [style.background-color]="item.color" style="height: 100%; border-radius: 4px;"></div>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+  </div>
+
 
   <div class="row g-3 g-xxl-4">
-
 
     <div class="col-xl-8">
 

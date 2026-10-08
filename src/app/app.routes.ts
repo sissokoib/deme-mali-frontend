@@ -20,6 +20,11 @@ export const routes: Routes = [
   },
 
   {
+    path: 'register',
+    loadComponent: () => import('./public/register/register').then(m => m.Register)
+  },
+
+  {
     path: 'organisation',
     component: Main,
     canActivate: [AuthGuard, RoleGuard],
