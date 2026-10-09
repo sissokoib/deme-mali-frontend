@@ -121,71 +121,32 @@ export const routes: Routes = [
           }
         ]
       },
-          {
+      {
         path: 'demandes-aide',
         loadComponent: () =>
           import('./pages/organisations/demandes/list-demandes/list-demandes')
             .then(m => m.ListDemandes)
       },
-         {
+      {
         path: 'add-demandes-aide',
         loadComponent: () =>
           import('./pages/organisations/demandes/add-demndes/add-demndes')
             .then(m => m.AddDemndes)
       },
-
-
+      {
+        path: 'demandes-aide/:id',
+        loadComponent: () =>
+          import('./pages/organisations/demandes/detail-demande/detail-demande')
+            .then(m => m.DetailDemande)
+      },
+      {
+        path: 'demandes-aide/:id/modifier',
+        loadComponent: () =>
+          import('./pages/organisations/demandes/edit-demandes/edit-demandes')
+            .then(m => m.EditDemandes)
+      }
     ]
-  
-children: [
-
-  {
-    path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full'
   },
-
-  {
-    path: 'dashboard',
-    loadComponent: () =>
-      import('./pages/organisations/dashboard/dashboard')
-        .then(m => m.Dashboard)
-  },
-
-  {
-    path: 'demandes-aide',
-    loadComponent: () =>
-      import('./pages/organisations/demandes/list-demandes/list-demandes')
-        .then(m => m.ListDemandes)
-  },
-
-  {
-    path: 'add-demandes-aide',
-    loadComponent: () =>
-      import('./pages/organisations/demandes/add-demndes/add-demndes')
-        .then(m => m.AddDemndes)
-  },
-
-  {
-    path: 'demandes-aide/:id',
-    loadComponent: () =>
-      import('./pages/organisations/demandes/detail-demande/detail-demande')
-        .then(m => m.DetailDemande)
-  },
-
-  {
-    path: 'demandes-aide/:id/modifier',
-    loadComponent: () =>
-      import('./pages/organisations/demandes/edit-demandes/edit-demandes')
-        .then(m => m.EditDemandes)
-  }
-
-]
-
-
-  },
-  
-  
 
   {
     path: '**',
