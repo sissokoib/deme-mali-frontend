@@ -1,0 +1,70 @@
+.sidebar-inner {
+  background-color: #F6F3E6;
+  border-radius: 20px;
+  padding: 20px 10px;
+  height: calc(100vh - 40px);
+  margin: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 20px;
+  margin-bottom: 30px;
+  text-decoration: none;
+}
+
+.logos-image {
+  width: 40px;
+}
+
+.brand-text {
+  font-weight: 700;
+  font-size: 20px;
+  color: #0d834a;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nav-item-link {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px 20px;
+  text-decoration: none;
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.nav-item-link svg {
+  width: 24px;
+  height: 24px;
+}
+
+.nav-item-link:hover {
+  background-color: rgba(15, 108, 68, 0.1);
+}
+
+.nav-item-link.is-active {
+  background-color: #0F6C44;
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(15, 108, 68, 0.3);
+}
+
+.nav-item-link.is-active svg {
+  stroke: #fff;
+}

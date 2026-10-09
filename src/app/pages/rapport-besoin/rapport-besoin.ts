@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { RapportBesoin } from '../../models/etude.model';
 
 @Component({
   selector: 'app-rapport-besoin',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './rapport-besoin.html',
   styleUrl: './rapport-besoin.css',
   standalone: true

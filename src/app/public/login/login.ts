@@ -78,9 +78,9 @@ export class Login {
         console.log('Rôle :', role);
 
         if (role === 'ORGANISATIONPARTENAIRE') {
-
+          
           this.router.navigate(['/organisation/dashboard']);
-
+          
         } /*else if (role === 'ADMIN') {
 
           this.router.navigate(['/admin/dashboard']);

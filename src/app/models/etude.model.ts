@@ -1,3 +1,5 @@
+import { Demande } from './demande.model';
+
 export enum ResultatEtude {
   EN_ATTENTE = 'En attente',
   PLANIFIER = 'Planifier',
@@ -6,6 +8,7 @@ export enum ResultatEtude {
 
 export interface EtudeTerrain {
   id?: number;
+  demande?: Demande; // <-- LIAISON : Une étude est liée à une Demande
   dateRealisation: Date;
   datePlanification: Date;
   lieu: string;

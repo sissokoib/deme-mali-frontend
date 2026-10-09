@@ -1,1062 +1,194 @@
-<main id="main" class="app-content" tabindex="-1">
+<main id="main" class="main" tabindex="-1">
 
-  
-
-   
-
-
-  <section class="kpi-grid" aria-label="Chiffres clés">
-
-    <div class="kpi">
-
-      <div class="kpi-top">
-
-        <span class="kpi-icon tone-teal">
-
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M22 21v-2a4 4 0 0 0-3-3.9"/>
-            <path d="M16 3.1a4 4 0 0 1 0 7.8"/>
-
-          </svg>
-
-        </span>
-
-        <p class="kpi-label">
-          Demandes d'aide
-        </p>
-
-      </div>
-
-      <p class="kpi-value">
-        24
-      </p>
-
-      <p class="kpi-note">
-        8 nouvelles demandes
-      </p>
-
+  <header class="page-top mb-4">
+    <div>
+      <h1 class="page-title">Bonjour, Fondation</h1>
+      <p class="page-sub">Voici un aperçu de l'activité de votre organisation.</p>
     </div>
-
-
-    <div class="kpi">
-
-      <div class="kpi-top">
-
-        <span class="kpi-icon tone-green">
-
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-
-            <path d="M20 6L9 17l-5-5"/>
-
-          </svg>
-
-        </span>
-
-        <p class="kpi-label">
-          Demandes validées
-        </p>
-
-      </div>
-
-      <p class="kpi-value">
-        16
-      </p>
-
-      <p class="kpi-note">
-        67 % des demandes traitées
-      </p>
-
-    </div>
-
-
-    <div class="kpi">
-
-      <div class="kpi-top">
-
-        <span class="kpi-icon tone-amber">
-
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-
-            <rect x="3" y="5" width="18" height="14" rx="2"/>
-            <path d="M3 10h18"/>
-            <path d="M7 15h3"/>
-
-          </svg>
-
-        </span>
-
-        <p class="kpi-label">
-          Aides distribuées
-        </p>
-
-      </div>
-
-      <p class="kpi-value">
-        3,2 M FCFA
-      </p>
-
-      <p class="kpi-note">
-        18 aides distribuées
-      </p>
-
-    </div>
-
-
-    <div class="kpi">
-
-      <div class="kpi-top">
-
-        <span class="kpi-icon tone-slate">
-
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-
-            <path d="M3 21h18"/>
-            <path d="M5 21V7l7-4 7 4v14"/>
-            <path d="M9 21v-6h6v6"/>
-
-          </svg>
-
-        </span>
-
-        <p class="kpi-label">
-          Projets
-        </p>
-
-      </div>
-
-      <p class="kpi-value">
-        20
-      </p>
-
-      <p class="kpi-note">
-        5 en cours · 12 terminés
-      </p>
-
-    </div>
-
-  </section>
-
-
-  <div class="row g-3 g-xxl-4">
-
-
-    <div class="col-xl-8">
-
-      <section class="panel h-100">
-
-        <div class="panel-head">
-
-          <div>
-
-            <h2 class="panel-title">
-              Suivi des demandes d'aide
-            </h2>
-
-            <p class="panel-sub">
-              État des demandes actuellement traitées par votre organisation
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <div class="panel-body">
-
-          <ul class="bar-list">
-
-            <li>
-
-              <span class="bar-label">
-                En attente
-              </span>
-
-              <span class="meter" aria-hidden="true">
-                <span style="width: 33%"></span>
-              </span>
-
-              <span class="bar-value num">
-                8
-              </span>
-
-            </li>
-
-
-            <li>
-
-              <span class="bar-label">
-                Validées
-              </span>
-
-              <span class="meter" aria-hidden="true">
-                <span style="width: 67%"></span>
-              </span>
-
-              <span class="bar-value num">
-                16
-              </span>
-
-            </li>
-
-
-            <li>
-
-              <span class="bar-label">
-                Publiées
-              </span>
-
-              <span class="meter" aria-hidden="true">
-                <span style="width: 50%"></span>
-              </span>
-
-              <span class="bar-value num">
-                12
-              </span>
-
-            </li>
-
-
-            <li>
-
-              <span class="bar-label">
-                Rejetées
-              </span>
-
-              <span class="meter" aria-hidden="true">
-                <span style="width: 17%"></span>
-              </span>
-
-              <span class="bar-value num">
-                4
-              </span>
-
-            </li>
-
-          </ul>
-
-
-          <a
-            class="link-arrow"
-            routerLink="/organisation/demandes-aide"
-          >
-
-            Voir toutes les demandes
-
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-
-              <path d="M5 12h14"/>
-              <path d="M13 6l6 6-6 6"/>
-
+  </header>
+
+  <!-- 4 METRICS CARDS -->
+  <div class="row gx-3 gy-3 mb-4">
+    <!-- Demandes -->
+    <div class="col-xl-3 col-lg-6 col-12">
+      <div class="panel h-100 p-3" style="border-radius: 12px; border: 1px solid #eee; background: white; text-align: center;">
+        <div class="d-flex justify-content-center align-items-center mb-3" style="gap: 8px;">
+          <div style="width: 36px; height: 36px; border-radius: 50%; background: #F7F3EA; display: flex; align-items: center; justify-content: center; color: #0F7A4B;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
             </svg>
-
-          </a>
-
-        </div>
-
-      </section>
-
-    </div>
-
-
-    <div class="col-xl-4">
-
-      <section class="panel h-100">
-
-        <div class="panel-head">
-
-          <div>
-
-            <h2 class="panel-title">
-              Études de terrain
-            </h2>
-
-            <p class="panel-sub">
-              Situation des études réalisées
-            </p>
-
           </div>
-
+          <span style="font-size: 15px; font-weight: 500; color: #0F7A4B;">Demandes</span>
         </div>
-
-
-        <div class="panel-body">
-
-          <ul class="split-legend split-legend-grid">
-
-            <li>
-
-              <span class="split-key is-p"></span>
-
-              En cours
-
-              <strong>
-                5
-              </strong>
-
-            </li>
-
-            <li>
-
-              <span class="split-key is-l"></span>
-
-              Terminées
-
-              <strong>
-                12
-              </strong>
-
-            </li>
-
-            <li>
-
-              <span class="split-key is-a"></span>
-
-              À réaliser
-
-              <strong>
-                7
-              </strong>
-
-            </li>
-
-            <li>
-
-              <span class="split-key is-e"></span>
-
-              Rapports
-
-              <strong>
-                9
-              </strong>
-
-            </li>
-
-          </ul>
-
-
-          <a
-            class="link-arrow"
-            routerLink="/organisation/etudes-terrain"
-          >
-
-            Voir les études
-
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-
-              <path d="M5 12h14"/>
-              <path d="M13 6l6 6-6 6"/>
-
+        <div style="font-size: 32px; font-weight: bold; color: #0F7A4B;">
+          {{ (kpiStats.demandes < 10 ? "0" : "") + (kpiStats.demandes || 0) }}
+        </div>
+      </div>
+    </div>
+    
+    <!-- Demandes refusées -->
+    <div class="col-xl-3 col-lg-6 col-12">
+      <div class="panel h-100 p-3" style="border-radius: 12px; border: 1px solid #eee; background: white; text-align: center;">
+        <div class="d-flex justify-content-center align-items-center mb-3" style="gap: 8px;">
+          <div style="width: 36px; height: 36px; border-radius: 50%; background: #F7F3EA; display: flex; align-items: center; justify-content: center; color: #0F7A4B;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
             </svg>
-
-          </a>
-
+          </div>
+          <span style="font-size: 15px; font-weight: 500; color: #0F7A4B;">Demandes refusées</span>
         </div>
-
-      </section>
-
+        <div style="font-size: 32px; font-weight: bold; color: #0F7A4B;">
+          {{ (kpiStats.demandesRefusees < 10 ? "0" : "") + (kpiStats.demandesRefusees || 0) }}
+        </div>
+      </div>
     </div>
 
-
-    <div class="col-xl-7">
-
-      <section class="panel h-100">
-
-        <div class="panel-head">
-
-          <div>
-
-            <h2 class="panel-title">
-              Projets de l'organisation
-            </h2>
-
-            <p class="panel-sub">
-              Suivi des projets sociaux et économiques
-            </p>
-
-          </div>
-
-          <a
-            class="link-arrow"
-            routerLink="/organisation/projets"
-          >
-            Voir les projets
-          </a>
-
-        </div>
-
-
-        <div class="panel-body">
-
-          <ul class="bar-list">
-
-            <li>
-
-              <span class="bar-label">
-                Préparation
-              </span>
-
-              <span class="meter" aria-hidden="true">
-                <span style="width: 15%"></span>
-              </span>
-
-              <span class="bar-value num">
-                3
-              </span>
-
-            </li>
-
-
-            <li>
-
-              <span class="bar-label">
-                En cours
-              </span>
-
-              <span class="meter" aria-hidden="true">
-                <span style="width: 25%"></span>
-              </span>
-
-              <span class="bar-value num">
-                5
-              </span>
-
-            </li>
-
-
-            <li>
-
-              <span class="bar-label">
-                Terminés
-              </span>
-
-              <span class="meter" aria-hidden="true">
-                <span style="width: 60%"></span>
-              </span>
-
-              <span class="bar-value num">
-                12
-              </span>
-
-            </li>
-
-          </ul>
-
-
-          <div class="panel-summary">
-
-            <span>
-              Budget total
-            </span>
-
-            <strong>
-              4,8 M FCFA
-            </strong>
-
-          </div>
-
-        </div>
-
-      </section>
-
-    </div>
-
-
-    <div class="col-xl-5">
-
-      <section class="panel h-100">
-
-        <div class="panel-head">
-
-          <div>
-
-            <h2 class="panel-title">
-              Aides distribuées
-            </h2>
-
-            <p class="panel-sub">
-              Dernières aides enregistrées
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <ul class="notice-list">
-
-          <li class="notice">
-
-            <span class="date-chip">
-
-              <span class="date-chip-m">
-                SEP
-              </span>
-
-              <span class="date-chip-d">
-                28
-              </span>
-
-            </span>
-
-
-            <div class="notice-body">
-
-              <p class="notice-title">
-                Famille Traoré
-              </p>
-
-              <p class="notice-meta">
-
-                <span class="tag tag-event">
-                  250 000 FCFA
-                </span>
-
-                Aide distribuée
-
-              </p>
-
-            </div>
-
-          </li>
-
-
-          <li class="notice">
-
-            <span class="date-chip">
-
-              <span class="date-chip-m">
-                SEP
-              </span>
-
-              <span class="date-chip-d">
-                25
-              </span>
-
-            </span>
-
-
-            <div class="notice-body">
-
-              <p class="notice-title">
-                Famille Coulibaly
-              </p>
-
-              <p class="notice-meta">
-
-                <span class="tag tag-event">
-                  180 000 FCFA
-                </span>
-
-                Aide distribuée
-
-              </p>
-
-            </div>
-
-          </li>
-
-
-          <li class="notice">
-
-            <span class="date-chip">
-
-              <span class="date-chip-m">
-                SEP
-              </span>
-
-              <span class="date-chip-d">
-                22
-              </span>
-
-            </span>
-
-
-            <div class="notice-body">
-
-              <p class="notice-title">
-                Mariam Diarra
-              </p>
-
-              <p class="notice-meta">
-
-                <span class="tag tag-event">
-                  350 000 FCFA
-                </span>
-
-                Aide distribuée
-
-              </p>
-
-            </div>
-
-          </li>
-
-        </ul>
-
-
-        <div class="panel-body">
-
-          <a
-            class="link-arrow"
-            routerLink="/organisation/aides-distribuees"
-          >
-
-            Voir les aides distribuées
-
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-
-              <path d="M5 12h14"/>
-              <path d="M13 6l6 6-6 6"/>
-
+    <!-- Demandes en attente -->
+    <div class="col-xl-3 col-lg-6 col-12">
+      <div class="panel h-100 p-3" style="border-radius: 12px; border: 1px solid #eee; background: white; text-align: center;">
+        <div class="d-flex justify-content-center align-items-center mb-3" style="gap: 8px;">
+          <div style="width: 36px; height: 36px; border-radius: 50%; background: #F7F3EA; display: flex; align-items: center; justify-content: center; color: #0F7A4B;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 22h14"></path>
+              <path d="M5 2h14"></path>
+              <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"></path>
+              <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"></path>
             </svg>
-
-          </a>
-
-        </div>
-
-      </section>
-
-    </div>
-
-
-    <div class="col-xl-8">
-
-      <section class="panel h-100">
-
-        <div class="panel-head">
-
-          <div>
-
-            <h2 class="panel-title">
-              Demandes récentes
-            </h2>
-
-            <p class="panel-sub">
-              Les dernières demandes reçues par votre organisation
-            </p>
-
           </div>
-
-          <a
-            class="link-arrow"
-            routerLink="/organisation/demandes-aide"
-          >
-            Toutes les demandes
-          </a>
-
+          <span style="font-size: 15px; font-weight: 500; color: #0F7A4B;">Demandes en attente</span>
         </div>
-
-
-        <div class="table-wrap">
-
-          <table class="table-data table-stack">
-
-            <thead>
-
-              <tr>
-
-                <th>
-                  Demande
-                </th>
-
-                <th>
-                  Bénéficiaire
-                </th>
-
-                <th>
-                  Montant
-                </th>
-
-                <th>
-                  Date
-                </th>
-
-                <th>
-                  Statut
-                </th>
-
-              </tr>
-
-            </thead>
-
-
-            <tbody>
-
-              <tr>
-
-                <td class="cell-main">
-
-                  <div>
-
-                    <span class="person-name">
-                      Aide alimentaire
-                    </span>
-
-                    <span class="person-meta">
-                      DA-0025
-                    </span>
-
-                  </div>
-
-                </td>
-
-                <td>
-                  Famille Traoré
-                </td>
-
-                <td class="num">
-                  250 000 FCFA
-                </td>
-
-                <td class="num">
-                  28 sept. 2026
-                </td>
-
-                <td>
-
-                  <span class="status status-success">
-                    Validée
-                  </span>
-
-                </td>
-
-              </tr>
-
-
-              <tr>
-
-                <td class="cell-main">
-
-                  <div>
-
-                    <span class="person-name">
-                      Équipement professionnel
-                    </span>
-
-                    <span class="person-meta">
-                      DA-0024
-                    </span>
-
-                  </div>
-
-                </td>
-
-                <td>
-                  Mariam Diarra
-                </td>
-
-                <td class="num">
-                  350 000 FCFA
-                </td>
-
-                <td class="num">
-                  26 sept. 2026
-                </td>
-
-                <td>
-
-                  <span class="status status-warning">
-                    En attente
-                  </span>
-
-                </td>
-
-              </tr>
-
-
-              <tr>
-
-                <td class="cell-main">
-
-                  <div>
-
-                    <span class="person-name">
-                      Petit commerce alimentaire
-                    </span>
-
-                    <span class="person-meta">
-                      DA-0023
-                    </span>
-
-                  </div>
-
-                </td>
-
-                <td>
-                  Famille Diallo
-                </td>
-
-                <td class="num">
-                  500 000 FCFA
-                </td>
-
-                <td class="num">
-                  24 sept. 2026
-                </td>
-
-                <td>
-
-                  <span class="status status-success">
-                    Publiée
-                  </span>
-
-                </td>
-
-              </tr>
-
-
-              <tr>
-
-                <td class="cell-main">
-
-                  <div>
-
-                    <span class="person-name">
-                      Élevage de volailles
-                    </span>
-
-                    <span class="person-meta">
-                      DA-0022
-                    </span>
-
-                  </div>
-
-                </td>
-
-                <td>
-                  Famille Coulibaly
-                </td>
-
-                <td class="num">
-                  1 200 000 FCFA
-                </td>
-
-                <td class="num">
-                  20 sept. 2026
-                </td>
-
-                <td>
-
-                  <span class="status status-success">
-                    Validée
-                  </span>
-
-                </td>
-
-              </tr>
-
-            </tbody>
-
-          </table>
-
+        <div style="font-size: 32px; font-weight: bold; color: #0F7A4B;">
+          {{ (kpiStats.demandesAttente < 10 ? "0" : "") + (kpiStats.demandesAttente || 0) }}
         </div>
-
-      </section>
-
+      </div>
     </div>
 
-
-    <div class="col-xl-4">
-
-      <section class="panel h-100">
-
-        <div class="panel-head">
-
-          <div>
-
-            <h2 class="panel-title">
-              Activités récentes
-            </h2>
-
-            <p class="panel-sub">
-              Dernières opérations effectuées
-            </p>
-
+    <!-- Demandes traitées -->
+    <div class="col-xl-3 col-lg-6 col-12">
+      <div class="panel h-100 p-3" style="border-radius: 12px; border: 1px solid #eee; background: white; text-align: center;">
+        <div class="d-flex justify-content-center align-items-center mb-3" style="gap: 8px;">
+          <div style="width: 36px; height: 36px; border-radius: 50%; background: #F7F3EA; display: flex; align-items: center; justify-content: center; color: #0F7A4B;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
           </div>
-
+          <span style="font-size: 15px; font-weight: 500; color: #0F7A4B;">Demandes traitées</span>
         </div>
-
-
-        <ul class="notice-list">
-
-          <li class="notice">
-
-            <span class="date-chip">
-
-              <span class="date-chip-m">
-                OCT
-              </span>
-
-              <span class="date-chip-d">
-                06
-              </span>
-
-            </span>
-
-
-            <div class="notice-body">
-
-              <p class="notice-title">
-                Nouvelle demande reçue
-              </p>
-
-              <p class="notice-meta">
-                Une nouvelle demande d'aide nécessite une étude.
-              </p>
-
-            </div>
-
-          </li>
-
-
-          <li class="notice">
-
-            <span class="date-chip">
-
-              <span class="date-chip-m">
-                OCT
-              </span>
-
-              <span class="date-chip-d">
-                05
-              </span>
-
-            </span>
-
-
-            <div class="notice-body">
-
-              <p class="notice-title">
-                Étude de terrain terminée
-              </p>
-
-              <p class="notice-meta">
-                Le rapport de besoin est disponible.
-              </p>
-
-            </div>
-
-          </li>
-
-
-          <li class="notice">
-
-            <span class="date-chip">
-
-              <span class="date-chip-m">
-                OCT
-              </span>
-
-              <span class="date-chip-d">
-                03
-              </span>
-
-            </span>
-
-
-            <div class="notice-body">
-
-              <p class="notice-title">
-                Aide distribuée
-              </p>
-
-              <p class="notice-meta">
-                La distribution a été enregistrée avec succès.
-              </p>
-
-            </div>
-
-          </li>
-
-
-          <li class="notice">
-
-            <span class="date-chip">
-
-              <span class="date-chip-m">
-                OCT
-              </span>
-
-              <span class="date-chip-d">
-                01
-              </span>
-
-            </span>
-
-
-            <div class="notice-body">
-
-              <p class="notice-title">
-                Projet mis à jour
-              </p>
-
-              <p class="notice-meta">
-                Le projet Atelier couture Awa Traoré a été actualisé.
-              </p>
-
-            </div>
-
-          </li>
-
-        </ul>
-
-      </section>
-
+        <div style="font-size: 32px; font-weight: bold; color: #0F7A4B;">
+          {{ (kpiStats.demandesTraitees < 10 ? "0" : "") + (kpiStats.demandesTraitees || 0) }}
+        </div>
+      </div>
     </div>
-
-
   </div>
 
+  <!-- NOTRE IMPACT -->
+  <div class="panel p-4 mb-4" style="border-radius: 12px; border: 1px solid #eee; background: white;">
+    <h2 style="font-size: 18px; margin-bottom: 20px; font-weight: 600;">Notre impact</h2>
+    <div class="row text-center align-items-center">
+      <div class="col-md-4 col-12 mb-3 mb-md-0" style="border-right: 1px solid #eee;">
+        <span style="background: #E8F5E9; color: #0F7A4B; padding: 4px 10px; border-radius: 20px; font-weight: bold; margin-right: 8px;">{{ impactStats.beneficiaires }}</span>
+        <span style="color: #666; font-size: 14px;">bénéficiaires aidés</span>
+      </div>
+      <div class="col-md-4 col-12 mb-3 mb-md-0" style="border-right: 1px solid #eee;">
+        <span style="background: #E8F5E9; color: #0F7A4B; padding: 4px 10px; border-radius: 20px; font-weight: bold; margin-right: 8px;">{{ impactStats.demandesTraitees }}</span>
+        <span style="color: #666; font-size: 14px;">demandes traitées</span>
+      </div>
+      <div class="col-md-4 col-12">
+        <span style="color: #0F7A4B; font-weight: bold; font-size: 16px; margin-right: 8px;">{{ impactStats.montantFCFA }}</span>
+        <span style="color: #666; font-size: 14px;">FCFA distribués</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW -->
+  <div class="row gx-4 mb-4">
+    <!-- Évolution des aides -->
+    <div class="col-lg-7 mb-4 mb-lg-0">
+      <div class="panel h-100 p-4" style="border-radius: 12px; border: 1px solid #eee; background: white;">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+          <div>
+            <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">Évolution des aides</h2>
+            <p style="color: #666; font-size: 14px; margin: 0;">Montants collectés et distribués</p>
+          </div>
+          <div class="d-flex gap-3" style="font-size: 13px;">
+            <div class="d-flex align-items-center gap-1"><div style="width: 10px; height: 10px; border-radius: 50%; background: #0F7A4B;"></div> Collecté</div>
+            <div class="d-flex align-items-center gap-1"><div style="width: 10px; height: 10px; border-radius: 50%; background: #F1C40F;"></div> Distribué</div>
+          </div>
+        </div>
+        
+        <!-- Canvas pour le graphique dynamique Chart.js -->
+        <div style="height: 250px; width: 100%; position: relative;">
+           <canvas id="evolutionChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Répartition des demandes -->
+    <div class="col-lg-5">
+      <div class="panel h-100 p-4" style="border-radius: 12px; border: 1px solid #eee; background: white;">
+        <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">Répartition des demandes</h2>
+        <p style="color: #666; font-size: 14px; margin-bottom: 24px;">Par catégorie d'aide</p>
+
+        <!-- Bars Dynamiques -->
+        <div class="mb-3" *ngFor="let item of repartition">
+          <div class="d-flex justify-content-between mb-1" style="font-size: 14px;">
+            <span>{{ item.label }}</span>
+            <span style="font-weight: bold;">{{ item.percent }}%</span>
+          </div>
+          <div style="width: 100%; height: 8px; background: #F7F3EA; border-radius: 4px; overflow: hidden;">
+            <div [style.width.%]="item.percent" [style.background]="item.color" style="height: 100%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEMANDES RÉCENTES -->
+  <div class="panel p-4" style="border-radius: 12px; border: 1px solid #eee; background: white;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">Demandes récentes</h2>
+        <p style="color: #666; font-size: 14px; margin: 0;">Dernières demandes suivies par votre organisation</p>
+      </div>
+      <a routerLink="/organisation/demandes-aide" class="db-btn-link">Voir toutes les demandes &rarr;</a>
+    </div>
+
+    <div class="db-table-wrapper">
+      <table class="db-table">
+        <thead>
+          <tr>
+            <th style="padding-left: 0;">Demande</th>
+            <th>Bénéficiaire</th>
+            <th>Catégorie</th>
+            <th>Urgence</th>
+            <th>Statut</th>
+            <th style="text-align: right; padding-right: 0;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let demande of recentDemandes">
+            <td class="db-fw-600" style="padding-left: 0;">{{ demande.nom }}</td>
+            <td>{{ demande.beneficiaire }}</td>
+            <td>{{ demande.categorie }}</td>
+            <td>
+              <span class="db-badge" [ngClass]="demande.urgenceClass">
+                {{ demande.urgence }}
+              </span>
+            </td>
+            <td>
+              <span class="db-badge" [ngClass]="demande.statutClass">
+                {{ demande.statut }}
+              </span>
+            </td>
+            <td style="text-align: right; padding-right: 0;">
+              <a href="#" class="db-btn-action" style="text-decoration: none;">Voir</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </main>

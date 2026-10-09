@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { RapportTechnique, DetailRapportTechnique } from '../../models/etude.model';
 
 @Component({
   selector: 'app-rapport-technique',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './rapport-technique.html',
   styleUrl: './rapport-technique.css',
   standalone: true

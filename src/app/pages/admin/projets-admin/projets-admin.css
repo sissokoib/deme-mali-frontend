@@ -1,0 +1,220 @@
+.projets-container {
+  padding: 10px;
+}
+
+.page-header {
+  margin-bottom: 25px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 5px;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #666;
+}
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 30px;
+}
+
+.section-card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  margin-bottom: 25px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.custom-table th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: #333;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.custom-table td {
+  padding: 15px 0;
+  font-size: 12px;
+  color: #555;
+  border-bottom: 1px solid #f5f5f5;
+  font-weight: 500;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.status-encours {
+  background-color: #0d834a;
+}
+
+.progression-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  background-color: #e6f2ec;
+  color: #0d834a;
+}
+
+/* Stat Cards */
+.stat-card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: #222;
+}
+
+.stat-count {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.count-bg-light { background-color: #f1ebd8; color: #555; }
+.count-bg-warning { background-color: #f59e0b; color: #fff; }
+.count-bg-success { background-color: #0d834a; color: #fff; }
+
+/* Shortcuts */
+.shortcut-btn {
+  width: 100%;
+  background-color: #f1efdf;
+  border: 1px solid #e0dfd1;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-weight: 600;
+  color: #222;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.shortcut-btn:hover {
+  background-color: #e8e5d2;
+}
+
+.shortcut-icon {
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+  border: 1px solid #333;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.shortcut-icon svg { width: 20px; height: 20px; }
+
+/* Calendar steps */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.step-card {
+  background-color: #f6f3e6;
+  border-radius: 12px;
+  padding: 15px;
+  position: relative;
+}
+
+.step-arrow {
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555;
+  z-index: 10;
+}
+
+.step-date {
+  font-size: 11px;
+  color: #555;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.step-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.step-badge {
+  display: inline-block;
+  background-color: #4b9b73;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+}

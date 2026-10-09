@@ -1,0 +1,28 @@
+.admin-app {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f1efdf; /* Background color from the design */
+  font-family: 'Inter', sans-serif;
+}
+
+.admin-sidebar-container {
+  width: 280px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 100;
+}
+
+.admin-content-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 30px 20px 10px;
+  overflow-x: hidden;
+}
+
+.admin-main-content {
+  flex-grow: 1;
+  background: transparent;
+}

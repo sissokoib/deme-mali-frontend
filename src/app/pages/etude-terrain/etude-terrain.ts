@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { EtudeTerrain, ResultatEtude } from '../../models/etude.model';
 
 @Component({
   selector: 'app-etude-terrain',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './etude-terrain.html',
   styleUrl: './etude-terrain.css',
   standalone: true

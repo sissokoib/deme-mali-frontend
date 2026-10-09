@@ -1,1 +1,242 @@
+<div class="dashboard-container">
+  <h1 class="dashboard-title">Bonjour, ONG Dèmè Mali</h1>
 
+  <!-- KPI Cards -->
+  <div class="kpi-cards">
+    
+    <div class="kpi-card">
+      <div class="kpi-icon-wrapper">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+      </div>
+      <div class="kpi-label">Projets actifs</div>
+      <div class="kpi-value">12</div>
+      <div class="kpi-trend positive">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+        +2 ce mois
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon-wrapper" style="background-color: #fff9e6; color: #fdba12;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+      </div>
+      <div class="kpi-label">Dons reçus</div>
+      <div class="kpi-value">{{stats.montantTotalCollecte | number:'1.0-0'}} FCFA</div>
+      <div class="kpi-trend positive">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+        +12% ce mois
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon-wrapper" style="background-color: #fff0f0; color: #ef4444;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      </div>
+      <div class="kpi-label">Bénéficiaires aidés</div>
+      <div class="kpi-value">{{stats.totalBeneficiaires}}</div>
+      <div class="kpi-trend positive">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+        +18% ce mois
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon-wrapper" style="background-color: #e6f2ff; color: #3b82f6;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      </div>
+      <div class="kpi-label">Membres</div>
+      <div class="kpi-value">36</div>
+      <div class="kpi-trend positive">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+        +5% ce mois
+      </div>
+    </div>
+
+  </div>
+
+  <div class="dashboard-grid">
+    <div class="dashboard-left">
+      <!-- Projets de Dons Table -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">Projets de Dons</h2>
+          <div>
+            <button class="btn btn-light btn-sm mx-2">Filtrer</button>
+            <button class="btn btn-light btn-sm">Date</button>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Nom du projet</th>
+                <th>Localisation</th>
+                <th>Type</th>
+                <th>Statut</th>
+                <th>Date</th>
+                <th>Priorité</th>
+                <th>Bénéficiaire</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Soutien aux Ecoles à Bamako</strong></td>
+                <td>Bamako</td>
+                <td>Education</td>
+                <td><span class="status-badge status-encours">En cours</span></td>
+                <td>20/09/2025</td>
+                <td><span class="priority-badge priority-urgente">Urgente</span></td>
+                <td>
+                  <div class="beneficiary-info">
+                    <span class="beneficiary-name">Sissoko Ibrahima</span>
+                    <span class="beneficiary-phone">+223 70000000</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Soutien aux Ecoles à Bamako</strong></td>
+                <td>Bamako</td>
+                <td>Education</td>
+                <td><span class="status-badge status-termine">Terminé</span></td>
+                <td>20/09/2025</td>
+                <td><span class="priority-badge priority-moyenne">Moyenne</span></td>
+                <td>
+                  <div class="beneficiary-info">
+                    <span class="beneficiary-name">Sissoko Ibrahima</span>
+                    <span class="beneficiary-phone">+223 70000000</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Soutien aux Ecoles à Bamako</strong></td>
+                <td>Bamako</td>
+                <td>Education</td>
+                <td><span class="status-badge status-attente">En attente</span></td>
+                <td>20/09/2025</td>
+                <td><span class="priority-badge priority-basse">Basse</span></td>
+                <td>
+                  <div class="beneficiary-info">
+                    <span class="beneficiary-name">Sissoko Ibrahima</span>
+                    <span class="beneficiary-phone">+223 70000000</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Soutien aux Ecoles à Bamako</strong></td>
+                <td>Bamako</td>
+                <td>Education</td>
+                <td><span class="status-badge status-encours">En cours</span></td>
+                <td>20/09/2025</td>
+                <td><span class="priority-badge priority-urgente">Urgente</span></td>
+                <td>
+                  <div class="beneficiary-info">
+                    <span class="beneficiary-name">Sissoko Ibrahima</span>
+                    <span class="beneficiary-phone">+223 70000000</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-grid">
+        <div class="section-card">
+          <div class="section-header">
+            <h2 class="section-title">Apercu des Dons</h2>
+            <select class="form-select form-select-sm" style="width: auto;">
+              <option>cette semaine</option>
+            </select>
+          </div>
+          <div class="chart-placeholder">
+            [Graphique Aire - Apercu des Dons]
+          </div>
+        </div>
+        
+        <div class="section-card">
+          <div class="section-header">
+            <h2 class="section-title">Répartition de l'Aide</h2>
+          </div>
+          <div class="chart-placeholder">
+            [Graphique Secteur - Répartition]
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="dashboard-right">
+      
+      <!-- Calendar placeholder -->
+      <div class="section-card" style="padding: 15px;">
+        <div class="chart-placeholder" style="height: 250px;">
+          [Calendrier Sept 2026]
+        </div>
+      </div>
+
+      <!-- Niveau d'aide -->
+      <div class="section-card">
+        <h2 class="section-title mb-4">Niveau d'aide Atteint</h2>
+        <div class="level-info">
+          <span>Niveau atteint</span>
+          <span class="level-percent">67%</span>
+        </div>
+        <div class="level-bar-bg">
+          <div class="level-bar-fill" style="width: 67%;"></div>
+        </div>
+        <div class="level-text">30 sur 50 taches complété</div>
+      </div>
+
+      <!-- Taches à venir -->
+      <div class="section-card">
+        <h2 class="section-title mb-4">Taches à vénir</h2>
+        
+        <div class="task-list">
+          
+          <div class="task-item">
+            <div class="task-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <div class="task-info">
+              <div class="task-title">Distribution d'aides</div>
+              <div class="task-date">30 Septembre 2026</div>
+            </div>
+            <div class="task-priority">
+              <span class="priority-badge priority-urgente">Urgente</span>
+            </div>
+          </div>
+
+          <div class="task-item">
+            <div class="task-icon" style="background-color: #e6f2ff; color: #3b82f6;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
+            <div class="task-info">
+              <div class="task-title">Audit sur site du centre de santé de Koulikoro</div>
+              <div class="task-date">25 Septembre 2026</div>
+            </div>
+            <div class="task-priority">
+              <span class="priority-badge priority-moyenne">Moyenne</span>
+            </div>
+          </div>
+
+          <div class="task-item">
+            <div class="task-icon" style="background-color: #e6f2ff; color: #3b82f6;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
+            <div class="task-info">
+              <div class="task-title">Approbation de la convention partenaire (ONG Horizon)</div>
+              <div class="task-date">01 Octobre 2026</div>
+            </div>
+            <div class="task-priority">
+              <span class="priority-badge priority-basse">Basse</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
