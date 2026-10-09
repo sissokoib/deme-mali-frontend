@@ -1,0 +1,316 @@
+
+<div class="page">
+
+  <div class="entete">
+    <div>
+      <h1>Modifier une demande d'aide</h1>
+      <p>
+        Modifiez les informations de la demande et ses justificatifs.
+      </p>
+    </div>
+  </div>
+
+  <form
+    class="formulaire"
+    [formGroup]="formulaire"
+    (ngSubmit)="modifierDemande()"
+  >
+
+    <!-- INFORMATIONS DE LA DEMANDE -->
+    <div class="section">
+      <h2>Informations de la demande</h2>
+
+      <div class="ligne">
+
+        <div class="champ">
+          <label for="beneficiaire">Bénéficiaire</label>
+
+          <select id="beneficiaire" formControlName="beneficiaireId">
+            <option [ngValue]="null">Sélectionner un bénéficiaire</option>
+
+            <option
+              *ngFor="let beneficiaire of beneficiaires"
+              [ngValue]="beneficiaire.id"
+            >
+              {{ beneficiaire.prenom }} {{ beneficiaire.nom }}
+            </option>
+          </select>
+        </div>
+
+        <div class="champ">
+          <label for="categorie">Catégorie</label>
+
+          <select id="categorie" formControlName="categorieDemandeId">
+            <option [ngValue]="null">Sélectionner une catégorie</option>
+
+            <option
+              *ngFor="let categorie of categories"
+              [ngValue]="categorie.id"
+            >
+              {{ categorie.nom }}
+            </option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="ligne">
+
+        <div class="champ">
+          <label for="typeDemande">Type de demande</label>
+
+          <select id="typeDemande" formControlName="typeDemande">
+            <option value="">Sélectionner un type</option>
+            <option value="INDIVIDUEL">Individuelle</option>
+            <option value="COLLECTIF">Collective</option>
+          </select>
+        </div>
+
+        <div class="champ">
+          <label for="titre">Titre de la demande</label>
+
+          <input
+            id="titre"
+            type="text"
+            formControlName="titre"
+            placeholder="Ex : Besoin de fournitures scolaires"
+          >
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SITUATION DU BENEFICIAIRE -->
+    <div class="section">
+      <h2>Situation du bénéficiaire</h2>
+
+      <div class="ligne">
+
+        <div class="champ">
+          <label for="nombrePersonne">Nombre de personnes</label>
+
+          <input
+            id="nombrePersonne"
+            type="number"
+            min="1"
+            formControlName="nombrePersonne"
+            placeholder="Ex : 5"
+          >
+        </div>
+
+        <div class="champ">
+          <label for="niveauUrgence">Niveau d'urgence</label>
+
+          <select id="niveauUrgence" formControlName="niveauUrgence">
+            <option value="">Sélectionner un niveau</option>
+            <option value="FORTE">Élevée</option>
+            <option value="MOYENNE">Moyenne</option>
+            <option value="FAIBLE">Faible</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="champ">
+        <label for="descriptionSituation">
+          Description de la situation
+        </label>
+
+        <textarea
+          id="descriptionSituation"
+          formControlName="descriptionSituation"
+          rows="5"
+          placeholder="Décrivez la situation et le besoin du bénéficiaire..."
+        ></textarea>
+      </div>
+
+      <div class="champ">
+        <label for="motif">Motif complémentaire</label>
+
+        <input
+          id="motif"
+          type="text"
+          formControlName="motif"
+          placeholder="Précisez le motif si nécessaire"
+        >
+      </div>
+    </div>
+
+    <!-- BESOIN FINANCIER -->
+    <div class="section">
+      <h2>Besoin financier</h2>
+
+      <div class="champ montant">
+        <label for="montantNecessaire">Montant nécessaire (FCFA)</label>
+
+        <input
+          id="montantNecessaire"
+          type="number"
+          min="1"
+          formControlName="montantNecessaire"
+          placeholder="Ex : 250000"
+        >
+      </div>
+    </div>
+
+    <!-- JUSTIFICATIFS EXISTANTS -->
+    <div class="section">
+      <h2>Justificatifs déjà enregistrés</h2>
+
+      <p *ngIf="justificatifsExistants.length === 0">
+        Aucun justificatif enregistré pour cette demande.
+      </p>
+
+      <div
+        class="fichiers-selectionnes"
+        *ngFor="let justificatif of justificatifsExistants"
+      >
+
+        <p>
+          <strong>Type :</strong>
+          {{ obtenirNomType(justificatif.typeJustificatifId) }}
+        </p>
+
+        <p>
+          <strong>Fichier :</strong>
+          {{ justificatif.nomFichier }}
+        </p>
+
+        <!-- IMAGE ET ICONE DE SUPPRESSION -->
+        <div class="image-avec-suppression">
+
+          <img
+            *ngIf="estUneImage(justificatif.cheminFichier || justificatif.nomFichier)"
+            [src]="obtenirUrlJustificatif(justificatif.cheminFichier)"
+            [alt]="justificatif.nomFichier"
+            class="image-justificatif"
+          >
+
+          <button
+            type="button"
+            class="btn-supprimer"
+            (click)="retirerJustificatif(justificatif.id)"
+            aria-label="Supprimer le justificatif"
+            title="Supprimer le justificatif"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+
+        </div>
+
+        <p
+          *ngIf="!estUneImage(justificatif.cheminFichier || justificatif.nomFichier)"
+        >
+          Ce fichier n'est pas une image.
+        </p>
+
+        <!-- OUVRIR LE FICHIER -->
+        <p>
+          <a
+            [href]="obtenirUrlJustificatif(justificatif.cheminFichier)"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Ouvrir le justificatif
+          </a>
+        </p>
+
+      </div>
+    </div>
+
+    <!-- AJOUTER OU REMPLACER DES JUSTIFICATIFS -->
+    <div class="section">
+      <h2>Ajouter de nouveaux justificatifs</h2>
+
+      <p>
+        Pour remplacer une ancienne image, supprimez-la dans la section
+        précédente, puis sélectionnez le nouveau fichier.
+      </p>
+
+      <div class="ligne">
+
+        <div class="champ">
+          <label for="typeJustificatifId">
+            Type de justificatif
+          </label>
+
+          <select
+            id="typeJustificatifId"
+            formControlName="typeJustificatifId"
+          >
+            <option [ngValue]="null">Sélectionner un type</option>
+
+            <option
+              *ngFor="let type of typesJustificatifs"
+              [ngValue]="type.id"
+            >
+              {{ type.nom }}
+            </option>
+          </select>
+        </div>
+
+        <div class="champ">
+          <label for="fichiers">Ajouter des fichiers</label>
+
+          <input
+            id="fichiers"
+            type="file"
+            multiple
+            accept="image/*,.pdf"
+            (change)="selectionnerFichiers($event)"
+          >
+        </div>
+
+      </div>
+
+      <!-- NOUVEAUX FICHIERS SELECTIONNES -->
+      <div class="fichiers-selectionnes">
+        <label>Nouveaux fichiers sélectionnés</label>
+
+        <p *ngIf="fichiers.length === 0">
+          Aucun nouveau fichier sélectionné.
+        </p>
+
+        <div
+          class="fichier"
+          *ngFor="let fichier of fichiers; let i = index"
+        >
+          <span>{{ fichier.name }}</span>
+
+          <button
+            type="button"
+            class="supprimer-fichier"
+            (click)="supprimerFichier(i)"
+            aria-label="Retirer ce nouveau fichier"
+            title="Retirer ce fichier"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOUTONS -->
+    <div class="boutons">
+
+      <button
+        type="button"
+        class="annuler"
+        (click)="annuler()"
+      >
+        Annuler
+      </button>
+
+      <button
+        type="submit"
+        class="creer"
+        [disabled]="formulaire.invalid"
+      >
+        Enregistrer les modifications
+      </button>
+
+    </div>
+
+  </form>
+
+</div>
