@@ -1,0 +1,120 @@
+
+<div class="page">
+  <h2>Détail de la demande</h2>
+  <p class="sous-titre">Consultez la demande, son étude de terrain et les rapports associés.</p>
+
+  <div *ngIf="demande as d; else chargement" class="carte-detail">
+    <div class="entete">
+      <div>
+        <h3>{{ d.titre }}</h3>
+        <p>Référence : DA-{{ d.id }}</p>
+        <p class="statut">{{ d.statut }}</p>
+      </div>
+      <div class="actions">
+        <button class="btn-secondaire" type="button">Traiter la demande</button>
+        <button class="btn-principal" type="button">Planifier une étude</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Informations générales</h4>
+      <div class="infos">
+        <div class="info">
+          <span>Référence</span>
+          <strong>DA-{{ d.id }}</strong>
+        </div>
+        <div class="info">
+          <span>Type de demande</span>
+          <strong>{{ d.typeDemande === 'INDIVIDUEL' ? 'Aide individuelle' : d.typeDemande }}</strong>
+        </div>
+        <div class="info">
+          <span>Date de création</span>
+          <strong>{{ d.dateCreation | date:'dd/MM/yyyy' }}</strong>
+        </div>
+        <div class="info">
+          <span>Bénéficiaire</span>
+          <strong>{{ d.beneficiairePrenom }} {{ d.beneficiaireNom }}</strong>
+        </div>
+        <div class="info">
+          <span>Nombre de personnes</span>
+          <strong>{{ d.nombrePersonne }} personnes</strong>
+        </div>
+        <div class="info">
+          <span>Catégorie</span>
+          <strong>{{ d.categorieDemandeNom }}</strong>
+        </div>
+        <div class="info">
+          <span>Urgence</span>
+          <strong>{{ d.niveauUrgence }}</strong>
+        </div>
+        <div class="info">
+          <span>Statut</span>
+          <strong>{{ d.statut }}</strong>
+        </div>
+      </div>
+      <div class="description">
+        <span>Description de la situation</span>
+        <p>{{ d.descriptionSituation || 'Aucune description disponible.' }}</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Budget et collecte</h4>
+      <div class="budget">
+        <div class="info">
+          <span>Montant nécessaire</span>
+          <strong>{{ d.montantNecessaire | number:'1.0-0' }} FCFA</strong>
+        </div>
+        <div class="info">
+          <span>Montant collecté</span>
+          <strong class="vert">{{ d.montantCollecte | number:'1.0-0' }} FCFA</strong>
+        </div>
+        <div class="info">
+          <span>Reste à collecter</span>
+          <strong>{{ (d.montantNecessaire - d.montantCollecte) > 0 ? (d.montantNecessaire - d.montantCollecte) : 0 | number:'1.0-0' }} FCFA</strong>
+        </div>
+        <div class="info">
+          <span>Progression de la collecte</span>
+          <strong class="vert">{{ d.montantNecessaire > 0 ? (d.montantCollecte / d.montantNecessaire * 100).toFixed(0) : 0 }} %</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Étude de terrain</h4>
+      <p>Les informations de l'étude de terrain ne sont pas encore disponibles.</p>
+      <div class="actions">
+        <button class="btn-principal petit" type="button">Planifier une étude</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h4>Rapports associés</h4>
+      <div class="rapports">
+        <div class="rapport">
+          <div>
+            <strong>Rapport de besoin</strong>
+            <p>Aucun rapport disponible pour le moment.</p>
+          </div>
+        </div>
+        <div class="rapport">
+          <div>
+            <strong>Rapport technique</strong>
+            <p>Aucun rapport disponible pour le moment.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section justificatifs">
+      <h4>Justificatifs de la demande</h4>
+      <p>Aucun justificatif disponible pour le moment.</p>
+    </div>
+  </div>
+
+  <ng-template #chargement>
+    <div class="carte-detail">
+      <p>Chargement de la demande...</p>
+    </div>
+  </ng-template>
+</div>

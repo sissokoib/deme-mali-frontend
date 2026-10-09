@@ -26,14 +26,15 @@
               }
             ],
             "styles": [
-            "src/styles.css",
-            "public/assets/css/vendor/bootstrap.min.css",
-            "public/assets/css/style.css"
-          ],
-          "scripts": [
-            "public/assets/js/vendor/bootstrap.bundle.min.js",
-            "public/assets/js/main.js"
-          ]
+              "src/material-theme.scss",
+              "src/styles.css",
+              "public/assets/css/vendor/bootstrap.min.css",
+              "public/assets/css/style.css"
+            ],
+            "scripts": [
+              "public/assets/js/vendor/bootstrap.bundle.min.js",
+              "public/assets/js/main.js"
+            ]
           },
           "configurations": {
             "production": {
