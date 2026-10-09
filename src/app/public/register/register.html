@@ -1,115 +1,160 @@
-<div class="auth">
-  <!-- MÊME SIDEBAR QUE LA PAGE DE CONNEXION -->
-  <aside class="auth-aside" aria-label="About Deme Mali">
-    <img class="auth-photo" src="img/campus.jpg" alt="Image d'illustration" width="1200" height="1500">
+﻿<div class="auth">
+  <aside class="auth-aside" aria-label="Presentation de Deme Mali">
+    <img class="auth-photo" src="/assets/img/Accueil.jfif" alt="Illustration de solidarite et d'entraide au Mali" width="1200" height="1500">
     <div class="auth-aside-inner">
-      <a class="brand brand-on-dark" href="#" aria-label="Deme Mali">
-        <span class="brand-mark"><svg class="crest" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path class="crest-shield" d="M16 2 4 6.5v8.2c0 7.3 5 13.3 12 15.3 7-2 12-8 12-15.3V6.5z"/><path class="crest-line" d="M10 14 16 9.5l6 4.5"/><path class="crest-line" d="M9.5 19c2.2-1.6 4.3-1.6 6.5 0s4.3 1.6 6.5 0"/><path class="crest-line" d="M9.5 23c2.2-1.6 4.3-1.6 6.5 0s4.3 1.6 6.5 0"/></svg></span>
-        <span class="brand-text"><span class="brand-name">Deme Mali</span><span class="brand-sub">Plateforme Solidaire</span></span>
+      <a class="brand brand-on-dark" routerLink="/login" aria-label="Deme Mali">
+        <span class="brand-mark">
+          <img src="/Group 522.png" alt="Logo Deme Mali" class="logo-image">
+        </span>
+        <span class="brand-text">
+          <span class="brand-name">Deme Mali</span>
+        </span>
       </a>
-      <div class="auth-pitch">
-        <p class="auth-kicker">Rejoignez-nous</p>
-        <p class="auth-headline">Devenez une Organisation Partenaire certifiée.</p>
-        <ul class="auth-points">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Gérez vos demandes d'aide de manière centralisée</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Collaborez avec les autres acteurs humanitaires</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Accédez à des statistiques et un tableau de bord complet</span></li>
+
+      <div class="auth-pitch" style="display: flex; flex-direction: column; align-items: center;">
+        <p class="auth-headline" style="margin-bottom: 20px; text-align: center;">Devenez une Organisation Partenaire certifiee.</p>
+        <ul class="auth-points" style="font-size: 0.95rem; width: 100%;">
+          <li style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px;">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+            <span>Gerez vos demandes d'aide de maniere centralisee</span>
+          </li>
+          <li style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px;">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+            <span>Collaborez avec les autres acteurs humanitaires</span>
+          </li>
+          <li style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+            <span>Accedez a des statistiques et un tableau de bord complet</span>
+          </li>
         </ul>
       </div>
+
     </div>
   </aside>
-
-  <div class="auth-main">
-    <!-- HEADER -->
-    <header class="auth-top">
-      <a class="brand auth-brand-sm" href="#">
-        <span class="brand-mark"><svg class="crest" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path class="crest-shield" d="M16 2 4 6.5v8.2c0 7.3 5 13.3 12 15.3 7-2 12-8 12-15.3V6.5z"/><path class="crest-line" d="M10 14 16 9.5l6 4.5"/><path class="crest-line" d="M9.5 19c2.2-1.6 4.3-1.6 6.5 0s4.3 1.6 6.5 0"/><path class="crest-line" d="M9.5 23c2.2-1.6 4.3-1.6 6.5 0s4.3 1.6 6.5 0"/></svg></span>
-        <span class="brand-text"><span class="brand-name">Deme Mali</span><span class="brand-sub">Inscription Partenaire</span></span>
+  
+  <div class="auth-wrapper">
+    <header class="auth-header">
+      <a class="brand brand-on-light" routerLink="/login" aria-label="Deme Mali">
+        <span class="brand-mark">
+          <img src="/Group 522.png" alt="Logo Deme Mali" class="logo-image">
+        </span>
+        <span class="brand-text">
+          <span class="brand-name">Deme Mali</span>
+        </span>
       </a>
-      <button type="button" class="icon-btn" data-theme-toggle aria-pressed="false" aria-label="Dark mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="ic-moon"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="ic-sun"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
     </header>
 
-    <!-- CARTE D'INSCRIPTION -->
-    <main id="main" class="auth-card" tabindex="-1">
-      <h1 class="auth-title">Formulaire D'inscription</h1>
-      <p class="auth-sub">Remplissez le formulaire pour soumettre votre ONG ou Structure.</p>
+    <main id="main" class="auth-card" tabindex="-1" style="justify-content: center; overflow-y: auto; padding-top: 60px; padding-bottom: 20px;">
+      <h1 class="auth-title mb-1" style="font-size: 28px;">Formulaire d'inscription</h1>
+      <p class="auth-sub mb-3" style="font-size: 13px;">Remplissez le formulaire pour soumettre votre ONG ou Structure.</p>
+      
+      <!-- INDICATEUR D'ETAPE -->
+      <div class="d-flex justify-content-between mb-3 pb-2" style="border-bottom: 2px solid #F7F3EA; font-size: 14px;">
+        <div [style.color]="currentStep >= 1 ? '#0F7A4B' : '#999'" [style.fontWeight]="currentStep === 1 ? 'bold' : 'normal'">1. Structure</div>
+        <div [style.color]="currentStep >= 2 ? '#0F7A4B' : '#999'" [style.fontWeight]="currentStep === 2 ? 'bold' : 'normal'">2. Representant</div>
+        <div [style.color]="currentStep === 3 ? '#0F7A4B' : '#999'" [style.fontWeight]="currentStep === 3 ? 'bold' : 'normal'">3. Validation</div>
+      </div>
       
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
         
-        <h3 class="h6 mb-3 text-muted text-uppercase fw-bold">1. Informations de la Structure</h3>
-        <div class="row gx-3 mb-4">
-          <div class="col-md-12 mb-3">
-            <label class="form-label">Nom de l'organisation <span class="text-danger">*</span></label>
-            <input type="text" class="form-control form-control-lg" formControlName="nomStructure" placeholder="Ex: Association Deme Mali">
+        <ng-container *ngIf="currentStep === 1">
+          <div class="row gx-3 mb-2">
+            <div class="col-md-12 mb-2">
+              <label class="form-label mb-1" style="font-size: 13px;">Nom de l'organisation <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" formControlName="nomStructure" placeholder="Ex: Association Deme Mali">
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="form-label mb-1" style="font-size: 13px;">Type <span class="text-danger">*</span></label>
+              <select class="form-select" formControlName="typeOrganisation">
+                <option value="">Selectionnez...</option>
+                <option value="ONG">ONG</option>
+                <option value="ASSOCIATION">Association</option>
+                <option value="FONDATION">Fondation</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="form-label mb-1" style="font-size: 13px;">Numero d'enregistrement <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" formControlName="numeroEnregistrement" placeholder="NINA, NIF...">
+            </div>
+            <div class="col-md-12 mb-2">
+              <label class="form-label mb-1" style="font-size: 13px;">Email professionnel <span class="text-danger">*</span></label>
+              <input type="email" class="form-control" formControlName="email" placeholder="contact@organisation.com">
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="form-label mb-1" style="font-size: 13px;">Ville <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" formControlName="ville" placeholder="Ex: Bamako">
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="form-label mb-1" style="font-size: 13px;">Adresse <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" formControlName="adresse" placeholder="Quartier, Rue...">
+            </div>
           </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Type d'organisation <span class="text-danger">*</span></label>
-            <select class="form-select form-control-lg" formControlName="typeOrganisation">
-              <option value="">Sélectionnez...</option>
-              <option value="ONG">ONG</option>
-              <option value="ASSOCIATION">Association</option>
-              <option value="ENTREPRISE">Fondation</option>
-            </select>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Numéro d'enregistrement <span class="text-danger">*</span></label>
-            <input type="text" class="form-control form-control-lg" formControlName="numeroEnregistrement" placeholder="NINA, NIF, Récépissé...">
-          </div>
-          <div class="col-md-12 mb-3">
-            <label class="form-label">Email professionnel <span class="text-danger">*</span></label>
-            <input type="email" class="form-control form-control-lg" formControlName="email" placeholder="contact@organisation.com">
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Ville <span class="text-danger">*</span></label>
-            <input type="text" class="form-control form-control-lg" formControlName="ville" placeholder="Ex: Bamako">
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Adresse <span class="text-danger">*</span></label>
-            <input type="text" class="form-control form-control-lg" formControlName="adresse" placeholder="Quartier, Rue...">
-          </div>
-        </div>
+          <button type="button" class="btn btn-primary w-100" style="min-height: 44px; padding: 0.5rem;" (click)="nextStep()">Suivant (Etape 2/3)</button>
+        </ng-container>
 
-        <h3 class="h6 mb-3 text-muted text-uppercase fw-bold">2. Contact Représentant (Utilisateur)</h3>
-        <div class="row gx-3 mb-4">
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Prénom <span class="text-danger">*</span></label>
-            <input type="text" class="form-control form-control-lg" formControlName="prenom" placeholder="Votre prénom">
+        <ng-container *ngIf="currentStep === 2">
+          <div class="row gx-3 mb-2">
+            <div class="col-md-6 mb-2">
+              <label class="form-label mb-1" style="font-size: 13px;">Prenom <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" formControlName="prenom" placeholder="Votre prenom">
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="form-label mb-1" style="font-size: 13px;">Nom <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" formControlName="nom" placeholder="Votre nom">
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="form-label mb-1" style="font-size: 13px;">Fonction <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" formControlName="fonction" placeholder="Ex: Directeur...">
+            </div>
+            <div class="col-md-6 mb-2">
+              <label class="form-label mb-1" style="font-size: 13px;">Telephone <span class="text-danger">*</span></label>
+              <input type="tel" class="form-control" formControlName="telephone" placeholder="+223 ...">
+            </div>
+            <div class="col-md-12 mb-2">
+              <label class="form-label mb-1" for="registerPassword" style="font-size: 13px;">Mot de passe de connexion <span class="text-danger">*</span></label>
+              <div class="input-group pw-group">
+                <input class="form-control" id="registerPassword" [type]="showPassword ? 'text' : 'password'" formControlName="motDePasse" placeholder="Minimum 6 caracteres">
+                <button type="button" class="btn pw-toggle" (click)="showPassword = !showPassword" style="padding: 0 10px; min-width: 44px;">
+                  <ng-container *ngIf="!showPassword">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="ic-show" style="width:16px;height:16px;">
+                      <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  </ng-container>
+                  <ng-container *ngIf="showPassword">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="ic-hide" style="width:16px;height:16px;">
+                      <path d="M9.9 4.2A10 10 0 0 1 12 4c6.4 0 10 8 10 8a17 17 0 0 1-2.2 3.2"/>
+                      <path d="M6.6 6.6A17 17 0 0 0 2 12s3.6 8 10 8a9.7 9.7 0 0 0 5.4-1.6"/>
+                      <path d="M14.1 14.1a3 3 0 1 1-4.2-4.2"/>
+                      <path d="M2 2l20 20"/>
+                    </svg>
+                  </ng-container>
+                </button>
+              </div>
+            </div>
           </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Nom <span class="text-danger">*</span></label>
-            <input type="text" class="form-control form-control-lg" formControlName="nom" placeholder="Votre nom">
+          <div class="d-flex gap-3 mt-1">
+            <button type="button" class="btn btn-outline-secondary w-50" (click)="prevStep()" style="min-height: 44px; padding: 0.5rem; border: 1px solid #D8D2C5; background: white;">Retour</button>
+            <button type="button" class="btn btn-primary w-50" (click)="nextStep()" style="min-height: 44px; padding: 0.5rem;">Suivant</button>
           </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Fonction <span class="text-danger">*</span></label>
-            <input type="text" class="form-control form-control-lg" formControlName="fonction" placeholder="Ex: Directeur, Coordinateur">
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Téléphone <span class="text-danger">*</span></label>
-            <input type="tel" class="form-control form-control-lg" formControlName="telephone" placeholder="+223 ...">
-          </div>
-          <div class="col-md-12 mb-3">
-            <label class="form-label">Mot de passe de connexion <span class="text-danger">*</span></label>
-            <input type="password" class="form-control form-control-lg" formControlName="motDePasse" placeholder="Minimum 6 caractères">
-          </div>
-        </div>
+        </ng-container>
 
-        <h3 class="h6 mb-3 text-muted text-uppercase fw-bold">3. Validation</h3>
-        <div class="mb-4">
-          <label class="form-label">Document Justificatif (Agrément, Récépissé) <span class="text-danger">*</span></label>
-          <input type="file" class="form-control form-control-lg" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png">
-          <div class="form-text mt-1 text-muted">Obligatoire. Votre compte sera validé par un administrateur après vérification.</div>
-        </div>
+        <ng-container *ngIf="currentStep === 3">
+          <div class="mb-3">
+            <label class="form-label mb-1" style="font-size: 13px;">Document Justificatif <span class="text-danger">*</span></label>
+            <input type="file" class="form-control" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png">
+            <div class="form-text mt-1 text-muted" style="font-size: 12px;">Obligatoire. Votre compte sera valide apres verification.</div>
+          </div>
+          <div class="d-flex gap-3 mt-1">
+            <button type="button" class="btn btn-outline-secondary w-50" (click)="prevStep()" style="min-height: 44px; padding: 0.5rem; border: 1px solid #D8D2C5; background: white;">Retour</button>
+            <button type="submit" class="btn btn-primary w-50" style="min-height: 44px; padding: 0.5rem;" [disabled]="!registerForm.valid">Soumettre</button>
+          </div>
+        </ng-container>
 
-        <button type="submit" class="btn btn-primary btn-lg w-100 mt-2" [disabled]="!registerForm.valid">Soumettre la candidature</button>
       </form>
 
-      <div class="mt-4 text-center">
-        <p>Vous avez déjà un compte ? <a routerLink="/login" class="fw-semibold">Se connecter</a></p>
+      <div class="mt-3 text-center pb-2">
+        <p style="font-size: 14px;">Vous avez deja un compte ? <a routerLink="/login" class="fw-semibold">Se connecter</a></p>
       </div>
     </main>
-
-    <footer class="auth-footer">
-      <p>&copy; 2026 Deme Mali</p>
-    </footer>
   </div>
 </div>

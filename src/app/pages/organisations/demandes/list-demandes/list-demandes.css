@@ -4,10 +4,32 @@
     box-sizing: border-box;
 }
 
-body {
+:host {
+    display: block;
     font-family: Arial, sans-serif;
-    background-color: #f7f3ea;
     color: #1f1f1f;
+    background-color: #f7f3ea;
+    
+    /* Compense exactement le padding de .app-content sur mobile */
+    margin: -20px -16px -28px -16px;
+    padding: 20px 16px 28px 16px;
+    min-height: 100vh;
+}
+
+@media (min-width: 992px) {
+    :host {
+        /* Compense le padding sur tablettes/petits écrans */
+        margin: -24px -24px -32px -24px;
+        padding: 24px 24px 32px 24px;
+    }
+}
+
+@media (min-width: 1400px) {
+    :host {
+        /* Compense le padding sur grands écrans */
+        margin: -28px -32px -36px -32px;
+        padding: 28px 32px 36px 32px;
+    }
 }
 
 

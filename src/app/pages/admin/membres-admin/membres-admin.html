@@ -1,0 +1,69 @@
+<div class="membres-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Gestion des Membres</h1>
+      <p class="page-subtitle">Personnel de l'ONG et bénéficiaires affiliés, avec leur statut d'adhésion.</p>
+    </div>
+    <button class="btn-primary">Nouveau Membre</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn" [class.active]="activeTab === 'Tous'" (click)="setTab('Tous')">Tous (25)</button>
+    <button class="tab-btn" [class.active]="activeTab === 'Personnel'" (click)="setTab('Personnel')">Personnel (10)</button>
+    <button class="tab-btn" [class.active]="activeTab === 'Bénéficiaires'" (click)="setTab('Bénéficiaires')">Bénéficiaires (15)</button>
+    <button class="tab-btn warning">Demandes en attente (3)</button>
+    <button class="tab-btn danger">Réjeter (1)</button>
+  </div>
+
+  <div class="section-card">
+    <div class="section-header">
+      <h2 class="section-title">Listes Complètes des Dons et Contributions FCFA & Nature</h2>
+      
+      <div class="search-box">
+        <div class="search-input-wrapper">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" placeholder="Rechercher...">
+        </div>
+        <button class="filter-btn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+          Filtrer
+        </button>
+      </div>
+    </div>
+
+    <table class="custom-table">
+      <thead>
+        <tr>
+          <th>Id Membre</th>
+          <th>Membre</th>
+          <th>Type</th>
+          <th>Role/Situation</th>
+          <th>Région</th>
+          <th>Date d'adhésion</th>
+          <th>Mode d'inscription</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let m of membres">
+          <td><strong style="color:#000;">{{m.id}}</strong></td>
+          <td>{{m.nom}}</td>
+          <td style="color:#f8f9f3;"><span class="type-badge">{{m.type}}</span></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>{{m.inscription}}</td>
+          <td><span class="status-badge" [ngClass]="m.statutClass">{{m.statut}}</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <span class="page-item"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg></span>
+      <span class="page-item active">1</span>
+      <span class="page-item">2</span>
+      <span class="page-item">3</span>
+      <span class="page-item"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+    </div>
+  </div>
+</div>

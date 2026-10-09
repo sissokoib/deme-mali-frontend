@@ -1,0 +1,129 @@
+<div class="projets-container">
+  <div class="page-header">
+    <h1 class="page-title">Gestion des projets - Dèmè Mali</h1>
+    <p class="page-subtitle">Gérez et consultez l'historique détaillé des projets collectés</p>
+  </div>
+
+  <div class="main-grid">
+    <div class="left-col">
+      <!-- Liste Projets -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">Listes des projets validés et planifiés</h2>
+          <div>
+            <button class="btn btn-light btn-sm mx-2" style="font-weight: 600; border-radius: 8px;">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+              Filtrer
+            </button>
+            <button class="btn btn-light btn-sm" style="font-weight: 600; border-radius: 8px;">
+              Filtrer par : Date 
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>ID Projet</th>
+                <th>Nom du projet</th>
+                <th>Région cible</th>
+                <th>Responsable</th>
+                <th>Type de projet</th>
+                <th>Statut</th>
+                <th>Progression</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of projets">
+                <td><strong style="color:#000;">{{p.id}}</strong></td>
+                <td style="color:#888;">{{p.nom}}</td>
+                <td>{{p.region}}</td>
+                <td>{{p.responsable}}</td>
+                <td>{{p.type}}</td>
+                <td><span class="status-badge" [ngClass]="p.statutClass">{{p.statut}}</span></td>
+                <td><span class="progression-badge">{{p.progression}}%</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Calendrier Etapes Cles -->
+      <div class="section-card">
+        <h2 class="section-title" style="margin-bottom: 20px;">Calendrier des Etapes Clés</h2>
+        
+        <div class="steps-grid">
+          <div class="step-card" *ngFor="let etape of etapes; let i = index">
+            <div class="step-date">{{etape.date}}</div>
+            <div class="step-title">{{etape.titre}}</div>
+            <div class="step-badge">{{etape.statut}}</div>
+            
+            <!-- Afficher la flèche sauf pour le dernier élément de la ligne -->
+            <div class="step-arrow" *ngIf="(i + 1) % 3 !== 0">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-col">
+      <!-- Stats Projets -->
+      <div style="margin-bottom: 30px;">
+        <h2 class="section-title" style="margin-bottom: 15px;">Statistiques des Projets</h2>
+        
+        <div class="stat-card">
+          <div class="stat-info">
+            <span class="stat-label">Total des Projets</span>
+            <span class="stat-value">500 000 FCFA</span>
+          </div>
+          <div class="stat-count count-bg-light">5</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-info">
+            <span class="stat-label">Projets en Cours</span>
+            <span class="stat-value">1 500 000 FCFA</span>
+          </div>
+          <div class="stat-count count-bg-warning">10</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-info">
+            <span class="stat-label">Projets Terminés</span>
+            <span class="stat-value">150 000 FCFA</span>
+          </div>
+          <div class="stat-count count-bg-success">2</div>
+        </div>
+      </div>
+
+      <!-- Raccourcis -->
+      <div>
+        <h2 class="section-title" style="margin-bottom: 15px;">Raccourcis</h2>
+        
+        <button class="shortcut-btn">
+          <div class="shortcut-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          </div>
+          Calendrier des Projets
+        </button>
+        
+        <button class="shortcut-btn">
+          <div class="shortcut-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+          Equipe du Projet
+        </button>
+        
+        <button class="shortcut-btn">
+          <div class="shortcut-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          </div>
+          Cout du Projet
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

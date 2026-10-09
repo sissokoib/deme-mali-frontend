@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common'; // Import pour *ngFor et *ngIf
+import { CommonModule } from '@angular/common';
 import { EtudeTerrainService } from '../../../services/etude-terrain.service';
-import { EtudeTerrain } from '../../../models/etude.model';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-etudes-liste',
@@ -12,27 +12,34 @@ import { EtudeTerrain } from '../../../models/etude.model';
 })
 export class EtudesListe implements OnInit {
   
-  etudes: EtudeTerrain[] = [];
+  etudes: any[] = [];
   
-  // Statistiques
   aPlanifier = 0;
   planifiee = 0;
   terminee = 0;
 
-  constructor(private etudeService: EtudeTerrainService) {}
+  constructor(
+    private etudeService: EtudeTerrainService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
-    // 1. On appelle le backend (le service) pour récupérer les données dynamiques
-    this.etudeService.getEtudes().subscribe(data => {
-      this.etudes = data;
-      this.calculerStatistiques();
+    this.authService.currentUser$.subscribe(user => {
+      if (user && user.id) {
+        this.etudeService.getEtudes(user.id).subscribe({
+          next: (data) => {
+            this.etudes = data;
+            this.calculerStatistiques();
+          },
+          error: (err) => console.error(err)
+        });
+      }
     });
   }
 
-  // 2. On calcule automatiquement les statistiques en fonction de la base de données !
   calculerStatistiques() {
-    this.aPlanifier = this.etudes.filter(e => e.status === 'En attente').length;
-    this.planifiee = this.etudes.filter(e => e.status === 'Planifiée').length;
-    this.terminee = this.etudes.filter(e => e.status === 'Terminée').length;
+    this.aPlanifier = this.etudes.filter(e => e.status === 'EN_ATTENTE' || e.status === 'En attente').length;
+    this.planifiee = this.etudes.filter(e => e.status === 'PLANIFIEE' || e.status === 'Planifie').length;
+    this.terminee = this.etudes.filter(e => e.status === 'TERMINEE' || e.status === 'Termine').length;
   }
 }

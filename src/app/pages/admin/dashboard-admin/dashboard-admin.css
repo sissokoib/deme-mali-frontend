@@ -1,0 +1,286 @@
+.dashboard-container {
+  padding: 10px;
+}
+
+.dashboard-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 25px;
+}
+
+.kpi-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.kpi-card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+}
+
+.kpi-icon-wrapper {
+  background-color: #e6f2ec;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  color: #0d834a;
+}
+
+.kpi-icon-wrapper svg {
+  width: 20px;
+  height: 20px;
+}
+
+.kpi-label {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.kpi-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.kpi-trend {
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.kpi-trend.positive {
+  color: #0d834a;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+}
+
+.dashboard-left, .dashboard-right {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.section-card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.custom-table th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.custom-table td {
+  padding: 15px 0;
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+  border-bottom: 1px solid #eee;
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-encours {
+  background-color: #0d834a;
+  color: #fff;
+}
+
+.status-termine {
+  background-color: #0d834a;
+  color: #fff;
+}
+
+.status-attente {
+  background-color: #f59e0b;
+  color: #fff;
+}
+
+.priority-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.priority-urgente {
+  background-color: #ef4444;
+}
+
+.priority-moyenne {
+  background-color: #f59e0b;
+}
+
+.priority-basse {
+  background-color: #10b981;
+}
+
+.beneficiary-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.beneficiary-name {
+  font-weight: 700;
+}
+
+.beneficiary-phone {
+  font-size: 11px;
+  color: #888;
+}
+
+/* Charts dummy */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.chart-placeholder {
+  height: 200px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 14px;
+}
+
+/* Right Side widgets */
+.level-bar-bg {
+  height: 12px;
+  background-color: #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+.level-bar-fill {
+  height: 100%;
+  background-color: #0d834a;
+}
+
+.level-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.level-percent {
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.level-text {
+  font-size: 14px;
+  color: #666;
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.task-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.task-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: #e6f2ec;
+  color: #0d834a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.task-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.task-info {
+  flex-grow: 1;
+}
+
+.task-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: #222;
+}
+
+.task-date {
+  font-size: 12px;
+  color: #666;
+}
+
+.task-priority {
+  margin-left: auto;
+}

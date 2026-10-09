@@ -14,8 +14,7 @@ Chart.register(...registerables);
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    DatePipe,
-    RouterLink,
+    // RouterLink,
     CommonModule
   ],
   templateUrl: './dashboard.html',
@@ -33,10 +32,10 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   // Dynamic Stats initialized with default/mock values while loading
   kpiStats: KpiStats = {
-    demandesAttente: 8,
-    etudesRealiser: 5,
-    projetsLances: 3,
-    aidesDistribuees: 18
+    demandes: 20,
+    demandesRefusees: 5,
+    demandesAttente: 12,
+    demandesTraitees: 18
   };
 
   impactStats: ImpactStats = {
@@ -71,7 +70,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   }
 
   loadDashboardData(): void {
-    this.dashboardSub = this.dashboardService.getDashboardStats().subscribe({
+    this.dashboardSub = this.dashboardService.getDashboardStats(this.user?.id || 1).subscribe({
       next: (data) => {
         this.kpiStats = data.kpiStats;
         this.impactStats = data.impactStats;
@@ -104,7 +103,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     if (!ctx) return;
 
     this.chartInstance = new Chart(ctx, {
-      type: 'line',
+      type: 'bar',
       data: {
         labels: ['Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept.', 'Oct'],
         datasets: [
@@ -113,20 +112,14 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
             data: [250000, 500000, 750000, 1050000, 900000, 1300000, 1600000],
             borderColor: '#117b48',
             backgroundColor: '#117b48',
-            borderWidth: 3,
-            tension: 0.3,
-            pointRadius: 4,
-            pointBackgroundColor: '#117b48'
+            borderWidth: 3
           },
           {
             label: 'Distribué',
             data: [100000, 200000, 350000, 600000, 480000, 800000, 1000000],
             borderColor: '#fdba12',
             backgroundColor: '#fdba12',
-            borderWidth: 3,
-            tension: 0.3,
-            pointRadius: 4,
-            pointBackgroundColor: '#fdba12'
+            borderWidth: 3
           }
         ]
       },

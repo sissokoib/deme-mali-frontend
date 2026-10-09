@@ -1,8 +1,8 @@
 export interface KpiStats {
+  demandes: number;
+  demandesRefusees: number;
   demandesAttente: number;
-  etudesRealiser: number;
-  projetsLances: number;
-  aidesDistribuees: number;
+  demandesTraitees: number;
 }
 
 export interface ImpactStats {

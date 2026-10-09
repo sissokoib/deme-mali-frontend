@@ -1,54 +1,46 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { EtudeTerrain, ResultatEtude } from '../models/etude.model';
-import { Demande } from '../models/demande.model';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { EtudeTerrain } from '../models/etude.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EtudeTerrainService {
 
-  private apiUrl = '/api/etudes';
+  private apiUrl = 'http://localhost:8080/api/etudes-terrain';
+  private demandesUrl = 'http://localhost:8080/api/demandes-aide';
 
   constructor(private http: HttpClient) { }
 
-  // 1. Récupérer toutes les études
-  getEtudes(): Observable<EtudeTerrain[]> {
-    // Si tu as ton backend prêt, tu utiliseras :
-    // return this.http.get<EtudeTerrain[]>(this.apiUrl);
-    
-    // Pour l'instant on utilise des fausses données (Mock) pour tester le visuel dynamique
-    return of([
-      {
-        id: 1,
-        demande: { id: 1, titre: 'Aide alimentaire pour une famille', beneficiaire: 'Famille Traoré', categorie: 'Alimentaire', urgence: 'Élevée', date: '25 sept. 2026', statut: 'EN_ATTENTE', montantNecessaire: 250000 },
-        datePlanification: new Date(),
-        dateRealisation: new Date(),
-        lieu: 'Kalaban-Coura',
-        objectif: 'Vérifier la situation...',
-        observation: '',
-        resultat: ResultatEtude.EN_ATTENTE,
-        heure: '10:00',
-        status: 'En attente'
-      },
-      {
-        id: 2,
-        demande: { id: 2, titre: 'Fournitures scolaires', beneficiaire: 'Famille Diallo', categorie: 'Éducation', urgence: 'Moyenne', date: '26 sept. 2026', statut: 'PLANIFIEE', montantNecessaire: 50000 },
-        datePlanification: new Date('2026-09-27'),
-        dateRealisation: new Date(),
-        lieu: 'Lafiabougou',
-        objectif: 'Vérifier scolarité',
-        observation: '',
-        resultat: ResultatEtude.PLANIFIER,
-        heure: '14:30',
-        status: 'Planifiée'
-      }
-    ]);
+  getEtudes(organisationId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/organisation/${organisationId}`).pipe(
+      map(backendData => {
+        return backendData.map(etude => ({
+          id: etude.id,
+          demande: {
+            id: etude.demandeAideId,
+            titre: 'Demande #' + etude.demandeAideId,
+            beneficiaire: 'Bnciaire ' + (etude.organisationPartenaireId || '')
+          },
+          datePlanification: etude.datePlanification,
+          dateRealisation: etude.dateRealisation,
+          lieu: etude.lieu,
+          objectif: etude.objectif,
+          observation: etude.observation,
+          resultat: etude.resultat,
+          status: etude.status // Backend is EN_ATTENTE, PLANIFIEE, TERMINEE
+        }));
+      })
+    );
   }
 
-  // 2. Planifier une nouvelle étude
-  planifierEtude(demandeId: number, etude: EtudeTerrain): Observable<EtudeTerrain> {
-    return this.http.post<EtudeTerrain>(`${this.apiUrl}/planifier/${demandeId}`, etude);
+  planifierEtude(etudeDto: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, etudeDto);
+  }
+
+  getDemandes(organisationId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.demandesUrl}/organisation/${organisationId}`);
   }
 }

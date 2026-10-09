@@ -20,6 +20,43 @@ export const routes: Routes = [
   },
 
   {
+    path: 'admin',
+    loadComponent: () => import('./layout/admin-main/admin-main').then(m => m.AdminMain),
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./pages/admin/dashboard-admin/dashboard-admin').then(m => m.DashboardAdmin)
+      },
+      {
+        path: 'projets',
+        loadComponent: () => import('./pages/admin/projets-admin/projets-admin').then(m => m.ProjetsAdmin)
+      },
+      {
+        path: 'dons',
+        loadComponent: () => import('./pages/admin/dons-admin/dons-admin').then(m => m.DonsAdmin)
+      },
+      {
+        path: 'rapports',
+        loadComponent: () => import('./pages/admin/rapports-admin/rapports-admin').then(m => m.RapportsAdmin)
+      },
+      {
+        path: 'membres',
+        loadComponent: () => import('./pages/admin/membres-admin/membres-admin').then(m => m.MembresAdmin)
+      },
+      {
+        path: 'partenaires',
+        loadComponent: () => import('./pages/admin/partenaires-admin/partenaires-admin').then(m => m.PartenairesAdmin)
+      }
+      // other admin routes like projets, dons, etc. will go here later
+    ]
+  },
+
+  {
     path: 'register',
     loadComponent: () => import('./public/register/register').then(m => m.Register)
   },
@@ -59,7 +96,7 @@ export const routes: Routes = [
             loadComponent: () => import('./pages/etude-terrain/etudes-planifier/etudes-planifier').then(m => m.EtudesPlanifier)
           },
           {
-            path: 'realiser',
+            path: 'realiser/:id',
             loadComponent: () => import('./pages/etude-terrain/etude-terrain').then(m => m.EtudeTerrainComponent)
           },
           {

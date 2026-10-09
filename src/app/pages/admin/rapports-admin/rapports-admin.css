@@ -1,0 +1,207 @@
+.rapports-container {
+  padding: 10px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 25px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 5px;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #666;
+}
+
+.btn-primary {
+  background-color: #0d834a;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.report-cards {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.report-card {
+  border-radius: 12px;
+  padding: 20px 15px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.card-argent { background-color: #c4ded2; }
+.card-dons { background-color: #fcebd0; }
+.card-aides { background-color: #fef1c7; }
+.card-personnes { background-color: #c4ded2; }
+.card-projets { background-color: #fcebd0; }
+.card-verif { background-color: #fef1c7; }
+
+.report-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  margin-bottom: 15px;
+}
+
+.card-argent .report-icon { background-color: #0d834a; }
+.card-dons .report-icon { background-color: #f59e0b; }
+.card-aides .report-icon { background-color: #d97706; }
+.card-personnes .report-icon { background-color: #0d834a; }
+.card-projets .report-icon { background-color: #f59e0b; }
+.card-verif .report-icon { background-color: #d97706; }
+
+.report-icon svg { width: 16px; height: 16px; }
+
+.report-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 5px;
+  line-height: 1.2;
+}
+
+.report-desc {
+  font-size: 11px;
+  color: #555;
+  line-height: 1.3;
+}
+
+.filters-bar {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #888;
+  margin-bottom: 5px;
+}
+
+.filter-select {
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+  outline: none;
+  cursor: pointer;
+}
+
+.btn-reset {
+  background-color: #f1efdf;
+  border: 1px solid #e0dfd1;
+  padding: 8px 15px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.section-card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 5px 0;
+}
+
+.section-subtitle {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.custom-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: #111;
+  padding-bottom: 15px;
+}
+
+.custom-table td {
+  padding: 15px 0;
+  font-size: 12px;
+  color: #555;
+  font-weight: 600;
+}
+
+.type-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.badge-argent { background-color: #c4ded2; color: #0d834a; }
+.badge-dons { background-color: #fcebd0; color: #f59e0b; }
+.badge-aides { background-color: #c4ded2; color: #0d834a; }
+.badge-personnes { background-color: #fef1c7; color: #fbbf24; }
+.badge-verif { background-color: #c4ded2; color: #0d834a; }
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.status-publie { background-color: #c4ded2; color: #0d834a; }
+.status-brouillon { background-color: #fef1c7; color: #fbbf24; }
+
+.btn-voir {
+  background-color: #f1efdf;
+  border: 1px solid #e0dfd1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  color: #333;
+}

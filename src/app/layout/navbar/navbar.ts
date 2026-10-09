@@ -1,27 +1,38 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
-  host: {
-    'class': 'topbar'
-  },
-  imports: [RouterModule, CommonModule],
+  standalone: true,
+  imports: [
+    AsyncPipe
+  ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css'
 })
 export class Navbar {
-  showDropdown = false;
 
-  constructor(private authService: AuthService) {}
+  private readonly authService = inject(AuthService);
 
-  toggleDropdown() {
-    this.showDropdown = !this.showDropdown;
+  readonly currentUser$ = this.authService.currentUser$;
+
+  currentDate = new Date();
+
+  obtenirDate(): string {
+
+    const jour = this.currentDate.getDate();
+    const mois = this.currentDate.getMonth() + 1;
+    const annee = this.currentDate.getFullYear();
+
+    return `${jour.toString().padStart(2, '0')}/${mois.toString().padStart(2, '0')}/${annee}`;
   }
 
-  logout(): void {
-    this.authService.logout();
+  obtenirInitiales(prenom: string, nom: string): string {
+
+    const initialePrenom = prenom?.trim().charAt(0) ?? '';
+    const initialeNom = nom?.trim().charAt(0) ?? '';
+
+    return `${initialePrenom}${initialeNom}`.toUpperCase();
   }
 }
