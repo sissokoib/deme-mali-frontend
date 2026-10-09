@@ -1,0 +1,30 @@
+
+.statut {
+  display: inline-block;
+  margin: 10px 0 0;
+  padding: 5px 9px;
+  border-radius: 5px;
+  background-color: #fff4d6;
+  color: #805b00;
+  font-size: 11px;
+}
+.section > p {
+  font-size: 12px;
+  color: #777;
+  margin: 8px 0;
+}
+.entete > div:first-child {
+  min-width: 0;
+}
+@media (max-width: 700px) {
+  .entete, .etude, .rapports {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .entete .actions {
+    flex-wrap: wrap;
+  }
+  .rapport {
+    flex-wrap: wrap;
+  }
+}
