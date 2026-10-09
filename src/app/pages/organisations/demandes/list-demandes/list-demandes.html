@@ -151,14 +151,14 @@
 
             <td>
               <span class="montant">
-                {{ (demande.montantNecessaire ?? 0) | number:'1.0-0' }}
+                {{ demande.montantNecessaire | number:'1.0-0' }}
                 FCFA
               </span>
             </td>
 
             <td>
               <span class="montant montant-collecte">
-                {{ (demande.montantCollecte ?? 0) | number:'1.0-0' }}
+                {{ demande.montantCollecte | number:'1.0-0' }}
                 FCFA
               </span>
             </td>
