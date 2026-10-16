@@ -1,0 +1,303 @@
+:host {
+  display: block;
+  min-height: 100%;
+  background-color: #f7f3ea;
+  color: #1f1f1f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.page-detail {
+  width: 100%;
+  padding: 30px 35px;
+}
+
+.entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.titre-page {
+  flex: 1;
+  min-width: 240px;
+}
+
+.surtitre {
+  color: #0f7a4b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.entete h1 {
+  margin: 8px 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.entete p {
+  margin: 0;
+  color: #777;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.actions-entete {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.bouton-retour {
+  color: #0f7a4b !important;
+  border-color: #0f7a4b !important;
+  border-radius: 8px !important;
+}
+
+.bouton-reception {
+  min-height: 44px;
+  padding: 0 18px !important;
+  border-radius: 8px !important;
+  background-color: #0f7a4b !important;
+  color: #fff !important;
+  font-weight: 600;
+}
+
+.bouton-reception:hover {
+  background-color: #0b613b !important;
+}
+
+.carte-detail {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 30px;
+  border-radius: 14px;
+  background-color: #fff;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+}
+
+.identite-don {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.icone-don {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  background-color: #e6f3eb;
+  color: #0f7a4b;
+}
+
+.icone-don mat-icon {
+  width: 34px;
+  height: 34px;
+  font-size: 34px;
+}
+
+.identite-contenu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+  min-width: 0;
+}
+
+.type-don {
+  color: #0f7a4b;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.identite-contenu h2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 23px;
+  overflow-wrap: anywhere;
+}
+
+.reference {
+  color: #777;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.badge-statut {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.attente {
+  background-color: #fff2cc;
+  color: #936600;
+}
+
+.confirme {
+  background-color: #e1f4e8;
+  color: #0f7a4b;
+}
+
+.refuse,
+.echec {
+  background-color: #fde7e7;
+  color: #b42318;
+}
+
+.separateur {
+  height: 1px;
+  margin: 28px 0;
+  background-color: #eee;
+}
+
+.carte-detail h3 {
+  margin: 0 0 22px;
+  font-size: 18px;
+}
+
+.grille-informations {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 25px;
+}
+
+.information {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.information span {
+  color: #777;
+  font-size: 13px;
+}
+
+.information strong {
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+
+.valeur-verte {
+  color: #0f7a4b;
+  font-size: 18px !important;
+}
+
+.section-reception,
+.section-financiere {
+  padding: 22px;
+  border-radius: 10px;
+  background-color: #f7f3ea;
+}
+
+.section-reception h3,
+.section-financiere h3 {
+  margin-bottom: 12px;
+}
+
+.section-reception p,
+.section-financiere p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.texte-positif {
+  color: #0f7a4b !important;
+}
+
+.texte-negatif {
+  color: #b42318 !important;
+}
+
+.message {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.chargement {
+  background-color: #fff;
+  color: #555;
+}
+
+.erreur {
+  background-color: #fde7e7;
+  color: #b42318;
+}
+
+@media (max-width: 768px) {
+  .page-detail {
+    padding: 20px 15px;
+  }
+
+  .entete {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .actions-entete {
+    width: 100%;
+  }
+
+  .carte-detail {
+    padding: 20px;
+  }
+
+  .grille-informations {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .identite-contenu h2 {
+    font-size: 19px;
+  }
+}
+
+@media (max-width: 480px) {
+  .actions-entete {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actions-entete button {
+    width: 100%;
+  }
+
+  .identite-don {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .icone-don {
+    width: 52px;
+    height: 52px;
+  }
+
+  .icone-don mat-icon {
+    font-size: 27px;
+  }
+}

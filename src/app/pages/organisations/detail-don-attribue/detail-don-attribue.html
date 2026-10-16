@@ -1,0 +1,94 @@
+<div class="contenu">
+
+  <button class="btn-retour" type="button" (click)="retour()">
+    <mat-icon>arrow_back</mat-icon>
+    Retour aux dons attribués
+  </button>
+
+  <div *ngIf="chargement" class="message">
+    Chargement des détails...
+  </div>
+
+  <div *ngIf="erreur && !chargement" class="message erreur">
+    Impossible de charger les détails de ce don.
+    <button type="button" (click)="retour()">Retour</button>
+  </div>
+
+  <section class="carte-detail" *ngIf="don as d">
+
+    <header class="entete">
+      <div class="icone">
+        <mat-icon>
+          {{ d.donFinancierId !== null ? 'payments' : 'inventory_2' }}
+        </mat-icon>
+      </div>
+
+      <div>
+        <h2>Détail du don attribué</h2>
+        <p>Attribution numéro {{ d.id }}</p>
+      </div>
+    </header>
+
+    <div class="montant" *ngIf="d.donFinancierId !== null">
+      <span>Montant attribué</span>
+      <h1>{{ d.montantAttribue | number:'1.0-0' }} FCFA</h1>
+    </div>
+
+    <div class="montant" *ngIf="d.donMaterielId !== null">
+      <span>Matériel attribué</span>
+      <h1>{{ d.designation || 'Don matériel' }}</h1>
+      <p>Quantité : {{ d.quantiteAttribuee }} {{ d.unite || '' }}</p>
+    </div>
+
+    <h3>Informations générales</h3>
+
+    <div class="ligne">
+      <span>Type de don</span>
+      <strong>
+        {{ d.donFinancierId !== null ? 'Financier' : 'Matériel' }}
+      </strong>
+    </div>
+
+    <div class="ligne">
+      <span>Référence du don</span>
+      <strong>{{ d.donFinancierId ?? d.donMaterielId }}</strong>
+    </div>
+
+    <div class="ligne" *ngIf="d.donFinancierId !== null">
+      <span>Montant attribué</span>
+      <strong>{{ d.montantAttribue | number:'1.0-0' }} FCFA</strong>
+    </div>
+
+    <div class="ligne" *ngIf="d.donMaterielId !== null">
+      <span>Désignation</span>
+      <strong>{{ d.designation || '—' }}</strong>
+    </div>
+
+    <div class="ligne" *ngIf="d.donMaterielId !== null">
+      <span>Quantité attribuée</span>
+      <strong>{{ d.quantiteAttribuee }} {{ d.unite || '' }}</strong>
+    </div>
+
+    <div class="ligne">
+      <span>Date d'attribution</span>
+      <strong>{{ d.dateAttribution | date:'dd/MM/yyyy' }}</strong>
+    </div>
+
+    <div class="ligne">
+      <span>Organisation</span>
+      <strong>{{ d.nomOrganisation || '—' }}</strong>
+    </div>
+
+    <div class="ligne">
+      <span>Administrateur</span>
+      <strong>{{ d.administrateurId ?? '—' }}</strong>
+    </div>
+
+    <div class="ligne">
+      <span>Score de priorité</span>
+      <strong>{{ d.scorePriorite ?? '—' }}{{ d.scorePriorite != null ? ' / 100' : '' }}</strong>
+    </div>
+
+  </section>
+
+</div>

@@ -1,0 +1,32 @@
+h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #0f7a4b;
+}
+
+.icone-titre {
+  color: #0f7a4b;
+}
+
+.description {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.information {
+  margin-bottom: 12px;
+  padding: 12px;
+  background: #f7f3ea;
+  border-radius: 8px;
+}
+
+.champ {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.bouton-confirmer {
+  background: #0f7a4b !important;
+  color: white !important;
+}

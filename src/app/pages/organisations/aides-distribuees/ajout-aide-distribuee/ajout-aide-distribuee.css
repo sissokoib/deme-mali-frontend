@@ -1,0 +1,126 @@
+.contenu {
+  min-height: 100%;
+  padding: 30px;
+  background-color: #f7f3ea;
+  color: #1f1f1f;
+}
+
+.entete {
+  margin-bottom: 25px;
+}
+
+.entete h2 {
+  margin: 0 0 8px;
+}
+
+.entete p {
+  margin: 0;
+  color: #666;
+}
+
+.formulaire {
+  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 10px;
+}
+
+.champs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.champ {
+  display: flex;
+  flex: 1 1 250px;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.champ label {
+  font-weight: 600;
+}
+
+.champ input,
+.champ select {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #1f1f1f;
+  font-size: 14px;
+}
+
+.champ input:focus,
+.champ select:focus {
+  outline: none;
+  border-color: #0f7a4b;
+}
+
+.champ input[readonly] {
+  background-color: #f7f3ea;
+}
+
+.champ small,
+.aide-texte {
+  color: #666;
+  font-size: 13px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.bouton-annuler,
+.bouton-enregistrer {
+  padding: 12px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.bouton-annuler {
+  border: 1px solid #ccc;
+  background-color: #ffffff;
+  color: #1f1f1f;
+}
+
+.bouton-enregistrer {
+  border: none;
+  background-color: #0f7a4b;
+  color: #ffffff;
+}
+
+.bouton-enregistrer:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.erreur {
+  margin-bottom: 15px;
+  color: #1f1f1f;
+}
+
+.succes {
+  margin-bottom: 15px;
+  color: #0f7a4b;
+}
+
+@media (max-width: 768px) {
+  .contenu {
+    padding: 15px;
+  }
+
+  .formulaire {
+    padding: 18px;
+  }
+
+  .actions {
+    flex-wrap: wrap;
+  }
+}

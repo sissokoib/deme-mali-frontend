@@ -111,6 +111,7 @@ export class ListDemandes implements OnInit {
 
   voirDemande(id: number): void {
     this.router.navigate(['/organisation/demandes-aide', id]);
+    
   }
 
   modifierDemande(id: number): void {
@@ -133,7 +134,9 @@ export class ListDemandes implements OnInit {
       case 'MOYENNE': return 'moyenne';
       case 'FAIBLE': return 'faible';
       default: return '';
+      
     }
+
   }
 }
 

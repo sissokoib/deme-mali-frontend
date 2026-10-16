@@ -1,0 +1,632 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+  min-height: 100%;
+  font-family: Arial, sans-serif;
+  color: #1f1f1f;
+}
+
+/* PAGE PRINCIPALE */
+
+.page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 30px;
+  background-color: #f7f3ea;
+}
+
+/* BOUTON RETOUR */
+
+.retour {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 10px 16px;
+  border: 1px solid #0f7a4b;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #0f7a4b;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.retour:hover {
+  background-color: #0f7a4b;
+  color: #ffffff;
+}
+
+.retour mat-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+}
+
+/* TITRE DE LA PAGE */
+
+.titre-page {
+  max-width: 1100px;
+  margin: 0 auto 25px;
+}
+
+.titre-page h2 {
+  margin-bottom: 8px;
+  color: #1f1f1f;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.sous-titre {
+  color: #777777;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* CHARGEMENT */
+
+.message-chargement {
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 25px;
+  border: 1px solid #e5e0d6;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #777777;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* MESSAGES D'ERREUR */
+
+.message-erreur {
+  max-width: 1100px;
+  margin: 0 auto 20px;
+  padding: 14px 16px;
+  border: 1px solid #d9c7a0;
+  border-radius: 6px;
+  background-color: #fff4cf;
+  color: #805d00;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.erreur-popup {
+  margin-top: 16px;
+  margin-bottom: 0;
+}
+
+/* CARTE DU BÉNÉFICIAIRE */
+
+.carte-detail {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 30px;
+  border: 1px solid #e5e0d6;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* EN-TÊTE DE LA CARTE */
+
+.entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 25px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #e5e0d6;
+}
+
+.identite {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.identite h3 {
+  margin-bottom: 8px;
+  color: #1f1f1f;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.texte-secondaire {
+  color: #777777;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ACTIONS */
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-traiter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 12px 18px;
+  border: 1px solid #0f7a4b;
+  border-radius: 6px;
+  background-color: #0f7a4b;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-traiter:hover {
+  border-color: #095c37;
+  background-color: #095c37;
+}
+
+.btn-traiter mat-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+}
+
+/* SECTION DES INFORMATIONS */
+
+.section {
+  margin-top: 25px;
+}
+
+/* INFORMATIONS DU BÉNÉFICIAIRE */
+
+.infos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.info {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid #e8e4dc;
+  border-radius: 8px;
+  background-color: #ffffff;
+  transition: border-color 0.2s;
+}
+
+.info:hover {
+  border-color: #c7d9ce;
+}
+
+.info .label {
+  display: block;
+  margin-bottom: 9px;
+  color: #777777;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.info .valeur {
+  display: block;
+  color: #1f1f1f;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* FOND DE LA POPUP */
+
+.fond-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: rgba(31, 31, 31, 0.6);
+  animation: apparition-fond 0.2s ease-out;
+}
+
+/* CARTE DE DÉCISION */
+
+.carte-decision {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  max-height: 90dvh;
+  padding: 28px;
+  overflow-y: auto;
+  border: 1px solid #e5e0d6;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+  animation: apparition-popup 0.2s ease-out;
+}
+
+/* EN-TÊTE DE LA POPUP */
+
+.entete-popup {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.fermer-popup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: #f7f3ea;
+  color: #1f1f1f;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.fermer-popup:hover {
+  background-color: #e5e0d6;
+}
+
+.fermer-popup mat-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+}
+
+/* TITRE ET DESCRIPTION DE LA POPUP */
+
+.carte-decision > h3 {
+  margin-bottom: 10px;
+  color: #1f1f1f;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.description-decision {
+  color: #777777;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* CHOIX DE LA DÉCISION */
+
+.choix-decision {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #e5e0d6;
+  border-radius: 8px;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.option:hover {
+  border-color: #0f7a4b;
+  background-color: #f7fbf8;
+}
+
+.option.selectionnee {
+  border-color: #0f7a4b;
+  background-color: #eaf5ee;
+  box-shadow: 0 0 0 1px #0f7a4b;
+}
+
+.option input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  flex-shrink: 0;
+  accent-color: #0f7a4b;
+  cursor: pointer;
+}
+
+.texte-option {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.texte-option strong {
+  color: #1f1f1f;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.texte-option small {
+  color: #777777;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* MOTIF DU REFUS */
+
+.champ-commentaire {
+  margin-top: 20px;
+}
+
+.champ-commentaire label {
+  display: block;
+  margin-bottom: 9px;
+  color: #1f1f1f;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.champ-commentaire label span {
+  color: #805d00;
+}
+
+.champ-commentaire textarea {
+  display: block;
+  width: 100%;
+  min-height: 110px;
+  padding: 12px;
+  border: 1px solid #d8d3ca;
+  border-radius: 6px;
+  outline: none;
+  background-color: #ffffff;
+  color: #1f1f1f;
+  resize: vertical;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.champ-commentaire textarea:focus {
+  border-color: #0f7a4b;
+  box-shadow: 0 0 0 3px rgba(15, 122, 75, 0.1);
+}
+
+.champ-commentaire textarea::placeholder {
+  color: #999999;
+}
+
+.aide-champ {
+  display: block;
+  margin-top: 8px;
+  color: #777777;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* BOUTONS DE LA POPUP */
+
+.boutons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.btn-annuler,
+.btn-confirmer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 11px 18px;
+  border-radius: 6px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-annuler {
+  border: 1px solid #d8d3ca;
+  background-color: #ffffff;
+  color: #1f1f1f;
+}
+
+.btn-annuler:hover {
+  background-color: #f7f3ea;
+}
+
+.btn-confirmer {
+  border: 1px solid #0f7a4b;
+  background-color: #0f7a4b;
+  color: #ffffff;
+}
+
+.btn-confirmer:hover {
+  border-color: #095c37;
+  background-color: #095c37;
+}
+
+.btn-annuler:focus-visible,
+.btn-confirmer:focus-visible,
+.btn-traiter:focus-visible,
+.fermer-popup:focus-visible,
+.retour:focus-visible {
+  outline: 3px solid rgba(247, 181, 0, 0.8);
+  outline-offset: 3px;
+}
+
+.btn-annuler:disabled,
+.btn-confirmer:disabled,
+.btn-traiter:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ANIMATIONS */
+
+@keyframes apparition-fond {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes apparition-popup {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ADAPTATION AUX TABLETTES ET TÉLÉPHONES */
+
+@media (max-width: 768px) {
+  .page {
+    padding: 20px 15px;
+  }
+
+  .titre-page h2 {
+    font-size: 23px;
+  }
+
+  .carte-detail {
+    padding: 22px;
+  }
+
+  .entete {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+  }
+
+  .identite h3 {
+    font-size: 20px;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .btn-traiter {
+    width: 100%;
+    white-space: normal;
+  }
+
+  .info {
+    flex-basis: 100%;
+  }
+
+  .fond-popup {
+    align-items: center;
+    padding: 12px;
+  }
+
+  .carte-decision {
+    max-height: 94vh;
+    max-height: 94dvh;
+    padding: 22px;
+  }
+
+  .carte-decision > h3 {
+    font-size: 20px;
+  }
+
+  .boutons {
+    flex-direction: column-reverse;
+  }
+
+  .btn-annuler,
+  .btn-confirmer {
+    width: 100%;
+  }
+}
+
+/* PETITS TÉLÉPHONES */
+
+@media (max-width: 400px) {
+  .page {
+    padding: 15px 10px;
+  }
+
+  .retour {
+    gap: 6px;
+    padding: 9px 11px;
+    font-size: 13px;
+  }
+
+  .titre-page h2 {
+    font-size: 21px;
+  }
+
+  .carte-detail {
+    padding: 16px;
+  }
+
+  .info {
+    padding: 15px;
+  }
+
+  .fond-popup {
+    padding: 8px;
+  }
+
+  .carte-decision {
+    padding: 17px;
+    border-radius: 9px;
+  }
+
+  .option {
+    padding: 13px;
+  }
+}
+
+/* ACCESSIBILITÉ : RÉDUIRE LES ANIMATIONS */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

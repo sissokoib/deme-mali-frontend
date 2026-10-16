@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
@@ -20,13 +21,23 @@ export class RoleGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot): boolean | UrlTree {
 
+    // Vérifier si l'utilisateur est connecté.
+    if (!this.authService.isLoggedIn()) {
+      return this.router.createUrlTree(['/login']);
+    }
+
+    // Récupérer le rôle autorisé pour la route.
     const roleAutorise = route.data['role'];
+
+    // Récupérer le rôle de l'utilisateur connecté.
     const roleUtilisateur = this.authService.getRole();
 
+    // Vérifier si le rôle correspond.
     if (roleUtilisateur === roleAutorise) {
       return true;
     }
 
+    // Si le rôle ne correspond pas, rediriger.
     return this.router.createUrlTree(['/login']);
   }
 }

@@ -1,0 +1,132 @@
+
+<div class="page-organisation">
+
+  <div class="titre-page">
+    <div>
+      <h2>Mon organisation</h2>
+      <p>Consultez les informations de votre organisation .</p>
+    </div>
+
+  </div>
+
+  <p *ngIf="chargement" class="message-chargement">
+    Chargement des informations...
+  </p>
+
+  <p *ngIf="erreur" class="message-erreur">
+    {{ erreur }}
+  </p>
+
+  <ng-container *ngIf="!chargement && organisation as org">
+
+    <div class="carte-principale">
+
+      <div class="logo-organisation">
+        <mat-icon>business</mat-icon>
+      </div>
+
+      <div class="nom-organisation">
+        <h3>{{ org.nomOrganisation || 'Organisation sans nom' }}</h3>
+      </div>
+
+     <button
+  class="btn-modifier"
+  type="button"
+  (click)="modifierOrganisation(org.id)">
+
+  <mat-icon>edit</mat-icon>
+  Modifier les informations
+
+</button>
+
+    </div>
+
+    <div class="contenu-informations">
+
+      <div class="carte informations-generales">
+        <h4>Informations de l'organisation</h4>
+
+        <div class="ligne-information">
+          <div>
+            <span>Nom de l'organisation</span>
+            <strong>{{ org.nomOrganisation || 'Non renseigné' }}</strong>
+          </div>
+
+          <div>
+            <span>Date d'inscription</span>
+            <strong>
+              {{ org.dateCreation
+                ? (org.dateCreation | date:'dd MMMM yyyy')
+                : 'Non renseignée' }}
+            </strong>
+          </div>
+        </div>
+
+        <div class="ligne-information">
+          <div>
+            <span>Type</span>
+            <strong>{{ org.typeOrganisation || 'Non renseigné' }}</strong>
+          </div>
+        </div>
+
+        <div class="information-simple">
+          <span>Numéro d'identification / enregistrement</span>
+          <strong>{{ org.nif || 'Non renseigné' }}</strong>
+        </div>
+      </div>
+
+      <div class="carte representant">
+        <h4>Représentant légal</h4>
+
+        <div class="personne">
+          <div class="avatar">
+            <mat-icon>person</mat-icon>
+          </div>
+
+          <div>
+            <strong>Nom complet</strong>
+            <p>{{ org.prenom || '' }} {{ org.nom || '' }}</p>
+          </div>
+        </div>
+
+        <div class="information-simple">
+          <span>Téléphone</span>
+          <strong>{{ org.telephone || 'Non renseigné' }}</strong>
+        </div>
+      </div>
+
+      <div class="carte coordonnees">
+        <h4>Coordonnées</h4>
+
+        <div class="ligne-information">
+          <div>
+            <span>Adresse</span>
+            <strong>{{ org.adresse || 'Non renseignée' }}</strong>
+          </div>
+
+          <div>
+            <span>Email de l'organisation</span>
+            <strong class="email">
+              {{ org.email || 'Non renseigné' }}
+            </strong>
+          </div>
+        </div>
+
+        <div class="ligne-information">
+          <div>
+            <span>Ville</span>
+            <strong>{{ org.ville || 'Non renseignée' }}</strong>
+          </div>
+
+          <div>
+            <span>Téléphone</span>
+            <strong>{{ org.telephone || 'Non renseigné' }}</strong>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </ng-container>
+
+</div>

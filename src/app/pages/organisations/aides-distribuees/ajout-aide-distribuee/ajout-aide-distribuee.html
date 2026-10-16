@@ -1,0 +1,173 @@
+
+<div class="contenu">
+
+  <div class="entete">
+    <div>
+      <h2>Ajouter une aide distribuée</h2>
+      <p>Enregistrez une distribution et sa preuve justificative.</p>
+    </div>
+  </div>
+
+  <form class="formulaire" (ngSubmit)="enregistrer()">
+
+    <div class="champ">
+      <label for="organisation">Organisation connectée</label>
+      <input
+        id="organisation"
+        type="text"
+        [value]="organisationId ?? ''"
+        readonly
+      >
+    </div>
+
+    <div class="champ">
+      <label for="demandeAideId">Demande d'aide</label>
+
+      <select
+        id="demandeAideId"
+        name="demandeAideId"
+        [(ngModel)]="aide.demandeAideId"
+        required
+      >
+        <option [ngValue]="0" disabled>
+          Choisir une demande d'aide
+        </option>
+
+        <option
+          *ngFor="let demande of demandes"
+          [ngValue]="demande.id"
+        >
+          {{ demande.titre }} — ID {{ demande.id }}
+        </option>
+      </select>
+
+      <p class="aide-texte" *ngIf="chargementDemandes">
+        Chargement des demandes...
+      </p>
+
+      <p
+        class="aide-texte"
+        *ngIf="!chargementDemandes && demandes.length === 0"
+      >
+        Aucune demande validée avec une collecte terminée n'est disponible.
+      </p>
+    </div>
+
+    <div class="champs">
+
+      <div class="champ">
+        <label for="dateDistribution">Date de distribution</label>
+        <input
+          id="dateDistribution"
+          type="date"
+          name="dateDistribution"
+          [(ngModel)]="aide.dateDistribution"
+          required
+        >
+      </div>
+
+      <div class="champ">
+        <label for="montantDistribue">Montant distribué (FCFA)</label>
+        <input
+          id="montantDistribue"
+          type="number"
+          name="montantDistribue"
+          [(ngModel)]="aide.montantDistribue"
+          min="0"
+        >
+      </div>
+
+      <div class="champ">
+        <label for="quantiteDistribue">Quantité distribuée</label>
+        <input
+          id="quantiteDistribue"
+          type="number"
+          name="quantiteDistribue"
+          [(ngModel)]="aide.quantiteDistribue"
+          min="0"
+        >
+      </div>
+
+      <div class="champ">
+        <label for="unite">Unité</label>
+        <input
+          id="unite"
+          type="text"
+          name="unite"
+          [(ngModel)]="aide.unite"
+          placeholder="Ex. : kits, sacs, kg"
+        >
+      </div>
+
+      <div class="champ">
+        <label for="modeDistribution">Mode de distribution</label>
+
+        <select
+          id="modeDistribution"
+          name="modeDistribution"
+          [(ngModel)]="aide.modeDistribution"
+          required
+        >
+          <option
+            *ngFor="let mode of modesDistribution"
+            [ngValue]="mode"
+          >
+            {{ mode }}
+          </option>
+        </select>
+      </div>
+
+      <div class="champ">
+        <label for="lieuDistribution">Lieu de distribution</label>
+        <input
+          id="lieuDistribution"
+          type="text"
+          name="lieuDistribution"
+          [(ngModel)]="aide.lieuDistribution"
+          placeholder="Lieu de distribution"
+          required
+        >
+      </div>
+
+      <div class="champ">
+        <label for="preuve">Preuve de distribution</label>
+        <input
+          id="preuve"
+          type="file"
+          name="preuve"
+          accept="image/*,.pdf"
+          (change)="choisirPreuve($event)"
+        >
+
+        <small *ngIf="fichierPreuve">
+          Fichier sélectionné : {{ fichierPreuve.name }}
+        </small>
+      </div>
+
+    </div>
+
+    <div class="actions">
+      <button
+        type="button"
+        class="bouton-annuler"
+        (click)="annuler()"
+      >
+        Annuler
+      </button>
+
+      <button
+        type="submit"
+        class="bouton-enregistrer"
+        [disabled]="
+          chargement ||
+          chargementDemandes ||
+          demandes.length === 0
+        "
+      >
+        {{ chargement ? 'Enregistrement...' : 'Enregistrer' }}
+      </button>
+    </div>
+
+  </form>
+
+</div>

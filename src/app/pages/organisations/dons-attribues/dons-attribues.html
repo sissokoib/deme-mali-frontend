@@ -1,0 +1,308 @@
+
+<div class="contenu">
+
+  <!-- STATISTIQUES -->
+  <section class="statistiques">
+
+    <article class="carte-statistique">
+      <div class="stat-icone vert">
+        <mat-icon>payments</mat-icon>
+      </div>
+      <div>
+        <p>Montant financier attribué</p>
+        <h3>{{ montantFinancier | number:'1.0-0' }} FCFA</h3>
+      </div>
+    </article>
+
+    <article class="carte-statistique">
+      <div class="stat-icone jaune">
+        <mat-icon>inventory_2</mat-icon>
+      </div>
+      <div>
+        <p>Quantité de dons matériels</p>
+        <h3>{{ quantiteMaterielle }}</h3>
+      </div>
+    </article>
+
+    <article class="carte-statistique">
+      <div class="stat-icone vert">
+        <mat-icon>volunteer_activism</mat-icon>
+      </div>
+      <div>
+        <p>Nombre de dons attribués</p>
+        <h3>{{ nombreAttributions }}</h3>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- LISTE DES ATTRIBUTIONS -->
+  <section class="bloc-tableau">
+
+    <h2>Mes ressources</h2>
+    <p class="description">
+      Retrouvez les dons confiés à votre organisation.
+    </p>
+
+    <!-- ONGLETS -->
+    <div class="onglets">
+
+      <button
+        type="button"
+        [class.actif]="ongletActif === 'FINANCIER'"
+        (click)="changerOnglet('FINANCIER')">
+
+        Dons financiers
+        <span>{{ donsFinanciers.length }}</span>
+      </button>
+
+      <button
+        type="button"
+        [class.actif]="ongletActif === 'MATERIEL'"
+        (click)="changerOnglet('MATERIEL')">
+
+        Dons matériels
+        <span>{{ donsMateriels.length }}</span>
+      </button>
+
+    </div>
+
+    <!-- CHARGEMENT -->
+    <div class="message" *ngIf="chargement">
+      Chargement des dons attribués...
+    </div>
+
+    <!-- ERREUR -->
+    <div class="message erreur" *ngIf="!chargement && erreur">
+      Impossible de charger les dons attribués.
+      <button type="button" (click)="chargerAttributions()">
+        Réessayer
+      </button>
+    </div>
+
+    <!-- TABLEAU -->
+    <div
+      class="table-responsive"
+      *ngIf="!chargement && !erreur">
+
+      <table>
+        <thead>
+          <tr>
+            <th>Don</th>
+            <th>Type</th>
+            <th>Montant / Quantité</th>
+            <th>Date d'attribution</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let don of donsPagines">
+
+            <td>
+              <strong>
+                {{ don.donFinancierId !== null
+                  ? 'Don financier'
+                  : 'Don matériel' }}
+                {{ don.donFinancierId ?? don.donMaterielId }}
+              </strong>
+            </td>
+
+            <td>
+              {{ don.donFinancierId !== null ? 'Financier' : 'Matériel' }}
+            </td>
+
+            <td>
+              <strong *ngIf="don.donFinancierId !== null">
+                {{ don.montantAttribue | number:'1.0-0' }} FCFA
+              </strong>
+
+              <strong *ngIf="don.donMaterielId !== null">
+                {{ don.quantiteAttribuee }}
+                {{ don.unite || '' }}
+              </strong>
+
+              <div
+                class="designation"
+                *ngIf="don.donMaterielId !== null">
+                {{ don.designation }}
+              </div>
+            </td>
+
+            <td>
+              {{ don.dateAttribution | date:'dd/MM/yyyy' }}
+            </td>
+
+            <td>
+            <button
+  type="button"
+  class="btn-details"
+  title="Voir les détails"
+  (click)="voirDetails(don)">
+
+  <mat-icon>visibility</mat-icon>
+  Voir
+</button>
+            </td>
+
+          </tr>
+
+          <tr *ngIf="donsAffiches.length === 0">
+            <td colspan="5" class="vide">
+              Aucun don attribué dans cette catégorie.
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+
+      <!-- PAGINATION -->
+      <footer
+        class="bas-tableau"
+        *ngIf="donsAffiches.length > 0">
+
+        <p>
+          Page {{ pageActuelle }} sur {{ totalPages }}
+          · {{ donsAffiches.length }}
+          {{ donsAffiches.length > 1 ? 'dons' : 'don' }}
+        </p>
+
+        <nav
+          class="pagination"
+          *ngIf="totalPages > 1"
+          aria-label="Pagination">
+
+          <button
+            type="button"
+            (click)="changerPage(pageActuelle - 1)"
+            [disabled]="pageActuelle === 1">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+
+          <button
+            type="button"
+            *ngFor="let page of pages"
+            [class.actif]="pageActuelle === page"
+            (click)="changerPage(page)">
+            {{ page }}
+          </button>
+
+          <button
+            type="button"
+            (click)="changerPage(pageActuelle + 1)"
+            [disabled]="pageActuelle === totalPages">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+
+        </nav>
+
+      </footer>
+
+    </div>
+
+  </section>
+
+  <!-- DÉTAILS DE L'ATTRIBUTION -->
+  <div
+    class="fond-modal"
+    *ngIf="attributionSelectionnee as don"
+    (click)="fermerDetails()">
+
+    <section
+      class="modal-details"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="titre-details"
+      (click)="$event.stopPropagation()">
+
+      <header class="modal-entete">
+        <div>
+          <span class="surtitre">DÈMÈ MALI</span>
+          <h2 id="titre-details">Détails de l'attribution</h2>
+        </div>
+
+        <button
+          type="button"
+          class="btn-fermer"
+          aria-label="Fermer"
+          (click)="fermerDetails()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+
+      <div class="details-contenu">
+
+        <div class="detail-ligne">
+          <span>Numéro d'attribution</span>
+          <strong>{{ don.id }}</strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Type de don</span>
+          <strong>
+            {{ don.donFinancierId !== null ? 'Financier' : 'Matériel' }}
+          </strong>
+        </div>
+
+        <div class="detail-ligne" *ngIf="don.donFinancierId !== null">
+          <span>Numéro du don</span>
+          <strong>{{ don.donFinancierId }}</strong>
+        </div>
+
+        <div class="detail-ligne" *ngIf="don.donMaterielId !== null">
+          <span>Numéro du don</span>
+          <strong>{{ don.donMaterielId }}</strong>
+        </div>
+
+        <div class="detail-ligne" *ngIf="don.donFinancierId !== null">
+          <span>Montant attribué</span>
+          <strong class="valeur-verte">
+            {{ don.montantAttribue | number:'1.0-0' }} FCFA
+          </strong>
+        </div>
+
+        <div class="detail-ligne" *ngIf="don.donMaterielId !== null">
+          <span>Matériel</span>
+          <strong>{{ don.designation || '—' }}</strong>
+        </div>
+
+        <div class="detail-ligne" *ngIf="don.donMaterielId !== null">
+          <span>Quantité attribuée</span>
+          <strong>{{ don.quantiteAttribuee }} {{ don.unite || '' }}</strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Date d'attribution</span>
+          <strong>{{ don.dateAttribution | date:'dd/MM/yyyy' }}</strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Organisation bénéficiaire</span>
+          <strong>{{ don.nomOrganisation }}</strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Administrateur</span>
+          <strong>{{ don.administrateurId }}</strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Score de priorité</span>
+          <strong>{{ don.scorePriorite }} / 100</strong>
+        </div>
+
+      </div>
+
+      <button
+        type="button"
+        class="btn-principal"
+        (click)="fermerDetails()">
+        Fermer
+      </button>
+
+    </section>
+
+  </div>
+
+</div>

@@ -43,4 +43,5 @@ export class EtudeTerrainService {
   getDemandes(organisationId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.demandesUrl}/organisation/${organisationId}`);
   }
+  EtudeTerrainParDemande(demandeId: number) { return this.http.get<any[]>( `${this.apiUrl}/demande/${demandeId}` ); }
 }

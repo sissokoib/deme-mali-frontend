@@ -1,0 +1,129 @@
+.contenu {
+  min-height: 100%;
+  padding: 30px;
+  background: #f7f3ea;
+  color: #1f1f1f;
+}
+
+.btn-retour {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 7px;
+  background: #fff;
+  color: #0f7a4b;
+  cursor: pointer;
+}
+
+.carte-detail {
+  max-width: 850px;
+  margin: auto;
+  padding: 28px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px #0000000a;
+}
+
+.entete {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #eee;
+}
+
+.icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 55px;
+  height: 55px;
+  border-radius: 12px;
+  background: #e2f2e9;
+  color: #0f7a4b;
+}
+
+.entete h2 {
+  margin: 0 0 7px;
+  font-size: 22px;
+}
+
+.entete p {
+  margin: 0;
+  color: #777;
+  font-size: 13px;
+}
+
+.montant {
+  margin: 24px 0;
+  padding: 22px;
+  text-align: center;
+  border-radius: 10px;
+  background: #e2f2e9;
+}
+
+.montant span {
+  color: #35694d;
+  font-size: 14px;
+}
+
+.montant h1 {
+  margin: 10px 0;
+  color: #0f7a4b;
+  font-size: 27px;
+  overflow-wrap: anywhere;
+}
+
+.carte-detail h3 {
+  margin: 25px 0 12px;
+  font-size: 16px;
+}
+
+.ligne {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.ligne span {
+  color: #777;
+}
+
+.ligne strong {
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.message {
+  padding: 30px;
+  text-align: center;
+}
+
+.erreur {
+  color: #b42318;
+}
+
+@media (max-width: 600px) {
+  .contenu {
+    padding: 15px;
+  }
+
+  .carte-detail {
+    padding: 18px;
+  }
+
+  .ligne {
+    gap: 12px;
+    font-size: 12px;
+  }
+
+  .montant h1 {
+    font-size: 22px;
+  }
+}
