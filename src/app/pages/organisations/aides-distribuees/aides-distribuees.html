@@ -1,0 +1,109 @@
+
+<div class="contenu">
+
+  <div class="entete">
+    <div>
+      <h2>Aides distribuées</h2>
+      <p>Consultez les aides distribuées aux bénéficiaires.</p>
+    </div>
+
+    <button
+      type="button"
+      class="bouton-ajouter"
+      (click)="ouvrirFormulaireAjout()"
+    >
+      <mat-icon>add</mat-icon>
+      Ajouter une aide
+    </button>
+  </div>
+
+  <div *ngIf="chargement" class="message">
+    Chargement des aides distribuées...
+  </div>
+
+  <div *ngIf="erreur && !chargement" class="message erreur">
+    {{ erreur }}
+
+    <button type="button" (click)="chargerAides()">
+      Réessayer
+    </button>
+  </div>
+
+  <div class="tableau" *ngIf="!chargement && !erreur">
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Date de distribution</th>
+          <th>Montant</th>
+          <th>Quantité</th>
+          <th>Mode de distribution</th>
+          <th>Lieu</th>
+          <th>Statut</th>
+          <th>Demande d'aide</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let aide of aides">
+          <td>{{ aide.id }}</td>
+
+          <td>
+            {{ aide.dateDistribution | date:'dd/MM/yyyy' }}
+          </td>
+
+          <td>
+            {{ aide.montantDistribue === null ? '-' : aide.montantDistribue }}
+          </td>
+
+          <td>
+            {{ aide.quantiteDistribue === null ? '-' : aide.quantiteDistribue }}
+            {{ aide.unite }}
+          </td>
+
+          <td>{{ aide.modeDistribution }}</td>
+
+          <td>{{ aide.lieuDistribution }}</td>
+
+          <td>{{ aide.statut }}</td>
+
+          <td>{{ aide.demandeAideId }}</td>
+
+          <td class="actions-liste">
+
+            <button
+              type="button"
+              class="bouton-voir"
+              (click)="voir(aide.id)"
+              title="Voir les détails"
+            >
+              <mat-icon>visibility</mat-icon>
+              Voir
+            </button>
+
+            <button
+              type="button"
+              class="bouton-modifier"
+              (click)="modifier(aide.id)"
+              title="Modifier cette aide"
+            >
+              <mat-icon>edit</mat-icon>
+              Modifier
+            </button>
+
+          </td>
+        </tr>
+
+        <tr *ngIf="aides.length === 0">
+          <td colspan="9" class="vide">
+            Aucune aide distribuée enregistrée.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+</div>

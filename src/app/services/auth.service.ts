@@ -1,12 +1,19 @@
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  tap,
+  catchError,
+  throwError
+} from 'rxjs';
 import { Router } from '@angular/router';
-import { User } from '../models/utilisateur.model';
-import { LoginRequest, AuthResponse } from '../models/utilisateur.model';
+
+import { User, LoginRequest, AuthResponse } from '../models/utilisateur.model';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class AuthService {
 
@@ -23,60 +30,26 @@ export class AuthService {
     private router: Router
   ) {}
 
+  // CONNEXION
   login(credentials: LoginRequest): Observable<AuthResponse> {
 
     return this.http.post<AuthResponse>(
       `${this.apiUrl}/login`,
       credentials
     ).pipe(
-
       tap(response => {
         this.storeAuthData(response);
       }),
-
       catchError(error => {
         return throwError(() => error);
       })
     );
   }
 
-  refreshToken(): Observable<{ accessToken: string; expiresIn: number }> {
-
-    const refreshToken = this.getRefreshToken();
-
-    if (!refreshToken) {
-      this.logout();
-      return throwError(() => new Error('Pas de refresh token'));
-    }
-
-    return this.http.post<any>(
-      `${this.apiUrl}/refresh`,
-      { refreshToken }
-    ).pipe(
-
-      tap(response => {
-        localStorage.setItem(
-          'access_token',
-          response.accessToken
-        );
-      }),
-
-      catchError(error => {
-        this.logout();
-        return throwError(() => error);
-      })
-    );
-  }
-
+  // DECONNEXION LOCALE
   logout(): void {
 
-    this.http.post(
-      `${this.apiUrl}/logout`,
-      {}
-    ).subscribe();
-
     localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
     localStorage.removeItem('current_user');
 
     this.currentUserSubject.next(null);
@@ -84,6 +57,7 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
+  // VERIFIER SI L'UTILISATEUR EST CONNECTE
   isLoggedIn(): boolean {
 
     const token = this.getAccessToken();
@@ -95,37 +69,33 @@ export class AuthService {
     return !this.isTokenExpired(token);
   }
 
+  // RECUPERER LE TOKEN
   getAccessToken(): string | null {
     return localStorage.getItem('access_token');
   }
 
-  getRefreshToken(): string | null {
-    return localStorage.getItem('refresh_token');
-  }
-
+  // RECUPERER L'UTILISATEUR CONNECTE
   getCurrentUser(): User | null {
     return this.currentUserSubject.value;
   }
-private storeAuthData(response: AuthResponse): void {
 
-  localStorage.setItem(
-    'access_token',
-    response.accessToken
-  );
+  // ENREGISTRER LES DONNEES DE CONNEXION
+  private storeAuthData(response: AuthResponse): void {
 
-  localStorage.setItem(
-    'refresh_token',
-    response.refreshToken
-  );
+    localStorage.setItem(
+      'access_token',
+      response.accessToken
+    );
 
-  localStorage.setItem(
-    'current_user',
-    JSON.stringify(response.user)
-  );
+    localStorage.setItem(
+      'current_user',
+      JSON.stringify(response.user)
+    );
 
-  this.currentUserSubject.next(response.user);
-}
+    this.currentUserSubject.next(response.user);
+  }
 
+  // RECUPERER L'UTILISATEUR ENREGISTRE
   private getStoredUser(): User | null {
 
     const stored = localStorage.getItem('current_user');
@@ -142,6 +112,7 @@ private storeAuthData(response: AuthResponse): void {
     }
   }
 
+  // RECUPERER LE ROLE DEPUIS LE TOKEN
   getRole(): string | null {
 
     const token = this.getAccessToken();
@@ -151,14 +122,17 @@ private storeAuthData(response: AuthResponse): void {
     }
 
     try {
-
       const payload = JSON.parse(
-        atob(token.split('.')[1])
+        atob(
+          token.split('.')[1]
+            .replace(/-/g, '+')
+            .replace(/_/g, '/')
+        )
       );
 
       const role = payload.role;
 
-      if (!role) {
+      if (!role || typeof role !== 'string') {
         return null;
       }
 
@@ -169,15 +143,23 @@ private storeAuthData(response: AuthResponse): void {
     }
   }
 
+  // VERIFIER SI LE TOKEN EST EXPIRE
   private isTokenExpired(token: string): boolean {
 
     try {
-
       const payload = JSON.parse(
-        atob(token.split('.')[1])
+        atob(
+          token.split('.')[1]
+            .replace(/-/g, '+')
+            .replace(/_/g, '/')
+        )
       );
 
-      return payload.exp * 1000 < Date.now();
+      if (typeof payload.exp !== 'number') {
+        return true;
+      }
+
+      return payload.exp * 1000 <= Date.now();
 
     } catch {
       return true;

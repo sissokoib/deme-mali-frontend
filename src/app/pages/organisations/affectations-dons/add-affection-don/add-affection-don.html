@@ -1,0 +1,440 @@
+
+<div class="page-affectation">
+
+  <header class="entete-page">
+    <div>
+      <span class="surtitre">GESTION DES AIDES</span>
+      <h1>Nouvelle affectation</h1>
+      <p>Affectez les dons attribués à votre organisation.</p>
+    </div>
+    <mat-icon class="icone-entete">volunteer_activism</mat-icon>
+  </header>
+
+  <!-- STATISTIQUES -->
+  <section class="cartes-resume">
+    <article class="carte-resume">
+      <div class="resume-icone verte">
+        <mat-icon>payments</mat-icon>
+      </div>
+      <div>
+        <p>Dons financiers disponibles</p>
+        <h2>{{ donsFinanciersDisponibles }}</h2>
+      </div>
+    </article>
+
+    <article class="carte-resume">
+      <div class="resume-icone jaune">
+        <mat-icon>inventory_2</mat-icon>
+      </div>
+      <div>
+        <p>Dons matériels disponibles</p>
+        <h2>{{ donsMaterielsDisponibles }}</h2>
+      </div>
+    </article>
+
+    <article class="carte-resume">
+      <div class="resume-icone beige">
+        <mat-icon>assignment</mat-icon>
+      </div>
+      <div>
+        <p>Demandes disponibles</p>
+        <h2>{{ demandes.length }}</h2>
+      </div>
+    </article>
+  </section>
+
+  <!-- CHARGEMENT -->
+  <div class="message chargement" *ngIf="chargementInitial">
+    Chargement des données...
+  </div>
+
+  <!-- ERREUR GÉNÉRALE DE CHARGEMENT -->
+  <div class="message erreur" *ngIf="erreur">
+    {{ erreur }}
+  </div>
+
+  <form class="carte-formulaire" (ngSubmit)="enregistrer()">
+
+    <div class="titre-formulaire">
+      <h2>Informations de l'affectation</h2>
+      <p>Choisissez le destinataire et le don à affecter.</p>
+    </div>
+
+    <!-- DESTINATION -->
+    <div class="groupe-champ">
+      <label>Destination de l'aide</label>
+
+      <div class="choix-mode">
+        <button
+          type="button"
+          [class.actif]="modeAffectation === 'DEMANDE'"
+          (click)="changerDestination('DEMANDE')">
+          <mat-icon>assignment</mat-icon>
+          Demande d'aide
+        </button>
+
+        <button
+          type="button"
+          [class.actif]="modeAffectation === 'BENEFICIAIRE'"
+          (click)="changerDestination('BENEFICIAIRE')">
+          <mat-icon>person</mat-icon>
+          Bénéficiaire
+        </button>
+      </div>
+    </div>
+
+    <!-- DEMANDE D'AIDE -->
+    <div class="groupe-champ" *ngIf="modeAffectation === 'DEMANDE'">
+
+      <label for="rechercheDemande">Demande d'aide</label>
+
+      <input
+        id="rechercheDemande"
+        type="text"
+        name="rechercheDemande"
+        [(ngModel)]="rechercheDemande"
+        (focus)="ouvrirListeDemandes()"
+        (click)="ouvrirListeDemandes()"
+        placeholder="Cliquez pour choisir une demande..."
+        autocomplete="off">
+
+      <div class="liste-options" *ngIf="listeDemandesOuverte">
+
+        <button
+          type="button"
+          class="option"
+          *ngFor="let demande of demandesFiltrees"
+          [class.selectionnee]="demandeAideId === demande.id"
+          (click)="selectionnerDemande(demande)">
+
+          <span>
+            <strong>{{ demande.titre }}</strong>
+            <small>Demande #{{ demande.id }}</small>
+            <small>
+              Besoin :
+              {{ demande.montantNecessaire | number:'1.0-0' }} FCFA
+            </small>
+            <small>
+              Collecté :
+              {{ demande.montantCollecte | number:'1.0-0' }} FCFA
+            </small>
+          </span>
+
+          <mat-icon *ngIf="demandeAideId === demande.id">
+            check_circle
+          </mat-icon>
+        </button>
+
+        <p
+          class="aucun-resultat"
+          *ngIf="demandesFiltrees.length === 0">
+          Aucune demande disponible.
+        </p>
+      </div>
+
+      <!-- ERREUR DEMANDE -->
+      <small class="erreur-champ" *ngIf="erreurDemande">
+        {{ erreurDemande }}
+      </small>
+    </div>
+
+    <!-- BÉNÉFICIAIRE -->
+    <div
+      class="groupe-champ"
+      *ngIf="modeAffectation === 'BENEFICIAIRE'">
+
+      <label for="rechercheBeneficiaire">Bénéficiaire</label>
+
+      <input
+        id="rechercheBeneficiaire"
+        type="text"
+        name="rechercheBeneficiaire"
+        [(ngModel)]="rechercheBeneficiaire"
+        (focus)="ouvrirListeBeneficiaires()"
+        (click)="ouvrirListeBeneficiaires()"
+        placeholder="Cliquez pour choisir un bénéficiaire..."
+        autocomplete="off">
+
+      <div
+        class="liste-options"
+        *ngIf="listeBeneficiairesOuverte">
+
+        <button
+          type="button"
+          class="option"
+          *ngFor="let beneficiaire of beneficiairesFiltres"
+          [class.selectionnee]="beneficiaireId === beneficiaire.id"
+          (click)="selectionnerBeneficiaire(beneficiaire)">
+
+          <span>
+            <strong>
+              {{ beneficiaire.prenom }} {{ beneficiaire.nom }}
+            </strong>
+            <small>{{ beneficiaire.telephone }}</small>
+          </span>
+
+          <mat-icon *ngIf="beneficiaireId === beneficiaire.id">
+            check_circle
+          </mat-icon>
+        </button>
+
+        <p
+          class="aucun-resultat"
+          *ngIf="beneficiairesFiltres.length === 0">
+          Aucun bénéficiaire accepté disponible.
+        </p>
+      </div>
+
+      <!-- ERREUR BÉNÉFICIAIRE -->
+      <small class="erreur-champ" *ngIf="erreurBeneficiaire">
+        {{ erreurBeneficiaire }}
+      </small>
+    </div>
+
+    <!-- TYPE DE DON -->
+    <div class="groupe-champ">
+      <label>Type de don</label>
+
+      <div class="choix-mode">
+        <button
+          type="button"
+          [class.actif]="typeAide === 'FINANCIER'"
+          (click)="changerType('FINANCIER')">
+          <mat-icon>payments</mat-icon>
+          Don financier
+        </button>
+
+        <button
+          type="button"
+          [class.actif]="typeAide === 'MATERIEL'"
+          (click)="changerType('MATERIEL')">
+          <mat-icon>inventory_2</mat-icon>
+          Don matériel
+        </button>
+      </div>
+    </div>
+
+    <!-- DON DISPONIBLE -->
+    <div class="groupe-champ">
+      <label for="rechercheDon">Don disponible</label>
+
+      <input
+        id="rechercheDon"
+        type="text"
+        name="rechercheDon"
+        [(ngModel)]="rechercheDon"
+        (focus)="ouvrirListeDons()"
+        (click)="ouvrirListeDons()"
+        placeholder="Cliquez pour choisir un don..."
+        autocomplete="off">
+
+      <div class="liste-options" *ngIf="listeDonsOuverte">
+
+        <button
+          type="button"
+          class="option"
+          *ngFor="let don of donsFiltres"
+          [class.selectionnee]="donId === don.donId"
+          (click)="selectionnerDon(don)">
+
+          <span>
+            <strong>Don #{{ don.donId }}</strong>
+
+            <small *ngIf="don.typeDon === 'FINANCIER'">
+              Montant attribué :
+              {{ don.montantAttribue | number:'1.0-0' }} FCFA
+            </small>
+
+            <small *ngIf="don.typeDon === 'FINANCIER'">
+              Montant disponible :
+              {{ getMontantDisponible(don) | number:'1.0-0' }} FCFA
+            </small>
+
+            <small *ngIf="don.typeDon === 'MATERIEL'">
+              Quantité attribuée : {{ don.quantiteAttribuee }}
+            </small>
+
+            <small *ngIf="don.typeDon === 'MATERIEL'">
+              Quantité disponible :
+              {{ getQuantiteDisponible(don) }}
+            </small>
+
+            <small>
+              {{ don.designation || don.motif || 'Don attribué' }}
+            </small>
+          </span>
+
+          <mat-icon *ngIf="donId === don.donId">
+            check_circle
+          </mat-icon>
+        </button>
+
+        <p class="aucun-resultat" *ngIf="donsFiltres.length === 0">
+          Aucun don disponible pour ce type.
+        </p>
+      </div>
+
+      <!-- ERREUR DON -->
+      <small class="erreur-champ" *ngIf="erreurDon">
+        {{ erreurDon }}
+      </small>
+    </div>
+
+    <!-- MONTANT FINANCIER -->
+    <div class="groupe-champ" *ngIf="typeAide === 'FINANCIER'">
+
+      <label for="montantAffecte">
+        Montant à affecter (FCFA)
+      </label>
+
+      <input
+        id="montantAffecte"
+        type="number"
+        name="montantAffecte"
+        [(ngModel)]="montantAffecte"
+        (ngModelChange)="erreurMontant = ''"
+        [class.champ-invalide]="!!erreurMontant"
+        min="0.01"
+        step="0.01"
+        required
+        placeholder="Ex. : 5000">
+
+      <!-- ERREUR MONTANT -->
+      <small class="erreur-champ" *ngIf="erreurMontant">
+        {{ erreurMontant }}
+      </small>
+
+      <small class="aide-champ" *ngIf="donSelectionne">
+        Montant disponible :
+        {{ getMontantDisponible(donSelectionne) | number:'1.0-0' }}
+        FCFA
+      </small>
+
+      <small
+        class="aide-champ"
+        *ngIf="modeAffectation === 'DEMANDE' &&
+               montantRestantDemandeSelectionnee !== null">
+        Besoin restant :
+        {{ montantRestantDemandeSelectionnee | number:'1.0-0' }} FCFA
+      </small>
+    </div>
+
+    <!-- QUANTITÉ MATÉRIELLE -->
+    <div class="groupe-champ" *ngIf="typeAide === 'MATERIEL'">
+
+      <label for="quantiteAffectee">Quantité à affecter</label>
+
+      <input
+        id="quantiteAffectee"
+        type="number"
+        name="quantiteAffectee"
+        [(ngModel)]="quantiteAffectee"
+        (ngModelChange)="erreurQuantite = ''"
+        [class.champ-invalide]="!!erreurQuantite"
+        min="1"
+        step="1"
+        required
+        placeholder="Ex. : 5">
+
+      <!-- ERREUR QUANTITÉ -->
+      <small class="erreur-champ" *ngIf="erreurQuantite">
+        {{ erreurQuantite }}
+      </small>
+
+      <small class="aide-champ" *ngIf="donSelectionne">
+        Quantité disponible :
+        {{ getQuantiteDisponible(donSelectionne) }}
+      </small>
+    </div>
+
+    <!-- UNITÉ MATÉRIELLE -->
+    <div class="groupe-champ" *ngIf="typeAide === 'MATERIEL'">
+
+      <label for="unite">Unité du matériel</label>
+
+      <select
+        id="unite"
+        name="unite"
+        [ngModel]="unite"
+        (ngModelChange)="changerUnite($event); erreurUnite = ''"
+        [class.champ-invalide]="!!erreurUnite"
+        required>
+
+        <option value="">Choisir une unité</option>
+
+        <option
+          *ngFor="let uniteDisponible of unitesDisponibles"
+          [value]="uniteDisponible">
+          {{ uniteDisponible }}
+        </option>
+
+        <option value="AUTRE">Autre unité...</option>
+      </select>
+
+      <!-- ERREUR UNITÉ -->
+      <small
+        class="erreur-champ"
+        *ngIf="erreurUnite && !utiliserUnitePersonnalisee">
+        {{ erreurUnite }}
+      </small>
+
+      <div
+        class="groupe-champ"
+        *ngIf="utiliserUnitePersonnalisee">
+
+        <label for="unitePersonnalisee">
+          Précisez l'unité
+        </label>
+
+        <input
+          id="unitePersonnalisee"
+          type="text"
+          name="unitePersonnalisee"
+          [(ngModel)]="unitePersonnalisee"
+          (ngModelChange)="erreurUnite = ''"
+          [class.champ-invalide]="!!erreurUnite"
+          required
+          maxlength="50"
+          placeholder="Ex. : paquet, bouteille, paire...">
+
+        <!-- ERREUR UNITÉ PERSONNALISÉE -->
+        <small class="erreur-champ" *ngIf="erreurUnite">
+          {{ erreurUnite }}
+        </small>
+      </div>
+
+      <small class="aide-champ" *ngIf="uniteFinale">
+        Unité sélectionnée : {{ uniteFinale }}
+      </small>
+    </div>
+
+    <!-- BOUTONS -->
+    <div class="actions-formulaire">
+
+      <button
+        type="button"
+        class="bouton-secondaire"
+        [disabled]="chargement"
+        (click)="annuler()">
+        Annuler
+      </button>
+
+      <button
+        type="submit"
+        class="bouton-principal"
+        [disabled]="chargement || chargementInitial">
+
+        <mat-icon>
+          {{ chargement ? 'hourglass_empty' : 'check_circle' }}
+        </mat-icon>
+
+        {{
+          chargement
+            ? 'Enregistrement...'
+            : 'Enregistrer l’affectation'
+        }}
+      </button>
+
+    </div>
+  </form>
+</div>

@@ -2,12 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule
-} from '@angular/forms';
+import {FormBuilder,  FormGroup,  Validators,  ReactiveFormsModule} from '@angular/forms';
 
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -39,6 +34,8 @@ export class EditDemandes implements OnInit {
   beneficiaires: any[] = [];
   categories: any[] = [];
   typesJustificatifs: TypeJustificatif[] = [];
+  
+
 
   fichiers: File[] = [];
   justificatifsExistants: any[] = [];

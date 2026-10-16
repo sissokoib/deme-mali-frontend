@@ -1,0 +1,20 @@
+/* Notification de succès */
+.snackbar-success {
+  --mdc-snackbar-container-color: #0F7A4B;
+  --mdc-snackbar-supporting-text-color: #FFFFFF;
+  --mat-snack-bar-button-color: #F7B500;
+}
+
+/* Notification d'erreur */
+.snackbar-error {
+  --mdc-snackbar-container-color: #C62828;
+  --mdc-snackbar-supporting-text-color: #FFFFFF;
+  --mat-snack-bar-button-color: #FFFFFF;
+}
+
+/* Notification d'information */
+.snackbar-info {
+  --mdc-snackbar-container-color: #1F1F1F;
+  --mdc-snackbar-supporting-text-color: #FFFFFF;
+  --mat-snack-bar-button-color: #F7B500;
+}

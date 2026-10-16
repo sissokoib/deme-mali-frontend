@@ -1,0 +1,175 @@
+<div class="page">
+
+  <div class="entete-page">
+    <h2>Mes bénéficiaires</h2>
+    <p>Retrouvez les personnes et structures rattachées à votre organisation.</p>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="statistiques">
+
+    <div class="statistique">
+      <p>Total</p>
+      <h3>{{ beneficiaires.length }}</h3>
+    </div>
+
+    <div class="statistique attente">
+      <p>En attente</p>
+      <h3>{{ compterStatut('EN_ATTENTE') }}</h3>
+    </div>
+
+    <div class="statistique acceptes">
+      <p>Acceptés</p>
+      <h3>{{ compterStatut('ACCEPTE') }}</h3>
+    </div>
+
+  </div>
+
+  <!-- Barre de recherche -->
+  <div class="recherche">
+    <mat-icon>search</mat-icon>
+
+    <input
+      type="text"
+      placeholder="Rechercher un bénéficiaire..."
+      [(ngModel)]="recherche"
+      (ngModelChange)="reinitialiserPage()"
+    />
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="chargement" class="message">
+    Chargement des bénéficiaires...
+  </div>
+
+  <!-- Erreur -->
+  <div *ngIf="erreur" class="message">
+    {{ erreur }}
+  </div>
+
+  <!-- Liste des bénéficiaires -->
+  <div
+    class="liste-beneficiaires"
+    *ngIf="
+      !chargement &&
+      !erreur &&
+      beneficiairesFiltres().length > 0
+    "
+  >
+
+    <div
+      class="carte"
+      *ngFor="let beneficiaire of beneficiairesParPage()"
+    >
+
+      <div class="avatar">
+        <mat-icon>
+          {{
+            beneficiaire.typeBeneficiaire === 'PARTICULIER'
+              ? 'person'
+              : 'domain'
+          }}
+        </mat-icon>
+      </div>
+
+      <div class="informations">
+        <h3>
+          {{ beneficiaire.prenom }} {{ beneficiaire.nom }}
+        </h3>
+
+        <p>
+          {{
+            beneficiaire.typeBeneficiaire === 'PARTICULIER'
+              ? 'Particulier'
+              : 'Structure'
+          }}
+          <span>·</span>
+          {{ beneficiaire.ville || 'Ville non renseignée' }}
+        </p>
+      </div>
+
+      
+<!-- Statut du bénéficiaire -->
+<span
+  class="statut"
+  [ngClass]="{
+    'accepte': beneficiaire.statut === 'ACCEPTE',
+    'en-attente': beneficiaire.statut === 'EN_ATTENTE',
+    'refuse': beneficiaire.statut === 'REFUSE'
+  }"
+>
+  {{
+    beneficiaire.statut === 'ACCEPTE'
+      ? 'Accepté'
+      : beneficiaire.statut === 'EN_ATTENTE'
+        ? 'En attente'
+        : 'Refusé'
+  }}
+</span>
+
+<!-- Actions -->
+
+<div class="actions-beneficiaire">
+
+  <button
+    type="button"
+    class="action-details"
+    (click)="voirDetails(beneficiaire.id)"
+  >
+    <mat-icon>visibility</mat-icon>
+    Voir les détails
+  </button>
+
+</div>
+
+
+
+  <!-- Aucun résultat -->
+  <div
+    class="message"
+    *ngIf="
+      !chargement &&
+      !erreur &&
+      beneficiairesFiltres().length === 0
+    "
+  >
+    Aucun bénéficiaire trouvé.
+  </div>
+
+  <!-- Pagination -->
+  <div
+    class="pagination"
+    *ngIf="
+      !chargement &&
+      !erreur &&
+      beneficiairesFiltres().length > 0
+    "
+  >
+
+    <span>
+      Page {{ pageActuelle }} sur {{ nombrePages() }}
+    </span>
+
+    <div class="pagination-boutons">
+
+      <button
+        type="button"
+        (click)="pagePrecedente()"
+        [disabled]="pageActuelle === 1"
+      >
+        Précédent
+      </button>
+
+      <button
+        type="button"
+        (click)="pageSuivante()"
+        [disabled]="pageActuelle === nombrePages()"
+      >
+        Suivant
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

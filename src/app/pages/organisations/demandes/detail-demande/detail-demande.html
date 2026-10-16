@@ -1,120 +1,426 @@
 
 <div class="page">
-  <h2>Détail de la demande</h2>
-  <p class="sous-titre">Consultez la demande, son étude de terrain et les rapports associés.</p>
 
-  <div *ngIf="demande as d; else chargement" class="carte-detail">
+  <h2>Détail de la demande</h2>
+
+  <p class="sous-titre">
+    Consultez la demande, son étude de terrain et les rapports associés.
+  </p>
+
+  <p *ngIf="chargement" class="message-chargement">
+    Chargement des informations...
+  </p>
+
+  <p *ngIf="erreur" class="message-erreur">
+    {{ erreur }}
+  </p>
+
+  <div class="carte-detail" *ngIf="demande as d">
+
+    <!-- EN-TÊTE -->
     <div class="entete">
-      <div>
-        <h3>{{ d.titre }}</h3>
-        <p>Référence : DA-{{ d.id }}</p>
-        <p class="statut">{{ d.statut }}</p>
-      </div>
+
+      <h3>{{ d.titre }}</h3>
+
       <div class="actions">
-        <button class="btn-secondaire" type="button">Traiter la demande</button>
-        <button class="btn-principal" type="button">Planifier une étude</button>
+
+        <button
+          class="btn-secondaire"
+          type="button"
+          (click)="ouvrirDecision()">
+
+          <mat-icon>assignment</mat-icon>
+          Traiter la demande
+        </button>
+
+        <button class="btn-principal" type="button">
+          <mat-icon>event</mat-icon>
+          Planifier une étude
+        </button>
+
       </div>
+
     </div>
 
+    <!-- INFORMATIONS GÉNÉRALES -->
     <div class="section">
+
       <h4>Informations générales</h4>
+
       <div class="infos">
+
         <div class="info">
           <span>Référence</span>
           <strong>DA-{{ d.id }}</strong>
         </div>
+
         <div class="info">
           <span>Type de demande</span>
-          <strong>{{ d.typeDemande === 'INDIVIDUEL' ? 'Aide individuelle' : d.typeDemande }}</strong>
+          <strong>{{ d.typeDemande }}</strong>
         </div>
+
         <div class="info">
           <span>Date de création</span>
-          <strong>{{ d.dateCreation | date:'dd/MM/yyyy' }}</strong>
+          <strong>{{ d.dateCreation | date:'dd MMMM yyyy' }}</strong>
         </div>
+
         <div class="info">
           <span>Bénéficiaire</span>
-          <strong>{{ d.beneficiairePrenom }} {{ d.beneficiaireNom }}</strong>
+          <strong>
+            {{ d.beneficiairePrenom }} {{ d.beneficiaireNom }}
+          </strong>
         </div>
+
         <div class="info">
           <span>Nombre de personnes</span>
           <strong>{{ d.nombrePersonne }} personnes</strong>
         </div>
-        <div class="info">
-          <span>Catégorie</span>
-          <strong>{{ d.categorieDemandeNom }}</strong>
-        </div>
+
         <div class="info">
           <span>Urgence</span>
           <strong>{{ d.niveauUrgence }}</strong>
         </div>
-        <div class="info">
-          <span>Statut</span>
-          <strong>{{ d.statut }}</strong>
-        </div>
+
       </div>
+
       <div class="description">
         <span>Description de la situation</span>
-        <p>{{ d.descriptionSituation || 'Aucune description disponible.' }}</p>
+        <p>{{ d.descriptionSituation }}</p>
       </div>
+
     </div>
 
+    <!-- BUDGET ET COLLECTE -->
     <div class="section">
+
       <h4>Budget et collecte</h4>
+
       <div class="budget">
+
         <div class="info">
           <span>Montant nécessaire</span>
-          <strong>{{ d.montantNecessaire | number:'1.0-0' }} FCFA</strong>
+          <strong>
+            {{ d.montantNecessaire | number:'1.0-0' }} FCFA
+          </strong>
         </div>
+
         <div class="info">
           <span>Montant collecté</span>
-          <strong class="vert">{{ d.montantCollecte | number:'1.0-0' }} FCFA</strong>
+          <strong class="vert">
+            {{ d.montantCollecte | number:'1.0-0' }} FCFA
+          </strong>
         </div>
+
         <div class="info">
           <span>Reste à collecter</span>
-          <strong>{{ (d.montantNecessaire - d.montantCollecte) > 0 ? (d.montantNecessaire - d.montantCollecte) : 0 | number:'1.0-0' }} FCFA</strong>
+          <strong>
+            {{
+              (d.montantNecessaire - d.montantCollecte)
+                | number:'1.0-0'
+            }} FCFA
+          </strong>
         </div>
+
         <div class="info">
           <span>Progression de la collecte</span>
-          <strong class="vert">{{ d.montantNecessaire > 0 ? (d.montantCollecte / d.montantNecessaire * 100).toFixed(0) : 0 }} %</strong>
+          <strong class="vert">
+            {{
+              d.montantNecessaire > 0
+                ? (d.montantCollecte / d.montantNecessaire * 100
+                    | number:'1.0-0')
+                : 0
+            }} %
+          </strong>
         </div>
+
       </div>
+
     </div>
 
+    <!-- ÉTUDE DE TERRAIN -->
     <div class="section">
+
       <h4>Étude de terrain</h4>
-      <p>Les informations de l'étude de terrain ne sont pas encore disponibles.</p>
-      <div class="actions">
-        <button class="btn-principal petit" type="button">Planifier une étude</button>
+
+      <div
+        *ngIf="etudeTerrain as etude; else aucuneEtude"
+        class="etude">
+
+        <div class="info">
+          <span>Lieu</span>
+          <strong>{{ etude.lieu }}</strong>
+        </div>
+
+        <div class="info">
+          <span>Date de planification</span>
+          <strong>
+            {{ etude.datePlanification | date:'dd MMMM yyyy' }}
+          </strong>
+        </div>
+
+        <div class="info">
+          <span>Date de réalisation</span>
+          <strong>
+            {{
+              etude.dateRealisation
+                ? (etude.dateRealisation | date:'dd MMMM yyyy')
+                : 'Non réalisée'
+            }}
+          </strong>
+        </div>
+
+        <div class="actions">
+          <button class="btn-secondaire petit" type="button">
+            Voir
+          </button>
+
+          <button class="btn-principal petit" type="button">
+            Modifier
+          </button>
+        </div>
+
       </div>
+
+      <ng-template #aucuneEtude>
+        <p class="message-vide">
+          Aucune étude de terrain disponible pour cette demande.
+        </p>
+      </ng-template>
+
     </div>
 
+    <!-- RAPPORTS ASSOCIÉS -->
     <div class="section">
+
       <h4>Rapports associés</h4>
+
       <div class="rapports">
+
+        <!-- RAPPORT DE BESOIN -->
         <div class="rapport">
-          <div>
+
+          <div class="rapport-infos">
             <strong>Rapport de besoin</strong>
-            <p>Aucun rapport disponible pour le moment.</p>
+
+            <p *ngIf="rapportBesoin">
+              {{ rapportBesoin.titre }}
+            </p>
+
+            <p *ngIf="rapportBesoin">
+              Réalisé le
+              {{ rapportBesoin.dateCreation | date:'dd MMMM yyyy' }}
+            </p>
+
+            <p *ngIf="!rapportBesoin" class="message-vide">
+              Aucun rapport de besoin disponible.
+            </p>
           </div>
+
+          <div class="actions" *ngIf="rapportBesoin">
+
+            <button class="btn-secondaire petit" type="button">
+              Voir
+            </button>
+
+            <button class="btn-principal petit" type="button">
+              Modifier
+            </button>
+
+          </div>
+
         </div>
+
+        <!-- RAPPORT TECHNIQUE -->
         <div class="rapport">
-          <div>
+
+          <div class="rapport-infos">
             <strong>Rapport technique</strong>
-            <p>Aucun rapport disponible pour le moment.</p>
+
+            <p *ngIf="rapportTechnique">
+              Réalisé le
+              {{ rapportTechnique.dateCreation | date:'dd MMMM yyyy' }}
+            </p>
+
+            <p *ngIf="!rapportTechnique" class="message-vide">
+              Aucun rapport technique disponible.
+            </p>
           </div>
+
+          <div class="actions" *ngIf="rapportTechnique">
+
+            <button class="btn-secondaire petit" type="button">
+              Voir
+            </button>
+
+            <button class="btn-principal petit" type="button">
+              Modifier
+            </button>
+
+          </div>
+
         </div>
+
       </div>
+
     </div>
 
+    <!-- JUSTIFICATIFS -->
     <div class="section justificatifs">
+
       <h4>Justificatifs de la demande</h4>
-      <p>Aucun justificatif disponible pour le moment.</p>
+
+      <div
+        class="fichiers"
+        *ngIf="justificatifs.length > 0">
+
+        <ng-container *ngFor="let justificatif of justificatifs">
+
+          <!-- APERÇU DES IMAGES -->
+          <a
+            *ngIf="estUneImage(justificatif.cheminFichier)"
+            class="justificatif"
+            [href]="obtenirUrlJustificatif(justificatif.cheminFichier)"
+            target="_blank"
+            rel="noopener noreferrer">
+
+            <img
+              [src]="obtenirUrlJustificatif(justificatif.cheminFichier)"
+              alt="Justificatif de la demande">
+
+          </a>
+
+          <!-- AUTRES DOCUMENTS -->
+          <a
+            *ngIf="!estUneImage(justificatif.cheminFichier)"
+            class="fichier document"
+            [href]="obtenirUrlJustificatif(justificatif.cheminFichier)"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Ouvrir le document">
+
+            <mat-icon>description</mat-icon>
+
+          </a>
+
+        </ng-container>
+
+      </div>
+
+      <p
+        class="message-vide"
+        *ngIf="justificatifs.length === 0">
+
+        Aucun justificatif disponible pour cette demande.
+      </p>
+
     </div>
+
   </div>
 
-  <ng-template #chargement>
-    <div class="carte-detail">
-      <p>Chargement de la demande...</p>
+</div>
+
+<!-- POP-UP DE DÉCISION -->
+<div class="fond-popup" *ngIf="popupDecision">
+
+  <div
+    class="carte-decision"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titre-decision">
+
+    <h3 id="titre-decision">
+      Décision concernant la demande
+    </h3>
+
+    <p class="description-decision">
+      Après examen de la demande et des rapports,
+      choisissez la décision à prendre.
+    </p>
+
+    <!-- CHOIX SUR LA MÊME LIGNE -->
+    <div class="choix-decision">
+
+      <label class="option valide">
+
+        <input
+          type="radio"
+          name="decision"
+          value="VALIDEE"
+          [(ngModel)]="decisionChoisie">
+
+        <span class="texte-option">
+          <strong>Valider la demande</strong>
+          <small>
+            Le besoin est confirmé et peut être pris en charge.
+          </small>
+        </span>
+
+      </label>
+
+      <label class="option rejete">
+
+        <input
+          type="radio"
+          name="decision"
+          value="REJETEE"
+          [(ngModel)]="decisionChoisie">
+
+        <span class="texte-option">
+          <strong>Rejeter la demande</strong>
+          <small>
+            La demande ne peut pas être prise en charge.
+          </small>
+        </span>
+
+      </label>
+
     </div>
-  </ng-template>
+
+    <!-- MOTIF OU COMMENTAIRE -->
+    <div class="champ-commentaire">
+
+      <label for="motif">
+        Motif ou commentaire de la décision
+      </label>
+
+      <textarea
+        id="motif"
+        name="motif"
+        rows="4"
+        [(ngModel)]="motifDecision"
+        placeholder="Saisissez une justification ou un commentaire...">
+      </textarea>
+
+      <p
+        class="message-erreur"
+        *ngIf="erreurDecision !== ''">
+
+        {{ erreurDecision }}
+      </p>
+
+    </div>
+
+    <!-- BOUTONS -->
+    <div class="boutons">
+
+      <button
+        type="button"
+        class="btn-annuler"
+        (click)="fermerDecision()">
+
+        Annuler
+      </button>
+
+      <button
+        type="button"
+        class="btn-confirmer"
+        (click)="confirmerDecision()">
+
+        Confirmer
+      </button>
+
+    </div>
+
+  </div>
+
 </div>

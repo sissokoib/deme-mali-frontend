@@ -1,0 +1,829 @@
+
+/* ================================
+   PAGE PRINCIPALE
+================================ */
+.page-affectation {
+  min-height: 100vh;
+  padding: 30px;
+  background-color: #F7F3EA;
+  color: #1F1F1F;
+  font-family: Arial, sans-serif;
+}
+
+/* ================================
+   ENTETE
+================================ */
+.entete-page {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.surtitre {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: #0F7A4B;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+}
+
+.entete-page h1 {
+  margin: 0 0 10px;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.entete-page p {
+  margin: 0;
+  color: #666;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.icone-entete {
+  width: 60px;
+  height: 60px;
+  color: #0F7A4B;
+  font-size: 55px;
+}
+
+/* ================================
+   CARTES DE RESUME
+================================ */
+.cartes-resume {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.carte-resume {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 110px;
+  padding: 22px;
+  background-color: #FFFFFF;
+  border: 1px solid #E9E4D9;
+  border-radius: 14px;
+  box-shadow: 0 3px 10px rgba(31, 31, 31, 0.04);
+}
+
+.resume-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+}
+
+.resume-icone mat-icon {
+  font-size: 27px;
+  width: 27px;
+  height: 27px;
+}
+
+.resume-icone.verte {
+  color: #0F7A4B;
+  background-color: #E5F3EA;
+}
+
+.resume-icone.jaune {
+  color: #9A6B00;
+  background-color: #FFF2C9;
+}
+
+.resume-icone.beige {
+  color: #6D6251;
+  background-color: #F0E9DB;
+}
+
+.carte-resume p {
+  margin: 0 0 8px;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.carte-resume h2 {
+  margin: 0;
+  color: #1F1F1F;
+  font-size: 27px;
+  font-weight: 700;
+}
+
+/* ================================
+   MESSAGES
+================================ */
+.message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 15px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.message mat-icon {
+  flex-shrink: 0;
+}
+
+.message.chargement {
+  color: #0F7A4B;
+  background-color: #E5F3EA;
+}
+
+.message.erreur {
+  color: #A52A2A;
+  background-color: #FCE8E6;
+  border: 1px solid #F3C6C3;
+}
+
+/* ================================
+   FORMULAIRE
+================================ */
+.carte-formulaire {
+  max-width: 100%;
+  padding: 30px;
+  background-color: #FFFFFF;
+  border: 1px solid #E9E4D9;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(31, 31, 31, 0.05);
+}
+
+.titre-formulaire {
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #EEEAE2;
+}
+
+.titre-formulaire h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.titre-formulaire p {
+  margin: 0;
+  color: #777;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ================================
+   CHAMPS
+================================ */
+.groupe-champ {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.groupe-champ > label {
+  color: #292929;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.groupe-champ input,
+.groupe-champ select {
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 14px;
+  color: #1F1F1F;
+  background-color: #FFFFFF;
+  border: 1px solid #D9D5CC;
+  border-radius: 8px;
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.groupe-champ input::placeholder {
+  color: #A09B91;
+}
+
+.groupe-champ input:focus,
+.groupe-champ select:focus {
+  border-color: #0F7A4B;
+  box-shadow: 0 0 0 3px rgba(15, 122, 75, 0.1);
+}
+
+.groupe-champ input:disabled,
+.groupe-champ select:disabled {
+  background-color: #F2F0EB;
+  cursor: not-allowed;
+}
+
+.aide-champ {
+  color: #6B6B6B;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ================================
+   CHOIX DU MODE ET DU TYPE
+================================ */
+.choix-mode {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.choix-mode button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 45px;
+  padding: 11px 18px;
+  color: #555;
+  background-color: #FFFFFF;
+  border: 1px solid #D9D5CC;
+  border-radius: 9px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.choix-mode button mat-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+}
+
+.choix-mode button:hover {
+  border-color: #0F7A4B;
+  color: #0F7A4B;
+}
+
+.choix-mode button.actif {
+  color: #0F7A4B;
+  background-color: #E5F3EA;
+  border-color: #0F7A4B;
+}
+
+/* ================================
+   LISTES DE SELECTION
+================================ */
+.liste-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 300px;
+  margin-top: 5px;
+  overflow-y: auto;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  width: 100%;
+  padding: 15px;
+  text-align: left;
+  color: #1F1F1F;
+  background-color: #FFFFFF;
+  border: 1px solid #E4E0D7;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.option:hover {
+  background-color: #FAFCFA;
+  border-color: #0F7A4B;
+}
+
+.option.selectionnee {
+  background-color: #EAF5EE;
+  border: 1px solid #0F7A4B;
+}
+
+.option > span {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.option strong {
+  color: #1F1F1F;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.option small {
+  color: #6D6D6D;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.option > mat-icon {
+  flex-shrink: 0;
+  color: #0F7A4B;
+}
+
+.aucun-resultat {
+  margin: 0;
+  padding: 18px;
+  color: #777;
+  background-color: #F8F6F1;
+  border: 1px dashed #D9D5CC;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 13px;
+}
+
+/* ================================
+   ACTIONS
+================================ */
+.actions-formulaire {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+  padding-top: 22px;
+  border-top: 1px solid #EEEAE2;
+}
+
+.bouton-secondaire,
+.bouton-principal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.bouton-secondaire {
+  color: #555;
+  background-color: #FFFFFF;
+  border: 1px solid #D9D5CC;
+}
+
+.bouton-secondaire:hover:not(:disabled) {
+  background-color: #F5F2EB;
+}
+
+.bouton-principal {
+  color: #FFFFFF;
+  background-color: #0F7A4B;
+  border: 1px solid #0F7A4B;
+}
+
+.bouton-principal:hover:not(:disabled) {
+  background-color: #0B633C;
+  border-color: #0B633C;
+}
+
+.bouton-principal mat-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+}
+
+.bouton-secondaire:disabled,
+.bouton-principal:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ================================
+   RESPONSIVE : TABLETTE
+================================ */
+@media (max-width: 900px) {
+  .page-affectation {
+    padding: 22px;
+  }
+
+  .cartes-resume {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .carte-formulaire {
+    padding: 24px;
+  }
+}
+
+/* ================================
+   RESPONSIVE : TELEPHONE
+================================ */
+@media (max-width: 600px) {
+  .page-affectation {
+    padding: 15px;
+  }
+
+  .entete-page {
+    align-items: flex-start;
+    margin-bottom: 22px;
+  }
+
+  .entete-page h1 {
+    font-size: 24px;
+  }
+
+  .entete-page p {
+    font-size: 13px;
+  }
+
+  .icone-entete {
+    width: 38px;
+    height: 38px;
+    font-size: 36px;
+  }
+
+  .cartes-resume {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .carte-resume {
+    min-height: 90px;
+    padding: 16px;
+  }
+
+  .carte-resume h2 {
+    font-size: 23px;
+  }
+
+  .carte-formulaire {
+    padding: 18px 15px;
+    border-radius: 12px;
+  }
+
+  .titre-formulaire h2 {
+    font-size: 19px;
+  }
+
+  .choix-mode {
+    flex-direction: column;
+  }
+
+  .choix-mode button {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .option {
+    padding: 12px;
+  }
+
+  .actions-formulaire {
+    flex-direction: column-reverse;
+  }
+
+  .bouton-secondaire,
+  .bouton-principal {
+    width: 100%;
+  }
+}
+
+.page-affectation {
+  padding: 30px;
+  background: #f7f3ea;
+  min-height: 100vh;
+  color: #1f1f1f;
+}
+
+.entete-page {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.entete-page h2 {
+  margin: 0 0 8px;
+  color: #0f7a4b;
+}
+
+.entete-page p {
+  margin: 0;
+  color: #666;
+}
+
+.btn-retour,
+.btn-annuler,
+.btn-enregistrer {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-retour,
+.btn-annuler {
+  background: #fff;
+  color: #1f1f1f;
+  border: 1px solid #ddd;
+}
+
+.carte-formulaire {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 28px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px #0000000a;
+}
+
+.indication-obligatoire {
+  text-align: right;
+  margin-bottom: 25px;
+  font-size: 13px;
+  color: #555;
+}
+
+.obligatoire {
+  color: #dc2626;
+}
+
+.groupe-formulaire {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+}
+
+.groupe-formulaire > label {
+  margin-bottom: 9px;
+  font-weight: 500;
+}
+
+.groupe-formulaire input,
+.groupe-formulaire select {
+  width: 100%;
+  min-height: 44px;
+  padding: 11px 12px;
+  box-sizing: border-box;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  background: #fff;
+  color: #1f1f1f;
+  outline: none;
+}
+
+.groupe-formulaire input:focus,
+.groupe-formulaire select:focus {
+  border-color: #0f7a4b;
+}
+
+.groupe-formulaire input.champ-invalide,
+.groupe-formulaire select.champ-invalide {
+  border-color: #dc2626;
+  background: #fff7f7;
+}
+
+.erreur-champ {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  margin-top: 7px;
+  color: #c62828;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.erreur-champ mat-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+}
+
+.texte-aide {
+  margin-top: 7px;
+  color: #666;
+  font-size: 12px;
+}
+
+.champ-avec-icone {
+  position: relative;
+}
+
+.champ-avec-icone input {
+  padding-right: 42px;
+}
+
+.champ-avec-icone mat-icon {
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  color: #777;
+}
+
+.liste-deroulante {
+  position: absolute;
+  top: calc(100% - 2px);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  max-height: 240px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 5px 12px #00000015;
+}
+
+.option-liste {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.option-liste:hover {
+  background: #f7f3ea;
+}
+
+.option-liste span {
+  font-size: 12px;
+  color: #666;
+}
+
+.liste-vide {
+  padding: 12px;
+  color: #777;
+  font-size: 13px;
+}
+
+.choix-type,
+.choix-destination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.choix-type button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.choix-type button.actif {
+  border-color: #0f7a4b;
+  background: #eef7f1;
+  color: #0f7a4b;
+}
+
+.compteur {
+  font-weight: bold;
+}
+
+.choix-destination label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.resume-don {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding: 15px;
+  background: #f7f3ea;
+  border-radius: 6px;
+}
+
+.resume-icone {
+  color: #0f7a4b;
+}
+
+.resume-informations {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.resume-informations span {
+  font-size: 13px;
+}
+
+.erreur-generale {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  color: #c62828;
+  font-size: 13px;
+}
+
+.actions-formulaire {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.btn-enregistrer {
+  border: none;
+  background: #0f7a4b;
+  color: #fff;
+}
+
+.btn-enregistrer:hover {
+  background: #0b603b;
+}
+
+.btn-enregistrer:disabled,
+.btn-annuler:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.message-chargement {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 30px;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ddd;
+  border-top-color: #0f7a4b;
+  border-radius: 50%;
+  animation: tourner 0.8s linear infinite;
+}
+
+@keyframes tourner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 600px) {
+  .page-affectation {
+    padding: 15px;
+  }
+
+  .entete-page {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .carte-formulaire {
+    padding: 18px;
+  }
+
+  .actions-formulaire {
+    flex-direction: column-reverse;
+  }
+
+  .actions-formulaire button {
+    width: 100%;
+  }
+}
+/* Erreurs affichées sous les champs concernés */
+.erreur-champ {
+  display: block;
+  margin-top: 6px;
+  color: #c62828;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.champ-invalide {
+  border: 1px solid #c62828 !important;
+  background-color: #fff7f7;
+}

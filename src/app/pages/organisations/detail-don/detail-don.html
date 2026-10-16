@@ -1,0 +1,161 @@
+<div class="page-detail">
+
+  <header class="entete">
+    <div class="titre-page">
+      <span class="surtitre">GESTION DES DONS</span>
+      <h1>Détail du don</h1>
+      <p>Consultez les informations de la contribution reçue par votre organisation.</p>
+    </div>
+
+    <div class="actions-entete">
+      <button
+        mat-stroked-button
+        type="button"
+        class="bouton-retour"
+        (click)="retourner()">
+        <mat-icon>arrow_back</mat-icon>
+        Retour
+      </button>
+
+      <button
+        *ngIf="peutConfirmerReception"
+        mat-flat-button
+        type="button"
+        class="bouton-reception"
+        (click)="ouvrirReception()">
+        <mat-icon>inventory_2</mat-icon>
+        Confirmer la réception
+      </button>
+    </div>
+  </header>
+
+  <div *ngIf="chargement" class="message chargement">
+    Chargement du don...
+  </div>
+
+  <div *ngIf="erreur" class="message erreur">
+    {{ erreur }}
+  </div>
+
+  <section class="carte-detail" *ngIf="don && !chargement">
+
+    <div class="identite-don">
+      <div class="icone-don">
+        <mat-icon>{{ estMateriel ? 'inventory_2' : 'payments' }}</mat-icon>
+      </div>
+
+      <div class="identite-contenu">
+        <span class="type-don">
+          {{ estMateriel ? 'DON MATÉRIEL' : 'DON FINANCIER' }}
+        </span>
+
+        <h2>
+          {{ estMateriel ? (don.designation || 'Don matériel') : 'Don financier' }}
+          <span class="reference">#{{ don.id }}</span>
+        </h2>
+
+        <span
+          class="badge-statut"
+          [ngClass]="{
+            'attente': don.statut === 'EN_ATTENTE',
+            'confirme': don.statut === 'CONFIRME' || don.statut === 'RECU',
+            'refuse': don.statut === 'REFUSE',
+            'echec': don.statut === 'ECHOUE'
+          }">
+          {{ don.statut || 'Statut non renseigné' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="separateur"></div>
+
+    <h3>Informations générales</h3>
+
+    <div class="grille-informations">
+
+      <div class="information">
+        <span>Référence du don</span>
+        <strong>#{{ don.id }}</strong>
+      </div>
+
+      <div class="information" *ngIf="don.demandeAideId">
+        <span>Demande associée</span>
+        <strong>#{{ don.demandeAideId }}</strong>
+      </div>
+
+      <div class="information" *ngIf="!don.demandeAideId">
+        <span>Affectation</span>
+        <strong>Don général</strong>
+      </div>
+
+      <div class="information">
+        <span>Date du don</span>
+        <strong>
+          {{ don.date ? (don.date | date:'dd/MM/yyyy') : 'Non renseignée' }}
+        </strong>
+      </div>
+
+      <div class="information" *ngIf="estMateriel">
+        <span>Désignation</span>
+        <strong>{{ don.designation || 'Don matériel' }}</strong>
+      </div>
+
+      <div class="information" *ngIf="estMateriel">
+        <span>Quantité annoncée</span>
+        <strong>{{ don.quantite ?? '—' }} {{ don.unite || '' }}</strong>
+      </div>
+
+      <div class="information" *ngIf="estMateriel">
+        <span>Quantité réellement reçue</span>
+        <strong class="valeur-verte">
+          {{ don.quantiteRecue ?? 0 }} {{ don.unite || '' }}
+        </strong>
+      </div>
+
+      <div class="information" *ngIf="!estMateriel">
+        <span>Montant du don</span>
+        <strong class="valeur-verte">
+          {{ don.montant | number:'1.0-0' }} FCFA
+        </strong>
+      </div>
+
+      <div class="information" *ngIf="!estMateriel">
+        <span>Mode de paiement</span>
+        <strong>{{ don.modePaiement || 'Non renseigné' }}</strong>
+      </div>
+
+    </div>
+
+    <div class="separateur"></div>
+
+    <section *ngIf="estMateriel" class="section-reception">
+      <h3>État de la réception</h3>
+
+      <p *ngIf="don.statut === 'EN_ATTENTE'">
+        La réception de ce don matériel est en attente.
+        Utilisez le bouton situé en haut de la page pour confirmer
+        la quantité reçue ou refuser le don avec un motif.
+      </p>
+
+      <p *ngIf="don.statut === 'RECU'" class="texte-positif">
+        <mat-icon>check_circle</mat-icon>
+        La réception a été confirmée.
+      </p>
+
+      <p *ngIf="don.statut === 'REFUSE'" class="texte-negatif">
+        <mat-icon>cancel</mat-icon>
+        Ce don a été refusé.
+      </p>
+    </section>
+
+    <section *ngIf="!estMateriel" class="section-financiere">
+      <h3>Informations financières</h3>
+      <p>
+        Ce don est financier. La confirmation de réception de matériel
+        n'est pas applicable.
+      </p>
+    </section>
+
+  </section>
+
+</div>

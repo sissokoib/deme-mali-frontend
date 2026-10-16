@@ -2,10 +2,11 @@ export interface Beneficiaire {
   id: number;
   nom: string;
   prenom: string;
-  typeBeneficiaire: string;
+  telephone: string;
+  typeBeneficiaire: 'PARTICULIER' | 'STRUCTURE';
   ville: string;
   adresse: string;
-  statut: string;
+  statut: 'ACCEPTE' | 'EN_ATTENTE' | 'REFUSE';
   dateValidation?: string;
-  organisationPartenaireId: number;
+  motifRefus?: string;
 }

@@ -1,0 +1,218 @@
+
+<div class="page">
+
+  <a routerLink="/organisation/beneficiaires" class="retour">
+    <mat-icon>arrow_back</mat-icon>
+    Retour aux bénéficiaires
+  </a>
+
+  <div class="titre-page">
+    <h2>Détail du bénéficiaire</h2>
+    <p class="sous-titre">
+      Consultez les informations du bénéficiaire et gérez son statut.
+    </p>
+  </div>
+
+  <p *ngIf="chargement" class="message-chargement">
+    Chargement des informations...
+  </p>
+
+
+
+  <div class="carte-detail" *ngIf="beneficiaire as b">
+
+    <div class="entete">
+
+      <div class="identite">
+        <div>
+          <h3>{{ b.prenom }} {{ b.nom }}</h3>
+          <p class="texte-secondaire">
+            Informations générales du bénéficiaire
+          </p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button
+          class="btn-traiter"
+          type="button"
+          (click)="ouvrirDecision()">
+
+          <mat-icon>assignment</mat-icon>
+          Traiter le bénéficiaire
+
+        </button>
+      </div>
+
+    </div>
+
+    <div class="section">
+
+      <div class="infos">
+
+        <div class="info">
+          <span class="label">Nom</span>
+          <strong class="valeur">
+            {{ b.nom || 'Non renseigné' }}
+          </strong>
+        </div>
+
+        <div class="info">
+          <span class="label">Prénom</span>
+          <strong class="valeur">
+            {{ b.prenom || 'Non renseigné' }}
+          </strong>
+        </div>
+
+        <div class="info">
+          <span class="label">Type de bénéficiaire</span>
+          <strong class="valeur">
+            {{ b.typeBeneficiaire || 'Non renseigné' }}
+          </strong>
+        </div>
+
+        <div class="info">
+          <span class="label">Ville</span>
+          <strong class="valeur">
+            {{ b.ville || 'Non renseignée' }}
+          </strong>
+        </div>
+
+        <div class="info">
+          <span class="label">Adresse</span>
+          <strong class="valeur">
+            {{ b.adresse || 'Non renseignée' }}
+          </strong>
+        </div>
+
+        <div class="info">
+          <span class="label">Date de validation</span>
+          <strong class="valeur">
+            {{
+              b.dateValidation
+                ? (b.dateValidation | date:'dd/MM/yyyy')
+                : 'Pas encore validé'
+            }}
+          </strong>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- POPUP DE DÉCISION -->
+
+<div
+  class="fond-popup"
+  *ngIf="popupDecision"
+  (click)="fermerDecision()">
+
+  <div
+    class="carte-decision"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titre-decision"
+    (click)="$event.stopPropagation()">
+
+   
+    <h3 id="titre-decision">
+      Traiter le bénéficiaire
+    </h3>
+
+    <p class="description-decision">
+      Choisissez la décision à appliquer au dossier de ce bénéficiaire.
+    </p>
+
+    <div class="choix-decision">
+
+      <label
+        class="option valide"
+        [class.selectionnee]="decisionChoisie === 'ACCEPTE'">
+
+        <input
+          type="radio"
+          name="decisionBeneficiaire"
+          value="ACCEPTE"
+          [(ngModel)]="decisionChoisie">
+
+        <span class="texte-option">
+          <strong>Accepter</strong>
+          <small>
+            Accepter le bénéficiaire dans votre organisation.
+          </small>
+        </span>
+
+      </label>
+
+      <label
+        class="option rejete"
+        [class.selectionnee]="decisionChoisie === 'REFUSE'">
+
+        <input
+          type="radio"
+          name="decisionBeneficiaire"
+          value="REFUSE"
+          [(ngModel)]="decisionChoisie">
+
+        <span class="texte-option">
+          <strong>Refuser</strong>
+          <small>
+            Refuser la demande de prise en charge.
+          </small>
+        </span>
+
+      </label>
+
+    </div>
+
+    <div
+      class="champ-commentaire"
+      *ngIf="decisionChoisie === 'REFUSE'">
+
+      <label for="motifDecision">
+        Motif du refus <span>*</span>
+      </label>
+
+      <textarea
+        id="motifDecision"
+        name="motifDecision"
+        rows="4"
+        [(ngModel)]="motifDecision"
+        placeholder="Expliquez la raison du refus...">
+      </textarea>
+
+      <small class="aide-champ">
+        Le motif est obligatoire pour refuser le bénéficiaire.
+      </small>
+
+    </div>
+
+    <p *ngIf="erreurDecision" class="message-erreur erreur-popup">
+      {{ erreurDecision }}
+    </p>
+
+    <div class="boutons">
+
+      <button
+        type="button"
+        class="btn-annuler"
+        (click)="fermerDecision()">
+        Annuler
+      </button>
+
+      <button
+        type="button"
+        class="btn-confirmer"
+        (click)="confirmerDecision()">
+        Confirmer la décision
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,356 @@
+
+<div class="contenu">
+
+  <!-- EN-TÊTE -->
+  <header class="entete">
+    <div>
+      <h2>Les dons reçus</h2>
+      <p>Consulte les contributions financières et matérielles de ton organisation.</p>
+    </div>
+  </header>
+
+  <!-- STATISTIQUES -->
+  <section class="statistiques">
+
+    <article class="carte-statistique">
+      <div class="stat-icone vert">
+        <mat-icon>account_balance_wallet</mat-icon>
+      </div>
+      <div>
+        <p class="stat-label">Montant des dons financiers</p>
+        <h3>{{ montantTotalDonsFinanciers | number:'1.0-0' }} FCFA</h3>
+      </div>
+    </article>
+
+    <article class="carte-statistique">
+      <div class="stat-icone jaune">
+        <mat-icon>inventory_2</mat-icon>
+      </div>
+      <div>
+        <p class="stat-label">Quantité matérielle reçue</p>
+        <h3>{{ quantiteMaterielleAttribuee | number:'1.0-0' }}</h3>
+      </div>
+    </article>
+
+    <article class="carte-statistique">
+      <div class="stat-icone vert">
+        <mat-icon>volunteer_activism</mat-icon>
+      </div>
+      <div>
+        <p class="stat-label">Nombre total de dons</p>
+        <h3>{{ totalDons }}</h3>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- LISTE DES DONS -->
+  <section class="bloc-tableau">
+
+    <div class="tableau-entete">
+      <div>
+        <h3>Liste des contributions</h3>
+        <p>Recherche et suivi des dons reçus.</p>
+      </div>
+    </div>
+
+    <!-- RECHERCHE ET FILTRES -->
+    <div class="filtres">
+
+      <div class="recherche">
+        <mat-icon>search</mat-icon>
+
+        <input
+          type="text"
+          [(ngModel)]="recherche"
+          (ngModelChange)="reinitialiserPagination()"
+          placeholder="Rechercher un don ou une demande..."
+          aria-label="Rechercher un don">
+      </div>
+
+      <select
+        [(ngModel)]="filtreStatut"
+        (ngModelChange)="reinitialiserPagination()"
+        aria-label="Filtrer par statut">
+
+        <option value="TOUS">Tous les statuts</option>
+
+        <ng-container *ngIf="ongletActif === 'MATERIEL'">
+          <option value="EN_ATTENTE">En attente</option>
+          <option value="PARTIELLEMENT_RECU">Partiellement reçu</option>
+          <option value="RECU">Reçu</option>
+          <option value="REFUSE">Refusé</option>
+          <option value="PARTIELLEMENT_REFUSE">Partiellement refusé</option>
+        </ng-container>
+
+        <ng-container *ngIf="ongletActif === 'FINANCIER'">
+          <option value="CONFIRME">Confirmé</option>
+          <option value="EN_ATTENTE">En attente</option>
+          <option value="ECHOUE">Échoué</option>
+        </ng-container>
+
+      </select>
+
+    
+
+    </div>
+
+    <!-- ONGLETS -->
+    <div class="onglets-dons">
+
+      <button
+        type="button"
+        class="onglet"
+        [class.actif]="ongletActif === 'FINANCIER'"
+        (click)="changerOnglet('FINANCIER')">
+
+       
+        Dons financiers
+        <span class="compteur">{{ nombreDonsFinanciers }}</span>
+      </button>
+
+      <button
+        type="button"
+        class="onglet"
+        [class.actif]="ongletActif === 'MATERIEL'"
+        (click)="changerOnglet('MATERIEL')">
+
+       
+        Dons matériels
+        <span class="compteur">{{ nombreDonsMateriels }}</span>
+      </button>
+
+    </div>
+
+    <!-- CHARGEMENT -->
+    <div class="etat-vide" *ngIf="chargement">
+      <p>Chargement des dons...</p>
+    </div>
+
+    <!-- ERREUR -->
+    <div
+      class="etat-vide erreur"
+      *ngIf="!chargement && erreurChargement">
+
+      <mat-icon>cloud_off</mat-icon>
+      <strong>Impossible de charger les dons.</strong>
+
+   
+    </div>
+
+    <!-- TABLEAU DES DONS FINANCIERS -->
+    <ng-container
+      *ngIf="!chargement && !erreurChargement && ongletActif === 'FINANCIER'">
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Don</th>
+              <th>Demande d'aide</th>
+              <th>Montant</th>
+              <th>Paiement</th>
+              <th>Date</th>
+            
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <tr *ngFor="let don of donsPagines">
+
+              <td>
+                <strong>Don {{ don.id }}</strong>
+              </td>
+
+              <td>
+                <span class="titre-demande">
+                  {{ don.titreDemandeAide || (don.demandeAideId ? 'Demande ' + don.demandeAideId : 'Don général') }}
+                </span>
+              </td>
+
+              <td>
+                <strong class="montant">
+                  {{ don.montant | number:'1.0-0' }} FCFA
+                </strong>
+              </td>
+
+              <td>{{ don.modePaiement || '—' }}</td>
+
+              <td>
+                {{ don.date ? (don.date | date:'dd/MM/yyyy') : '—' }}
+              </td>
+
+             
+              <td>
+                <button
+                  type="button"
+                  class="btn-voir"
+                  (click)="ouvrirDetailDon(don, 'FINANCIER')">
+
+                  <mat-icon>visibility</mat-icon>
+                
+                </button>
+              </td>
+
+            </tr>
+
+            <tr *ngIf="donsFiltres.length === 0">
+              <td colspan="7" class="cellule-vide">
+                Aucun don financier à afficher.
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+    </ng-container>
+
+    <!-- TABLEAU DES DONS MATÉRIELS -->
+    <ng-container
+      *ngIf="!chargement && !erreurChargement && ongletActif === 'MATERIEL'">
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Don</th>
+              <th>Demande d'aide</th>
+              <th>Matériel</th>
+              <th>Quantité annoncée</th>
+              <th>Quantité reçue</th>
+              <th>Date</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <tr *ngFor="let don of donsPagines">
+
+              <td>
+                <strong>Don {{ don.id }}</strong>
+              </td>
+
+              <td>
+                <span class="titre-demande">
+                  {{ don.titreDemandeAide || (don.demandeAideId ? 'Demande ' + don.demandeAideId : 'Don général') }}
+                </span>
+              </td>
+
+              <td>{{ don.designation || 'Matériel' }}</td>
+
+              <td>
+                {{ don.quantite ?? '—' }} {{ don.unite || '' }}
+              </td>
+
+              <td>
+                {{ don.quantiteRecue ?? 0 }} {{ don.unite || '' }}
+              </td>
+
+              <td>
+                {{ don.date ? (don.date | date:'dd/MM/yyyy') : '—' }}
+              </td>
+
+              <td>
+                <span
+                  class="badge-statut"
+                  [ngClass]="{
+                    'attente': don.statut === 'EN_ATTENTE',
+                    'partiel': don.statut === 'PARTIELLEMENT_RECU',
+                    'confirme': don.statut === 'RECU',
+                    'refuse': don.statut === 'REFUSE',
+                    'refus-partiel': don.statut === 'PARTIELLEMENT_REFUSE'
+                  }">
+
+                  {{ afficherStatut(don.statut) }}
+                </span>
+              </td>
+
+              <td>
+                <button
+                  type="button"
+                  class="btn-voir"
+                  (click)="ouvrirDetailDon(don, 'MATERIEL')">
+
+                  <mat-icon>visibility</mat-icon>
+                  Détails
+                </button>
+              </td>
+
+            </tr>
+
+            <tr *ngIf="donsFiltres.length === 0">
+              <td colspan="8" class="cellule-vide">
+                Aucun don matériel à afficher.
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+    </ng-container>
+
+    <!-- PAGINATION -->
+    <footer
+      class="bas-tableau"
+      *ngIf="!chargement && !erreurChargement && donsFiltres.length > 0">
+
+      <p class="texte-pagination">
+        Page {{ pageActuelle }} sur {{ totalPages }}
+        <span>
+          · {{ donsFiltres.length }}
+          {{ donsFiltres.length > 1 ? 'dons' : 'don' }}
+        </span>
+      </p>
+
+      <nav
+        class="pagination"
+        *ngIf="totalPages > 1"
+        aria-label="Pagination des dons">
+
+        <!-- PAGE PRÉCÉDENTE -->
+        <button
+          type="button"
+          class="btn-page"
+          (click)="changerPage(pageActuelle - 1)"
+          [disabled]="pageActuelle === 1">
+
+          <mat-icon>chevron_left</mat-icon>
+          Précédent
+        </button>
+
+        <!-- NUMÉROS DES PAGES -->
+        <button
+          type="button"
+          class="btn-page"
+          *ngFor="let page of pages"
+          (click)="changerPage(page)"
+          [class.active]="pageActuelle === page"
+          [attr.aria-current]="pageActuelle === page ? 'page' : null">
+
+          {{ page }}
+        </button>
+
+        <!-- PAGE SUIVANTE -->
+        <button
+          type="button"
+          class="btn-page"
+          (click)="changerPage(pageActuelle + 1)"
+          [disabled]="pageActuelle === totalPages">
+
+          Suivant
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+
+      </nav>
+
+    </footer>
+
+  </section>
+
+</div>

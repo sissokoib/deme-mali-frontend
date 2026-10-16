@@ -9,8 +9,7 @@ export class JustificatifService {
 
   private http = inject(HttpClient);
 
-  private url =
-    'http://localhost:8080/api/justificatifs';
+  private url ='http://localhost:8080/api/justificatifs';
 
   creerJustificatifs(
     fichiers: File[],

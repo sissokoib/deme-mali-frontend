@@ -1,0 +1,174 @@
+
+<div class="page">
+
+  <div class="entete">
+    <div>
+      <h1>Modifier mon organisation</h1>
+      <p>Modifiez les informations de votre organisation .</p>
+    </div>
+  </div>
+
+  <div *ngIf="chargement" class="message">
+    Chargement des informations...
+  </div>
+
+  <form
+    *ngIf="!chargement"
+    (ngSubmit)="enregistrer()"
+    #formulaire="ngForm"
+  >
+
+    <div class="section">
+      <h2>Informations personnelles</h2>
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="nom">Nom</label>
+          <input
+            id="nom"
+            type="text"
+            name="nom"
+            [(ngModel)]="organisation.nom"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="prenom">Prénom</label>
+          <input
+            id="prenom"
+            type="text"
+            name="prenom"
+            [(ngModel)]="organisation.prenom"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="telephone">Téléphone de connexion</label>
+          <input
+            id="telephone"
+            type="tel"
+            name="telephone"
+            [(ngModel)]="organisation.telephone"
+            (ngModelChange)="verifierTelephone()"
+            required
+          >
+
+          <small class="erreur" *ngIf="erreurTelephone">
+            {{ erreurTelephone }}
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            [(ngModel)]="organisation.email"
+            (ngModelChange)="verifierEmail()"
+            required
+            email
+          >
+
+          <small class="erreur" *ngIf="erreurEmail">
+            {{ erreurEmail }}
+          </small>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Informations de l’organisation</h2>
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="nomOrganisation">
+            Nom de l’organisation
+          </label>
+          <input
+            id="nomOrganisation"
+            type="text"
+            name="nomOrganisation"
+            [(ngModel)]="organisation.nomOrganisation"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="telephoneOrganisation">
+            Téléphone de l’organisation
+          </label>
+          <input
+            id="telephoneOrganisation"
+            type="tel"
+            name="telephoneOrganisation"
+            [(ngModel)]="organisation.telephoneOrganisation"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="ville">Ville</label>
+          <input
+            id="ville"
+            type="text"
+            name="ville"
+            [(ngModel)]="organisation.ville"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="adresse">Adresse</label>
+          <input
+            id="adresse"
+            type="text"
+            name="adresse"
+            [(ngModel)]="organisation.adresse"
+            required
+          >
+        </div>
+
+      </div>
+    </div>
+
+    <div *ngIf="erreur" class="message erreur-general">
+      {{ erreur }}
+    </div>
+
+    <div *ngIf="messageSucces" class="message succes">
+      {{ messageSucces }}
+    </div>
+
+    <div class="actions">
+
+      <button
+        type="button"
+        class="bouton-annuler"
+        (click)="annuler()"
+        [disabled]="enregistrement"
+      >
+        Annuler
+      </button>
+
+      <button
+        type="submit"
+        class="bouton-enregistrer"
+        [disabled]="enregistrement || formulaire.invalid"
+      >
+        {{
+          enregistrement
+            ? 'Enregistrement...'
+            : 'Enregistrer les modifications'
+        }}
+      </button>
+
+    </div>
+
+  </form>
+
+</div>
