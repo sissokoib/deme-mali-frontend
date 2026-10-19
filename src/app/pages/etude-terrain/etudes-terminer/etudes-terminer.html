@@ -1,0 +1,169 @@
+
+<div class="page-etude">
+  <header class="entete">
+    <div>
+      <span class="surtitre">SUIVI DES DEMANDES D'AIDE</span>
+      <h1>Terminer l'étude de terrain</h1>
+      <p>
+        Enregistrez les observations et les résultats de la visite.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="btn-secondaire"
+      (click)="annuler()">
+      <mat-icon>arrow_back</mat-icon>
+      Retour à la liste
+    </button>
+  </header>
+
+  <div class="message" *ngIf="chargement">
+    Chargement de l'étude...
+  </div>
+
+  <div class="message erreur" *ngIf="erreurChargement">
+    <mat-icon>error_outline</mat-icon>
+    {{ erreurChargement }}
+  </div>
+
+  <ng-container
+    *ngIf="!chargement && etude && !erreurChargement">
+
+    <section class="carte">
+      <h2>Informations de la visite planifiée</h2>
+
+      <div class="resume">
+        <div>
+          <span>Date prévue</span>
+          <strong>
+            {{ etude.datePlanification | date:'dd/MM/yyyy' }}
+          </strong>
+        </div>
+
+        <div>
+          <span>Heure prévue</span>
+          <strong>{{ etude.heure | date:'HH:mm' }}</strong>
+        </div>
+
+        <div>
+          <span>Lieu</span>
+          <strong>{{ etude.lieu }}</strong>
+        </div>
+
+        <div>
+          <span>Objectif</span>
+          <strong>{{ etude.objectif }}</strong>
+        </div>
+      </div>
+    </section>
+
+    <form
+      class="carte formulaire"
+      #formTerminaison="ngForm"
+      (ngSubmit)="terminer()"
+      novalidate>
+
+      <h2>Résultats de la visite</h2>
+
+      <p class="indication">
+        <span>*</span> Champs obligatoires
+      </p>
+
+      <div class="champ">
+        <label for="dateRealisation">
+          Date réelle de la visite <span>*</span>
+        </label>
+
+        <input
+          id="dateRealisation"
+          type="date"
+          name="dateRealisation"
+          [(ngModel)]="dateRealisation"
+          [max]="dateDuJour"
+          [class.invalide]="champInvalide('dateRealisation')"
+          required>
+
+        <small
+          class="aide-champ"
+          *ngIf="!champInvalide('dateRealisation')">
+          Date du système préremplie. Une date passée peut être choisie
+          si la visite a réellement eu lieu auparavant.
+        </small>
+
+        <small
+          class="erreur-champ"
+          *ngIf="champInvalide('dateRealisation')">
+          {{ messageErreur('dateRealisation') }}
+        </small>
+      </div>
+
+      <div class="champ">
+        <label for="observation">
+          Observations de terrain <span>*</span>
+        </label>
+
+        <textarea
+          id="observation"
+          name="observation"
+          [(ngModel)]="observation"
+          rows="5"
+          placeholder="Décrivez la situation constatée..."
+          [class.invalide]="champInvalide('observation')"
+          required></textarea>
+
+        <small
+          class="erreur-champ"
+          *ngIf="champInvalide('observation')">
+          {{ messageErreur('observation') }}
+        </small>
+      </div>
+
+      <div class="champ">
+        <label for="resultat">
+          Résultat de l'étude <span>*</span>
+        </label>
+
+        <textarea
+          id="resultat"
+          name="resultat"
+          [(ngModel)]="resultat"
+          rows="5"
+          placeholder="Indiquez les besoins identifiés et les conclusions..."
+          [class.invalide]="champInvalide('resultat')"
+          required></textarea>
+
+        <small
+          class="erreur-champ"
+          *ngIf="champInvalide('resultat')">
+          {{ messageErreur('resultat') }}
+        </small>
+      </div>
+
+      <footer class="actions">
+        <button
+          type="button"
+          class="btn-secondaire"
+          (click)="annuler()"
+          [disabled]="enregistrement">
+          Annuler
+        </button>
+
+        <button
+          type="submit"
+          class="btn-principal"
+          [disabled]="enregistrement">
+          <mat-icon>
+            {{ enregistrement ? 'hourglass_empty' : 'check_circle' }}
+          </mat-icon>
+
+          {{
+            enregistrement
+              ? 'Enregistrement...'
+              : "Terminer l'étude"
+          }}
+        </button>
+      </footer>
+    </form>
+  </ng-container>
+</div>

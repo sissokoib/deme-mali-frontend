@@ -1,471 +1,763 @@
-
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import {FormBuilder,  FormGroup,  Validators,  ReactiveFormsModule} from '@angular/forms';
-
+import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { finalize, forkJoin } from 'rxjs';
+
+import {
+  Demande,
+  DemandeAideRequest
+} from '../../../../models/demande.model';
+
+import { ArticleDemande } from '../../../../models/articles-demandes.model';
+import { CategorieDemande } from '../../../../models/categorie-demande.model';
 
 import { demandeAideService } from '../../../../services/demande-aide';
+import { CategorieDemandeService } from '../../../../services/categorie-demande';
+import { BeneficiaireService } from '../../../../services/beneficiaire';
 import { AuthService } from '../../../../services/auth.service';
-import { TypeJustificatif } from '../../../../models/type-justificatif.models';
+import { NotificationService } from '../../../../services/notification';
 import { TypeJustificatifService } from '../../../../services/type-justificatif-service';
 import { JustificatifService } from '../../../../services/justificatif-service';
-import { MatIconModule } from '@angular/material/icon';
-import { Demande } from '../../../../models/demande.model';
+
+interface FichierJustificatif {
+  id: number;
+  nomFichier?: string;
+  nom?: string;
+  url?: string;
+  cheminFichier?: string;
+  typeJustificatifId?: number;
+  typeJustificatifNom?: string;
+  typeJustificatif?: {
+    id?: number;
+    nom?: string;
+    libelle?: string;
+  };
+}
 
 @Component({
-  selector: 'app-edit-demandes',
+  selector: 'app-modifier-demandes-aide',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatIconModule
-  ],
+  imports: [CommonModule, FormsModule],
   templateUrl: './edit-demandes.html',
   styleUrl: './edit-demandes.css'
 })
-export class EditDemandes implements OnInit {
+export class ModifierDemandesAide implements OnInit {
 
-  formulaire!: FormGroup;
-  id!: number;
-  demande!: Demande;
+  demandeId = 0;
+  demande: Demande | null = null;
 
+  categories: CategorieDemande[] = [];
   beneficiaires: any[] = [];
-  categories: any[] = [];
-  typesJustificatifs: TypeJustificatif[] = [];
-  
+  typesJustificatif: any[] = [];
 
+  chargement = true;
+  enregistrement = false;
 
-  fichiers: File[] = [];
-  justificatifsExistants: any[] = [];
-  justificatifsASupprimer: number[] = [];
+  fichiersExistants: FichierJustificatif[] = [];
+  fichiersAjoutes: File[] = [];
+  fichiersASupprimer: number[] = [];
+
+  // Prévisualisation des images justificatives.
+  imageApercu = '';
+  nomImageApercu = '';
+
+  typeJustificatifId: number | null = null;
+  montantInitial: number | null = null;
+
+  nouvelArticle: ArticleDemande = {
+    designation: '',
+    quantiteDemandee: 1,
+    unite: 'unité',
+    prixUnitaireEstime: 0
+  };
 
   constructor(
-    private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private demandeAideService: demandeAideService,
+    private demandeService: demandeAideService,
+    private categorieService: CategorieDemandeService,
+    private beneficiaireService: BeneficiaireService,
     private authService: AuthService,
+    private notificationService: NotificationService,
     private typeJustificatifService: TypeJustificatifService,
-    private justificatifService: JustificatifService
+    private justificatifService: JustificatifService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.demandeId = Number(this.route.snapshot.paramMap.get('id'));
 
-    this.formulaire = this.fb.group({
-      beneficiaireId: [null, Validators.required],
-      categorieDemandeId: [null, Validators.required],
-      typeDemande: ['', Validators.required],
-      titre: ['', Validators.required],
-      nombrePersonne: [
-        null,
-        [Validators.required, Validators.min(1)]
-      ],
-      descriptionSituation: ['', Validators.required],
-      niveauUrgence: ['', Validators.required],
-      montantNecessaire: [
-        null,
-        [Validators.required, Validators.min(1)]
-      ],
-      motif: [''],
-      typeJustificatifId: [null]
-    });
-
-    this.id = Number(this.route.snapshot.paramMap.get('id'));
-
-    if (!this.id || Number.isNaN(this.id)) {
-      console.error('Identifiant de demande invalide.');
+    if (!Number.isInteger(this.demandeId) || this.demandeId <= 0) {
+      this.notificationService.erreur(
+        'Identifiant de demande invalide.'
+      );
+      this.chargement = false;
       return;
     }
 
-    this.chargerDemande();
-    this.chargerBeneficiaires();
     this.chargerCategories();
-    this.chargerTypesJustificatifs();
-    this.chargerJustificatifs();
+    this.chargerTypesJustificatif();
+    this.chargerDemande();
+  }
+
+  get estModifiable(): boolean {
+    return this.demande?.statut === 'EN_ATTENTE';
+  }
+
+  get montantMateriel(): number {
+    return (this.demande?.articles ?? []).reduce(
+      (total, article) =>
+        total +
+        Number(article.quantiteDemandee || 0) *
+        Number(article.prixUnitaireEstime || 0),
+      0
+    );
+  }
+
+  get montantEstime(): number {
+    if (!this.demande) {
+      return 0;
+    }
+
+    return this.demande.typeDemandeAide === 'FINANCIERE'
+      ? Number(this.demande.montantNecessaire || 0)
+      : this.montantMateriel;
+  }
+
+  get variationMontant(): number {
+    if (
+      !this.demande ||
+      this.montantInitial === null ||
+      this.demande.typeDemandeAide !== 'FINANCIERE'
+    ) {
+      return 0;
+    }
+
+    return (
+      Number(this.demande.montantNecessaire || 0) -
+      this.montantInitial
+    );
+  }
+
+  // --------------------------------------------------
+  // Chargement des données
+  // --------------------------------------------------
+
+  chargerCategories(): void {
+    this.categorieService.getCategories().subscribe({
+      next: data => {
+        this.categories = data ?? [];
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        console.error(err);
+        this.notificationService.erreur(
+          'Impossible de charger les catégories.'
+        );
+      }
+    });
+  }
+
+  chargerTypesJustificatif(): void {
+    this.typeJustificatifService.getTypes().subscribe({
+      next: data => {
+        this.typesJustificatif = data ?? [];
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        console.error(err);
+        this.notificationService.erreur(
+          'Impossible de charger les types de justificatifs.'
+        );
+      }
+    });
   }
 
   chargerDemande(): void {
+  this.chargement = true;
 
-    this.demandeAideService.getDemandeById(this.id).subscribe({
+  this.demandeService
+    .getDemandeById(this.demandeId)
+    .pipe(
+      finalize(() => {
+        this.chargement = false;
+        this.cdr.detectChanges();
+      })
+    )
+    .subscribe({
+      next: (data) => {
+        console.log('Demande récupérée :', data);
 
-      next: (demande) => {
+        this.demande = {
+          ...data,
+          articles: (data.articles ?? []).map(article => ({
+            ...article
+          }))
+        };
 
-        this.demande = demande;
+        this.montantInitial =
+          data.typeDemandeAide === 'FINANCIERE'
+            ? Number(data.montantNecessaire || 0)
+            : null;
 
-        this.formulaire.patchValue({
-          beneficiaireId: demande.beneficiaireId,
-          categorieDemandeId: demande.categorieDemandeId,
-          typeDemande: demande.typeDemande,
-          titre: demande.titre,
-          nombrePersonne: demande.nombrePersonne,
-          descriptionSituation: demande.descriptionSituation,
-          niveauUrgence: demande.niveauUrgence,
-          montantNecessaire: demande.montantNecessaire,
-          motif: demande.motif
-        });
+        const utilisateur = this.authService.getCurrentUser();
 
-      },
+        if (
+          !utilisateur?.id ||
+          Number(this.demande.organisationPartenaireId) !==
+            Number(utilisateur.id)
+        ) {
+          this.notificationService.erreur(
+            'Cette demande ne dépend pas de votre organisation.'
+          );
 
-      error: (erreur) => {
-        console.error(
-          'Erreur lors du chargement de la demande :',
-          erreur
-        );
-      }
+          this.demande = null;
+          return;
+        }
 
-    });
-  }
-
-  chargerBeneficiaires(): void {
-
-    const utilisateur = this.authService.getCurrentUser();
-
-    if (!utilisateur) {
-      return;
-    }
-
-    this.demandeAideService
-      .getBeneficiairesParOrganisation(utilisateur.id)
-      .subscribe({
-
-        next: (data) => {
-          this.beneficiaires = data;
-        },
-
-        error: (erreur) => {
-          console.error(
-            'Erreur lors du chargement des bénéficiaires :',
-            erreur
+        if (!this.estModifiable) {
+          this.notificationService.info(
+            'Seules les demandes en attente peuvent être modifiées.'
           );
         }
 
+        this.chargerBeneficiaires();
+        this.chargerJustificatifs();
+      },
+
+      error: (err) => {
+        console.error(
+          'Erreur lors du chargement de la demande :',
+          err
+        );
+
+        this.notificationService.erreur(
+          err?.error?.message ||
+          'Impossible de charger la demande. Vérifie le backend et l’identifiant.'
+        );
+      }
+    });
+}
+
+  chargerBeneficiaires(): void {
+    const organisationId = this.demande?.organisationPartenaireId;
+
+    if (!organisationId) {
+      return;
+    }
+
+    this.beneficiaireService
+      .trouverParOrganisation(organisationId)
+      .subscribe({
+        next: data => {
+          this.beneficiaires = data ?? [];
+          this.cdr.detectChanges();
+        },
+        error: err => {
+          console.error(err);
+          this.notificationService.erreur(
+            'Impossible de charger les bénéficiaires.'
+          );
+        }
       });
   }
 
-  chargerCategories(): void {
-
-    this.demandeAideService.getCategories().subscribe({
-
-      next: (data) => {
-        this.categories = data;
-      },
-
-      error: (erreur) => {
-        console.error(
-          'Erreur lors du chargement des catégories :',
-          erreur
-        );
-      }
-
-    });
-  }
-
-  chargerTypesJustificatifs(): void {
-
-    this.typeJustificatifService.getAll().subscribe({
-
-      next: (types) => {
-        this.typesJustificatifs = types;
-
-        console.log(
-          'Types de justificatifs reçus :',
-          types
-        );
-      },
-
-      error: (erreur) => {
-        console.error(
-          'Erreur lors du chargement des types de justificatifs :',
-          erreur
-        );
-      }
-
-    });
-  }
-
   chargerJustificatifs(): void {
+    this.justificatifService
+      .getByDemande(this.demandeId)
+      .subscribe({
+        next: data => {
+          this.fichiersExistants =
+            (data ?? []) as FichierJustificatif[];
 
-    this.justificatifService.getByDemande(this.id).subscribe({
+          const premierFichier = this.fichiersExistants[0];
 
-      next: (justificatifs) => {
+          if (premierFichier) {
+            const typeId =
+              premierFichier.typeJustificatifId ??
+              premierFichier.typeJustificatif?.id;
 
-        this.justificatifsExistants = justificatifs || [];
+            if (typeId != null) {
+              this.typeJustificatifId = Number(typeId);
+            }
+          }
 
-        if (this.justificatifsExistants.length > 0) {
-
-          const typeId =
-            this.justificatifsExistants[0].typeJustificatifId;
-
-          this.formulaire.patchValue({
-            typeJustificatifId: Number(typeId)
-          });
+          this.cdr.detectChanges();
+        },
+        error: err => {
+          console.error('Chargement des justificatifs :', err);
+          this.fichiersExistants = [];
+          this.cdr.detectChanges();
         }
-
-        console.log(
-          'Justificatifs reçus :',
-          justificatifs
-        );
-
-      },
-
-      error: (erreur) => {
-        console.error(
-          'Erreur lors du chargement des justificatifs :',
-          erreur
-        );
-      }
-
-    });
+      });
   }
 
-  obtenirNomType(typeId: number | string | null): string {
+  // --------------------------------------------------
+  // Justificatifs et prévisualisation des images
+  // --------------------------------------------------
 
-    if (typeId === null || typeId === undefined) {
-      return 'Type non renseigné';
-    }
-
-    const type = this.typesJustificatifs.find(
-      element => Number(element.id) === Number(typeId)
+  nomFichier(fichier: FichierJustificatif): string {
+    return (
+      fichier.nomFichier ??
+      fichier.nom ??
+      `Justificatif #${fichier.id}`
     );
-
-    return type ? type.nom : 'Chargement du type...';
   }
 
-  obtenirUrlJustificatif(chemin: string | null): string {
+  nomTypeFichier(fichier: FichierJustificatif): string {
+    return (
+      fichier.typeJustificatifNom ??
+      fichier.typeJustificatif?.nom ??
+      fichier.typeJustificatif?.libelle ??
+      'Type non renseigné'
+    );
+  }
+
+  urlFichier(fichier: FichierJustificatif): string {
+    const chemin =
+      fichier.url || fichier.cheminFichier || '';
 
     if (!chemin) {
       return '';
     }
 
-    const nomFichier = chemin.split(/[\\/]/).pop();
-
-    if (!nomFichier) {
-      return '';
+    if (
+      chemin.startsWith('http://') ||
+      chemin.startsWith('https://')
+    ) {
+      return chemin;
     }
 
-    return 'http://localhost:8080/uploads/justificatifs/'
-      + encodeURIComponent(nomFichier);
+    return `http://localhost:8080/${chemin.replace(/^\/+/, '')}`;
   }
 
-  estUneImage(nomFichier: string | null): boolean {
+  // Détecter les formats d'image pris en charge.
+  estUneImage(chemin: string | null): boolean {
+    return !!chemin &&
+      /\.(jpg|jpeg|png|gif|webp|bmp)$/i.test(chemin);
+  }
 
-    if (!nomFichier) {
+  // Afficher l'image dans la fenêtre de prévisualisation.
+  ouvrirApercuImage(fichier: FichierJustificatif): void {
+    const url = this.urlFichier(fichier);
+
+    if (!url || !this.estUneImage(url)) {
+      return;
+    }
+
+    this.imageApercu = url;
+    this.nomImageApercu = this.nomFichier(fichier);
+  }
+
+  // Fermer la prévisualisation.
+  fermerApercuImage(): void {
+    this.imageApercu = '';
+    this.nomImageApercu = '';
+  }
+
+  fichierMarque(fichier: FichierJustificatif): boolean {
+    return this.fichiersASupprimer.includes(fichier.id);
+  }
+
+  basculerSuppressionFichier(
+    fichier: FichierJustificatif
+  ): void {
+    if (!fichier?.id || this.enregistrement) {
+      return;
+    }
+
+    if (!this.fichiersASupprimer.includes(fichier.id)) {
+      this.fichiersASupprimer = [
+        ...this.fichiersASupprimer,
+        fichier.id
+      ];
+    }
+
+    this.fichiersExistants = this.fichiersExistants.filter(
+      element => element.id !== fichier.id
+    );
+
+    this.cdr.detectChanges();
+  }
+
+  selectionnerFichiers(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files?.length) {
+      return;
+    }
+
+    this.fichiersAjoutes = [
+      ...this.fichiersAjoutes,
+      ...Array.from(input.files)
+    ];
+
+    input.value = '';
+  }
+
+  retirerNouveauFichier(index: number): void {
+    if (index < 0 || index >= this.fichiersAjoutes.length) {
+      return;
+    }
+
+    this.fichiersAjoutes = this.fichiersAjoutes.filter(
+      (_, i) => i !== index
+    );
+  }
+
+  bloquerMoletteMontant(event: WheelEvent): void {
+    const cible = event.currentTarget;
+
+    if (cible instanceof HTMLInputElement) {
+      cible.blur();
+    }
+  }
+
+  // --------------------------------------------------
+  // Gestion des articles matériels
+  // --------------------------------------------------
+
+  ajouterArticle(): void {
+    if (!this.demande || this.enregistrement) {
+      return;
+    }
+
+    const designation =
+      (this.nouvelArticle.designation ?? '').trim();
+
+    const quantite =
+      Number(this.nouvelArticle.quantiteDemandee);
+
+    const prix =
+      Number(this.nouvelArticle.prixUnitaireEstime);
+
+    const unite =
+      (this.nouvelArticle.unite ?? '').trim() || 'unité';
+
+    if (
+      !designation ||
+      !Number.isInteger(quantite) ||
+      quantite <= 0 ||
+      !Number.isFinite(prix) ||
+      prix < 0
+    ) {
+      this.notificationService.erreur(
+        'Saisis une désignation, une quantité positive et un prix valide.'
+      );
+      return;
+    }
+
+    this.demande.articles ??= [];
+
+    const normaliser = (texte: string): string =>
+      texte
+        .trim()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, ' ')
+        .toLowerCase();
+
+    const articleExistant = this.demande.articles.find(
+      article =>
+        normaliser(article.designation) === normaliser(designation) &&
+        normaliser(article.unite ?? 'unité') === normaliser(unite)
+    );
+
+    if (articleExistant) {
+      if (
+        Number(articleExistant.prixUnitaireEstime) !== prix
+      ) {
+        this.notificationService.erreur(
+          'Cet article existe déjà avec un prix différent.'
+        );
+        return;
+      }
+
+      articleExistant.quantiteDemandee =
+        Number(articleExistant.quantiteDemandee) + quantite;
+    } else {
+      this.demande.articles.push({
+        designation,
+        quantiteDemandee: quantite,
+        unite,
+        prixUnitaireEstime: prix
+      });
+    }
+
+    this.nouvelArticle = {
+      designation: '',
+      quantiteDemandee: 1,
+      unite: 'unité',
+      prixUnitaireEstime: 0
+    };
+  }
+
+  supprimerArticle(index: number): void {
+    if (
+      !this.demande?.articles ||
+      index < 0 ||
+      index >= this.demande.articles.length
+    ) {
+      return;
+    }
+
+    this.demande.articles.splice(index, 1);
+  }
+
+  // --------------------------------------------------
+  // Validation
+  // --------------------------------------------------
+
+  private validerDonnees(): boolean {
+    const d = this.demande;
+
+    if (!d) {
       return false;
     }
 
-    return /\.(jpg|jpeg|png|gif|webp|bmp)$/i.test(nomFichier);
+    if (!String(d.titre ?? '').trim()) {
+      this.notificationService.erreur(
+        'Le titre ne peut pas être vide.'
+      );
+      return false;
+    }
+
+    if (
+      !Number.isInteger(Number(d.nombrePersonne)) ||
+      Number(d.nombrePersonne) < 1
+    ) {
+      this.notificationService.erreur(
+        'Le nombre de personnes doit être un entier positif.'
+      );
+      return false;
+    }
+
+    if (
+      !this.beneficiaires.some(
+        beneficiaire =>
+          Number(beneficiaire.id) === Number(d.beneficiaireId)
+      )
+    ) {
+      this.notificationService.erreur(
+        'Choisis un bénéficiaire de ton organisation.'
+      );
+      return false;
+    }
+
+    if (
+      d.typeDemandeAide === 'FINANCIERE' &&
+      (
+        !Number.isFinite(Number(d.montantNecessaire)) ||
+        Number(d.montantNecessaire) <= 0
+      )
+    ) {
+      this.notificationService.erreur(
+        'Le montant doit être supérieur à zéro.'
+      );
+      return false;
+    }
+
+    if (d.typeDemandeAide === 'MATERIELLE') {
+      if (!d.articles?.length) {
+        this.notificationService.erreur(
+          'Une demande matérielle doit contenir au moins un article.'
+        );
+        return false;
+      }
+
+      const articleInvalide = d.articles.some(article =>
+        !String(article.designation ?? '').trim() ||
+        !Number.isInteger(Number(article.quantiteDemandee)) ||
+        Number(article.quantiteDemandee) <= 0 ||
+        !Number.isFinite(Number(article.prixUnitaireEstime)) ||
+        Number(article.prixUnitaireEstime) < 0
+      );
+
+      if (articleInvalide) {
+        this.notificationService.erreur(
+          'Vérifie les désignations, quantités et prix des articles.'
+        );
+        return false;
+      }
+    }
+
+    if (
+      this.fichiersAjoutes.length > 0 &&
+      !this.typeJustificatifId
+    ) {
+      this.notificationService.erreur(
+        'Choisis un type de justificatif avant d’ajouter des fichiers.'
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  // --------------------------------------------------
+  // Enregistrement de la demande et des justificatifs
+  // --------------------------------------------------
+
+  enregistrer(_form: NgForm): void {
+    if (
+      !this.demande ||
+      !this.estModifiable ||
+      this.enregistrement
+    ) {
+      this.notificationService.erreur(
+        'Cette demande ne peut pas être modifiée.'
+      );
+      return;
+    }
+
+    if (!this.validerDonnees()) {
+      return;
+    }
+
+    const d = this.demande;
+
+    const payload: DemandeAideRequest = {
+      titre: String(d.titre ?? '').trim(),
+      descriptionSituation:
+        String(d.descriptionSituation ?? '').trim(),
+      niveauUrgence:
+        d.niveauUrgence as 'FORTE' | 'MOYENNE' | 'FAIBLE',
+      motif: String(d.motif ?? '').trim(),
+      nombrePersonne: Number(d.nombrePersonne),
+      montantNecessaire:
+        d.typeDemandeAide === 'FINANCIERE'
+          ? Number(d.montantNecessaire)
+          : null,
+      beneficiaireId: Number(d.beneficiaireId),
+      organisationPartenaireId:
+        Number(d.organisationPartenaireId),
+      categorieDemandeId: Number(d.categorieDemandeId),
+      typeDemande:
+        d.typeDemande as 'INDIVIDUEL' | 'COLLECTIF',
+      typeDemandeAide: d.typeDemandeAide,
+      articles:
+        d.typeDemandeAide === 'MATERIELLE'
+          ? (d.articles ?? []).map(article => ({
+              designation:
+                String(article.designation ?? '').trim(),
+              quantiteDemandee:
+                Number(article.quantiteDemandee),
+              unite:
+                String(article.unite ?? 'unité').trim() || 'unité',
+              prixUnitaireEstime:
+                Number(article.prixUnitaireEstime)
+            }))
+          : []
+    };
+
+    console.log('Articles du formulaire :', d.articles);
+    console.log('Articles envoyés au backend :', payload.articles);
+
+    this.enregistrement = true;
+
+    this.demandeService
+      .modifierDemande(this.demandeId, payload)
+      .subscribe({
+        next: () => {
+          this.enregistrerFichiers();
+        },
+        error: err => {
+          console.error(err);
+
+          this.enregistrement = false;
+          this.cdr.detectChanges();
+
+          this.notificationService.erreur(
+            err?.error?.message ||
+            'La modification de la demande a échoué.'
+          );
+        }
+      });
+  }
+
+  private enregistrerFichiers(): void {
+    const operations = [];
+
+    for (const id of this.fichiersASupprimer) {
+      operations.push(
+        this.justificatifService.supprimer(id)
+      );
+    }
+
+    if (this.fichiersAjoutes.length > 0) {
+      if (!this.typeJustificatifId) {
+        this.enregistrement = false;
+        this.cdr.detectChanges();
+
+        this.notificationService.erreur(
+          'Choisis un type de justificatif avant d’ajouter des fichiers.'
+        );
+        return;
+      }
+
+      operations.push(
+        this.justificatifService.creerJustificatifs(
+          this.fichiersAjoutes,
+          this.typeJustificatifId,
+          this.demandeId
+        )
+      );
+    }
+
+    if (operations.length === 0) {
+      this.enregistrement = false;
+
+      this.notificationService.succes(
+        'La demande a été modifiée avec succès.'
+      );
+
+      this.router.navigate(['/organisation/demandes-aide']);
+      return;
+    }
+
+    forkJoin(operations)
+      .pipe(
+        finalize(() => {
+          this.enregistrement = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.fichiersASupprimer = [];
+          this.fichiersAjoutes = [];
+
+          this.notificationService.succes(
+            'La demande et les justificatifs ont été modifiés avec succès.'
+          );
+
+          this.router.navigate(['/organisation/demandes-aide']);
+        },
+        error: err => {
+          console.error(
+            'Erreur lors de la modification des justificatifs :',
+            err
+          );
+
+          this.notificationService.erreur(
+            'La demande a été enregistrée, mais une opération sur les justificatifs a échoué. Vérifie les fichiers avant de recommencer.'
+          );
+        }
+      });
   }
 
   annuler(): void {
     this.router.navigate(['/organisation/demandes-aide']);
   }
-
-  selectionnerFichiers(event: Event): void {
-
-    const input = event.target as HTMLInputElement;
-
-    if (input.files) {
-      this.fichiers = Array.from(input.files);
-    }
-  }
-
-  supprimerFichier(index: number): void {
-    this.fichiers.splice(index, 1);
-  }
-
-  retirerJustificatif(id: number): void {
-
-    if (!this.justificatifsASupprimer.includes(id)) {
-      this.justificatifsASupprimer.push(id);
-    }
-
-    this.justificatifsExistants =
-      this.justificatifsExistants.filter(
-        justificatif => justificatif.id !== id
-      );
-
-    console.log(
-      'Justificatifs à supprimer :',
-      this.justificatifsASupprimer
-    );
-  }
-
-  modifierDemande(): void {
-
-    if (this.formulaire.invalid) {
-      this.formulaire.markAllAsTouched();
-      return;
-    }
-
-    const utilisateur = this.authService.getCurrentUser();
-
-    if (!utilisateur) {
-      alert('Vous devez être connecté pour modifier cette demande.');
-      return;
-    }
-
-    const typeId = Number(
-      this.formulaire.value.typeJustificatifId
-    );
-
-    if (this.fichiers.length > 0 && !typeId) {
-      alert('Veuillez sélectionner un type de justificatif.');
-      return;
-    }
-
-    const demandeModifiee = {
-
-      titre: this.formulaire.value.titre,
-
-      descriptionSituation:
-        this.formulaire.value.descriptionSituation,
-
-      niveauUrgence:
-        this.formulaire.value.niveauUrgence,
-
-      motif: this.formulaire.value.motif,
-
-      nombrePersonne:
-        this.formulaire.value.nombrePersonne,
-
-      montantNecessaire:
-        this.formulaire.value.montantNecessaire,
-
-      typeDemande:
-        this.formulaire.value.typeDemande,
-
-      beneficiaireId:
-        this.formulaire.value.beneficiaireId,
-
-      organisationPartenaireId:
-        utilisateur.id,
-
-      categorieDemandeId:
-        this.formulaire.value.categorieDemandeId
-
-    };
-
-    // 1. Modifier les informations de la demande
-    this.demandeAideService.modifierDemande(
-      this.id,
-      demandeModifiee
-    ).subscribe({
-
-      next: () => {
-
-        // 2. Supprimer les anciens justificatifs demandés
-        this.supprimerJustificatifs(0, typeId);
-
-      },
-
-      error: (erreur) => {
-
-        console.error(
-          'Erreur lors de la modification :',
-          erreur
-        );
-
-        alert('Impossible de modifier la demande.');
-
-      }
-
-    });
-  }
-
-  // Supprimer les justificatifs un par un
-  supprimerJustificatifs(
-    index: number,
-    typeId: number
-  ): void {
-
-    // Toutes les suppressions sont terminées
-    if (index >= this.justificatifsASupprimer.length) {
-
-      // Ajouter les nouveaux fichiers si nécessaire
-      this.ajouterNouveauxJustificatifs(typeId);
-
-      return;
-    }
-
-    const justificatifId =
-      this.justificatifsASupprimer[index];
-
-    this.justificatifService.supprimer(justificatifId)
-      .subscribe({
-
-        next: () => {
-
-          console.log(
-            'Justificatif supprimé :',
-            justificatifId
-          );
-
-          // Passer au justificatif suivant
-          this.supprimerJustificatifs(index + 1, typeId);
-
-        },
-
-        error: (erreur) => {
-
-          console.error(
-            'Erreur lors de la suppression du justificatif :',
-            justificatifId,
-            erreur
-          );
-
-          alert(
-            'La demande a été modifiée, mais un justificatif n’a pas pu être supprimé. Vérifiez le backend.'
-          );
-
-        }
-
-      });
-  }
-
-  // Ajouter les nouveaux justificatifs
-  ajouterNouveauxJustificatifs(typeId: number): void {
-
-    if (this.fichiers.length === 0) {
-
-      alert('La demande et les suppressions ont été enregistrées avec succès.');
-
-      this.router.navigate(['/organisation/demandes-aide']);
-
-      return;
-    }
-
-    this.justificatifService.creerJustificatifs(
-      this.fichiers,
-      typeId,
-      this.id
-    ).subscribe({
-
-      next: () => {
-
-        alert(
-          'La demande a été modifiée et les justificatifs ont été enregistrés avec succès.'
-        );
-
-        this.router.navigate(['/organisation/demandes-aide']);
-
-      },
-
-      error: (erreur) => {
-
-        console.error(
-          'Erreur lors de l’envoi des justificatifs :',
-          erreur
-        );
-
-        alert(
-          'La demande a été modifiée, mais les nouveaux justificatifs n’ont pas été envoyés.'
-        );
-
-      }
-
-    });
-  }
-
+  imageErreur(event: Event): void {
+  const image = event.target as HTMLImageElement;
+
+  console.error(
+    'Impossible de charger cette image :',
+    image.src
+  );
+
+  image.style.display = 'none';
+}
 }

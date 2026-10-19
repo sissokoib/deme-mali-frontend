@@ -1,9 +1,4 @@
-
-
-export interface CategorieDemande {
-  id: number;
-  nom: string;
-}
+import { ArticleDemande } from './articles-demandes.model';
 
 export interface Demande {
   id: number;
@@ -18,7 +13,7 @@ export interface Demande {
   motif: string;
 
   nombrePersonne: number;
-  montantNecessaire: number;
+  montantNecessaire: number | null;
 
   dateValidation?: string;
 
@@ -26,6 +21,7 @@ export interface Demande {
   montantCollecte: number;
 
   typeDemande: string;
+  typeDemandeAide: 'FINANCIERE' | 'MATERIELLE';
 
   beneficiaireId: number;
   beneficiaireNom: string;
@@ -35,4 +31,21 @@ export interface Demande {
 
   categorieDemandeId: number;
   categorieDemandeNom: string;
+
+  articles: ArticleDemande[];
+}
+
+export interface DemandeAideRequest {
+  titre: string;
+  descriptionSituation: string;
+  niveauUrgence: string;
+  motif?: string;
+  nombrePersonne: number;
+  montantNecessaire: number | null;
+  beneficiaireId: number;
+  organisationPartenaireId: number;
+  categorieDemandeId: number;
+  typeDemande: string;
+  typeDemandeAide: 'FINANCIERE' | 'MATERIELLE';
+  articles: ArticleDemande[];
 }

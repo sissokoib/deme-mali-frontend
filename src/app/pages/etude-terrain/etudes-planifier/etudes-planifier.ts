@@ -1,80 +1,236 @@
-import { Component, OnInit } from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EtudeTerrainService } from '../../../services/etude-terrain.service';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
 import { AuthService } from '../../../services/auth.service';
+import { demandeAideService } from '../../../services/demande-aide';
+import { EtudeTerrainService } from '../../../services/etude-terrain.service';
+import { Demande } from '../../../models/demande.model';
 
 @Component({
   selector: 'app-etudes-planifier',
   standalone: true,
-  imports: [RouterLink, CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatIconModule,
+    MatSnackBarModule
+  ],
   templateUrl: './etudes-planifier.html',
-  styleUrl: './etudes-planifier.css',
+  styleUrl: './etudes-planifier.css'
 })
 export class EtudesPlanifier implements OnInit {
-  planifierForm: FormGroup;
-  demandes: any[] = [];
-  user: any;
+  readonly dateDuJour = this.formaterDate(new Date());
+
+  demande: Demande | null = null;
+  demandeId = 0;
+  organisationId: number | null = null;
+
+  datePlanification = '';
+  heure = '';
+  lieu = '';
+  objectif = '';
+
+  chargement = true;
+  enregistrement = false;
+  soumis = false;
+  erreurChargement = '';
 
   constructor(
-    private fb: FormBuilder,
-    private etudeService: EtudeTerrainService,
+    private route: ActivatedRoute,
+    private router: Router,
     private authService: AuthService,
-    private router: Router
-  ) {
-    this.planifierForm = this.fb.group({
-      demandeAideId: ['', Validators.required],
-      datePlanification: ['', Validators.required],
-      heure: ['', Validators.required],
-      lieu: ['', Validators.required],
-      objectif: ['', Validators.required]
-    });
-  }
+    private demandeService: demandeAideService,
+    private etudeService: EtudeTerrainService,
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    this.authService.currentUser$.subscribe(u => {
-      this.user = u;
-      const orgId = this.user?.id || 1;
-      if (orgId) {
-        this.etudeService.getDemandes(orgId).subscribe({
-          next: (data) => this.demandes = data,
-          error: (err) => console.error("Erreur chargement demandes", err)
-        });
-      }
-    });
-  }
+    const utilisateur = this.authService.getCurrentUser();
+    const id = Number(
+      this.route.snapshot.queryParamMap.get('demandeId')
+    );
 
-  onSubmit() {
-    if (this.planifierForm.invalid) {
-      alert("Veuillez remplir tous les champs obligatoires.");
+    if (
+      !utilisateur ||
+      utilisateur.role !== 'ORGANISATIONPARTENAIRE'
+    ) {
+      this.erreurChargement =
+        'Organisation connectée introuvable.';
+      this.chargement = false;
       return;
     }
 
-    const formValues = this.planifierForm.value;
-    
-    // Le backend attend EtudeTerrainRequestDTO
-    const dto = {
-      datePlanification: formValues.datePlanification,
-      lieu: formValues.lieu,
-      objectif: formValues.objectif,
-      status: 'PLANIFIEE',
-      demandeAideId: formValues.demandeAideId,
-      organisationPartenaireId: this.user?.id || 1,
-      // L'heure necessite un LocalDateTime cote backend, Angular time picker retourne "HH:mm".
-      // On bricole une date valide pour eviter l'erreur 500 :
-      heure: formValues.datePlanification + 'T' + formValues.heure + ':00'
-    };
+    if (!Number.isInteger(id) || id <= 0) {
+      this.erreurChargement = 'Identifiant de demande invalide.';
+      this.chargement = false;
+      return;
+    }
 
-    this.etudeService.planifierEtude(dto).subscribe({
-      next: (res) => {
-        alert("Etude planifiee avec succes !");
-        this.router.navigate(['/organisation/etudes-terrain']);
+    this.organisationId = utilisateur.id;
+    this.demandeId = id;
+
+    this.demandeService.getDemandeById(id).subscribe({
+      next: demande => {
+        if (
+          demande.organisationPartenaireId !== this.organisationId
+        ) {
+          this.erreurChargement =
+            'Cette demande ne dépend pas de votre organisation.';
+        } else {
+          this.demande = demande;
+        }
+
+        this.chargement = false;
+        this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error("Erreur lors de la planification", err);
-        alert("Une erreur est survenue lors de la planification.");
+      error: err => {
+        console.error(
+          'Erreur de chargement de la demande :',
+          err
+        );
+
+        this.erreurChargement =
+          'Impossible de charger la demande concernée.';
+        this.chargement = false;
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  enregistrer(): void {
+    this.soumis = true;
+
+    if (!this.demande || this.organisationId === null) {
+      return;
+    }
+
+    if (
+      !this.datePlanification ||
+      !this.heure ||
+      !this.lieu.trim() ||
+      !this.objectif.trim()
+    ) {
+      return;
+    }
+
+    if (this.datePlanification < this.dateDuJour) {
+      return;
+    }
+
+    const dto = {
+      demandeAideId: this.demandeId,
+      organisationPartenaireId: this.organisationId,
+      datePlanification: this.datePlanification,
+      heure: `${this.datePlanification}T${this.heure}:00`,
+      lieu: this.lieu.trim(),
+      objectif: this.objectif.trim()
+    };
+
+    this.enregistrement = true;
+
+    this.etudeService.creerEtude(dto).subscribe({
+      next: () => {
+        this.enregistrement = false;
+
+        this.snackBar.open(
+          'Étude de terrain planifiée avec succès.',
+          'Fermer',
+          {
+            duration: 4000,
+            panelClass: ['notification-succes'],
+            horizontalPosition: 'end',
+            verticalPosition: 'top'
+          }
+        );
+
+        this.cdr.detectChanges();
+        this.router.navigate(['/organisation/etudes-terrain']);
+      },
+      error: err => {
+        console.error('Erreur de planification :', err);
+
+        const message =
+          err?.error?.message ||
+          err?.error?.error ||
+          'Impossible de planifier cette étude. Réessayez.';
+
+        this.snackBar.open(message, 'Fermer', {
+          duration: 5000,
+          panelClass: ['notification-erreur'],
+          horizontalPosition: 'end',
+          verticalPosition: 'top'
+        });
+
+        this.enregistrement = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  champInvalide(champ: string): boolean {
+    if (!this.soumis) return false;
+
+    switch (champ) {
+      case 'datePlanification':
+        return (
+          !this.datePlanification ||
+          this.datePlanification < this.dateDuJour
+        );
+
+      case 'heure':
+        return !this.heure;
+
+      case 'lieu':
+        return !this.lieu.trim();
+
+      case 'objectif':
+        return !this.objectif.trim();
+
+      default:
+        return false;
+    }
+  }
+
+  messageErreur(champ: string): string {
+    switch (champ) {
+      case 'datePlanification':
+        return !this.datePlanification
+          ? 'Veuillez renseigner la date prévue.'
+          : 'La date de visite ne peut pas être dans le passé.';
+
+      case 'heure':
+        return 'Veuillez renseigner l’heure prévue.';
+
+      case 'lieu':
+        return 'Veuillez renseigner le lieu de la visite.';
+
+      case 'objectif':
+        return 'Veuillez renseigner l’objectif de la visite.';
+
+      default:
+        return '';
+    }
+  }
+
+  annuler(): void {
+    this.router.navigate(['/organisation/etudes-terrain']);
+  }
+
+  consulterDemandes(): void {
+    this.router.navigate(['/organisation/demandes-aide']);
+  }
+
+  private formaterDate(date: Date): string {
+    const annee = date.getFullYear();
+    const mois = String(date.getMonth() + 1).padStart(2, '0');
+    const jour = String(date.getDate()).padStart(2, '0');
+
+    return `${annee}-${mois}-${jour}`;
   }
 }

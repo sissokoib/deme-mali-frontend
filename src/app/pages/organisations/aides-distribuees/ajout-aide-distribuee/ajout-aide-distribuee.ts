@@ -1,7 +1,6 @@
 
 import {
   Component,
-  inject,
   OnInit,
   ChangeDetectorRef
 } from '@angular/core';
@@ -11,19 +10,15 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { AideDistribueeService } from '../../../../services/aides-distribuees';
-import { AuthService } from '../../../../services/auth.service';
 import { demandeAideService } from '../../../../services/demande-aide';
-import { PreuveService } from '../../../../services/preuve';
-import { NotificationService } from '../../../../services/notification';
-
-import {
-  AideDistribueeRequest,
-  AideDistribueeResponse,
-  ModeDistribution,
-  MODES_DISTRIBUTION
-} from '../../../../models/aide-distribuee.model';
+import { BeneficiaireService } from '../../../../services/beneficiaire';
+import { PreuveDistributionService } from '../../../../services/preuve-distribution.service';
+import { AuthService } from '../../../../services/auth.service';
 
 import { Demande } from '../../../../models/demande.model';
+import { Beneficiaire } from '../../../../models/beneficiaire.model';
+import { AideDistribueeRequest } from '../../../../models/aide-distribuee.model';
+import { TypeMedia } from '../../../../models/preuve-distribution.model';
 
 @Component({
   selector: 'app-ajout-aide-distribuee',
@@ -34,50 +29,95 @@ import { Demande } from '../../../../models/demande.model';
 })
 export class AjoutAideDistribueeComponent implements OnInit {
 
-  private aideService = inject(AideDistribueeService);
-  private authService = inject(AuthService);
-  private demandeService = inject(demandeAideService);
-  private preuveService = inject(PreuveService);
-  private notificationService = inject(NotificationService);
-  private router = inject(Router);
-  private cdr = inject(ChangeDetectorRef);
-
-  organisationId: number | null = null;
-
   demandes: Demande[] = [];
-  fichierPreuve: File | null = null;
+  beneficiaires: Beneficiaire[] = [];
 
-  modesDistribution: ModeDistribution[] = MODES_DISTRIBUTION;
+  demandeAideId: number | null = null;
+  beneficiaireId: number | null = null;
 
-  chargement = false;
+  dateDistribution = new Date().toISOString().slice(0, 10);
+  lieuDistribution = '';
+
+  fichiersSelectionnes: File[] = [];
+
   chargementDemandes = false;
+  chargementBeneficiaires = false;
+  enregistrement = false;
 
-  aide: AideDistribueeRequest = {
-    dateDistribution: '',
-    montantDistribue: null,
-    quantiteDistribue: null,
-    unite: '',
-    modeDistribution: 'ESPECES',
-    lieuDistribution: '',
-    statut: 'EN_ATTENTE',
-    organisateurId: 0,
-    demandeAideId: 0
-  };
+  messageErreur = '';
+  messageSucces = '';
+
+  formulaireSoumis = false;
+
+  erreursChamps: {
+    cible?: string;
+    dateDistribution?: string;
+    lieuDistribution?: string;
+  } = {};
+
+  private organisationId: number | null = null;
+
+  private readonly TAILLE_MAX_IMAGE_DOCUMENT = 100 * 1024 * 1024;
+  private readonly TAILLE_MAX_VIDEO = 200 * 1024 * 1024;
+
+  constructor(
+    private readonly aideDistribueeService: AideDistribueeService,
+    private readonly demandeService: demandeAideService,
+    private readonly beneficiaireService: BeneficiaireService,
+    private readonly preuveDistributionService: PreuveDistributionService,
+    private readonly authService: AuthService,
+    private readonly router: Router,
+    private readonly cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    const utilisateur = this.authService.getCurrentUser();
+    this.recupererOrganisation();
+  }
 
-    if (!utilisateur || !utilisateur.id) {
-      this.notificationService.erreur(
-        'Impossible de récupérer l’organisation connectée.'
-      );
+  recupererOrganisation(): void {
+    const utilisateur = this.authService.getCurrentUser() as any;
+
+    if (!utilisateur) {
+      this.messageErreur = 'Aucun utilisateur connecté.';
+      this.actualiserAffichage();
       return;
     }
 
-    this.organisationId = Number(utilisateur.id);
-    this.aide.organisateurId = this.organisationId;
+    if (utilisateur.role !== 'ORGANISATIONPARTENAIRE') {
+      this.messageErreur =
+        'Cette page est réservée aux organisations partenaires.';
+      this.actualiserAffichage();
+      return;
+    }
+
+    const id =
+      utilisateur.organisationPartenaireId ??
+      utilisateur.organisationId ??
+      utilisateur.organisationPartenaire?.id ??
+      utilisateur.organisation?.id ??
+      utilisateur.id;
+
+    const organisationId = Number(id);
+
+    if (
+      id === null ||
+      id === undefined ||
+      !Number.isInteger(organisationId) ||
+      organisationId <= 0
+    ) {
+      this.messageErreur =
+        'Impossible de déterminer l’identifiant de votre organisation.';
+      this.actualiserAffichage();
+      return;
+    }
+
+    this.organisationId = organisationId;
+    this.messageErreur = '';
 
     this.chargerDemandes();
+    this.chargerBeneficiaires();
+
+    this.actualiserAffichage();
   }
 
   chargerDemandes(): void {
@@ -86,141 +126,296 @@ export class AjoutAideDistribueeComponent implements OnInit {
     }
 
     this.chargementDemandes = true;
+    this.actualiserAffichage();
 
     this.demandeService
-      .getDemandesTermineesPourAideDistribuee(this.organisationId)
+      .getTermineesPourAideDistribuee(this.organisationId)
       .subscribe({
-        next: (demandes: Demande[]) => {
-          this.demandes = demandes.filter(
-            (demande: Demande) =>
-              demande.statut === 'VALIDEE' &&
-              demande.statutCollecte === 'TERMINEE'
-          );
-
+        next: (resultat: Demande[]) => {
+          this.demandes = resultat ?? [];
           this.chargementDemandes = false;
-          this.cdr.detectChanges();
-
-          if (this.demandes.length === 0) {
-            this.notificationService.info(
-              'Aucune demande validée avec une collecte terminée n’est disponible.'
-            );
-          }
+          this.actualiserAffichage();
         },
+        error: (erreur) => {
+          console.error('Erreur chargement demandes :', erreur);
 
-        error: (erreur: unknown) => {
-          console.error(erreur);
-
+          this.demandes = [];
           this.chargementDemandes = false;
-          this.cdr.detectChanges();
+          this.messageErreur =
+            'Impossible de charger les demandes éligibles.';
 
-          this.notificationService.erreur(
-            'Impossible de charger les demandes disponibles.'
-          );
+          this.actualiserAffichage();
         }
       });
   }
 
-  choisirPreuve(event: Event): void {
+  chargerBeneficiaires(): void {
+    if (this.organisationId === null) {
+      return;
+    }
+
+    this.chargementBeneficiaires = true;
+    this.actualiserAffichage();
+
+    this.beneficiaireService
+      .trouverAcceptesParOrganisation(this.organisationId)
+      .subscribe({
+        next: (resultat: Beneficiaire[]) => {
+          this.beneficiaires = resultat ?? [];
+          this.chargementBeneficiaires = false;
+          this.actualiserAffichage();
+        },
+        error: (erreur) => {
+          console.error('Erreur chargement bénéficiaires :', erreur);
+
+          this.beneficiaires = [];
+          this.chargementBeneficiaires = false;
+          this.messageErreur =
+            'Impossible de charger les bénéficiaires acceptés.';
+
+          this.actualiserAffichage();
+        }
+      });
+  }
+
+  selectionnerDemande(valeur: string | number | null): void {
+    this.demandeAideId =
+      valeur === '' || valeur === null ? null : Number(valeur);
+
+    if (this.demandeAideId !== null) {
+      this.beneficiaireId = null;
+    }
+
+    this.effacerErreurCible();
+    this.actualiserAffichage();
+  }
+
+  selectionnerBeneficiaire(valeur: string | number | null): void {
+    this.beneficiaireId =
+      valeur === '' || valeur === null ? null : Number(valeur);
+
+    if (this.beneficiaireId !== null) {
+      this.demandeAideId = null;
+    }
+
+    this.effacerErreurCible();
+    this.actualiserAffichage();
+  }
+
+  private effacerErreurCible(): void {
+    if (
+      this.demandeAideId !== null ||
+      this.beneficiaireId !== null
+    ) {
+      delete this.erreursChamps.cible;
+    }
+  }
+
+  selectionnerFichiers(event: Event): void {
     const input = event.target as HTMLInputElement;
 
-    this.fichierPreuve =
-      input.files && input.files.length > 0
-        ? input.files[0]
-        : null;
+    if (!input.files) {
+      return;
+    }
+
+    const fichiers = Array.from(input.files);
+
+    const fichiersInvalides = fichiers.filter((fichier) => {
+      if (fichier.type.startsWith('video/')) {
+        return fichier.size > this.TAILLE_MAX_VIDEO;
+      }
+
+      return fichier.size > this.TAILLE_MAX_IMAGE_DOCUMENT;
+    });
+
+    if (fichiersInvalides.length > 0) {
+      this.messageErreur =
+        'Les images et documents sont limités à 100 Mo et les vidéos à 200 Mo.';
+
+      input.value = '';
+      this.fichiersSelectionnes = [];
+
+      this.actualiserAffichage();
+      return;
+    }
+
+    this.fichiersSelectionnes = fichiers;
+    this.messageErreur = '';
+
+    this.actualiserAffichage();
+  }
+
+  supprimerFichier(index: number): void {
+    if (
+      index >= 0 &&
+      index < this.fichiersSelectionnes.length
+    ) {
+      this.fichiersSelectionnes.splice(index, 1);
+      this.actualiserAffichage();
+    }
+  }
+
+  private determinerTypeMedia(fichier: File): TypeMedia {
+    if (fichier.type.startsWith('image/')) {
+      return 'IMAGE' as TypeMedia;
+    }
+
+    if (fichier.type.startsWith('video/')) {
+      return 'VIDEO' as TypeMedia;
+    }
+
+    return 'DOCUMENT' as TypeMedia;
+  }
+
+  private validerFormulaire(): boolean {
+    this.erreursChamps = {};
+
+    const cibleDemande = this.demandeAideId !== null;
+    const cibleBeneficiaire = this.beneficiaireId !== null;
+
+    if (cibleDemande === cibleBeneficiaire) {
+      this.erreursChamps.cible =
+        'Sélectionnez une demande d’aide ou un bénéficiaire, mais pas les deux.';
+    }
+
+    if (!this.dateDistribution) {
+      this.erreursChamps.dateDistribution =
+        'La date de distribution est obligatoire.';
+    }
+
+    if (!this.lieuDistribution.trim()) {
+      this.erreursChamps.lieuDistribution =
+        'Le lieu de distribution est obligatoire.';
+    }
+
+    return Object.keys(this.erreursChamps).length === 0;
   }
 
   enregistrer(): void {
-    if (this.chargement) {
+    if (this.enregistrement) {
       return;
     }
 
+    this.formulaireSoumis = true;
+    this.messageErreur = '';
+    this.messageSucces = '';
+
+    // Vérifier d'abord les champs obligatoires.
+    const formulaireValide = this.validerFormulaire();
+
+    if (!formulaireValide) {
+      this.actualiserAffichage();
+      return;
+    }
+
+    // Vérifier ensuite la présence des preuves.
+    if (this.fichiersSelectionnes.length === 0) {
+      this.messageErreur =
+        'Ajoutez au moins une preuve justificative avant d’enregistrer la distribution.';
+      this.actualiserAffichage();
+      return;
+    }
+
+    // Vérifier l'identifiant de l'organisation.
     if (this.organisationId === null) {
-      this.notificationService.erreur(
-        'Aucune organisation connectée.'
-      );
+      this.messageErreur =
+        'Impossible de déterminer l’identifiant de votre organisation.';
+      this.actualiserAffichage();
       return;
     }
 
-    const demandeSelectionnee = this.demandes.some(
-      (demande: Demande) =>
-        demande.id === this.aide.demandeAideId &&
-        demande.statut === 'VALIDEE' &&
-        demande.statutCollecte === 'TERMINEE'
-    );
+    const dto: AideDistribueeRequest = {
+      demandeAideId: this.demandeAideId,
+      beneficiaireId: this.beneficiaireId,
+      dateDistribution: this.dateDistribution,
+      lieuDistribution: this.lieuDistribution.trim()
+    };
 
-    if (!demandeSelectionnee) {
-      this.notificationService.erreur(
-        'Veuillez sélectionner une demande validée dont la collecte est terminée.'
-      );
-      return;
-    }
+    this.enregistrement = true;
+    this.actualiserAffichage();
 
-    if (
-      !this.aide.dateDistribution ||
-      !this.aide.lieuDistribution.trim()
-    ) {
-      this.notificationService.erreur(
-        'Veuillez remplir les champs obligatoires.'
-      );
-      return;
-    }
+    this.aideDistribueeService.creer(dto).subscribe({
+      next: (aide: any) => {
+        const aideId = aide?.id;
 
-    this.aide.organisateurId = this.organisationId;
-    this.chargement = true;
+        if (aideId === null || aideId === undefined) {
+          this.messageErreur =
+            'La distribution a été créée, mais son identifiant est absent de la réponse.';
 
-    const fichier = this.fichierPreuve;
-
-    this.aideService.creer(this.aide).subscribe({
-      next: (reponse: AideDistribueeResponse) => {
-
-        if (!fichier) {
-          this.notificationService.succes(
-            'Aide distribuée enregistrée avec succès.'
-          );
-
-          this.chargement = false;
-          this.router.navigate(['/organisation/aides-distribuees']);
+          this.enregistrement = false;
+          this.actualiserAffichage();
           return;
         }
 
-        this.preuveService
-          .uploaderPreuve(reponse.id, fichier)
-          .subscribe({
-            next: () => {
-              this.notificationService.succes(
-                'Aide distribuée et preuve enregistrées avec succès.'
-              );
-
-              this.chargement = false;
-              this.router.navigate(['/organisation/aides-distribuees']);
-            },
-
-            error: (erreur: unknown) => {
-              console.error(erreur);
-
-              this.chargement = false;
-
-              this.notificationService.erreur(
-                'L’aide est enregistrée, mais l’envoi de la preuve a échoué.'
-              );
-            }
-          });
+        this.televerserPreuves(Number(aideId));
       },
+      error: (erreur) => {
+        console.error('Erreur création distribution :', erreur);
 
-      error: (erreur: any) => {
-        console.error(erreur);
+        this.messageErreur =
+          erreur?.error?.message ??
+          'Une erreur est survenue lors de la création de la distribution.';
 
-        this.chargement = false;
-
-        this.notificationService.erreur(
-          erreur?.error?.message ||
-          'Erreur lors de l’enregistrement de l’aide distribuée.'
-        );
+        this.enregistrement = false;
+        this.actualiserAffichage();
       }
     });
   }
 
+  private televerserPreuves(aideId: number): void {
+    const fichiers = [...this.fichiersSelectionnes];
+    let index = 0;
+
+    const televerserSuivant = (): void => {
+      if (index >= fichiers.length) {
+        this.finaliserEnregistrement();
+        return;
+      }
+
+      const fichier = fichiers[index++];
+      const typeMedia = this.determinerTypeMedia(fichier);
+
+      this.preuveDistributionService
+        .ajouter(aideId, fichier, typeMedia)
+        .subscribe({
+          next: () => {
+            televerserSuivant();
+          },
+          error: (erreur) => {
+            console.error(
+              `Erreur téléversement de ${fichier.name} :`,
+              erreur
+            );
+
+            this.messageErreur =
+              erreur?.error?.message ??
+              `La distribution a été créée, mais la preuve « ${fichier.name} » n’a pas pu être envoyée.`;
+
+            this.enregistrement = false;
+            this.actualiserAffichage();
+          }
+        });
+    };
+
+    televerserSuivant();
+  }
+
+  private finaliserEnregistrement(): void {
+    this.messageErreur = '';
+    this.messageSucces =
+      'La distribution et ses preuves ont été enregistrées avec succès.';
+
+    this.enregistrement = false;
+    this.actualiserAffichage();
+
+    // Le succès reste affiché dans le formulaire.
+  }
+
   annuler(): void {
-    this.router.navigate(['/organisation/aides-distribuees']);
+    this.router.navigate(['/organisation/aide-distribuee']);
+  }
+
+  private actualiserAffichage(): void {
+    this.cdr.detectChanges();
   }
 }

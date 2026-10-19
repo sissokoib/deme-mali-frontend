@@ -6,26 +6,18 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class JustificatifService {
-
   private http = inject(HttpClient);
-
-  private url ='http://localhost:8080/api/justificatifs';
+  private url = 'http://localhost:8080/api/justificatifs';
 
   creerJustificatifs(
     fichiers: File[],
     typeJustificatifId: number,
     demandeAideId: number
-  ): Observable<any> {
-
+  ): Observable<unknown> {
     const formulaire = new FormData();
 
     fichiers.forEach((fichier) => {
-
-      formulaire.append(
-        'fichiers',
-        fichier
-      );
-
+      formulaire.append('fichiers', fichier);
     });
 
     formulaire.append(
@@ -38,18 +30,16 @@ export class JustificatifService {
       demandeAideId.toString()
     );
 
-    return this.http.post(
-      this.url,
-      formulaire
+    return this.http.post(this.url, formulaire);
+  }
+
+  getByDemande(demandeAideId: number): Observable<unknown[]> {
+    return this.http.get<unknown[]>(
+      `${this.url}/demande/${demandeAideId}`
     );
   }
-  
-getByDemande(demandeAideId: number): Observable<any[]> {
-  return this.http.get<any[]>(
-    `http://localhost:8080/api/justificatifs/demande/${demandeAideId}`
-  );
-}
-supprimer(id: number) {
-  return this.http.delete(`${this.url}/${id}`);
-}
+
+  supprimer(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${id}`);
+  }
 }

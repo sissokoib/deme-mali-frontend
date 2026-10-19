@@ -1,0 +1,136 @@
+
+<div class="preuves-page">
+
+  <div class="section-header">
+    <div>
+      <h2>Preuves de distribution</h2>
+      <p>Ajoutez des photos, vidéos ou documents pour assurer la traçabilité.</p>
+    </div>
+    <span class="compteur">{{ preuves.length }} preuve(s)</span>
+  </div>
+
+  <form class="form-upload" (ngSubmit)="televerser()">
+
+    <label for="fichier">Sélectionner un fichier</label>
+
+    <input
+      id="fichier"
+      type="file"
+      accept="image/*,video/*,.pdf,.txt,.doc,.docx"
+      (change)="selectionnerFichier($event)"
+    />
+
+    <div class="fichier-selectionne" *ngIf="fichierSelectionne">
+      <mat-icon>attach_file</mat-icon>
+      <span>{{ fichierSelectionne.name }}</span>
+      <span class="taille">
+        {{ (fichierSelectionne.size / 1024 / 1024).toFixed(2) }} Mo
+      </span>
+    </div>
+
+    <label for="typeMedia">Type de preuve</label>
+
+    <select
+      id="typeMedia"
+      name="typeMedia"
+      [(ngModel)]="typeMedia"
+    >
+      <option value="IMAGE">Image</option>
+      <option value="VIDEO">Vidéo</option>
+      <option value="DOCUMENT">Document</option>
+    </select>
+
+    <p class="info">
+      Taille maximale : 10 Mo.
+    </p>
+
+    <button
+      mat-flat-button
+      type="submit"
+      [disabled]="!fichierSelectionne || envoiEnCours"
+    >
+      <mat-icon>cloud_upload</mat-icon>
+      {{ envoiEnCours ? 'Téléversement...' : 'Ajouter la preuve' }}
+    </button>
+
+  </form>
+
+  <p class="message succes" *ngIf="messageSucces">
+    {{ messageSucces }}
+  </p>
+
+  <p class="message erreur" *ngIf="messageErreur">
+    {{ messageErreur }}
+  </p>
+
+  <div class="chargement" *ngIf="chargement">
+    Chargement des preuves...
+  </div>
+
+  <div class="preuves-grid" *ngIf="!chargement && preuves.length > 0">
+
+    <article class="preuve-card" *ngFor="let preuve of preuves">
+
+      <div class="apercu" [ngSwitch]="preuve.typeMedia">
+
+        <img
+          *ngSwitchCase="'IMAGE'"
+          [src]="urlFichier(preuve.urlFichier)"
+          [alt]="preuve.nomFichier"
+        />
+
+        <video
+          *ngSwitchCase="'VIDEO'"
+          [src]="urlFichier(preuve.urlFichier)"
+          controls
+        ></video>
+
+        <div class="document-apercu" *ngSwitchCase="'DOCUMENT'">
+          <mat-icon>description</mat-icon>
+          <span>Document</span>
+        </div>
+
+      </div>
+
+      <div class="preuve-infos">
+        <span class="type">{{ preuve.typeMedia }}</span>
+        <p class="nom-fichier" [title]="preuve.nomFichier">
+          {{ preuve.nomFichier }}
+        </p>
+
+        <div class="actions">
+          <a
+            [href]="urlFichier(preuve.urlFichier)"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <mat-icon>open_in_new</mat-icon>
+            Ouvrir
+          </a>
+
+          <button
+            mat-button
+            color="warn"
+            type="button"
+            (click)="supprimer(preuve)"
+          >
+            <mat-icon>delete</mat-icon>
+            Supprimer
+          </button>
+        </div>
+      </div>
+
+    </article>
+
+  </div>
+
+  <div
+    class="vide"
+    *ngIf="!chargement && preuves.length === 0"
+  >
+    <mat-icon>folder_open</mat-icon>
+    <h3>Aucune preuve pour le moment</h3>
+    <p>Les photos, vidéos et documents ajoutés apparaîtront ici.</p>
+  </div>
+
+</div>

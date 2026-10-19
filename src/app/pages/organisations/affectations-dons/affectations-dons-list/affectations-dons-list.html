@@ -1,137 +1,392 @@
 
 <div class="contenu">
 
+  <!-- EN-TÊTE -->
   <div class="entete-page">
     <div>
+      <span class="surtitre">GESTION DES AIDES</span>
       <h2>Affectations des dons</h2>
-      <p>
-        Consultez les dons affectés aux demandes d'aide
-        et aux bénéficiaires.
-      </p>
+      <p>Consultez les dons affectés aux demandes d'aide et aux bénéficiaires.</p>
     </div>
 
-    <button
-      class="btn-ajouter"
-      type="button"
-      (click)="ajouterAffectation()">
-
+    <button class="btn-ajouter" type="button" (click)="ajouterAffectation()">
       <mat-icon>add</mat-icon>
       Nouvelle affectation
     </button>
   </div>
 
+  <!-- STATISTIQUES -->
+  <section class="statistiques">
+    <article class="statistique">
+      <div class="stat-icone verte">
+        <mat-icon>payments</mat-icon>
+      </div>
+      <div>
+        <span>Dons financiers</span>
+        <strong>{{ financieres.length }}</strong>
+      </div>
+    </article>
+
+    <article class="statistique">
+      <div class="stat-icone jaune">
+        <mat-icon>inventory_2</mat-icon>
+      </div>
+      <div>
+        <span>Dons matériels</span>
+        <strong>{{ materielles.length }}</strong>
+      </div>
+    </article>
+
+    <article class="statistique">
+      <div class="stat-icone sombre">
+        <mat-icon>assignment_turned_in</mat-icon>
+      </div>
+      <div>
+        <span>Total des affectations</span>
+        <strong>{{ financieres.length + materielles.length }}</strong>
+      </div>
+    </article>
+  </section>
+
+  <!-- CHARGEMENT -->
   <div *ngIf="chargement" class="message">
+    <mat-icon>hourglass_empty</mat-icon>
     Chargement des affectations...
   </div>
 
+  <!-- ERREUR -->
   <div *ngIf="erreur && !chargement" class="message erreur">
-    Impossible de charger les affectations.
-
-    <button type="button" (click)="chargerAffectations()">
-      Réessayer
-    </button>
+    <mat-icon>error_outline</mat-icon>
+    <span>Impossible de charger les affectations.</span>
+    <button type="button" (click)="chargerAffectations()">Réessayer</button>
   </div>
 
   <ng-container *ngIf="!chargement && !erreur">
 
-    <h3>Dons financiers</h3>
+    <!-- ONGLET DE NAVIGATION -->
+    <section class="section-tableau">
 
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>N°</th>
-            <th>Don financier</th>
-            <th>Destination</th>
-            <th>Montant affecté</th>
-            <th>Date d'affectation</th>
-          </tr>
-        </thead>
+      <div class="barre-onglets">
+        <button
+          type="button"
+          class="onglet"
+          [class.actif]="ongletActif === 'FINANCIER'"
+          (click)="changerOnglet('FINANCIER')">
 
-        <tbody>
-          <tr *ngFor="let a of financieres">
-            <td>{{ a.id }}</td>
+          <mat-icon>payments</mat-icon>
+          Dons financiers
+          <span class="compteur">{{ financieres.length }}</span>
+        </button>
 
-            <td>Don n° {{ a.donFinancierId }}</td>
+        <button
+          type="button"
+          class="onglet"
+          [class.actif]="ongletActif === 'MATERIEL'"
+          (click)="changerOnglet('MATERIEL')">
 
-            <td>
-              <span *ngIf="a.demandeAideId != null">
-                Demande n° {{ a.demandeAideId }}
-              </span>
+          <mat-icon>inventory_2</mat-icon>
+          Dons matériels
+          <span class="compteur">{{ materielles.length }}</span>
+        </button>
+      </div>
 
-              <span *ngIf="a.beneficiaireId != null">
-                Bénéficiaire n° {{ a.beneficiaireId }}
-              </span>
-            </td>
+      <!-- TABLEAU FINANCIER -->
+      <div *ngIf="ongletActif === 'FINANCIER'">
 
-            <td>
-              {{ a.montantAffecte | number:'1.0-0' }} FCFA
-            </td>
+        <div class="entete-tableau">
+          <div>
+            <h3>Affectations financières</h3>
+            <p>Suivez les montants affectés aux destinataires.</p>
+          </div>
+        </div>
 
-            <td>
-              {{ a.dateAffectation | date:'dd/MM/yyyy' }}
-            </td>
-          </tr>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>N° affectation</th>
+                <th>Don</th>
+                <th>Destination</th>
+                <th>Montant affecté</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
 
-          <tr *ngIf="financieres.length === 0">
-            <td colspan="5" class="vide">
-              Aucune affectation financière enregistrée.
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+            <tbody>
+              <tr *ngFor="let a of financieres">
+                <td><strong>#{{ a.id }}</strong></td>
 
-    <h3>Dons matériels</h3>
+                <td>
+                  <span class="don-reference">
+                    <mat-icon>payments</mat-icon>
+                    Don #{{ a.donFinancierId }}
+                  </span>
+                </td>
 
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>N°</th>
-            <th>Désignation</th>
-            <th>Destination</th>
-            <th>Quantité affectée</th>
-            <th>Date d'affectation</th>
-          </tr>
-        </thead>
+                <td>
+                  <span class="destination" *ngIf="a.demandeAideId != null">
+                    <mat-icon>assignment</mat-icon>
+                    Demande #{{ a.demandeAideId }}
+                  </span>
 
-        <tbody>
-          <tr *ngFor="let a of materielles">
-            <td>{{ a.id }}</td>
+                  <span class="destination" *ngIf="a.beneficiaireId != null">
+                    <mat-icon>person</mat-icon>
+                    Bénéficiaire #{{ a.beneficiaireId }}
+                  </span>
 
-            <td>
-              {{ a.designation || ('Don n° ' + a.donMaterielId) }}
-            </td>
+                  <span
+                    class="texte-secondaire"
+                    *ngIf="a.demandeAideId == null && a.beneficiaireId == null">
+                    Non renseignée
+                  </span>
+                </td>
 
-            <td>
-              <span *ngIf="a.demandeAideId != null">
-                Demande n° {{ a.demandeAideId }}
-              </span>
+                <td class="montant">
+                  {{ a.montantAffecte | number:'1.0-0' }} FCFA
+                </td>
 
-              <span *ngIf="a.beneficiaireId != null">
-                Bénéficiaire n° {{ a.beneficiaireId }}
-              </span>
-            </td>
+                <td>
+                  {{ a.dateAffectation ? (a.dateAffectation | date:'dd/MM/yyyy') : '—' }}
+                </td>
 
-            <td>
-              {{ a.quantiteAffectee }} {{ a.unite }}
-            </td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn-details"
+                    (click)="voirDetailsFinanciers(a)"
+                    aria-label="Voir les détails de cette affectation">
+                    <mat-icon>visibility</mat-icon>
+                    Détails
+                  </button>
+                </td>
+              </tr>
 
-            <td>
-              {{ a.dateAffectation | date:'dd/MM/yyyy' }}
-            </td>
-          </tr>
+              <tr *ngIf="financieres.length === 0">
+                <td colspan="6" class="vide">
+                  <mat-icon>inbox</mat-icon>
+                  <strong>Aucune affectation financière</strong>
+                  <span>Les affectations financières apparaîtront ici.</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-          <tr *ngIf="materielles.length === 0">
-            <td colspan="5" class="vide">
-              Aucune affectation matérielle enregistrée.
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <!-- TABLEAU MATÉRIEL -->
+      <div *ngIf="ongletActif === 'MATERIEL'">
 
+        <div class="entete-tableau">
+          <div>
+            <h3>Affectations matérielles</h3>
+            <p>Consultez les quantités de matériel distribuées ou attribuées.</p>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>N° affectation</th>
+                <th>Désignation</th>
+                <th>Destination</th>
+                <th>Quantité affectée</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let a of materielles">
+                <td><strong>#{{ a.id }}</strong></td>
+
+                <td>
+                  <span class="don-reference">
+                    <mat-icon>inventory_2</mat-icon>
+                    {{ a.designation || ('Don #' + a.donMaterielId) }}
+                  </span>
+                  <small class="texte-secondaire" *ngIf="a.designation">
+                    Don #{{ a.donMaterielId }}
+                  </small>
+                </td>
+
+                <td>
+                  <span class="destination" *ngIf="a.demandeAideId != null">
+                    <mat-icon>assignment</mat-icon>
+                    Demande #{{ a.demandeAideId }}
+                  </span>
+
+                  <span class="destination" *ngIf="a.beneficiaireId != null">
+                    <mat-icon>person</mat-icon>
+                    Bénéficiaire #{{ a.beneficiaireId }}
+                  </span>
+
+                  <span
+                    class="texte-secondaire"
+                    *ngIf="a.demandeAideId == null && a.beneficiaireId == null">
+                    Non renseignée
+                  </span>
+                </td>
+
+                <td class="quantite">
+                  {{ a.quantiteAffectee }} {{ a.unite }}
+                </td>
+
+                <td>
+                  {{ a.dateAffectation ? (a.dateAffectation | date:'dd/MM/yyyy') : '—' }}
+                </td>
+
+                <td>
+                  <button
+                    type="button"
+                    class="btn-details"
+                    (click)="voirDetailsMateriels(a)"
+                    aria-label="Voir les détails de cette affectation">
+                    <mat-icon>visibility</mat-icon>
+                    Détails
+                  </button>
+                </td>
+              </tr>
+
+              <tr *ngIf="materielles.length === 0">
+                <td colspan="6" class="vide">
+                  <mat-icon>inbox</mat-icon>
+                  <strong>Aucune affectation matérielle</strong>
+                  <span>Les affectations matérielles apparaîtront ici.</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
   </ng-container>
+</div>
 
+<!-- FENÊTRE DE DÉTAILS -->
+<div
+  class="modal-overlay"
+  *ngIf="detailsOuverts"
+  (click)="fermerDetails()">
+
+  <section
+    class="modal-details"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titreDetails"
+    (click)="$event.stopPropagation()">
+
+    <div class="modal-entete">
+      <div class="modal-icone">
+        <mat-icon>{{ typeDetails === 'FINANCIER' ? 'payments' : 'inventory_2' }}</mat-icon>
+      </div>
+
+      <button
+        type="button"
+        class="modal-fermer"
+        aria-label="Fermer les détails"
+        (click)="fermerDetails()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <h2 id="titreDetails">Détails de l'affectation</h2>
+    <p class="modal-description">
+      Consultez les informations de cette affectation enregistrée.
+    </p>
+
+    <!-- DÉTAILS FINANCIERS -->
+    <ng-container *ngIf="typeDetails === 'FINANCIER' && detailFinancier">
+      <div class="details-montant">
+        <span>Montant affecté</span>
+        <strong>{{ detailFinancier.montantAffecte | number:'1.0-0' }} FCFA</strong>
+      </div>
+
+      <div class="details-liste">
+        <div class="detail-ligne">
+          <span>Numéro de l'affectation</span>
+          <strong>#{{ detailFinancier.id }}</strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Don financier</span>
+          <strong>#{{ detailFinancier.donFinancierId }}</strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Destination</span>
+          <strong *ngIf="detailFinancier.demandeAideId != null">
+            Demande d'aide #{{ detailFinancier.demandeAideId }}
+          </strong>
+          <strong *ngIf="detailFinancier.beneficiaireId != null">
+            Bénéficiaire #{{ detailFinancier.beneficiaireId }}
+          </strong>
+          <strong *ngIf="detailFinancier.demandeAideId == null && detailFinancier.beneficiaireId == null">
+            Non renseignée
+          </strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Date d'affectation</span>
+          <strong>
+            {{ detailFinancier.dateAffectation ? (detailFinancier.dateAffectation | date:'dd/MM/yyyy') : 'Non renseignée' }}
+          </strong>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- DÉTAILS MATÉRIELS -->
+    <ng-container *ngIf="typeDetails === 'MATERIEL' && detailMateriel">
+      <div class="details-montant details-quantite">
+        <span>Quantité affectée</span>
+        <strong>{{ detailMateriel.quantiteAffectee }} {{ detailMateriel.unite }}</strong>
+      </div>
+
+      <div class="details-liste">
+        <div class="detail-ligne">
+          <span>Numéro de l'affectation</span>
+          <strong>#{{ detailMateriel.id }}</strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Don matériel</span>
+          <strong>#{{ detailMateriel.donMaterielId }}</strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Désignation</span>
+          <strong>{{ detailMateriel.designation || 'Non renseignée' }}</strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Destination</span>
+          <strong *ngIf="detailMateriel.demandeAideId != null">
+            Demande d'aide #{{ detailMateriel.demandeAideId }}
+          </strong>
+          <strong *ngIf="detailMateriel.beneficiaireId != null">
+            Bénéficiaire #{{ detailMateriel.beneficiaireId }}
+          </strong>
+          <strong *ngIf="detailMateriel.demandeAideId == null && detailMateriel.beneficiaireId == null">
+            Non renseignée
+          </strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Date d'affectation</span>
+          <strong>
+            {{ detailMateriel.dateAffectation ? (detailMateriel.dateAffectation | date:'dd/MM/yyyy') : 'Non renseignée' }}
+          </strong>
+        </div>
+      </div>
+    </ng-container>
+
+
+    <div class="actions-modal">
+      <button type="button" class="btn-fermer-details" (click)="fermerDetails()">
+        Fermer
+      </button>
+    </div>
+  </section>
 </div>

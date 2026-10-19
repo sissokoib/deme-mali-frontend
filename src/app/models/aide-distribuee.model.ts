@@ -1,40 +1,46 @@
 
-export type StatutAideDistribuee = 'EN_ATTENTE' | 'DISTRIBUEE';
+import { PreuveDistribution } from './preuve-distribution.model';
 
-export type ModeDistribution =
-  | 'ORANGE_MONEY'
-  | 'MOVE_MONEY'
-  | 'WAVE'
-  | 'ESPECES';
+export type StatutDistribution = 'EN_ATTENTE' | 'DISTRIBUEE';
 
-export const MODES_DISTRIBUTION: ModeDistribution[] = [
-  'ORANGE_MONEY',
-  'MOVE_MONEY',
-  'WAVE',
-  'ESPECES'
-];
-
-export interface AideDistribueeRequest {
-  dateDistribution: string;
-  montantDistribue: number | null;
-  quantiteDistribue: number | null;
-  unite: string;
-  modeDistribution: ModeDistribution;
-  lieuDistribution: string;
-  statut: StatutAideDistribuee;
-  organisateurId: number;
-  demandeAideId: number;
+export interface AffectationDon {
+  id: number;
+  donFinancierId: number;
+  demandeAideId: number | null;
+  beneficiaireId: number | null;
+  organisationPartenaireId: number;
+  montantAffecte: number;
+  dateAffectation: string;
 }
 
-export interface AideDistribueeResponse {
+export interface AffectationDonMateriel {
   id: number;
-  dateDistribution: string;
-  montantDistribue: number | null;
-  quantiteDistribue: number | null;
+  donMaterielId: number;
+  designation: string;
+  quantiteAffectee: number;
   unite: string;
-  modeDistribution: ModeDistribution;
+  dateAffectation: string;
+  demandeAideId: number | null;
+  beneficiaireId: number | null;
+  organisationPartenaireId: number | null;
+  valeurAffectee?: number;
+}
+
+export interface AideDistribuee {
+  id: number;
+  demandeAideId: number | null;
+  beneficiaireId: number | null;
+  dateDistribution: string;
   lieuDistribution: string;
-  statut: StatutAideDistribuee;
-  organisateurId: number;
-  demandeAideId: number;
+  statut: StatutDistribution;
+  preuves: PreuveDistribution[];
+  affectationsFinancieres: AffectationDon[];
+  affectationsMaterielles: AffectationDonMateriel[];
+}
+
+export interface AideDistribueeRequest {
+  demandeAideId: number|null;
+  beneficiaireId?: number|null;
+  dateDistribution: string;
+  lieuDistribution: string;
 }

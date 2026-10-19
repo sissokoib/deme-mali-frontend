@@ -1,173 +1,340 @@
 
-<div class="contenu">
+<div class="page-container">
 
-  <div class="entete">
-    <div>
-      <h2>Ajouter une aide distribuée</h2>
-      <p>Enregistrez une distribution et sa preuve justificative.</p>
-    </div>
-  </div>
-
-  <form class="formulaire" (ngSubmit)="enregistrer()">
-
-    <div class="champ">
-      <label for="organisation">Organisation connectée</label>
-      <input
-        id="organisation"
-        type="text"
-        [value]="organisationId ?? ''"
-        readonly
-      >
+  <!-- En-tête -->
+  <header class="page-header">
+    <div class="header-icon">
+      <span class="material-symbol">volunteer_activism</span>
     </div>
 
-    <div class="champ">
-      <label for="demandeAideId">Demande d'aide</label>
-
-      <select
-        id="demandeAideId"
-        name="demandeAideId"
-        [(ngModel)]="aide.demandeAideId"
-        required
-      >
-        <option [ngValue]="0" disabled>
-          Choisir une demande d'aide
-        </option>
-
-        <option
-          *ngFor="let demande of demandes"
-          [ngValue]="demande.id"
-        >
-          {{ demande.titre }} — ID {{ demande.id }}
-        </option>
-      </select>
-
-      <p class="aide-texte" *ngIf="chargementDemandes">
-        Chargement des demandes...
-      </p>
-
-      <p
-        class="aide-texte"
-        *ngIf="!chargementDemandes && demandes.length === 0"
-      >
-        Aucune demande validée avec une collecte terminée n'est disponible.
+    <div class="header-text">
+      <h1>Enregistrer une distribution</h1>
+      <p>
+        Enregistrez une aide distribuée et ajoutez les preuves
+        pour assurer la traçabilité.
       </p>
     </div>
+  </header>
 
-    <div class="champs">
+  <!-- Formulaire -->
+  <form
+    class="distribution-form"
+    (ngSubmit)="enregistrer()"
+    novalidate>
 
-      <div class="champ">
-        <label for="dateDistribution">Date de distribution</label>
-        <input
-          id="dateDistribution"
-          type="date"
-          name="dateDistribution"
-          [(ngModel)]="aide.dateDistribution"
-          required
-        >
+    <!-- 1. Cible de la distribution -->
+    <section class="form-section">
+
+      <div class="section-heading">
+        <span class="section-number">1</span>
+        <div>
+          <h2>Bénéficiaire de l'aide</h2>
+          <p>Choisissez une demande d'aide ou un bénéficiaire.</p>
+        </div>
       </div>
 
-      <div class="champ">
-        <label for="montantDistribue">Montant distribué (FCFA)</label>
-        <input
-          id="montantDistribue"
-          type="number"
-          name="montantDistribue"
-          [(ngModel)]="aide.montantDistribue"
-          min="0"
-        >
+      <div class="target-notice">
+        <span class="notice-icon">ⓘ</span>
+        <p>
+          Une seule option est autorisée : une demande
+          <strong>OU</strong> un bénéficiaire.
+        </p>
       </div>
 
-      <div class="champ">
-        <label for="quantiteDistribue">Quantité distribuée</label>
-        <input
-          id="quantiteDistribue"
-          type="number"
-          name="quantiteDistribue"
-          [(ngModel)]="aide.quantiteDistribue"
-          min="0"
-        >
+      <div class="form-grid">
+
+        <!-- Demande d'aide -->
+        <div class="form-group">
+          <label for="demandeAideId">Demande d'aide</label>
+
+          <select
+            id="demandeAideId"
+            name="demandeAideId"
+            [ngModel]="demandeAideId"
+            (ngModelChange)="selectionnerDemande($event)"
+            [disabled]="chargementDemandes || enregistrement">
+
+            <option [ngValue]="null">
+              -- Choisir une demande --
+            </option>
+
+            <option
+              *ngFor="let demande of demandes"
+              [ngValue]="demande.id">
+              {{ demande.titre }} — #{{ demande.id }}
+            </option>
+          </select>
+
+          <span
+            class="field-hint"
+            *ngIf="!chargementDemandes">
+            Facultatif si un bénéficiaire est sélectionné.
+          </span>
+
+          <span class="field-hint" *ngIf="chargementDemandes">
+            Chargement des demandes...
+          </span>
+
+          <span
+            class="field-hint"
+            *ngIf="!chargementDemandes && demandes.length === 0">
+            Aucune demande éligible disponible.
+          </span>
+        </div>
+
+        <!-- Bénéficiaire -->
+        <div class="form-group">
+          <label for="beneficiaireId">Bénéficiaire</label>
+
+          <select
+            id="beneficiaireId"
+            name="beneficiaireId"
+            [ngModel]="beneficiaireId"
+            (ngModelChange)="selectionnerBeneficiaire($event)"
+            [disabled]="chargementBeneficiaires || enregistrement">
+
+            <option [ngValue]="null">
+              -- Choisir un bénéficiaire --
+            </option>
+
+            <option
+              *ngFor="let beneficiaire of beneficiaires"
+              [ngValue]="beneficiaire.id">
+              {{ beneficiaire.nom }} {{ beneficiaire.prenom }}
+            </option>
+          </select>
+
+          <span
+            class="field-hint"
+            *ngIf="!chargementBeneficiaires">
+            Facultatif si une demande est sélectionnée.
+          </span>
+
+          <span
+            class="field-hint"
+            *ngIf="chargementBeneficiaires">
+            Chargement des bénéficiaires...
+          </span>
+
+          <span
+            class="field-hint"
+            *ngIf="!chargementBeneficiaires && beneficiaires.length === 0">
+            Aucun bénéficiaire accepté disponible.
+          </span>
+        </div>
+
       </div>
 
-      <div class="champ">
-        <label for="unite">Unité</label>
-        <input
-          id="unite"
-          type="text"
-          name="unite"
-          [(ngModel)]="aide.unite"
-          placeholder="Ex. : kits, sacs, kg"
-        >
+      <div
+        class="selection-success"
+        *ngIf="demandeAideId !== null || beneficiaireId !== null">
+
+        <span class="success-icon">✓</span>
+
+        <span *ngIf="demandeAideId !== null">
+          Demande sélectionnée : #{{ demandeAideId }}
+        </span>
+
+        <span *ngIf="beneficiaireId !== null">
+          Bénéficiaire sélectionné
+        </span>
       </div>
 
-      <div class="champ">
-        <label for="modeDistribution">Mode de distribution</label>
+    </section>
 
-        <select
-          id="modeDistribution"
-          name="modeDistribution"
-          [(ngModel)]="aide.modeDistribution"
-          required
-        >
-          <option
-            *ngFor="let mode of modesDistribution"
-            [ngValue]="mode"
-          >
-            {{ mode }}
-          </option>
-        </select>
+    <!-- 2. Informations de distribution -->
+    <section class="form-section">
+
+      <div class="section-heading">
+        <span class="section-number">2</span>
+        <div>
+          <h2>Informations de distribution</h2>
+          <p>Renseignez la date et le lieu de distribution.</p>
+        </div>
       </div>
 
-      <div class="champ">
-        <label for="lieuDistribution">Lieu de distribution</label>
-        <input
-          id="lieuDistribution"
-          type="text"
-          name="lieuDistribution"
-          [(ngModel)]="aide.lieuDistribution"
-          placeholder="Lieu de distribution"
-          required
-        >
+      <div class="form-grid">
+
+        <!-- Date -->
+        <div class="form-group">
+          <label for="dateDistribution">
+            Date de distribution <span class="required">*</span>
+          </label>
+
+          <input
+            type="date"
+            id="dateDistribution"
+            name="dateDistribution"
+            [(ngModel)]="dateDistribution"
+            [disabled]="enregistrement"
+            required />
+        </div>
+
+        <!-- Lieu -->
+        <div class="form-group">
+          <label for="lieuDistribution">
+            Lieu de distribution <span class="required">*</span>
+          </label>
+
+          <input
+            type="text"
+            id="lieuDistribution"
+            name="lieuDistribution"
+            [(ngModel)]="lieuDistribution"
+            [disabled]="enregistrement"
+            placeholder="Ex. : Lafiabougou"
+            required />
+        </div>
+
       </div>
 
-      <div class="champ">
-        <label for="preuve">Preuve de distribution</label>
+    </section>
+
+    <!-- 3. Preuves de distribution -->
+    <section class="form-section">
+
+      <div class="section-heading">
+        <span class="section-number">3</span>
+        <div>
+          <h2>Preuves de distribution</h2>
+          <p>
+            Ajoutez au moins une photo, une vidéo ou un document
+            justificatif pour enregistrer la distribution.
+          </p>
+        </div>
+      </div>
+
+      <div class="upload-area">
+        <label for="preuves" class="upload-label">
+          <span class="upload-icon">＋</span>
+
+          <span class="upload-title">
+            Sélectionner des fichiers
+          </span>
+
+          <span class="upload-description">
+            Images et documents : 100 Mo maximum par fichier.
+            Vidéos : 200 Mo maximum par fichier.
+          </span>
+        </label>
+
         <input
-          id="preuve"
           type="file"
-          name="preuve"
-          accept="image/*,.pdf"
-          (change)="choisirPreuve($event)"
-        >
-
-        <small *ngIf="fichierPreuve">
-          Fichier sélectionné : {{ fichierPreuve.name }}
-        </small>
+          id="preuves"
+          name="preuves"
+          multiple
+          accept="image/*,video/*,.pdf,.txt,.doc,.docx"
+          [disabled]="enregistrement"
+          (change)="selectionnerFichiers($event)" />
       </div>
 
-    </div>
+      <!-- Liste des fichiers sélectionnés -->
+      <div
+        class="selected-files"
+        *ngIf="fichiersSelectionnes.length > 0">
 
-    <div class="actions">
+        <h3>
+          Fichiers sélectionnés ({{ fichiersSelectionnes.length }})
+        </h3>
+
+        <div
+          class="file-item"
+          *ngFor="let fichier of fichiersSelectionnes; let i = index">
+
+          <span class="file-icon">📎</span>
+
+          <div class="file-details">
+            <span class="file-name">{{ fichier.name }}</span>
+
+            <span class="file-size">
+              {{ (fichier.size / 1024 / 1024).toFixed(2) }} Mo
+            </span>
+          </div>
+
+          <button
+            type="button"
+            class="remove-file"
+            [disabled]="enregistrement"
+            (click)="supprimerFichier(i)"
+            [attr.aria-label]="'Supprimer ' + fichier.name">
+            ✕
+          </button>
+
+        </div>
+      </div>
+
+      <!-- AFFICHAGE DES ERREURS SOUS LES FICHIERS -->
+      <div
+        class="upload-feedback"
+        *ngIf="formulaireSoumis && (
+          erreursChamps.cible ||
+          erreursChamps.dateDistribution ||
+          erreursChamps.lieuDistribution ||
+          messageErreur
+        )">
+
+        <p class="field-error" *ngIf="erreursChamps.cible">
+          {{ erreursChamps.cible }}
+        </p>
+
+        <p
+          class="field-error"
+          *ngIf="erreursChamps.dateDistribution">
+          {{ erreursChamps.dateDistribution }}
+        </p>
+
+        <p
+          class="field-error"
+          *ngIf="erreursChamps.lieuDistribution">
+          {{ erreursChamps.lieuDistribution }}
+        </p>
+
+        <p class="field-error" *ngIf="messageErreur">
+          {{ messageErreur }}
+        </p>
+
+      </div>
+
+      <!-- AFFICHAGE DU SUCCÈS SOUS LES FICHIERS -->
+      <div
+        class="upload-success"
+        *ngIf="messageSucces">
+
+        <span class="success-icon">✓</span>
+        <span>{{ messageSucces }}</span>
+
+      </div>
+
+    </section>
+
+    <!-- Actions -->
+    <footer class="form-actions">
+
       <button
         type="button"
-        class="bouton-annuler"
+        class="btn btn-secondary"
         (click)="annuler()"
-      >
+        [disabled]="enregistrement">
         Annuler
       </button>
 
       <button
         type="submit"
-        class="bouton-enregistrer"
-        [disabled]="
-          chargement ||
-          chargementDemandes ||
-          demandes.length === 0
-        "
-      >
-        {{ chargement ? 'Enregistrement...' : 'Enregistrer' }}
+        class="btn btn-primary"
+        [disabled]="enregistrement">
+
+        <span *ngIf="!enregistrement">
+          Enregistrer la distribution
+        </span>
+
+        <span *ngIf="enregistrement" class="loading-content">
+          <span class="spinner"></span>
+          Enregistrement...
+        </span>
+
       </button>
-    </div>
+
+    </footer>
 
   </form>
-
 </div>

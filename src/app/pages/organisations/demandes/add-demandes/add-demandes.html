@@ -1,0 +1,653 @@
+
+<div class="page-container">
+
+  <div class="page-header">
+    <div>
+      <h1>Créer une demande d'aide</h1>
+      <p>
+        Renseignez les informations nécessaires pour créer une demande d'aide.
+      </p>
+    </div>
+  </div>
+
+  <form #form="ngForm" (ngSubmit)="soumettre(form)" novalidate>
+
+    <!-- 1. Informations générales -->
+    <section class="form-card">
+      <h2>Informations générales</h2>
+
+      <div class="form-grid">
+
+        <!-- Titre -->
+        <div class="form-group">
+          <label for="titre">Titre de la demande *</label>
+
+          <input
+            id="titre"
+            type="text"
+            name="titre"
+            [(ngModel)]="demande.titre"
+            #titre="ngModel"
+            required
+            placeholder="Ex. Aide alimentaire pour une famille">
+
+          <small
+            class="field-error"
+            *ngIf="titre.invalid && (titre.touched || soumis)">
+            Le titre de la demande est obligatoire.
+          </small>
+        </div>
+
+        <!-- Catégorie -->
+        <div class="form-group">
+          <label for="categorieDemandeId">Catégorie *</label>
+
+          <select
+            id="categorieDemandeId"
+            name="categorieDemandeId"
+            [(ngModel)]="demande.categorieDemandeId"
+            #categorie="ngModel"
+            required>
+
+            <option [ngValue]="0">Choisir une catégorie</option>
+
+            <option
+              *ngFor="let categorie of categories"
+              [ngValue]="categorie.id">
+              {{ categorie.nom }}
+            </option>
+          </select>
+
+          <small
+            class="field-error"
+            *ngIf="soumis && !demande.categorieDemandeId">
+            Veuillez sélectionner une catégorie.
+          </small>
+        </div>
+
+        <!-- Urgence -->
+        <div class="form-group">
+          <label for="niveauUrgence">Niveau d'urgence *</label>
+
+          <select
+            id="niveauUrgence"
+            name="niveauUrgence"
+            [(ngModel)]="demande.niveauUrgence"
+            #urgence="ngModel"
+            required>
+
+            <option value="">Choisir un niveau</option>
+            <option value="FAIBLE">Faible</option>
+            <option value="MOYENNE">Moyenne</option>
+            <option value="FORTE">Forte</option>
+          </select>
+
+          <small
+            class="field-error"
+            *ngIf="urgence.invalid && (urgence.touched || soumis)">
+            Veuillez sélectionner un niveau d'urgence.
+          </small>
+        </div>
+
+        <!-- Type de demande -->
+        <div class="form-group">
+          <label for="typeDemande">Type de demande *</label>
+
+          <select
+            id="typeDemande"
+            name="typeDemande"
+            [(ngModel)]="demande.typeDemande"
+            (ngModelChange)="changerTypeDemande()"
+            #typeDemande="ngModel"
+            required>
+
+            <option value="">Choisir un type</option>
+            <option value="INDIVIDUEL">Individuelle</option>
+            <option value="COLLECTIF">Collective</option>
+          </select>
+
+          <small
+            class="field-error"
+            *ngIf="typeDemande.invalid && (typeDemande.touched || soumis)">
+            Veuillez sélectionner un type de demande.
+          </small>
+        </div>
+
+        <!-- Nombre de personnes -->
+        <div class="form-group">
+          <label for="nombrePersonne">Nombre de personnes *</label>
+
+          <input
+            id="nombrePersonne"
+            type="number"
+            name="nombrePersonne"
+            [(ngModel)]="demande.nombrePersonne"
+            #nombre="ngModel"
+            [readonly]="demande.typeDemande === 'INDIVIDUEL'"
+            [min]="demande.typeDemande === 'INDIVIDUEL' ? 1 : 2"
+            step="1"
+            required>
+
+          <small
+            class="field-error"
+            *ngIf="soumis && nombrePersonnesInvalide()">
+            <span *ngIf="demande.typeDemande === 'INDIVIDUEL'">
+              Une demande individuelle concerne une personne.
+            </span>
+
+            <span *ngIf="demande.typeDemande === 'COLLECTIF'">
+              Une demande collective doit concerner au moins deux personnes.
+            </span>
+          </small>
+        </div>
+
+      </div>
+
+      <!-- Description -->
+      <div class="form-group description-group">
+        <label for="descriptionSituation">
+          Description de la situation *
+        </label>
+
+        <textarea
+          id="descriptionSituation"
+          name="descriptionSituation"
+          [(ngModel)]="demande.descriptionSituation"
+          #description="ngModel"
+          required
+          rows="5"
+          placeholder="Décrivez la situation et les besoins du bénéficiaire.">
+        </textarea>
+
+        <small
+          class="field-error"
+          *ngIf="description.invalid && (description.touched || soumis)">
+          La description de la situation est obligatoire.
+        </small>
+      </div>
+    </section>
+
+    <!-- 2. Bénéficiaire -->
+    <section class="form-card">
+      <h2>Bénéficiaire</h2>
+
+      <div class="form-group">
+        <label for="rechercheBeneficiaire">
+          Rechercher un bénéficiaire accepté *
+        </label>
+
+        <div class="beneficiaire-search">
+          <input
+            id="rechercheBeneficiaire"
+            type="text"
+            name="rechercheBeneficiaire"
+            [(ngModel)]="rechercheBeneficiaire"
+            (focus)="ouvrirListeBeneficiaires()"
+            (input)="ouvrirListeBeneficiaires()"
+            placeholder="Nom, prénom, téléphone ou identifiant">
+
+          <button
+            type="button"
+            class="btn-clear"
+            *ngIf="rechercheBeneficiaire"
+            (click)="effacerBeneficiaire()">
+            Effacer
+          </button>
+        </div>
+
+        <div
+          class="beneficiaires-list"
+          *ngIf="listeBeneficiairesVisible && beneficiairesFiltres.length > 0">
+
+          <button
+            type="button"
+            class="beneficiaire-option"
+            *ngFor="let beneficiaire of beneficiairesFiltres"
+            (click)="selectionnerBeneficiaire(beneficiaire)">
+
+            <strong>{{ nomCompletBeneficiaire(beneficiaire) }}</strong>
+            <span>Identifiant : {{ beneficiaire.id }}</span>
+
+            <span *ngIf="beneficiaire.telephone">
+              Téléphone : {{ beneficiaire.telephone }}
+            </span>
+          </button>
+        </div>
+
+        <p
+          class="empty-message"
+          *ngIf="listeBeneficiairesVisible && beneficiairesFiltres.length === 0">
+          Aucun bénéficiaire trouvé.
+        </p>
+
+        <div
+          class="selected-beneficiaire"
+          *ngIf="demande.beneficiaireId > 0">
+
+          <div>
+            <span class="selected-label">Bénéficiaire sélectionné</span>
+            <strong>{{ rechercheBeneficiaire }}</strong>
+          </div>
+
+          <button
+            type="button"
+            class="btn-clear"
+            (click)="effacerBeneficiaire()">
+            Changer
+          </button>
+        </div>
+
+        <small
+          class="field-error"
+          *ngIf="soumis && !demande.beneficiaireId">
+          Veuillez sélectionner un bénéficiaire accepté.
+        </small>
+      </div>
+    </section>
+
+    <!-- 3. Nature de l'aide -->
+    <section class="form-card">
+      <h2>Nature de l'aide</h2>
+
+      <p class="section-description">
+        Choisissez le type d'aide que vous souhaitez demander.
+      </p>
+
+      <div class="type-aide-options">
+
+        <!-- Aide financière -->
+        <label
+          class="type-aide-card"
+          [class.selected]="demande.typeDemandeAide === 'FINANCIERE'">
+
+          <input
+            type="radio"
+            name="typeDemandeAide"
+            [(ngModel)]="demande.typeDemandeAide"
+            [value]="'FINANCIERE'"
+            (ngModelChange)="changerTypeAide()"
+            required>
+
+          <span class="type-aide-icon">
+            <mat-icon>account_balance_wallet</mat-icon>
+          </span>
+
+          <span class="type-aide-content">
+            <strong>Aide financière</strong>
+            <small>Collecter de l'argent pour répondre au besoin.</small>
+          </span>
+
+          <span class="radio-indicator"></span>
+        </label>
+
+        <!-- Aide matérielle -->
+        <label
+          class="type-aide-card"
+          [class.selected]="demande.typeDemandeAide === 'MATERIELLE'">
+
+          <input
+            type="radio"
+            name="typeDemandeAide"
+            [(ngModel)]="demande.typeDemandeAide"
+            [value]="'MATERIELLE'"
+            (ngModelChange)="changerTypeAide()"
+            required>
+
+          <span class="type-aide-icon">
+            <mat-icon>inventory_2</mat-icon>
+          </span>
+
+          <span class="type-aide-content">
+            <strong>Aide matérielle</strong>
+            <small>Décrire les articles et les quantités nécessaires.</small>
+          </span>
+
+          <span class="radio-indicator"></span>
+        </label>
+
+      </div>
+
+      <!-- Détails de l'aide financière -->
+      <div
+        class="type-aide-details"
+        *ngIf="demande.typeDemandeAide === 'FINANCIERE'">
+
+        <div class="subsection-heading">
+          <h3>Montant de l'aide</h3>
+          <p>Indiquez le montant total nécessaire.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="montantNecessaire">
+            Montant nécessaire (FCFA) *
+          </label>
+
+          <input
+            id="montantNecessaire"
+            type="number"
+            name="montantNecessaire"
+            [(ngModel)]="demande.montantNecessaire"
+            #montant="ngModel"
+            min="1"
+            step="1"
+            required
+            (wheel)="bloquerMoletteMontant($event)"
+            placeholder="Ex. 65000">
+
+        
+<small
+  class="field-error"
+  *ngIf="
+    soumis &&
+    (
+      montant.invalid ||
+      montantFinancierInvalide()
+    )
+  ">
+  Le montant nécessaire doit être un nombre supérieur à zéro.
+</small>
+
+
+          <small class="help-text">
+            Montant exprimé en francs CFA.
+          </small>
+        </div>
+      </div>
+
+      <!-- Détails de l'aide matérielle -->
+      <div
+        class="type-aide-details"
+        *ngIf="demande.typeDemandeAide === 'MATERIELLE'">
+
+        <div class="subsection-heading">
+          <h3>Articles nécessaires</h3>
+          <p>
+            Ajoutez les articles nécessaires. Les quantités seront
+            additionnées lorsque la désignation, l'unité et le prix
+            unitaire sont identiques.
+          </p>
+        </div>
+
+        <div class="article-form">
+
+          <!-- Désignation -->
+          <div class="form-group">
+            <label for="designation">Désignation *</label>
+
+            <input
+              id="designation"
+              type="text"
+              name="designation"
+              [(ngModel)]="nouvelArticle.designation"
+              [ngModelOptions]="{standalone: true}"
+              placeholder="Ex. Sac de riz">
+
+            <small
+              class="field-error"
+              *ngIf="erreurAjoutArticle && designationArticleInvalide()">
+              La désignation de l'article est obligatoire.
+            </small>
+          </div>
+
+          <!-- Quantité -->
+          <div class="form-group">
+            <label for="quantiteDemandee">Quantité *</label>
+
+            <input
+              id="quantiteDemandee"
+              type="number"
+              name="quantiteDemandee"
+              [(ngModel)]="nouvelArticle.quantiteDemandee"
+              [ngModelOptions]="{standalone: true}"
+              min="1"
+              step="1">
+
+            <small
+              class="field-error"
+              *ngIf="erreurAjoutArticle && quantiteArticleInvalide()">
+              La quantité doit être un entier supérieur à zéro.
+            </small>
+          </div>
+
+          <!-- Unité -->
+          <div class="form-group">
+            <label for="unite">Unité *</label>
+
+            <input
+              id="unite"
+              type="text"
+              name="unite"
+              [(ngModel)]="nouvelArticle.unite"
+              [ngModelOptions]="{standalone: true}"
+              placeholder="Ex. sac, bidon, unité">
+
+            <small
+              class="field-error"
+              *ngIf="erreurAjoutArticle && uniteArticleInvalide()">
+              L'unité de l'article est obligatoire.
+            </small>
+          </div>
+
+          <!-- Prix unitaire -->
+          <div class="form-group">
+            <label for="prixUnitaireEstime">
+              Prix unitaire estimé (FCFA) *
+            </label>
+
+            <input
+              id="prixUnitaireEstime"
+              type="number"
+              name="prixUnitaireEstime"
+              [(ngModel)]="nouvelArticle.prixUnitaireEstime"
+              [ngModelOptions]="{standalone: true}"
+              min="0.01"
+              step="1"
+              (wheel)="bloquerMoletteMontant($event)"
+              placeholder="Ex. 15000">
+
+            <small
+              class="field-error"
+              *ngIf="erreurAjoutArticle && prixArticleEstVide()">
+              Le prix unitaire est obligatoire.
+            </small>
+
+            <small
+              class="field-error"
+              *ngIf="erreurAjoutArticle && prixArticleInvalide()">
+              Le prix unitaire doit être strictement supérieur à 0 FCFA.
+            </small>
+          </div>
+
+          <!-- Ajouter l'article -->
+          <div class="article-button">
+            <button
+              type="button"
+              class="btn-secondary"
+              (click)="ajouterArticle()">
+
+              <mat-icon>add</mat-icon>
+              Ajouter l'article
+            </button>
+          </div>
+
+        </div>
+
+        <small
+          class="field-error"
+          *ngIf="soumis && demande.articles.length === 0">
+          Ajoutez au moins un article pour une demande matérielle.
+        </small>
+
+        <!-- Tableau des articles ajoutés -->
+        <div
+          class="table-container"
+          *ngIf="demande.articles.length > 0">
+
+          <table>
+            <thead>
+              <tr>
+                <th>Désignation</th>
+                <th>Quantité</th>
+                <th>Unité</th>
+                <th>Prix unitaire</th>
+                <th>Montant total</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr
+                *ngFor="let article of demande.articles; let i = index">
+
+                <td>{{ article.designation }}</td>
+                <td>{{ article.quantiteDemandee }}</td>
+                <td>{{ article.unite }}</td>
+
+                <td>
+                  {{ article.prixUnitaireEstime | number:'1.0-0' }} FCFA
+                </td>
+
+                <td>
+                  {{
+                    article.quantiteDemandee * article.prixUnitaireEstime
+                      | number:'1.0-0'
+                  }} FCFA
+                </td>
+
+                <td>
+                  <button
+                    type="button"
+                    class="btn-delete"
+                    (click)="supprimerArticle(i)">
+                    Supprimer
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+
+            <tfoot>
+              <tr>
+                <th colspan="4">Montant total estimé</th>
+                <th colspan="2">
+                  {{ montantMateriel | number:'1.0-0' }} FCFA
+                </th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <div
+          class="empty-articles"
+          *ngIf="demande.articles.length === 0">
+
+          <mat-icon>inventory_2</mat-icon>
+          <p>Aucun article ajouté pour le moment.</p>
+        </div>
+
+        <div
+          class="total-estime"
+          *ngIf="demande.articles.length > 0">
+
+          <span>Montant total estimé de l'aide</span>
+          <strong>{{ montantEstime | number:'1.0-0' }} FCFA</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Justificatifs -->
+    <section class="form-card">
+      <h2>Justificatifs</h2>
+
+      <p class="section-description">
+        Vous pouvez joindre des documents permettant de justifier
+        la situation du bénéficiaire.
+      </p>
+
+      <div class="form-group">
+        <label for="typeJustificatifId">Type de justificatif</label>
+
+        <select
+          id="typeJustificatifId"
+          name="typeJustificatifId"
+          [(ngModel)]="typeJustificatifId">
+
+          <option [ngValue]="null">Choisir un type</option>
+
+          <option
+            *ngFor="let type of typesJustificatif"
+            [ngValue]="type.id">
+            {{ type.nom }}
+          </option>
+        </select>
+
+        <small
+          class="field-error"
+          *ngIf="soumis && fichiers.length > 0 && !typeJustificatifId">
+          Veuillez choisir le type des justificatifs.
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="fichiers">Documents justificatifs</label>
+
+        <input
+          id="fichiers"
+          type="file"
+          multiple
+          accept=".pdf,.jpg,.jpeg,.png"
+          (change)="selectionnerFichiers($event)">
+
+        <small class="help-text">
+          Formats acceptés : PDF, JPG, JPEG et PNG.
+        </small>
+      </div>
+
+      <div
+        class="fichiers-selectionnes"
+        *ngIf="fichiers.length > 0">
+
+        <h3>Fichiers sélectionnés ({{ fichiers.length }})</h3>
+
+        <div
+          class="fichier-item"
+          *ngFor="let fichier of fichiers; let i = index">
+
+          <span class="fichier-nom">{{ fichier.name }}</span>
+
+          <button
+            type="button"
+            class="btn-delete"
+            (click)="retirerFichier(i)">
+            Retirer
+          </button>
+        </div>
+      </div>
+
+      <p class="help-text" *ngIf="fichiers.length === 0">
+        Aucun fichier sélectionné. Les justificatifs sont facultatifs
+        dans ce formulaire.
+      </p>
+    </section>
+
+    <!-- 5. Actions -->
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn-cancel"
+        (click)="annuler()"
+        [disabled]="chargement">
+        Annuler
+      </button>
+
+      <button
+        type="submit"
+        class="btn-primary"
+        [disabled]="chargement">
+
+        <span *ngIf="!chargement">Créer la demande</span>
+        <span *ngIf="chargement">Enregistrement en cours...</span>
+      </button>
+    </div>
+
+  </form>
+</div>

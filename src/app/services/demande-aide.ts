@@ -4,10 +4,8 @@ import { Observable } from 'rxjs';
 
 import {
   Demande,
-  CategorieDemande
+  DemandeAideRequest
 } from '../models/demande.model';
-
-import { Beneficiaire } from '../models/beneficiaire.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,9 +14,7 @@ export class demandeAideService {
 
   private apiUrl = 'http://localhost:8080/api/demandes-aide';
 
-  constructor(
-    private http: HttpClient
-  ) {}
+  constructor(private http: HttpClient) {}
 
   getDemandesParOrganisation(
     organisationId: number
@@ -27,42 +23,24 @@ export class demandeAideService {
       `${this.apiUrl}/organisation/${organisationId}`
     );
   }
-  //demandes qui doivent etre distribuée
-getDemandesTermineesPourAideDistribuee(
-  organisationId: number
-): Observable<Demande[]> {
-  return this.http.get<Demande[]>(
-    `${this.apiUrl}/terminees-pour-aide-distribuee/organisation/${organisationId}`
-  );
-}
-  getDemandesDisponiblesPourDon(
-    organisationId: number
-  ): Observable<Demande[]> {
-    return this.http.get<Demande[]>(
-      `${this.apiUrl}/disponibles-pour-don/organisation/${organisationId}`
-    );
-  }
 
   getDemandes(): Observable<Demande[]> {
     return this.http.get<Demande[]>(this.apiUrl);
   }
 
   getDemandeById(id: number): Observable<Demande> {
-    return this.http.get<Demande>(
-      `${this.apiUrl}/${id}`
-    );
+    return this.http.get<Demande>(`${this.apiUrl}/${id}`);
   }
 
-  creerDemande(demande: any): Observable<Demande> {
-    return this.http.post<Demande>(
-      this.apiUrl,
-      demande
-    );
+  creerDemande(
+    demande: DemandeAideRequest
+  ): Observable<Demande> {
+    return this.http.post<Demande>(this.apiUrl, demande);
   }
 
   modifierDemande(
     id: number,
-    demande: any
+    demande: DemandeAideRequest
   ): Observable<Demande> {
     return this.http.put<Demande>(
       `${this.apiUrl}/${id}`,
@@ -70,8 +48,8 @@ getDemandesTermineesPourAideDistribuee(
     );
   }
 
-  validerDemande(id: number): Observable<any> {
-    return this.http.patch(
+  validerDemande(id: number): Observable<Demande> {
+    return this.http.patch<Demande>(
       `${this.apiUrl}/${id}/valider`,
       {}
     );
@@ -80,36 +58,41 @@ getDemandesTermineesPourAideDistribuee(
   rejeterDemande(
     id: number,
     motif: string
-  ): Observable<any> {
-    return this.http.patch(
+  ): Observable<Demande> {
+    return this.http.patch<Demande>(
       `${this.apiUrl}/${id}/rejeter`,
       null,
-      {
-        params: {
-          motif: motif
-        }
-      }
+      { params: { motif } }
     );
   }
+  getDemandesDisponiblesPourDon(
+  organisationId: number
+): Observable<Demande[]> {
+  return this.http.get<Demande[]>(
+    `${this.apiUrl}/disponibles-pour-don/organisation/${organisationId}`
+  );
+}
 
-  publierDemande(id: number): Observable<any> {
-    return this.http.put(
-      `${this.apiUrl}/${id}/publier`,
-      {}
-    );
-  }
-
-  getCategories(): Observable<CategorieDemande[]> {
-    return this.http.get<CategorieDemande[]>(
-      'http://localhost:8080/api/categories-demande'
-    );
-  }
-
-  getBeneficiairesParOrganisation(
+getDemandesTermineesPourAideDistribuee(
+  organisationId: number
+): Observable<Demande[]> {
+  return this.http.get<Demande[]>(
+    `${this.apiUrl}/terminees-pour-aide-distribuee/organisation/${organisationId}`
+  );
+}
+  getTermineesPourAideDistribuee(
     organisationId: number
-  ): Observable<Beneficiaire[]> {
-    return this.http.get<Beneficiaire[]>(
-      `http://localhost:8080/api/beneficiaires/organisation/${organisationId}`
+  ): Observable<Demande[]> {
+    return this.http.get<Demande[]>(
+      `${this.apiUrl}/terminees-pour-aide-distribuee/organisation/${organisationId}`
     );
   }
+
+  // Récupérer une demande par son identifiant.
+  getById(id: number): Observable<Demande> {
+    return this.http.get<Demande>(
+      `${this.apiUrl}/${id}`
+    );
+  }
+
 }

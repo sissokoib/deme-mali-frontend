@@ -1,0 +1,431 @@
+
+<div class="detail-page">
+
+  <!-- En-tête -->
+  <header class="page-header">
+    <button
+      class="btn-retour"
+      type="button"
+      (click)="retourListe()"
+    >
+      ← Retour aux distributions
+    </button>
+
+    <div class="titre-ligne">
+      <div>
+        <span class="sur-titre">DÈMÈ MALI</span>
+        <h1>Détail de la distribution</h1>
+        <p *ngIf="aide">Distribution #{{ aide.id }}</p>
+      </div>
+
+      <span
+        *ngIf="aide"
+        class="badge-statut"
+        [class.statut-attente]="aide.statut === 'EN_ATTENTE'"
+        [class.statut-termine]="aide.statut === 'DISTRIBUEE'"
+      >
+        {{ libelleStatut(aide.statut) }}
+      </span>
+    </div>
+  </header>
+
+  <!-- Chargement -->
+  <div *ngIf="chargement" class="etat-chargement">
+    <span class="spinner"></span>
+    Chargement des informations…
+  </div>
+
+  <!-- Message d'erreur -->
+  <div
+    *ngIf="messageErreur"
+    class="message-erreur"
+    role="alert"
+  >
+    {{ messageErreur }}
+  </div>
+
+  <!-- Contenu de la distribution -->
+  <ng-container *ngIf="!chargement && aide as distribution">
+
+    <!-- Informations générales -->
+    <section class="carte">
+      <div class="section-titre">
+        <div class="icone-section">📦</div>
+
+        <div>
+          <h2>Informations de la distribution</h2>
+          <p>Informations générales sur l'aide distribuée</p>
+        </div>
+      </div>
+
+      <div class="informations-grille">
+
+        <div class="information">
+          <span class="libelle">Numéro de distribution</span>
+          <strong>#{{ distribution.id }}</strong>
+        </div>
+
+        <div class="information">
+          <span class="libelle">Date de distribution</span>
+          <strong>
+            {{ distribution.dateDistribution | date:'dd/MM/yyyy' }}
+          </strong>
+        </div>
+
+        <div class="information">
+          <span class="libelle">Lieu de distribution</span>
+          <strong>
+            {{ distribution.lieuDistribution || 'Non renseigné' }}
+          </strong>
+        </div>
+
+        <div class="information">
+          <span class="libelle">Statut</span>
+          <strong>
+            {{ libelleStatut(distribution.statut) }}
+          </strong>
+        </div>
+
+        <div class="information">
+          <span class="libelle">Identifiant de la demande</span>
+          <strong>
+            {{ distribution.demandeAideId ?? 'Non renseigné' }}
+          </strong>
+        </div>
+
+        <div class="information">
+          <span class="libelle">Identifiant du bénéficiaire</span>
+          <strong>
+            {{ distribution.beneficiaireId ?? 'Non renseigné' }}
+          </strong>
+        </div>
+
+      </div>
+
+      <!-- Action de confirmation -->
+      <div
+        class="actions"
+        *ngIf="distribution.statut === 'EN_ATTENTE'"
+      >
+        <button
+          type="button"
+          class="btn-principal"
+          (click)="confirmerDistribution()"
+          [disabled]="chargement"
+        >
+          Confirmer la distribution
+        </button>
+      </div>
+    </section>
+
+    <!-- Demande d'aide associée -->
+    <section class="carte" *ngIf="demande as demandeAide">
+
+      <div class="section-titre">
+        <div class="icone-section">🤝</div>
+
+        <div>
+          <h2>Demande d'aide associée</h2>
+          <p>Origine de la distribution</p>
+        </div>
+      </div>
+
+      <h3 class="titre-demande">
+        {{ demandeAide.titre }}
+      </h3>
+
+      <p class="description-demande">
+        {{
+          demandeAide.descriptionSituation ||
+          'Aucune description disponible.'
+        }}
+      </p>
+
+      <div class="informations-grille">
+
+        <div class="information">
+          <span class="libelle">Type de demande</span>
+          <strong>
+            {{
+              demandeAide.typeDemandeAide === 'FINANCIERE'
+                ? 'Aide financière'
+                : 'Aide matérielle'
+            }}
+          </strong>
+        </div>
+
+        <div class="information">
+          <span class="libelle">Niveau d'urgence</span>
+          <strong>
+            {{ demandeAide.niveauUrgence || 'Non renseigné' }}
+          </strong>
+        </div>
+
+        <div class="information">
+          <span class="libelle">Nombre de personnes</span>
+          <strong>
+            {{ demandeAide.nombrePersonne ?? 'Non renseigné' }}
+          </strong>
+        </div>
+
+        <div class="information">
+          <span class="libelle">Montant nécessaire</span>
+          <strong>
+            {{
+              demandeAide.montantNecessaire != null
+                ? formaterMontant(demandeAide.montantNecessaire)
+                : 'Non applicable'
+            }}
+          </strong>
+        </div>
+
+      </div>
+
+      <button
+        type="button"
+        class="btn-secondaire"
+        (click)="voirDemande()"
+      >
+        Consulter la demande
+      </button>
+    </section>
+
+    <!-- Preuves de distribution -->
+    <section class="carte">
+
+      <div class="section-titre">
+        <div class="icone-section">📷</div>
+
+        <div>
+          <h2>Preuves de distribution</h2>
+          <p>Photos, vidéos et documents justificatifs</p>
+        </div>
+      </div>
+
+      <div
+        *ngIf="
+          !distribution.preuves ||
+          distribution.preuves.length === 0
+        "
+        class="etat-vide"
+      >
+        <span>📁</span>
+        <p>
+          Aucune preuve n'a été ajoutée à cette distribution.
+        </p>
+      </div>
+
+      <div
+        class="preuves-grille"
+        *ngIf="distribution.preuves?.length"
+      >
+
+        <article
+          class="preuve-carte"
+          *ngFor="let preuve of distribution.preuves"
+        >
+
+          <!-- Image -->
+          <img
+            *ngIf="estImage(preuve)"
+            [src]="urlPreuve(preuve.urlFichier)"
+            [alt]="preuve.nomFichier"
+            class="preuve-image"
+          />
+
+          <!-- Vidéo -->
+          <video
+            *ngIf="estVideo(preuve)"
+            class="preuve-video"
+            controls
+            preload="metadata"
+          >
+            <source [src]="urlPreuve(preuve.urlFichier)" />
+            Votre navigateur ne prend pas en charge la lecture vidéo.
+          </video>
+
+          <!-- Document -->
+          <div
+            class="preuve-document"
+            *ngIf="estDocument(preuve)"
+          >
+            <span>📄</span>
+            <p>Document justificatif</p>
+          </div>
+
+          <div class="preuve-infos">
+            <strong>{{ preuve.nomFichier }}</strong>
+            <span>{{ preuve.typeMedia }}</span>
+
+            <a
+              [href]="urlPreuve(preuve.urlFichier)"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Ouvrir la preuve ↗
+            </a>
+          </div>
+
+        </article>
+      </div>
+    </section>
+
+    <!-- Affectations financières -->
+    <section class="carte">
+
+      <div class="section-titre">
+        <div class="icone-section">💰</div>
+
+        <div>
+          <h2>Affectations financières</h2>
+          <p>Détail des dons financiers affectés</p>
+        </div>
+      </div>
+
+      <div
+        *ngIf="
+          !distribution.affectationsFinancieres ||
+          distribution.affectationsFinancieres.length === 0
+        "
+        class="etat-vide"
+      >
+        Aucune affectation financière enregistrée.
+      </div>
+
+      <div
+        class="table-responsive"
+        *ngIf="distribution.affectationsFinancieres?.length"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th>Don n°</th>
+              <th>Montant affecté</th>
+              <th>Date d'affectation</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr
+              *ngFor="
+                let affectation of distribution.affectationsFinancieres
+              "
+            >
+              <td>#{{ affectation.donFinancierId }}</td>
+
+              <td class="montant">
+                {{ formaterMontant(affectation.montantAffecte) }}
+              </td>
+
+              <td>
+                {{ affectation.dateAffectation | date:'dd/MM/yyyy' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="total-ligne">
+        <span>Total affecté</span>
+
+        <strong>
+          {{
+            formaterMontant(
+              distribution.affectationsFinancieres
+                ?.reduce(
+                  (total, affectation) =>
+                    total + (affectation.montantAffecte ?? 0),
+                  0
+                ) ?? 0
+            )
+          }}
+        </strong>
+      </div>
+    </section>
+
+    <!-- Affectations matérielles -->
+    <section class="carte">
+
+      <div class="section-titre">
+        <div class="icone-section">📦</div>
+
+        <div>
+          <h2>Affectations matérielles</h2>
+          <p>Détail des dons matériels affectés</p>
+        </div>
+      </div>
+
+      <div
+        *ngIf="
+          !distribution.affectationsMaterielles ||
+          distribution.affectationsMaterielles.length === 0
+        "
+        class="etat-vide"
+      >
+        Aucune affectation matérielle enregistrée.
+      </div>
+
+      <div
+        class="table-responsive"
+        *ngIf="distribution.affectationsMaterielles?.length"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th>Don matériel n°</th>
+              <th>Désignation</th>
+              <th>Quantité affectée</th>
+              <th>Valeur affectée</th>
+              <th>Date d'affectation</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr
+              *ngFor="
+                let affectation of distribution.affectationsMaterielles
+              "
+            >
+              <td>#{{ affectation.donMaterielId }}</td>
+
+              <td>
+                {{ affectation.designation || 'Non renseignée' }}
+              </td>
+
+              <td>
+                {{ affectation.quantiteAffectee }}
+                {{ affectation.unite }}
+              </td>
+
+              <td class="montant">
+                {{ formaterMontant(affectation.valeurAffectee) }}
+              </td>
+
+              <td>
+                {{ affectation.dateAffectation | date:'dd/MM/yyyy' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="total-ligne">
+        <span>Valeur totale affectée</span>
+
+        <strong>
+          {{
+            formaterMontant(
+              distribution.affectationsMaterielles
+                ?.reduce(
+                  (total, affectation) =>
+                    total + (affectation.valeurAffectee ?? 0),
+                  0
+                ) ?? 0
+            )
+          }}
+        </strong>
+      </div>
+    </section>
+
+  </ng-container>
+</div>

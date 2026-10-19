@@ -1,316 +1,606 @@
-
-<div class="page">
-
-  <div class="entete">
+<div class="page-container" *ngIf="!chargement; else loadingTemplate">
+  <header class="page-header">
     <div>
-      <h1>Modifier une demande d'aide</h1>
+      <span class="eyebrow">GESTION DES DEMANDES</span>
+      <h1>Modifier la demande</h1>
+      <p *ngIf="demande">
+        Demande #{{ demande.id }} — {{ demande.titre }}
+      </p>
+    </div>
+
+    <button type="button" class="btn-secondary" (click)="annuler()">
+      ← Retour
+    </button>
+  </header>
+
+  <ng-container *ngIf="demande as d">
+    <div *ngIf="!estModifiable" class="locked-banner">
+      <strong>Modification indisponible</strong>
       <p>
-        Modifiez les informations de la demande et ses justificatifs.
+        Cette demande a le statut « {{ d.statut }} ».
+        Seules les demandes en attente peuvent être modifiées.
       </p>
     </div>
-  </div>
 
-  <form
-    class="formulaire"
-    [formGroup]="formulaire"
-    (ngSubmit)="modifierDemande()"
-  >
+    <form #demandeForm="ngForm" (ngSubmit)="enregistrer(demandeForm)">
+      <fieldset [disabled]="!estModifiable || enregistrement">
 
-    <!-- INFORMATIONS DE LA DEMANDE -->
-    <div class="section">
-      <h2>Informations de la demande</h2>
+        <section class="form-card">
+          <div class="section-heading">
+            <span class="section-number">01</span>
+            <div>
+              <h2>Informations générales</h2>
+              <p>Modifie uniquement les informations nécessaires.</p>
+            </div>
+          </div>
 
-      <div class="ligne">
+          <div class="form-grid">
+            <div class="field full-width">
+              <label for="titre">Titre</label>
+              <input
+                id="titre"
+                name="titre"
+                [(ngModel)]="d.titre"
+                maxlength="150">
+            </div>
 
-        <div class="champ">
-          <label for="beneficiaire">Bénéficiaire</label>
+            <div class="field">
+              <label for="beneficiaireId">Bénéficiaire</label>
+              <select
+                id="beneficiaireId"
+                name="beneficiaireId"
+                [(ngModel)]="d.beneficiaireId">
+                <option [ngValue]="null">
+                  Conserver le bénéficiaire actuel
+                </option>
+                <option
+                  *ngFor="let b of beneficiaires"
+                  [ngValue]="b.id">
+                  {{ b.prenom }} {{ b.nom }}
+                </option>
+              </select>
+            </div>
 
-          <select id="beneficiaire" formControlName="beneficiaireId">
-            <option [ngValue]="null">Sélectionner un bénéficiaire</option>
+            <div class="field">
+              <label for="categorieDemandeId">Catégorie</label>
+              <select
+                id="categorieDemandeId"
+                name="categorieDemandeId"
+                [(ngModel)]="d.categorieDemandeId">
+                <option [ngValue]="null">
+                  Conserver la catégorie actuelle
+                </option>
+                <option
+                  *ngFor="let categorie of categories"
+                  [ngValue]="categorie.id">
+                  {{ categorie.nom }}
+                </option>
+              </select>
+            </div>
 
-            <option
-              *ngFor="let beneficiaire of beneficiaires"
-              [ngValue]="beneficiaire.id"
-            >
-              {{ beneficiaire.prenom }} {{ beneficiaire.nom }}
-            </option>
-          </select>
-        </div>
+            <div class="field">
+              <label for="typeDemande">Type de demande</label>
+              <select
+                id="typeDemande"
+                name="typeDemande"
+                [(ngModel)]="d.typeDemande">
+                <option value="INDIVIDUEL">Individuelle</option>
+                <option value="COLLECTIF">Collective</option>
+              </select>
+            </div>
 
-        <div class="champ">
-          <label for="categorie">Catégorie</label>
+            <div class="field">
+              <label for="nombrePersonne">Nombre de personnes</label>
+              <input
+                id="nombrePersonne"
+                name="nombrePersonne"
+                type="number"
+                min="1"
+                step="1"
+                [(ngModel)]="d.nombrePersonne"
+                (wheel)="bloquerMoletteMontant($event)">
+            </div>
 
-          <select id="categorie" formControlName="categorieDemandeId">
-            <option [ngValue]="null">Sélectionner une catégorie</option>
+            <div class="field">
+              <label for="niveauUrgence">Niveau d’urgence</label>
+              <select
+                id="niveauUrgence"
+                name="niveauUrgence"
+                [(ngModel)]="d.niveauUrgence">
+                <option value="FAIBLE">Faible</option>
+                <option value="MOYENNE">Moyenne</option>
+                <option value="FORTE">Forte</option>
+              </select>
+            </div>
 
-            <option
-              *ngFor="let categorie of categories"
-              [ngValue]="categorie.id"
-            >
-              {{ categorie.nom }}
-            </option>
-          </select>
-        </div>
+            <div class="field full-width">
+              <label for="motif">Motif</label>
+              <input
+                id="motif"
+                name="motif"
+                [(ngModel)]="d.motif"
+                maxlength="500">
+            </div>
 
-      </div>
+            <div class="field full-width">
+              <label for="descriptionSituation">
+                Description de la situation
+              </label>
+              <textarea
+                id="descriptionSituation"
+                name="descriptionSituation"
+                [(ngModel)]="d.descriptionSituation"
+                rows="5"
+                maxlength="5000"></textarea>
+            </div>
+          </div>
+        </section>
 
-      <div class="ligne">
+        <section class="form-card">
+          <div class="section-heading">
+            <span class="section-number">02</span>
+            <div>
+              <h2>Nature de l’aide</h2>
+              <p>
+                Le montant estimé est recalculé selon les modifications.
+              </p>
+            </div>
+          </div>
 
-        <div class="champ">
-          <label for="typeDemande">Type de demande</label>
+          <div class="aid-type-grid">
+            <label
+              class="aid-type-option"
+              [class.selected]="d.typeDemandeAide === 'FINANCIERE'">
+              <input
+                type="radio"
+                name="typeDemandeAide"
+                value="FINANCIERE"
+                [(ngModel)]="d.typeDemandeAide">
+              <span class="aid-icon">FCFA</span>
+              <span>
+                <strong>Aide financière</strong>
+                <small>Un montant d’argent nécessaire.</small>
+              </span>
+            </label>
 
-          <select id="typeDemande" formControlName="typeDemande">
-            <option value="">Sélectionner un type</option>
-            <option value="INDIVIDUEL">Individuelle</option>
-            <option value="COLLECTIF">Collective</option>
-          </select>
-        </div>
+            <label
+              class="aid-type-option"
+              [class.selected]="d.typeDemandeAide === 'MATERIELLE'">
+              <input
+                type="radio"
+                name="typeDemandeAide"
+                value="MATERIELLE"
+                [(ngModel)]="d.typeDemandeAide">
+              <span class="aid-icon">OBJ</span>
+              <span>
+                <strong>Aide matérielle</strong>
+                <small>Des biens et fournitures nécessaires.</small>
+              </span>
+            </label>
+          </div>
 
-        <div class="champ">
-          <label for="titre">Titre de la demande</label>
+          <div
+            *ngIf="d.typeDemandeAide === 'FINANCIERE'"
+            class="conditional-section">
 
-          <input
-            id="titre"
-            type="text"
-            formControlName="titre"
-            placeholder="Ex : Besoin de fournitures scolaires"
-          >
-        </div>
+            <div class="field">
+              <label for="montantNecessaire">
+                Montant nécessaire (FCFA)
+              </label>
+              <input
+                id="montantNecessaire"
+                name="montantNecessaire"
+                type="number"
+                min="1"
+                step="1"
+                [(ngModel)]="d.montantNecessaire"
+                (wheel)="bloquerMoletteMontant($event)">
 
-      </div>
-    </div>
+              <small class="help">
+                Montant initial :
+                {{ montantInitial ?? 0 | number:'1.0-0' }} FCFA
+              </small>
 
-    <!-- SITUATION DU BENEFICIAIRE -->
-    <div class="section">
-      <h2>Situation du bénéficiaire</h2>
+              <p class="increase-note" *ngIf="variationMontant > 0">
+                Augmentation :
+                +{{ variationMontant | number:'1.0-0' }} FCFA
+              </p>
 
-      <div class="ligne">
+              <p class="decrease-note" *ngIf="variationMontant < 0">
+                Diminution :
+                {{ variationMontant | number:'1.0-0' }} FCFA
+              </p>
+            </div>
 
-        <div class="champ">
-          <label for="nombrePersonne">Nombre de personnes</label>
+            <div class="amount-preview">
+              <span>Nouveau montant nécessaire</span>
+              <strong>
+                {{ montantEstime | number:'1.0-0' }} FCFA
+              </strong>
+            </div>
+          </div>
 
-          <input
-            id="nombrePersonne"
-            type="number"
-            min="1"
-            formControlName="nombrePersonne"
-            placeholder="Ex : 5"
-          >
-        </div>
+          <div
+            *ngIf="d.typeDemandeAide === 'MATERIELLE'"
+            class="conditional-section">
 
-        <div class="champ">
-          <label for="niveauUrgence">Niveau d'urgence</label>
+            <h3>Articles nécessaires</h3>
+            <p class="help">
+              Les majuscules et minuscules ne créent pas de nouveaux
+              articles. À désignation, unité et prix identiques, les
+              quantités sont regroupées.
+            </p>
 
-          <select id="niveauUrgence" formControlName="niveauUrgence">
-            <option value="">Sélectionner un niveau</option>
-            <option value="FORTE">Élevée</option>
-            <option value="MOYENNE">Moyenne</option>
-            <option value="FAIBLE">Faible</option>
-          </select>
-        </div>
+            <div class="table-wrapper" *ngIf="d.articles?.length">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Désignation</th>
+                    <th>Quantité</th>
+                    <th>Unité</th>
+                    <th>Prix unitaire (FCFA)</th>
+                    <th>Total (FCFA)</th>
+                    <th>Retirer</th>
+                  </tr>
+                </thead>
 
-      </div>
+                <tbody>
+                  <tr *ngFor="let article of d.articles; let i = index">
+                    <td>
+                      <input
+                        [name]="'designation' + i"
+                        [(ngModel)]="article.designation"
+                        aria-label="Désignation">
+                    </td>
 
-      <div class="champ">
-        <label for="descriptionSituation">
-          Description de la situation
-        </label>
+                    <td>
+                      <input
+                        [name]="'quantite' + i"
+                        type="number"
+                        min="1"
+                        step="1"
+                        [(ngModel)]="article.quantiteDemandee"
+                        (wheel)="bloquerMoletteMontant($event)"
+                        aria-label="Quantité">
+                    </td>
 
-        <textarea
-          id="descriptionSituation"
-          formControlName="descriptionSituation"
-          rows="5"
-          placeholder="Décrivez la situation et le besoin du bénéficiaire..."
-        ></textarea>
-      </div>
+                    <td>
+                      <input
+                        [name]="'unite' + i"
+                        [(ngModel)]="article.unite"
+                        aria-label="Unité">
+                    </td>
 
-      <div class="champ">
-        <label for="motif">Motif complémentaire</label>
+                    <td>
+                      <input
+                        [name]="'prix' + i"
+                        type="number"
+                        min="0"
+                        step="1"
+                        [(ngModel)]="article.prixUnitaireEstime"
+                        (wheel)="bloquerMoletteMontant($event)"
+                        aria-label="Prix unitaire">
+                    </td>
 
-        <input
-          id="motif"
-          type="text"
-          formControlName="motif"
-          placeholder="Précisez le motif si nécessaire"
-        >
-      </div>
-    </div>
+                    <td class="numeric">
+                      {{
+                        (article.quantiteDemandee *
+                          article.prixUnitaireEstime)
+                          | number:'1.0-0'
+                      }}
+                    </td>
 
-    <!-- BESOIN FINANCIER -->
-    <div class="section">
-      <h2>Besoin financier</h2>
+                    <td class="action-cell">
+                      <button
+                        type="button"
+                        class="icon-delete"
+                        (click)="supprimerArticle(i)"
+                        aria-label="Supprimer l’article"
+                        title="Supprimer l’article">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path
+                            d="M4 7h16M9 7V4h6v3m-9 0 1 13h10l1-13M10 11v5m4-5v5">
+                          </path>
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
-      <div class="champ montant">
-        <label for="montantNecessaire">Montant nécessaire (FCFA)</label>
+            <p *ngIf="!d.articles?.length" class="empty-articles">
+              Aucun article. Ajoute les articles nécessaires ci-dessous.
+            </p>
 
-        <input
-          id="montantNecessaire"
-          type="number"
-          min="1"
-          formControlName="montantNecessaire"
-          placeholder="Ex : 250000"
-        >
-      </div>
-    </div>
+            <div class="article-form">
+              <div class="field">
+                <label for="nouvelleDesignation">Désignation</label>
+                <input
+                  id="nouvelleDesignation"
+                  name="nouvelleDesignation"
+                  [(ngModel)]="nouvelArticle.designation"
+                  placeholder="Ex. : Sac de riz">
+              </div>
 
-    <!-- JUSTIFICATIFS EXISTANTS -->
-    <div class="section">
-      <h2>Justificatifs déjà enregistrés</h2>
+              <div class="field">
+                <label for="nouvelleQuantite">Quantité</label>
+                <input
+                  id="nouvelleQuantite"
+                  name="nouvelleQuantite"
+                  type="number"
+                  min="1"
+                  step="1"
+                  [(ngModel)]="nouvelArticle.quantiteDemandee"
+                  (wheel)="bloquerMoletteMontant($event)">
+              </div>
 
-      <p *ngIf="justificatifsExistants.length === 0">
-        Aucun justificatif enregistré pour cette demande.
-      </p>
+              <div class="field">
+                <label for="nouvelleUnite">Unité</label>
+                <input
+                  id="nouvelleUnite"
+                  name="nouvelleUnite"
+                  [(ngModel)]="nouvelArticle.unite"
+                  placeholder="Ex. : sac">
+              </div>
 
-      <div
-        class="fichiers-selectionnes"
-        *ngFor="let justificatif of justificatifsExistants"
-      >
+              <div class="field">
+                <label for="nouveauPrix">Prix unitaire (FCFA)</label>
+                <input
+                  id="nouveauPrix"
+                  name="nouveauPrix"
+                  type="number"
+                  min="0"
+                  step="1"
+                  [(ngModel)]="nouvelArticle.prixUnitaireEstime"
+                  (wheel)="bloquerMoletteMontant($event)">
+              </div>
 
-        <p>
-          <strong>Type :</strong>
-          {{ obtenirNomType(justificatif.typeJustificatifId) }}
-        </p>
+              <button
+                type="button"
+                class="btn-add-article"
+                (click)="ajouterArticle()">
+                ＋ Ajouter un article
+              </button>
+            </div>
 
-        <p>
-          <strong>Fichier :</strong>
-          {{ justificatif.nomFichier }}
-        </p>
+            <div class="amount-preview">
+              <span>Montant matériel estimé</span>
+              <strong>
+                {{ montantMateriel | number:'1.0-0' }} FCFA
+              </strong>
+            </div>
+          </div>
+        </section>
 
-        <!-- IMAGE ET ICONE DE SUPPRESSION -->
-        <div class="image-avec-suppression">
+        <!-- SECTION JUSTIFICATIFS -->
+        <section class="form-card">
+          <div class="section-heading">
+            <span class="section-number">03</span>
+            <div>
+              <h2>Justificatifs</h2>
+              <p>Conserve, retire ou ajoute des documents.</p>
+            </div>
+          </div>
 
-          <img
-            *ngIf="estUneImage(justificatif.cheminFichier || justificatif.nomFichier)"
-            [src]="obtenirUrlJustificatif(justificatif.cheminFichier)"
-            [alt]="justificatif.nomFichier"
-            class="image-justificatif"
-          >
+          <div class="field type-file">
+            <label for="typeJustificatifId">
+              Type des nouveaux justificatifs
+            </label>
 
-          <button
-            type="button"
-            class="btn-supprimer"
-            (click)="retirerJustificatif(justificatif.id)"
-            aria-label="Supprimer le justificatif"
-            title="Supprimer le justificatif"
-          >
-            <mat-icon>delete</mat-icon>
-          </button>
+            <select
+              id="typeJustificatifId"
+              name="typeJustificatifId"
+              [(ngModel)]="typeJustificatifId">
+              <option [ngValue]="null">Choisir un type</option>
+              <option
+                *ngFor="let type of typesJustificatif"
+                [ngValue]="type.id">
+                {{ type.nom || type.libelle || ('Type #' + type.id) }}
+              </option>
+            </select>
 
-        </div>
+            <small class="help">
+              Le type est prérempli si l’API fournit celui d’un
+              justificatif existant. Tu peux le changer pour les nouveaux
+              fichiers.
+            </small>
+          </div>
 
-        <p
-          *ngIf="!estUneImage(justificatif.cheminFichier || justificatif.nomFichier)"
-        >
-          Ce fichier n'est pas une image.
-        </p>
+          <div
+            class="existing-files"
+            *ngIf="fichiersExistants.length > 0; else noFiles">
 
-        <!-- OUVRIR LE FICHIER -->
-        <p>
-          <a
-            [href]="obtenirUrlJustificatif(justificatif.cheminFichier)"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Ouvrir le justificatif
-          </a>
-        </p>
+            <div
+              class="file-row"
+              *ngFor="let fichier of fichiersExistants"
+              [class.to-delete]="fichierMarque(fichier)">
 
-      </div>
-    </div>
+              <div class="file-symbol">DOC</div>
 
-    <!-- AJOUTER OU REMPLACER DES JUSTIFICATIFS -->
-    <div class="section">
-      <h2>Ajouter de nouveaux justificatifs</h2>
+              <div class="file-info">
+                <strong>{{ nomFichier(fichier) }}</strong>
+                <small>{{ nomTypeFichier(fichier) }}</small>
 
-      <p>
-        Pour remplacer une ancienne image, supprimez-la dans la section
-        précédente, puis sélectionnez le nouveau fichier.
-      </p>
+                <!-- IMAGE : cliquer sur la miniature pour l'agrandir -->
+                <button
+                  *ngIf="
+                    urlFichier(fichier) &&
+                    estUneImage(urlFichier(fichier))
+                  "
+                  type="button"
+                  class="image-justificatif-bouton"
+                  (click)="ouvrirApercuImage(fichier)"
+                  [attr.aria-label]="
+                    'Afficher l’image ' + nomFichier(fichier)
+                  ">
 
-      <div class="ligne">
+               <img
+  [src]="urlFichier(fichier)"
+  [alt]="nomFichier(fichier)"
+  class="image-justificatif-miniature"
+  (error)="imageErreur($event)"
+  (click)="ouvrirApercuImage(fichier)"
+>
 
-        <div class="champ">
-          <label for="typeJustificatifId">
-            Type de justificatif
-          </label>
+                  <span>Cliquer pour agrandir</span>
+                </button>
 
-          <select
-            id="typeJustificatifId"
-            formControlName="typeJustificatifId"
-          >
-            <option [ngValue]="null">Sélectionner un type</option>
+                <!-- PDF ET AUTRES DOCUMENTS -->
+                <a
+                  *ngIf="
+                    urlFichier(fichier) &&
+                    !estUneImage(urlFichier(fichier))
+                  "
+                  [href]="urlFichier(fichier)"
+                  target="_blank"
+                  rel="noopener noreferrer">
+                  ↗ Ouvrir le fichier
+                </a>
 
-            <option
-              *ngFor="let type of typesJustificatifs"
-              [ngValue]="type.id"
-            >
-              {{ type.nom }}
-            </option>
-          </select>
-        </div>
+                <small *ngIf="!urlFichier(fichier)" class="help">
+                  Adresse du fichier indisponible.
+                </small>
 
-        <div class="champ">
-          <label for="fichiers">Ajouter des fichiers</label>
+                <small
+                  *ngIf="fichierMarque(fichier)"
+                  class="delete-label">
+                  Marqué pour suppression à l’enregistrement.
+                </small>
+              </div>
 
-          <input
-            id="fichiers"
-            type="file"
-            multiple
-            accept="image/*,.pdf"
-            (change)="selectionnerFichiers($event)"
-          >
-        </div>
+              <button
+                type="button"
+                class="icon-delete"
+                [class.marked]="fichierMarque(fichier)"
+                (click)="basculerSuppressionFichier(fichier)"
+                [attr.aria-label]="
+                  fichierMarque(fichier)
+                    ? 'Annuler la suppression'
+                    : 'Supprimer le fichier'
+                "
+                [title]="
+                  fichierMarque(fichier)
+                    ? 'Annuler la suppression'
+                    : 'Supprimer le fichier'
+                ">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M4 7h16M9 7V4h6v3m-9 0 1 13h10l1-13M10 11v5m4-5v5">
+                  </path>
+                </svg>
+              </button>
+            </div>
+          </div>
 
-      </div>
+          <ng-template #noFiles>
+            <p class="empty-articles">
+              Aucun justificatif existant pour cette demande.
+            </p>
+          </ng-template>
 
-      <!-- NOUVEAUX FICHIERS SELECTIONNES -->
-      <div class="fichiers-selectionnes">
-        <label>Nouveaux fichiers sélectionnés</label>
+          <div class="field file-picker">
+            <label for="fichiers">
+              Ajouter des documents ou images
+            </label>
 
-        <p *ngIf="fichiers.length === 0">
-          Aucun nouveau fichier sélectionné.
-        </p>
+            <input
+              id="fichiers"
+              type="file"
+              multiple
+              accept="image/*,.pdf"
+              (change)="selectionnerFichiers($event)">
 
-        <div
-          class="fichier"
-          *ngFor="let fichier of fichiers; let i = index"
-        >
-          <span>{{ fichier.name }}</span>
+            <small class="help">
+              Choisis un type de justificatif si tu ajoutes de nouveaux
+              fichiers.
+            </small>
+          </div>
 
-          <button
-            type="button"
-            class="supprimer-fichier"
-            (click)="supprimerFichier(i)"
-            aria-label="Retirer ce nouveau fichier"
-            title="Retirer ce fichier"
-          >
-            <mat-icon>delete</mat-icon>
-          </button>
-        </div>
-      </div>
-    </div>
+          <ul class="new-files" *ngIf="fichiersAjoutes.length > 0">
+            <li *ngFor="let fichier of fichiersAjoutes; let i = index">
+              <span>
+                <strong>{{ fichier.name }}</strong>
+                <small>
+                  {{ fichier.size / 1024 | number:'1.0-0' }} Ko
+                </small>
+              </span>
 
-    <!-- BOUTONS -->
-    <div class="boutons">
+              <button
+                type="button"
+                class="remove-new-file"
+                (click)="retirerNouveauFichier(i)">
+                Retirer
+              </button>
+            </li>
+          </ul>
+        </section>
+
+        <footer class="form-footer">
+          <p>
+            La demande conserve son identifiant. Sa modification ne la
+            valide pas automatiquement.
+          </p>
+
+          <div class="footer-actions">
+            <button
+              type="button"
+              class="btn-secondary"
+              (click)="annuler()">
+              Annuler
+            </button>
+
+            <button
+              type="submit"
+              class="btn-primary"
+              [disabled]="enregistrement">
+              {{
+                enregistrement
+                  ? 'Enregistrement...'
+                  : 'Enregistrer les modifications'
+              }}
+            </button>
+          </div>
+        </footer>
+
+      </fieldset>
+    </form>
+  </ng-container>
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading">Chargement de la demande...</div>
+</ng-template>
+
+<!-- FENÊTRE DE PRÉVISUALISATION DE L'IMAGE -->
+<div
+  class="image-apercu-overlay"
+  *ngIf="imageApercu"
+  (click)="fermerApercuImage()">
+
+  <div
+    class="image-apercu-fenetre"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Prévisualisation de l’image"
+    (click)="$event.stopPropagation()">
+
+    <header class="image-apercu-entete">
+      <span>{{ nomImageApercu }}</span>
 
       <button
         type="button"
-        class="annuler"
-        (click)="annuler()"
-      >
-        Annuler
+        class="image-apercu-fermer"
+        aria-label="Fermer l’image"
+        (click)="fermerApercuImage()">
+        &times;
       </button>
+    </header>
 
-      <button
-        type="submit"
-        class="creer"
-        [disabled]="formulaire.invalid"
-      >
-        Enregistrer les modifications
-      </button>
-
+    <div class="image-apercu-corps">
+      <img
+        [src]="imageApercu"
+        [alt]="nomImageApercu">
     </div>
-
-  </form>
-
+  </div>
 </div>

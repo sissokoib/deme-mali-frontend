@@ -10,6 +10,7 @@ import { User } from '../../../models/utilisateur.model';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
+import { NotificationService } from '../../../services/notification';
 
 @Component({
   selector: 'app-mon-organisation',
@@ -27,12 +28,14 @@ export class MonOrganisation implements OnInit {
   organisation: Organisation | null = null;
   chargement = true;
   erreur = '';
+  
 
   constructor(
     private organisationService: OrganisationService,
     private authService: AuthService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    notification:NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -77,15 +80,9 @@ export class MonOrganisation implements OnInit {
   }
 
   modifierOrganisation(id: number): void {
-    console.log('ID organisation :', id);
+   
 
-    this.router.navigate(['/organisation/modifier', id])
-      .then(reussi => {
-        console.log('Navigation réussie :', reussi);
-        console.log('URL actuelle :', this.router.url);
-      })
-      .catch(erreur => {
-        console.error('Erreur de navigation :', erreur);
-      });
+    this.router.navigate(['/mon-organisation/modifier', id])
+   
   }
 }

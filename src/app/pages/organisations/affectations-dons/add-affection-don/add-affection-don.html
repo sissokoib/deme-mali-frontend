@@ -437,4 +437,126 @@
 
     </div>
   </form>
+  <!-- FENÊTRE DE CONFIRMATION -->
+<div class="modal-overlay" *ngIf="confirmationOuverte">
+  <section
+    class="modal-confirmation"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titreConfirmation">
+
+    <div class="modal-entete">
+      <div class="modal-icone">
+        <mat-icon>fact_check</mat-icon>
+      </div>
+
+      <button
+        type="button"
+        class="modal-fermer"
+        aria-label="Fermer"
+        (click)="fermerConfirmation()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <h2 id="titreConfirmation">Confirmer l'affectation</h2>
+
+    <p class="modal-description">
+      Vérifiez les informations avant de confirmer.
+      Une fois enregistrée, cette affectation ne pourra plus être modifiée.
+    </p>
+
+    <div class="recapitulatif">
+
+      <div class="recap-ligne">
+        <span>Destination</span>
+        <strong>
+          {{ modeAffectation === 'DEMANDE'
+            ? 'Demande d’aide'
+            : 'Bénéficiaire' }}
+        </strong>
+      </div>
+
+      <div class="recap-ligne" *ngIf="modeAffectation === 'DEMANDE'">
+        <span>Demande sélectionnée</span>
+        <strong>
+          {{ demandeSelectionnee?.titre }}
+          (N° {{ demandeAideId }})
+        </strong>
+      </div>
+
+      <div class="recap-ligne" *ngIf="modeAffectation === 'BENEFICIAIRE'">
+        <span>Bénéficiaire</span>
+        <strong>
+          {{ rechercheBeneficiaire }}
+        </strong>
+      </div>
+
+      <div class="recap-ligne">
+        <span>Type de don</span>
+        <strong>
+          {{ typeAide === 'FINANCIER' ? 'Don financier' : 'Don matériel' }}
+        </strong>
+      </div>
+
+      <div class="recap-ligne">
+        <span>Don sélectionné</span>
+        <strong>Don N° {{ donId }}</strong>
+      </div>
+
+      <div class="recap-ligne">
+        <span>Désignation</span>
+        <strong>
+          {{ donSelectionne?.designation || donSelectionne?.motif || 'Don attribué' }}
+        </strong>
+      </div>
+
+      <div class="recap-ligne" *ngIf="typeAide === 'FINANCIER'">
+        <span>Montant à affecter</span>
+        <strong class="montant-recap">
+          {{ montantAffecte | number:'1.0-2' }} FCFA
+        </strong>
+      </div>
+
+      <ng-container *ngIf="typeAide === 'MATERIEL'">
+        <div class="recap-ligne">
+          <span>Quantité à affecter</span>
+          <strong>{{ quantiteAffectee }} {{ uniteFinale }}</strong>
+        </div>
+      </ng-container>
+
+    </div>
+
+    <div class="avertissement-modal">
+      <mat-icon>info</mat-icon>
+      <p>
+        Vérifiez attentivement le destinataire et les quantités.
+        Confirmez uniquement si toutes les informations sont correctes.
+      </p>
+    </div>
+
+    <div class="actions-modal">
+      <button
+        type="button"
+        class="bouton-modal-annuler"
+        [disabled]="chargement"
+        (click)="fermerConfirmation()">
+        Annuler
+      </button>
+
+      <button
+        type="button"
+        class="bouton-modal-confirmer"
+        [disabled]="chargement"
+        (click)="confirmerAffectation()">
+
+        <mat-icon>
+          {{ chargement ? 'hourglass_empty' : 'check_circle' }}
+        </mat-icon>
+
+        {{ chargement ? 'Enregistrement...' : 'Confirmer l’affectation' }}
+      </button>
+    </div>
+  </section>
+</div>
 </div>

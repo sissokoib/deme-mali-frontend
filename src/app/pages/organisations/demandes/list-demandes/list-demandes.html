@@ -1,13 +1,16 @@
-
 <div class="contenu">
 
+  <!-- En-tête -->
   <div class="entete">
     <div>
       <h1>Demandes d'aide</h1>
-      <p>Consultez et suivez les demandes d'aide de votre organisation.</p>
+      <p>
+        Consultez et suivez les demandes d'aide de votre organisation.
+      </p>
     </div>
   </div>
 
+  <!-- Statistiques -->
   <div class="statistiques">
 
     <div class="carte">
@@ -52,10 +55,12 @@
 
   </div>
 
+  <!-- Filtres -->
   <div class="filtres">
 
     <div class="recherche">
       <mat-icon>search</mat-icon>
+
       <input
         type="text"
         placeholder="Rechercher une demande..."
@@ -64,47 +69,67 @@
     </div>
 
     <select
+      [(ngModel)]="typeAideSelectionne"
+      (change)="filtrer()">
+
+      <option value="">Tous les types d'aide</option>
+      <option value="FINANCIERE">Financière</option>
+      <option value="MATERIELLE">Matérielle</option>
+
+    </select>
+
+    <select
       [(ngModel)]="categorieSelectionnee"
       (change)="filtrer()">
+
       <option value="">Toutes les catégories</option>
-      <option
-        *ngFor="let categorie of categories"
-        [value]="categorie.nom">
-        {{ categorie.nom }}
-      </option>
+
+    <option
+  *ngFor="let categorie of categories"
+  [value]="categorie.id"
+>
+  {{ categorie.nom }}
+</option>
     </select>
 
     <select
       [(ngModel)]="urgenceSelectionnee"
       (change)="filtrer()">
+
       <option value="">Toutes les urgences</option>
       <option value="FORTE">Forte</option>
       <option value="MOYENNE">Moyenne</option>
       <option value="FAIBLE">Faible</option>
+
     </select>
 
-    <select
-      [(ngModel)]="statutSelectionne"
-      (change)="filtrer()">
-      <option value="">Tous les statuts</option>
-      <option value="EN_ATTENTE">En attente</option>
-      <option value="VALIDEE">Validée</option>
-      <option value="PUBLIEE">Publiée</option>
-      <option value="REJETEE">Rejetée</option>
-    </select>
+  <select
+  [(ngModel)]="statutSelectionne"
+  (change)="filtrer()">
+
+  <option value="">Tous les statuts</option>
+  <option value="EN_ATTENTE">En attente</option>
+  <option value="VALIDEE">Validée</option>
+  <option value="REJETEE">Rejetée</option>
+
+</select>
 
   </div>
 
+  <!-- Bouton nouvelle demande -->
   <div class="bouton-container">
     <button
       type="button"
       class="nouvelle"
       (click)="nouvelleDemande()">
+
       <mat-icon>add</mat-icon>
       Nouvelle demande
+
     </button>
   </div>
 
+  <!-- Tableau des demandes -->
   <div class="tableau">
 
     <h2>Liste des demandes</h2>
@@ -117,8 +142,9 @@
           <tr>
             <th>DEMANDE</th>
             <th>BÉNÉFICIAIRE</th>
-         <th>DATE DE CRÉATION</th>
-            <th>MONTANT NÉCESSAIRE</th>
+            <th>TYPE D'AIDE</th>
+            <th>DATE DE CRÉATION</th>
+            <th>MONTANT NÉCESSAIRE </th>
             <th>MONTANT COLLECTÉ</th>
             <th>URGENCE</th>
             <th>STATUT</th>
@@ -129,14 +155,20 @@
         <tbody>
 
           <tr
-            *ngFor="let demande of demandesFiltrees | slice:(pageActuelle - 1) * demandesParPage:pageActuelle * demandesParPage">
+            *ngFor="
+              let demande of demandesFiltrees
+                | slice:(pageActuelle - 1) * demandesParPage
+                        :pageActuelle * demandesParPage
+            ">
 
+            <!-- Titre -->
             <td>
               <strong class="titre-demande">
                 {{ demande.titre }}
               </strong>
             </td>
 
+            <!-- Bénéficiaire -->
             <td>
               <strong class="nom-beneficiaire">
                 {{ demande.beneficiairePrenom }}
@@ -144,45 +176,88 @@
               </strong>
             </td>
 
-          <td>
-  <span class="date-creation">
-    {{ demande.dateCreation | date:'dd/MM/yyyy' }}
-  </span>
-</td>
+            <!-- Type d'aide -->
+            <td>
+              <span
+                class="type-aide"
+                [ngClass]="getClasseTypeAide(demande.typeDemandeAide)">
 
+                {{ getTypeAide(demande.typeDemandeAide) }}
+
+              </span>
+            </td>
+
+            <!-- Date de création -->
+            <td>
+              <span class="date-creation">
+                {{ demande.dateCreation | date:'dd/MM/yyyy' }}
+              </span>
+            </td>
+
+            <!-- Montant nécessaire ou total estimé -->
             <td>
               <span class="montant">
-{{ demande.montantNecessaire | number:'1.0-0' }}                FCFA
-              </span>
-            </td>
-
-            <td>
-              <span class="montant montant-collecte">
-                {{ (demande.montantCollecte ) | number:'1.0-0' }}
+                {{ getMontantEstime(demande) | number:'1.0-0' }}
                 FCFA
               </span>
+
+              <small
+                *ngIf="demande.typeDemandeAide === 'MATERIELLE'"
+                class="detail-articles">
+
+                {{ getNombreArticles(demande) }}
+                article(s)
+
+              </small>
             </td>
 
+            <!-- Montant collecté -->
+            <td>
+              <ng-container
+                *ngIf="
+                  demande.typeDemandeAide === 'FINANCIERE';
+                  else montantNonApplicable
+                ">
+
+                <span class="montant montant-collecte">
+                  {{ (demande.montantCollecte || 0) | number:'1.0-0' }}
+                  FCFA
+                </span>
+
+              </ng-container>
+
+              <ng-template #montantNonApplicable>
+                <span class="non-applicable">—</span>
+              </ng-template>
+            </td>
+
+            <!-- Urgence -->
             <td>
               <span
                 class="urgence"
                 [ngClass]="getClasseUrgence(demande.niveauUrgence)">
+
                 {{ demande.niveauUrgence }}
+
               </span>
             </td>
 
+            <!-- Statut -->
             <td>
               <span
                 class="statut"
                 [ngClass]="getClasseStatut(demande.statut)">
+
                 {{ demande.statut }}
+
               </span>
             </td>
 
+            <!-- Actions -->
             <td>
               <div class="actions-demande">
 
-                <button
+                  <button
                   type="button"
                   class="action-icone"
                   title="Voir les détails"
@@ -192,21 +267,26 @@
                 </button>
 
                 <button
-                  type="button"
-                  class="action-icone"
-                  title="Modifier la demande"
-                  aria-label="Modifier la demande"
-                  (click)="modifierDemande(demande.id)">
-                  <mat-icon>edit</mat-icon>
-                </button>
+  type="button"
+  class="action-icone"
+  title="Modifier la demande"
+  aria-label="Modifier la demande"
+  [disabled]="demande.statut !== 'EN_ATTENTE'"
+  (click)="modifierDemande(demande.id)">
+
+  <mat-icon>edit</mat-icon>
+
+</button>
+
 
               </div>
             </td>
 
           </tr>
 
+          <!-- Aucune demande -->
           <tr *ngIf="demandesFiltrees.length === 0">
-            <td colspan="8" class="aucune-demande">
+            <td colspan="9" class="aucune-demande">
               Aucune demande trouvée.
             </td>
           </tr>
@@ -217,15 +297,20 @@
 
     </div>
 
-    <div class="pagination" *ngIf="demandesFiltrees.length > 0">
+    <!-- Pagination -->
+    <div
+      class="pagination"
+      *ngIf="demandesFiltrees.length > 0">
 
       <p class="pagination-info">
         Affichage de
         {{ (pageActuelle - 1) * demandesParPage + 1 }}
         à
-        {{ pageActuelle * demandesParPage > demandesFiltrees.length
-          ? demandesFiltrees.length
-          : pageActuelle * demandesParPage }}
+        {{
+          pageActuelle * demandesParPage > demandesFiltrees.length
+            ? demandesFiltrees.length
+            : pageActuelle * demandesParPage
+        }}
         sur {{ demandesFiltrees.length }} demandes
       </p>
 
@@ -236,7 +321,9 @@
           class="pagination-bouton"
           [disabled]="pageActuelle === 1"
           (click)="pagePrecedente()">
+
           Précédent
+
         </button>
 
         <button
@@ -245,7 +332,9 @@
           *ngFor="let page of pages"
           [class.active]="page === pageActuelle"
           (click)="allerPage(page)">
+
           {{ page }}
+
         </button>
 
         <button
@@ -253,7 +342,9 @@
           class="pagination-bouton"
           [disabled]="pageActuelle === nombrePages"
           (click)="pageSuivante()">
+
           Suivant
+
         </button>
 
       </div>

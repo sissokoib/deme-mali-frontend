@@ -1,0 +1,223 @@
+
+:host {
+  display: block;
+  color: #1f1f1f;
+}
+
+.preuves-page {
+  padding: 24px;
+  background: #f7f3ea;
+  border-radius: 16px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.section-header h2 {
+  margin: 0 0 8px;
+  color: #0f7a4b;
+  font-size: 22px;
+}
+
+.section-header p {
+  margin: 0;
+  color: #666;
+  line-height: 1.5;
+}
+
+.compteur {
+  padding: 8px 12px;
+  border-radius: 20px;
+  background: #fff;
+  color: #0f7a4b;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.form-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  background: #fff;
+  border: 1px solid #e5e0d5;
+  border-radius: 12px;
+}
+
+.form-upload label {
+  font-weight: 600;
+}
+
+.form-upload input[type="file"],
+.form-upload select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #d8d8d8;
+  border-radius: 8px;
+}
+
+.fichier-selectionne {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-wrap: anywhere;
+  color: #0f7a4b;
+}
+
+.taille {
+  color: #777;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.info {
+  margin: 0;
+  color: #777;
+  font-size: 13px;
+}
+
+.form-upload button {
+  align-self: flex-start;
+  min-height: 44px;
+  background: #0f7a4b;
+  color: #fff;
+}
+
+.form-upload button:disabled {
+  opacity: 0.6;
+}
+
+.message {
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.succes {
+  background: #e6f4eb;
+  color: #0f7a4b;
+}
+
+.erreur {
+  background: #fdebea;
+  color: #b42318;
+}
+
+.preuves-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 20px;
+}
+
+.preuve-card {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e5e0d5;
+  border-radius: 12px;
+}
+
+.apercu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 190px;
+  overflow: hidden;
+  background: #eee9df;
+}
+
+.apercu img,
+.apercu video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.document-apercu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #0f7a4b;
+}
+
+.document-apercu mat-icon {
+  width: 52px;
+  height: 52px;
+  font-size: 52px;
+}
+
+.preuve-infos {
+  padding: 16px;
+}
+
+.type {
+  display: inline-block;
+  padding: 5px 9px;
+  background: #fff2c7;
+  border-radius: 6px;
+  color: #785600;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.nom-fichier {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #0f7a4b;
+  text-decoration: none;
+}
+
+.vide,
+.chargement {
+  padding: 32px 16px;
+  text-align: center;
+  color: #777;
+}
+
+.vide mat-icon {
+  width: 44px;
+  height: 44px;
+  font-size: 44px;
+  color: #0f7a4b;
+}
+
+.vide h3 {
+  color: #1f1f1f;
+}
+
+@media (max-width: 600px) {
+  .preuves-page {
+    padding: 16px;
+  }
+
+  .section-header {
+    flex-direction: column;
+  }
+
+  .form-upload {
+    padding: 14px;
+  }
+}

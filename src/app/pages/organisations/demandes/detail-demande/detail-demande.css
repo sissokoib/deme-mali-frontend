@@ -1,602 +1,1204 @@
 
-* {
+/* =========================================================
+   DÈMÈ MALI — DÉTAIL D'UNE DEMANDE D'AIDE
+   Fichier : detail-demande.css
+   ========================================================= */
+
+:host {
+  display: block;
+  color: #1f1f1f;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* =========================================================
+   1. PAGE PRINCIPALE
+   ========================================================= */
+
+.detail-page {
+  min-height: 100vh;
+  padding: 28px;
+  background: #f7f3ea;
   box-sizing: border-box;
 }
 
-.page {
-  width: 100%;
-  min-height: 100%;
-  padding: 26px;
-  background-color: #f7f3ea;
-  font-family: Arial, sans-serif;
-  color: #1f1f1f;
-}
+/* =========================================================
+   2. EN-TÊTE
+   ========================================================= */
 
-h2 {
-  font-size: 26px;
-  margin: 0 0 7px;
-}
-
-.sous-titre {
-  font-size: 14px;
-  color: #777;
-  margin: 0 0 20px;
-}
-
-.message-chargement,
-.message-erreur {
-  font-size: 14px;
-  margin: 14px 0;
-}
-
-.message-erreur {
-  color: #d32f2f;
-  font-size: 12px;
-  margin-top: 6px;
-  display: block;
-}
-
-.message-vide {
-  font-size: 13px;
-  color: #888;
-  margin: 10px 0 0;
-}
-
-/* CARTE PRINCIPALE */
-
-.carte-detail {
-  width: 100%;
-  background-color: #ffffff;
-  border: 1px solid #e8e3da;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-/* EN-TÊTE */
-
-.entete {
+.page-header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  padding: 24px 28px;
-  border-bottom: 1px solid #eeeae3;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 25px;
 }
 
-.entete h3 {
-  font-size: 19px;
-  font-weight: 600;
+.page-header h1 {
+  margin: 0 0 8px;
+  color: #1f1f1f;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.page-header p {
   margin: 0;
+  color: #777;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
-/* BOUTONS GÉNÉRAUX */
+/* =========================================================
+   3. BOUTONS
+   ========================================================= */
 
-.actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-button {
-  cursor: pointer;
-  font-family: Arial, sans-serif;
-}
-
+.btn-retour,
 .btn-principal,
-.btn-secondaire {
+.btn-annuler {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   padding: 11px 16px;
-  border-radius: 6px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.btn-retour mat-icon,
+.btn-principal mat-icon,
+.btn-annuler mat-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+}
+
+.btn-retour,
+.btn-annuler {
+  background: #fff;
+  color: #333;
+  border: 1px solid #e8e3da;
+}
+
+.btn-retour:hover,
+.btn-annuler:hover {
+  background: #eee8dc;
+}
+
+.btn-principal {
+  background: #0f7a4b;
+  color: #fff;
+}
+
+.btn-principal:hover:not(:disabled) {
+  background: #0b633d;
+  transform: translateY(-1px);
+}
+
+.btn-principal:disabled,
+.btn-annuler:disabled,
+.btn-retour:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =========================================================
+   4. MESSAGES DE CHARGEMENT ET D'ERREUR
+   ========================================================= */
+
+.message-chargement,
+.message-erreur {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: 9px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.message-chargement {
+  background: #fff;
+  color: #555;
+  border: 1px solid #eee8dc;
+}
+
+.message-erreur {
+  background: #fff0f0;
+  color: #b42318;
+  border: 1px solid #ffd4d4;
+}
+
+.message-chargement mat-icon,
+.message-erreur mat-icon {
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   5. CARTE PRINCIPALE
+   ========================================================= */
+
+.carte-detail {
+  padding: 25px;
+  border: 1px solid #eee8dc;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 15px rgb(31 31 31 / 4%);
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   6. EN-TÊTE DE LA DEMANDE
+   ========================================================= */
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #eeeae3;
+}
+
+.titre-demande {
+  min-width: 0;
+}
+
+.reference {
+  display: block;
+  margin-bottom: 8px;
+  color: #0f7a4b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.detail-header h2 {
+  margin: 0 0 12px;
+  color: #1f1f1f;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   7. BADGES DE STATUT
+   ========================================================= */
+
+.badge-statut {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 11px;
+  border-radius: 20px;
+  background: #f0f0f0;
+  color: #555;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-statut.en_attente {
+  background: #fff4d6;
+  color: #946200;
+}
+
+.badge-statut.validee,
+.badge-statut.validee_definitivement,
+.badge-statut.validee_definitive {
+  background: #e2f5e9;
+  color: #0f7a4b;
+}
+
+.badge-statut.rejetee {
+  background: #ffe7e7;
+  color: #b42318;
+}
+
+.badge-statut.en_cours {
+  background: #e8f0ff;
+  color: #2457a7;
+}
+
+.badge-statut.terminee {
+  background: #e2f5e9;
+  color: #0f7a4b;
+}
+
+/* =========================================================
+   8. SECTIONS
+   ========================================================= */
+
+.section {
+  padding: 25px 0;
+  border-bottom: 1px solid #eeeae3;
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.section h3 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 20px;
+  color: #1f1f1f;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.section h3 mat-icon {
+  flex-shrink: 0;
+  color: #0f7a4b;
+}
+
+.sous-description {
+  margin: -8px 0 18px;
+  color: #777;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   9. INFORMATIONS GÉNÉRALES
+   ========================================================= */
+
+.grille-informations {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.info-item > span {
+  color: #777;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.info-item > strong {
+  color: #1f1f1f;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.info-item p {
+  margin: 0;
+  color: #444;
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.info-large {
+  grid-column: 1 / -1;
+}
+
+/* =========================================================
+   10. TABLEAU DES ARTICLES MATÉRIELS
+   ========================================================= */
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e8e3da;
+  border-radius: 10px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-articles {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.table-articles thead {
+  background: #f7f3ea;
+}
+
+.table-articles th,
+.table-articles td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #eeeae3;
+  text-align: left;
   font-size: 13px;
   white-space: nowrap;
 }
 
-.btn-principal {
-  background-color: #0f7a4b;
-  color: #ffffff;
-  border: 1px solid #0f7a4b;
-}
-
-.btn-secondaire {
-  background-color: #ffffff;
-  color: #0f7a4b;
-  border: 1px solid #0f7a4b;
-}
-
-.btn-principal:hover {
-  background-color: #0b603a;
-}
-
-.btn-secondaire:hover {
-  background-color: #f0f7f2;
-}
-
-.actions button mat-icon {
-  width: 19px;
-  height: 19px;
-  font-size: 19px;
-  line-height: 19px;
-}
-
-/* SECTIONS */
-
-.section {
-  padding: 21px 28px;
-  border-bottom: 1px solid #eeeae3;
-}
-
-.section h4 {
-  font-size: 16px;
-  color: #0f7a4b;
-  margin: 0 0 19px;
+.table-articles th {
+  color: #555;
   font-weight: 600;
 }
 
-/* INFORMATIONS GÉNÉRALES */
-
-.infos {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 22px 16px;
+.table-articles td {
+  color: #444;
 }
 
-.info {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  flex: 1 1 28%;
-  min-width: 140px;
+.table-articles tbody tr:hover {
+  background: #fcfaf6;
 }
 
-.info span,
-.description span {
-  font-size: 13px;
-  color: #888888;
+.table-articles .designation {
+  color: #1f1f1f;
+  font-weight: 600;
 }
 
-.info strong {
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-}
-
-/* DESCRIPTION */
-
-.description {
-  margin-top: 22px;
-}
-
-.description p {
-  font-size: 14px;
-  line-height: 1.7;
-  margin: 8px 0 0;
-  max-width: 800px;
-  overflow-wrap: anywhere;
-}
-
-/* BUDGET ET COLLECTE */
-
-.budget {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-}
-
-.budget .info {
-  flex: 1 1 20%;
-}
-
-.vert {
+.table-articles .montant-article {
   color: #0f7a4b;
-  font-weight: bold !important;
+  font-weight: 700;
 }
 
-/* ÉTUDE DE TERRAIN */
-
-.etude {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
+.table-articles tfoot td {
+  background: #f7f3ea;
+  border-bottom: none;
+  font-weight: 700;
 }
 
-.etude .info {
-  flex: 1;
+.table-articles tfoot td:first-child {
+  text-align: right;
 }
 
-.petit {
-  min-width: 80px;
-  padding: 9px 14px;
+.texte-secondaire {
+  color: #888;
+  font-size: 12px;
 }
 
-/* RAPPORTS */
+/* =========================================================
+   11. BUDGET DES DEMANDES FINANCIÈRES
+   ========================================================= */
 
-.rapports {
-  display: flex;
-  gap: 18px;
-}
-
-.rapport {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.grille-budget {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
-  flex: 1;
+}
+
+.carte-budget {
   min-width: 0;
   padding: 19px;
   border: 1px solid #e8e3da;
-  border-radius: 8px;
+  border-radius: 10px;
+  background: #fff;
+  box-sizing: border-box;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.rapport-infos {
-  min-width: 0;
+.carte-budget:hover {
+  border-color: #c8dfd1;
+  box-shadow: 0 4px 12px rgb(15 122 75 / 6%);
+}
+
+.icone-budget {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 14px;
+  border-radius: 10px;
+  background: #e8f5ed;
+  color: #0f7a4b;
+}
+
+.icone-budget mat-icon {
+  width: 23px;
+  height: 23px;
+  font-size: 23px;
+}
+
+.carte-budget span {
+  display: block;
+  margin-bottom: 12px;
+  color: #777;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.carte-budget strong {
+  display: block;
+  color: #0f7a4b;
+  font-size: 18px;
+  font-weight: 700;
   overflow-wrap: anywhere;
 }
 
-.rapport strong {
-  font-size: 14px;
+/* Progression de la collecte */
+
+.progression-collecte {
+  margin-top: 24px;
 }
 
-.rapport p {
-  font-size: 12px;
-  color: #888888;
-  margin: 9px 0 0;
+.progression-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  color: #555;
+  font-size: 13px;
+}
+
+.progression-label strong {
+  color: #0f7a4b;
+}
+
+.progression-barre {
+  height: 9px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #e8e3da;
+}
+
+.progression-remplie {
+  height: 100%;
+  border-radius: 20px;
+  background: #0f7a4b;
+  transition: width 0.3s ease;
+}
+
+/* =========================================================
+   12. MESSAGES VIDES
+   ========================================================= */
+
+.message-vide {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px;
+  border: 1px dashed #ddd5c8;
+  border-radius: 10px;
+  background: #f7f3ea;
+  color: #777;
+}
+
+.message-vide mat-icon {
+  flex-shrink: 0;
+  color: #0f7a4b;
+}
+
+.message-vide p {
+  margin: 0;
+  font-size: 13px;
   line-height: 1.6;
 }
 
-.rapport .actions {
-  gap: 8px;
+/* =========================================================
+   13. JUSTIFICATIFS
+   ========================================================= */
+
+.liste-justificatifs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 16px;
 }
 
-.rapport .petit {
-  min-width: 65px;
-  padding: 8px 11px;
-}
-
-/* JUSTIFICATIFS */
-
-.justificatifs {
-  border-bottom: none;
-}
-
-.fichiers {
+.carte-justificatif {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 18px;
-}
-
-.justificatif {
-  display: block;
-  width: 120px;
-  height: 105px;
-  overflow: hidden;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
   border: 1px solid #e8e3da;
-  border-radius: 8px;
-  background-color: #ffffff;
+  border-radius: 10px;
+  background: #fff;
+  box-sizing: border-box;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.justificatif img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.carte-justificatif:hover {
+  border-color: #b9d9c6;
+  box-shadow: 0 4px 12px rgb(15 122 75 / 5%);
 }
 
-.fichier.document {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
-  border: 1px solid #0f7a4b;
-  border-radius: 8px;
-  background-color: #ffffff;
+.carte-justificatif a {
   color: #0f7a4b;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
   text-decoration: none;
 }
 
-.fichier.document mat-icon {
-  width: 27px;
-  height: 27px;
-  font-size: 27px;
+.carte-justificatif a:hover {
+  text-decoration: underline;
 }
 
-/* POPUP : FOND SOMBRE */
+.carte-justificatif > span {
+  color: #555;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
 
-.fond-popup {
-  position: fixed;
-  top: 0;
-  left: 0;
+.lien-image {
+  display: block;
   width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.image-justificatif {
+  display: block;
+  width: 100%;
+  height: 150px;
+  border-radius: 8px;
+  background: #f7f3ea;
+  object-fit: cover;
+}
+
+.icone-document {
+  color: #0f7a4b;
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+}
+
+/* =========================================================
+   14. VÉRIFICATION DE L'ÉTUDE ET DES RAPPORTS
+   ========================================================= */
+
+.section-relations h3 mat-icon {
+  color: #0f7a4b;
+}
+
+/* Chargement de la vérification */
+
+.chargement-relations {
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 9999;
-  padding: 20px;
-  overflow-y: auto;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid #eee8dc;
+  border-radius: 9px;
+  background: #f7f3ea;
+  color: #555;
+  font-size: 13px;
 }
 
-/* POPUP : FENÊTRE */
-
-.carte-decision {
-  width: 100%;
-  max-width: 550px;
-  background-color: #ffffff;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-  max-height: calc(100vh - 40px);
-  overflow-y: auto;
+.chargement-relations mat-icon {
+  flex-shrink: 0;
+  color: #0f7a4b;
 }
 
-.carte-decision h3 {
-  margin: 0 0 12px;
-  font-size: 20px;
+/* Liste des résultats */
+
+.liste-relations {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.relation-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid #e8e3da;
+  border-radius: 10px;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.relation-item > mat-icon {
+  flex-shrink: 0;
+}
+
+.relation-ok {
+  border-color: #b9e4c9;
+  background: #f4fbf6;
+}
+
+.relation-ok > mat-icon {
+  color: #0f7a4b;
+}
+
+.relation-ko {
+  border-color: #f0d5a0;
+  background: #fffaf0;
+}
+
+.relation-ko > mat-icon {
+  color: #b77900;
+}
+
+.relation-contenu {
+  flex: 1;
+  min-width: 0;
+}
+
+.relation-contenu strong {
+  display: block;
+  margin-bottom: 5px;
   color: #1f1f1f;
+  font-size: 13px;
 }
 
-.description-decision {
-  color: #666666;
-  font-size: 14px;
-  line-height: 1.5;
-  margin: 0 0 22px;
+.relation-contenu p {
+  margin: 0;
+  color: #666;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
-/* CHOIX DE DÉCISION SUR LA MÊME LIGNE */
+.relation-statut {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+}
 
+.relation-ok .relation-statut {
+  color: #0f7a4b;
+}
+
+.relation-ko .relation-statut {
+  color: #946200;
+}
+
+/* Résumé de conformité */
+
+.resume-relations {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 13px;
+  border: 1px solid #e8e3da;
+  border-radius: 9px;
+  background: #f7f3ea;
+  color: #444;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.resume-relations mat-icon {
+  flex-shrink: 0;
+  color: #0f7a4b;
+}
+
+/* =========================================================
+   15. FENÊTRE DE DÉCISION
+   ========================================================= */
+
+.overlay-decision {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgb(0 0 0 / 45%);
+  box-sizing: border-box;
+}
+
+.popup-decision {
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 25px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 15px 45px rgb(0 0 0 / 20%);
+  box-sizing: border-box;
+}
+
+/* En-tête de la fenêtre */
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.popup-header h3 {
+  margin: 0;
+  color: #1f1f1f;
+  font-size: 19px;
+  line-height: 1.4;
+}
+
+.btn-fermer {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 6px;
+  border: none;
+  border-radius: 6px;
+  background: #f7f3ea;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-fermer:hover:not(:disabled) {
+  background: #eee8dc;
+}
+
+.btn-fermer:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.description-popup {
+  margin: 0 0 18px;
+  color: #666;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   16. CHOIX DE LA DÉCISION
+   ========================================================= */
 
 .choix-decision {
   display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  gap: 12px;
-  width: 100%;
-  margin: 20px 0;
-}
-
-.option {
-  display: flex;
-  flex: 1;
-  width: 0;
-  min-width: 0;
-  min-height: 100px;
-  box-sizing: border-box;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 14px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.texte-option {
-  display: flex;
   flex-direction: column;
-  flex: 1;
-  min-width: 0;
-  gap: 6px;
+  gap: 12px;
+  margin: 22px 0;
 }
 
-.texte-option strong {
-  font-size: 14px;
+.option-decision {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  border: 1px solid #e8e3da;
+  border-radius: 9px;
+  background: #fff;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
-.texte-option small {
-  font-size: 12px;
-  line-height: 1.5;
+.option-decision:hover {
+  border-color: #b9d9c6;
+  background: #fcfefc;
 }
-.option input[type="radio"] {
+
+.option-decision.option-selectionnee {
+  border-color: #0f7a4b;
+  background: #f1f9f4;
+}
+
+.option-decision input {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
   accent-color: #0f7a4b;
   cursor: pointer;
 }
 
-/* CHAMP COMMENTAIRE */
+.option-decision > mat-icon {
+  flex-shrink: 0;
+  color: #0f7a4b;
+}
 
-.champ-commentaire {
+.option-decision:nth-child(2) > mat-icon {
+  color: #b42318;
+}
+
+.option-decision span {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.option-decision strong {
+  color: #1f1f1f;
+  font-size: 13px;
+}
+
+.option-decision small {
+  color: #777;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   17. MOTIF DU REJET
+   ========================================================= */
+
+.champ-motif {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 22px;
+  margin: 18px 0;
 }
 
-.champ-commentaire label {
+.champ-motif label {
+  color: #333;
   font-size: 13px;
-  font-weight: bold;
+  font-weight: 600;
 }
 
-.champ-commentaire textarea {
+.champ-motif textarea {
+  display: block;
   width: 100%;
-  box-sizing: border-box;
+  min-height: 100px;
   padding: 12px;
-  border: 1px solid #dddddd;
-  border-radius: 6px;
-  font-family: Arial, sans-serif;
+  border: 1px solid #ddd5c8;
+  border-radius: 8px;
+  background: #fff;
+  color: #1f1f1f;
+  font-family: inherit;
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.6;
   resize: vertical;
+  box-sizing: border-box;
 }
 
-.champ-commentaire textarea:focus {
-  outline: none;
+.champ-motif textarea::placeholder {
+  color: #999;
+}
+
+.champ-motif textarea:focus {
+  outline: 2px solid rgb(15 122 75 / 18%);
   border-color: #0f7a4b;
 }
 
-/* MESSAGE D'ERREUR DANS LE POPUP */
+/* =========================================================
+   18. AVERTISSEMENTS ET ERREURS DE DÉCISION
+   ========================================================= */
 
-.champ-commentaire .message-erreur {
-  color: #d32f2f;
-  font-size: 12px;
-  margin: 0;
-  display: block;
+.avertissement-decision {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 16px 0;
+  padding: 12px;
+  border: 1px solid #f0d5a0;
+  border-radius: 8px;
+  background: #fff4d6;
+  color: #805b00;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
-/* BOUTONS DU POPUP */
+.avertissement-decision mat-icon {
+  flex-shrink: 0;
+  color: #946200;
+}
 
-.boutons {
+.erreur-decision {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 15px 0;
+  padding: 12px;
+  border: 1px solid #ffd4d4;
+  border-radius: 7px;
+  background: #fff0f0;
+  color: #b42318;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.erreur-decision mat-icon {
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   19. ACTIONS DE LA FENÊTRE
+   ========================================================= */
+
+.popup-actions {
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 10px;
   margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #eeeae3;
 }
 
-.btn-annuler,
-.btn-confirmer {
-  padding: 10px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
+/* =========================================================
+   20. ACCESSIBILITÉ ET INTERACTIONS
+   ========================================================= */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #0f7a4b;
+  outline-offset: 3px;
 }
 
-.btn-annuler {
-  background-color: #ffffff;
-  color: #1f1f1f;
-  border: 1px solid #cccccc;
+button,
+a,
+input,
+textarea {
+  -webkit-tap-highlight-color: transparent;
 }
 
-.btn-annuler:hover {
-  background-color: #f7f3ea;
+/* =========================================================
+   21. RESPONSIVE — TABLETTES
+   ========================================================= */
+
+@media (max-width: 1000px) {
+  .detail-page {
+    padding: 22px;
+  }
+
+  .carte-detail {
+    padding: 22px;
+  }
+
+  .grille-budget {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .carte-budget:last-child {
+    grid-column: 1 / -1;
+  }
 }
 
-.btn-confirmer {
-  background-color: #0f7a4b;
-  color: #ffffff;
-  border: 1px solid #0f7a4b;
-}
+/* =========================================================
+   22. RESPONSIVE — PETITES TABLETTES
+   ========================================================= */
 
-.btn-confirmer:hover {
-  background-color: #0b603a;
-}
+@media (max-width: 800px) {
+  .detail-page {
+    padding: 18px;
+  }
 
-/* ADAPTATION AUX ÉCRANS MOYENS */
+  .carte-detail {
+    padding: 18px;
+  }
 
-@media (max-width: 900px) {
-  .entete {
+  .detail-header {
     align-items: flex-start;
-    flex-direction: column;
   }
 
-  .etude {
-    flex-wrap: wrap;
+  .detail-header .btn-principal {
+    flex-shrink: 0;
   }
 
-  .etude .info {
-    flex: 1 1 28%;
+  .grille-budget {
+    grid-template-columns: 1fr;
   }
 
-  .rapports {
-    flex-direction: column;
+  .carte-budget:last-child {
+    grid-column: auto;
   }
 
-  .rapport {
-    width: 100%;
+  .relation-item {
+    align-items: flex-start;
   }
 }
 
-/* ADAPTATION AUX PETITS ÉCRANS */
+/* =========================================================
+   23. RESPONSIVE — MOBILES
+   ========================================================= */
 
 @media (max-width: 600px) {
-  .page {
+  .detail-page {
     padding: 14px;
   }
 
-  h2 {
-    font-size: 23px;
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
   }
 
-  .entete,
-  .section {
-    padding: 17px;
+  .page-header h1 {
+    font-size: 21px;
   }
 
-  .entete .actions {
-    flex-wrap: wrap;
-    justify-content: flex-start;
+  .page-header p {
+    font-size: 13px;
   }
 
-  .infos,
-  .budget {
+  .page-header .btn-retour {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .carte-detail {
+    padding: 16px;
+    border-radius: 11px;
+  }
+
+  .detail-header {
+    align-items: flex-start;
     flex-direction: column;
     gap: 16px;
   }
 
-  .info {
-    flex: 1 1 auto;
+  .detail-header h2 {
+    font-size: 20px;
   }
 
-  .etude {
-    align-items: stretch;
-    flex-direction: column;
+  .detail-header .btn-principal {
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .etude .actions {
-    justify-content: flex-start;
+  .section {
+    padding: 21px 0;
   }
 
-  .rapport {
-    align-items: flex-start;
-    flex-direction: column;
+  .section h3 {
+    font-size: 16px;
   }
 
-  .rapport .actions {
-    justify-content: flex-start;
+  .grille-informations {
+    grid-template-columns: 1fr;
+    gap: 18px;
   }
 
-  .btn-principal,
-  .btn-secondaire {
+  .info-large {
+    grid-column: auto;
+  }
+
+  .grille-budget {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .carte-budget:last-child {
+    grid-column: auto;
+  }
+
+  .carte-budget {
+    padding: 16px;
+  }
+
+  .carte-budget strong {
+    font-size: 17px;
+  }
+
+  .table-articles th,
+  .table-articles td {
+    padding: 11px 9px;
     font-size: 12px;
   }
-}
 
-/* POPUP SUR TÉLÉPHONE : CHOIX TOUJOURS CÔTE À CÔTE */
+  .liste-justificatifs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 
-@media (max-width: 480px) {
-  .fond-popup {
+  .image-justificatif {
+    height: 125px;
+  }
+
+  .relation-item {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 13px;
+  }
+
+  .relation-contenu {
+    flex: 1 1 calc(100% - 40px);
+  }
+
+  .relation-statut {
+    margin-left: 30px;
+  }
+
+  .resume-relations {
+    font-size: 12px;
+  }
+
+  .popup-decision {
+    padding: 18px;
+  }
+
+  .overlay-decision {
     padding: 12px;
   }
 
-  .carte-decision {
-    padding: 18px;
-    max-height: calc(100vh - 24px);
+  .popup-actions {
+    flex-direction: column-reverse;
   }
 
-  .carte-decision h3 {
+  .popup-actions button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* =========================================================
+   24. RESPONSIVE — TRÈS PETITS MOBILES
+   ========================================================= */
+
+@media (max-width: 400px) {
+  .detail-page {
+    padding: 10px;
+  }
+
+  .carte-detail {
+    padding: 13px;
+  }
+
+  .page-header h1 {
+    font-size: 19px;
+  }
+
+  .detail-header h2 {
     font-size: 18px;
   }
 
-  .choix-decision {
-    flex-direction: row;
-    gap: 8px;
+  .liste-justificatifs {
+    grid-template-columns: 1fr;
   }
 
-  .option {
-    flex: 1 1 0;
-    padding: 9px;
-    gap: 6px;
+  .image-justificatif {
+    height: 170px;
   }
 
-  .texte-option strong {
-    font-size: 11px;
+  .progression-label {
+    font-size: 12px;
   }
 
-  .texte-option small {
-    font-size: 10px;
+  .option-decision {
+    padding: 12px;
   }
+}
 
-  .boutons {
-    gap: 8px;
-  }
+/* =========================================================
+   25. RESPECT DES PRÉFÉRENCES D'ANIMATION
+   ========================================================= */
 
-  .btn-annuler,
-  .btn-confirmer {
-    padding: 10px 12px;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

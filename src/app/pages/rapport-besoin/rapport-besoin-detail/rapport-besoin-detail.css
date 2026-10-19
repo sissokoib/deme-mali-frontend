@@ -1,0 +1,239 @@
+
+:host {
+  display: block;
+  min-height: 100%;
+  background: #F7F3EA;
+  color: #1F1F1F;
+  font-family: Arial, sans-serif;
+}
+
+.page-detail {
+  min-height: 100%;
+  padding: 30px 32px;
+  background: #F7F3EA;
+  box-sizing: border-box;
+}
+
+/* En-tête de la page */
+.entete-page {
+  margin-bottom: 42px;
+}
+
+.entete-page h1 {
+  margin: 0 0 7px;
+  font-size: 23px;
+  font-weight: 700;
+  color: #1F1F1F;
+}
+
+.entete-page p {
+  margin: 0;
+  color: #777;
+  font-size: 13px;
+}
+
+/* Carte principale */
+.carte-rapport {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 24px 26px 28px;
+  background: #FFFFFF;
+  border: 1px solid #E9E3D9;
+  border-radius: 9px;
+}
+
+/* En-tête de la carte */
+.carte-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.titre-carte {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.titre-carte h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.icone-document {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #F7F3EA;
+  color: #0F7A4B;
+}
+
+/* Bouton modifier */
+.btn-modifier {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  border-radius: 5px;
+  background: #0F7A4B;
+  color: #FFFFFF;
+  padding: 10px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-modifier mat-icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}
+
+.btn-modifier:hover {
+  background: #0B603A;
+}
+
+/* Séparateur */
+.separateur {
+  height: 1px;
+  background: #EEE9E1;
+  margin: 18px 0;
+}
+
+/* Champs du rapport */
+.champ {
+  margin-bottom: 22px;
+}
+
+.champ h3,
+.information h3 {
+  margin: 0 0 9px;
+  color: #0F7A4B;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.valeur-simple {
+  margin: 0;
+  padding: 0 10px;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.zone-texte {
+  min-height: 45px;
+  box-sizing: border-box;
+  padding: 14px 16px;
+  border-radius: 6px;
+  background: #F7F3EA;
+  color: #333333;
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Montant et date */
+.informations-bas {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 24px;
+  margin-top: 8px;
+}
+
+.information p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.information .montant {
+  font-weight: 700;
+}
+
+/* Pied de carte */
+.pied-carte {
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid #EEE9E1;
+}
+
+.btn-retour {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid #0F7A4B;
+  border-radius: 5px;
+  background: #FFFFFF;
+  color: #0F7A4B;
+  padding: 9px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-retour:hover {
+  background: #F0F7F3;
+}
+
+/* Messages de chargement et d'erreur */
+.message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px;
+  background: #FFFFFF;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.erreur {
+  color: #B42318;
+  flex-wrap: wrap;
+}
+
+.erreur button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 5px;
+  background: #0F7A4B;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+/* Adaptation aux écrans mobiles */
+@media (max-width: 768px) {
+  .page-detail {
+    padding: 20px 14px;
+  }
+
+  .entete-page {
+    margin-bottom: 25px;
+  }
+
+  .entete-page h1 {
+    font-size: 20px;
+  }
+
+  .carte-rapport {
+    padding: 18px 15px;
+  }
+
+  .titre-carte h2 {
+    font-size: 16px;
+  }
+
+  .informations-bas {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}

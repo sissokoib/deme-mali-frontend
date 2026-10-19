@@ -1,0 +1,415 @@
+
+:host {
+  display: block;
+  color: #252525;
+  font-family: Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.detail-page {
+  min-height: 100%;
+  padding: 28px 24px;
+  background: #f7f3ea;
+}
+
+/* EN-TÊTE */
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.titre-page h1 {
+  margin: 0 0 5px;
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.titre-page p {
+  margin: 0;
+  color: #777;
+  font-size: 11px;
+}
+
+.surtitre {
+  display: none;
+}
+
+.actions-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-retour,
+.btn-modifier,
+.btn-retour-bas,
+.btn-modifier-bas {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.btn-retour,
+.btn-retour-bas {
+  color: #333;
+  background: #fff;
+  border: 1px solid #e5dfd4;
+}
+
+.btn-modifier,
+.btn-modifier-bas {
+  color: #fff;
+  background: #0f7a4b;
+  border: 1px solid #0f7a4b;
+}
+
+.btn-modifier:hover,
+.btn-modifier-bas:hover {
+  background: #095d38;
+}
+
+/* CONTENU PRINCIPAL */
+
+.contenu-rapport {
+  width: 100%;
+  padding: 15px 19px 25px;
+  background: #fff;
+  border: 1px solid #e9e3d9;
+  border-radius: 9px;
+}
+
+/* IDENTITÉ DU RAPPORT */
+
+.carte-identite {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee9df;
+}
+
+.icone-document,
+.icone-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #0f7a4b;
+  background: #f7f3ea;
+  border-radius: 7px;
+}
+
+.icone-document {
+  width: 38px;
+  height: 38px;
+}
+
+.icone-document mat-icon {
+  font-size: 21px;
+}
+
+.identite-infos {
+  flex: 1;
+  min-width: 0;
+}
+
+.identite-infos .libelle {
+  display: none;
+}
+
+.identite-infos h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.identite-infos p {
+  display: none;
+}
+
+.badge-statut {
+  display: none;
+}
+
+/* SECTIONS */
+
+.carte-section {
+  padding: 19px 0 17px;
+  border-bottom: 1px solid #eee9df;
+}
+
+.titre-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.icone-section {
+  display: none;
+}
+
+.titre-section h3 {
+  margin: 0 0 4px;
+  color: #0f7a4b;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.titre-section p {
+  margin: 0;
+  color: #858585;
+  font-size: 11px;
+}
+
+/* DESCRIPTION */
+
+.description-technique {
+  min-height: 62px;
+  padding: 11px 16px;
+  color: #333;
+  background: #f7f3ea;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+/* CARTES DE RÉSUMÉ */
+
+.resume-grid {
+  display: none;
+}
+
+/* TABLEAU DES RESSOURCES */
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+thead {
+  background: #f7f3ea;
+}
+
+th {
+  padding: 11px 16px;
+  color: #252525;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+td {
+  padding: 11px 16px;
+  border-bottom: 1px solid #eee9df;
+  color: #333;
+  font-size: 12px;
+}
+
+.designation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.designation strong {
+  font-weight: 400;
+}
+
+.puce-ressource {
+  display: none;
+}
+
+.colonne-montant {
+  text-align: left;
+  white-space: nowrap;
+}
+
+td.colonne-montant strong {
+  color: #252525;
+  font-weight: 700;
+}
+
+tfoot td {
+  padding-top: 14px;
+  padding-bottom: 14px;
+  color: #858585;
+  border-bottom: none;
+}
+
+tfoot td:first-child {
+  text-align: right;
+}
+
+tfoot .total-tableau {
+  color: #0f7a4b;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* BUDGET FINAL */
+
+.budget-final {
+  display: none;
+}
+
+/* AUCUNE RESSOURCE */
+
+.etat-vide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 25px 15px;
+  color: #777;
+  text-align: center;
+  background: #f7f3ea;
+  border-radius: 6px;
+}
+
+.etat-vide mat-icon {
+  color: #0f7a4b;
+}
+
+.etat-vide strong {
+  font-size: 13px;
+}
+
+.etat-vide p {
+  margin: 0;
+  font-size: 11px;
+}
+
+/* VERROUILLAGE ET ACTIONS */
+
+.message-verrouillage {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 16px;
+  padding: 12px;
+  color: #555;
+  background: #f7f3ea;
+  border-radius: 6px;
+}
+
+.message-verrouillage mat-icon {
+  color: #0f7a4b;
+}
+
+.message-verrouillage p {
+  margin: 0;
+  font-size: 11px;
+}
+
+.actions-bas {
+  display: none;
+}
+
+/* CHARGEMENT ET ERREURS */
+
+.etat-chargement {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 30px;
+  color: #666;
+  font-size: 12px;
+}
+
+.etat-chargement mat-icon {
+  color: #0f7a4b;
+}
+
+.message-erreur {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  color: #a32118;
+  background: #fff;
+  border: 1px solid #f0d5d2;
+  border-radius: 8px;
+}
+
+.message-erreur p {
+  margin: 5px 0 0;
+  font-size: 12px;
+}
+
+.message-erreur button {
+  margin-left: auto;
+  padding: 8px 12px;
+  background: #f7f3ea;
+  border: 1px solid #e5dfd4;
+  border-radius: 5px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 650px) {
+  .detail-page {
+    padding: 16px 10px;
+  }
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .actions-header {
+    width: 100%;
+  }
+
+  .contenu-rapport {
+    padding: 13px 10px 20px;
+  }
+
+  .carte-identite {
+    flex-wrap: wrap;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 580px;
+  }
+
+  th,
+  td {
+    padding: 10px;
+  }
+
+  .description-technique {
+    padding: 10px;
+  }
+}
