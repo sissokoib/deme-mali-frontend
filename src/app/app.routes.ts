@@ -337,6 +337,30 @@ export const routes: Routes = [
                 .then(m => m.DetailRapportTechniqueComponent)
           }
         ]
+      },
+      {
+        path: 'demandes-aide',
+        loadComponent: () =>
+          import('./pages/organisations/demandes/list-demandes/list-demandes')
+            .then(m => m.ListDemandes)
+      },
+      {
+        path: 'add-demandes-aide',
+        loadComponent: () =>
+          import('./pages/organisations/demandes/add-demandes/add-demandes')
+            .then(m => m.AddDemandesAide)
+      },
+      {
+        path: 'demandes-aide/:id',
+        loadComponent: () =>
+          import('./pages/organisations/demandes/detail-demande/detail-demande')
+            .then(m => m.DetailDemande)
+      },
+      {
+        path: 'demandes-aide/:id/modifier',
+        loadComponent: () =>
+          import('./pages/organisations/demandes/edit-demandes/edit-demandes')
+            .then(m => m.ModifierDemandesAide)
       }
     ]
   },
