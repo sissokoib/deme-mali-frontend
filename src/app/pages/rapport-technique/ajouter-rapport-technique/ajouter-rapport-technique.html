@@ -1,0 +1,269 @@
+
+<div class="page-technique">
+
+  <!-- En-tête -->
+  <header class="entete-page">
+    <h1>Créer un rapport technique</h1>
+    <p>
+      Définissez les moyens nécessaires pour répondre concrètement au besoin identifié.
+    </p>
+  </header>
+
+  <!-- Chargement -->
+  <div class="message-chargement" *ngIf="chargement">
+    Chargement des informations...
+  </div>
+
+  <!-- Erreur -->
+  <div class="message-erreur" *ngIf="!chargement && erreur">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ erreur }}</span>
+    <button type="button" (click)="chargerRapportBesoin()">
+      Réessayer
+    </button>
+  </div>
+
+  <ng-container *ngIf="!chargement && !erreur && rapportBesoin">
+
+    <!-- Rapport de besoin associé -->
+    <section class="carte carte-besoin">
+      <h2>Rapport de besoin associé</h2>
+
+      <div class="informations-grid">
+
+        <div class="information">
+          <strong>Demande</strong>
+          <p>{{ rapportBesoin.titre || 'Non renseigné' }}</p>
+        </div>
+
+        <div class="information">
+          <strong>Besoin identifié</strong>
+          <p>{{ rapportBesoin.besoinIdentifie || 'Non renseigné' }}</p>
+        </div>
+
+        <div class="information">
+          <strong>Bénéficiaire</strong>
+          <p>{{ nomBeneficiaire || 'Non renseigné' }}</p>
+        </div>
+
+        <div class="information">
+          <strong>Montant estimé</strong>
+          <p class="texte-vert">
+            {{ rapportBesoin.montantEstime | number:'1.0-0' }} FCFA
+          </p>
+        </div>
+
+        <div class="information information-large">
+          <strong>Solution proposée</strong>
+          <p>{{ rapportBesoin.solutionProposee || 'Non renseignée' }}</p>
+        </div>
+
+        <div class="information information-large">
+          <strong>Description de la situation</strong>
+          <p>{{ rapportBesoin.descriptionSituation || 'Non renseignée' }}</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Solution technique et ressources -->
+    <section class="carte carte-technique">
+
+      <h2>Solution technique</h2>
+
+      <!-- Description technique -->
+      <div class="champ">
+        <label for="descriptionTechnique">
+          Description de la solution *
+        </label>
+
+        <textarea
+          id="descriptionTechnique"
+          name="descriptionTechnique"
+          [(ngModel)]="descriptionTechnique"
+          (input)="descriptionTechniqueTouchee = true"
+          rows="3"
+          placeholder="Décrivez la solution technique proposée...">
+        </textarea>
+
+        <small
+          class="erreur-champ"
+          *ngIf="descriptionTechniqueTouchee && !descriptionTechnique.trim()">
+          La description technique est obligatoire.
+        </small>
+      </div>
+
+      <!-- Ressources nécessaires -->
+      <h2 class="titre-ressources">Ressources nécessaires</h2>
+
+      <p class="description-section">
+        Ajoutez les articles nécessaires à la réalisation de la solution.
+      </p>
+
+      <div class="formulaire-ressource">
+
+        <!-- Bouton placé AU-DESSUS des champs -->
+        <div class="bouton-ajout">
+          <button type="button" (click)="ajouterRessource()">
+            <mat-icon>add</mat-icon>
+            Ajouter une ressource
+          </button>
+        </div>
+
+        <!-- Désignation -->
+        <div class="champ">
+          <label for="designation">Désignation *</label>
+
+          <input
+            id="designation"
+            name="designation"
+            type="text"
+            [(ngModel)]="nouvelleRessource.designation"
+            (input)="validerChamps()"
+            placeholder="Ex. Riz">
+
+          <small
+            class="erreur-champ"
+            *ngIf="champsTouches && erreurs['designation']">
+            {{ erreurs['designation'] }}
+          </small>
+        </div>
+
+        <!-- Quantité -->
+        <div class="champ">
+          <label for="quantite">Quantité *</label>
+
+          <input
+            id="quantite"
+            name="quantite"
+            type="number"
+            min="1"
+            [(ngModel)]="nouvelleRessource.quantite"
+            (input)="validerChamps()">
+
+          <small
+            class="erreur-champ"
+            *ngIf="champsTouches && erreurs['quantite']">
+            {{ erreurs['quantite'] }}
+          </small>
+        </div>
+
+        <!-- Unité -->
+        <div class="champ">
+          <label for="unite">Unité *</label>
+
+          <input
+            id="unite"
+            name="unite"
+            type="text"
+            [(ngModel)]="nouvelleRessource.unite"
+            (input)="validerChamps()"
+            placeholder="Ex. kg">
+
+          <small
+            class="erreur-champ"
+            *ngIf="champsTouches && erreurs['unite']">
+            {{ erreurs['unite'] }}
+          </small>
+        </div>
+
+        <!-- Prix unitaire -->
+        <div class="champ">
+          <label for="prixUnitaire">Prix unitaire (FCFA) *</label>
+
+          <input
+            id="prixUnitaire"
+            name="prixUnitaire"
+            type="number"
+            min="0"
+            [(ngModel)]="nouvelleRessource.prixUnitaire"
+            (input)="validerChamps()">
+
+          <small
+            class="erreur-champ"
+            *ngIf="champsTouches && erreurs['prixUnitaire']">
+            {{ erreurs['prixUnitaire'] }}
+          </small>
+        </div>
+
+      </div>
+
+      <!-- Tableau affiché après le premier ajout -->
+      <div class="table-responsive" *ngIf="ressources.length > 0">
+
+        <table>
+          <thead>
+            <tr>
+              <th>Désignation</th>
+              <th>Quantité</th>
+              <th>Unité</th>
+              <th>Prix unitaire</th>
+              <th>Montant</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let ressource of ressources; let i = index">
+              <td>{{ ressource.designation }}</td>
+              <td>{{ ressource.quantite }}</td>
+              <td>{{ ressource.unite }}</td>
+
+              <td>
+                {{ ressource.prixUnitaire | number:'1.0-0' }} FCFA
+              </td>
+
+              <td class="montant">
+                {{ calculerMontant(ressource) | number:'1.0-0' }} FCFA
+              </td>
+
+              <td>
+                <button
+                  type="button"
+                  class="btn-supprimer"
+                  (click)="supprimerRessource(i)"
+                  title="Supprimer la ressource"
+                  aria-label="Supprimer la ressource">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+      <!-- Budget visible uniquement si des ressources existent -->
+      <div class="budget-total" *ngIf="ressources.length > 0">
+        <span>Budget total estimé</span>
+        <strong>
+          {{ calculerBudgetTotal() | number:'1.0-0' }} FCFA
+        </strong>
+      </div>
+
+    </section>
+
+    <!-- Actions -->
+    <footer class="actions-page">
+
+      <button
+        type="button"
+        class="btn-annuler"
+        [disabled]="enregistrement"
+        (click)="annuler()">
+        Annuler
+      </button>
+
+      <button
+        type="button"
+        class="btn-enregistrer"
+        [disabled]="enregistrement"
+        (click)="enregistrer()">
+        <mat-icon *ngIf="!enregistrement">save</mat-icon>
+        {{ enregistrement ? 'Enregistrement...' : 'Enregistrer' }}
+      </button>
+
+    </footer>
+
+  </ng-container>
+</div>

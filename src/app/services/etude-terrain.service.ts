@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { EtudeTerrain } from '../models/etude.model';
+
+import { EtudeTerrain } from '../models/etude-terrain.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,38 +10,70 @@ import { EtudeTerrain } from '../models/etude.model';
 export class EtudeTerrainService {
 
   private apiUrl = 'http://localhost:8080/api/etudes-terrain';
-  private demandesUrl = 'http://localhost:8080/api/demandes-aide';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  getEtudes(organisationId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/organisation/${organisationId}`).pipe(
-      map(backendData => {
-        return backendData.map(etude => ({
-          id: etude.id,
-          demande: {
-            id: etude.demandeAideId,
-            titre: 'Demande #' + etude.demandeAideId,
-            beneficiaire: 'Bnciaire ' + (etude.organisationPartenaireId || '')
-          },
-          datePlanification: etude.datePlanification,
-          dateRealisation: etude.dateRealisation,
-          lieu: etude.lieu,
-          objectif: etude.objectif,
-          observation: etude.observation,
-          resultat: etude.resultat,
-          status: etude.status // Backend is EN_ATTENTE, PLANIFIEE, TERMINEE
-        }));
-      })
+  getEtudesParOrganisation(
+    organisationId: number
+  ): Observable<EtudeTerrain[]> {
+    return this.http.get<EtudeTerrain[]>(
+      `${this.apiUrl}/organisation/${organisationId}`
     );
   }
 
-  planifierEtude(etudeDto: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, etudeDto);
+  getEtudeById(id: number): Observable<EtudeTerrain> {
+    return this.http.get<EtudeTerrain>(
+      `${this.apiUrl}/${id}`
+    );
   }
 
-  getDemandes(organisationId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.demandesUrl}/organisation/${organisationId}`);
+  creerEtude(dto: Partial<EtudeTerrain>): Observable<EtudeTerrain> {
+    return this.http.post<EtudeTerrain>(this.apiUrl, dto);
   }
-  EtudeTerrainParDemande(demandeId: number) { return this.http.get<any[]>( `${this.apiUrl}/demande/${demandeId}` ); }
+
+  planifierEtude(
+    id: number,
+    dto: Partial<EtudeTerrain>
+  ): Observable<EtudeTerrain> {
+    return this.http.put<EtudeTerrain>(
+      `${this.apiUrl}/${id}/planifier`,
+      dto
+    );
+  }
+
+  terminerEtude(
+    id: number,
+    dto: Partial<EtudeTerrain>
+  ): Observable<EtudeTerrain> {
+    return this.http.put<EtudeTerrain>(
+      `${this.apiUrl}/${id}/terminer`,
+      dto
+    );
+  }
+  
+  // Modifier une étude de terrain
+  modifier(
+    id: number,
+    dto: Partial<EtudeTerrain>
+  ): Observable<EtudeTerrain> {
+    return this.http.put<EtudeTerrain>(
+      `${this.apiUrl}/${id}`,
+      dto
+    );
+  }
+  
+getEtudesParDemande(
+  demandeAideId: number
+): Observable<EtudeTerrain[]> {
+  return this.http.get<EtudeTerrain[]>(
+    `${this.apiUrl}/demande/${demandeAideId}`
+  );
+}
+getByDemande(demandeAideId: number): Observable<EtudeTerrain[]> {
+  return this.http.get<EtudeTerrain[]>(
+    `${this.apiUrl}/demande/${demandeAideId}`
+  );
+}
+
+  
 }

@@ -11,6 +11,8 @@ import {
   AffectationMaterielle
 } from '../../../../models/affectation-don.model';
 
+type TypeOnglet = 'FINANCIER' | 'MATERIEL';
+
 @Component({
   selector: 'app-affectations-dons-list',
   standalone: true,
@@ -29,6 +31,16 @@ export class AffectationsDonsList implements OnInit {
 
   chargement = true;
   erreur = false;
+
+  // Onglet affiché
+  ongletActif: TypeOnglet = 'FINANCIER';
+
+  // Fenêtre de détails
+  detailsOuverts = false;
+  typeDetails: TypeOnglet = 'FINANCIER';
+
+  detailFinancier: AffectationFinanciere | null = null;
+  detailMateriel: AffectationMaterielle | null = null;
 
   constructor(
     private service: AffectationDonService,
@@ -67,6 +79,34 @@ export class AffectationsDonsList implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  // Changer d'onglet
+  changerOnglet(onglet: TypeOnglet): void {
+    this.ongletActif = onglet;
+  }
+
+  // Ouvrir les détails d'une affectation financière
+  voirDetailsFinanciers(affectation: AffectationFinanciere): void {
+    this.detailFinancier = affectation;
+    this.detailMateriel = null;
+    this.typeDetails = 'FINANCIER';
+    this.detailsOuverts = true;
+  }
+
+  // Ouvrir les détails d'une affectation matérielle
+  voirDetailsMateriels(affectation: AffectationMaterielle): void {
+    this.detailMateriel = affectation;
+    this.detailFinancier = null;
+    this.typeDetails = 'MATERIEL';
+    this.detailsOuverts = true;
+  }
+
+  // Fermer la fenêtre de détails
+  fermerDetails(): void {
+    this.detailsOuverts = false;
+    this.detailFinancier = null;
+    this.detailMateriel = null;
   }
 
   // Accéder au formulaire de nouvelle affectation

@@ -8,18 +8,20 @@ import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
-
+  // ROUTE PAR DÉFAUT
   {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
   },
 
+  // CONNEXION
   {
     path: 'login',
     component: Login
   },
 
+  // INSCRIPTION
   {
     path: 'register',
     loadComponent: () =>
@@ -27,7 +29,7 @@ export const routes: Routes = [
         .then(m => m.Register)
   },
 
-  // Routes administrateur
+  // ROUTES ADMINISTRATEUR
   {
     path: 'admin',
     loadComponent: () =>
@@ -79,7 +81,7 @@ export const routes: Routes = [
     ]
   },
 
-  // Routes de l'organisation partenaire
+  // ROUTES DE L'ORGANISATION PARTENAIRE
   {
     path: 'organisation',
     component: Main,
@@ -95,7 +97,7 @@ export const routes: Routes = [
         pathMatch: 'full'
       },
 
-      // Tableau de bord
+      // TABLEAU DE BORD
       {
         path: 'dashboard',
         loadComponent: () =>
@@ -103,144 +105,164 @@ export const routes: Routes = [
             .then(m => m.Dashboard)
       },
 
-      // Mon organisation
+      // MON ORGANISATION
       {
         path: 'mon-organisation',
-        loadComponent: () =>
-          import('./pages/organisations/mon-organisation/mon-organisation')
-            .then(m => m.MonOrganisation)
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/organisations/mon-organisation/mon-organisation')
+                .then(m => m.MonOrganisation)
+          },
+          {
+            path: 'modifier/:id',
+            loadComponent: () =>
+              import('./pages/organisations/modifier-organisation/modifier-organisation')
+                .then(m => m.ModifierOrganisation)
+          }
+        ]
       },
 
-      // Modifier les informations de l'organisation
-      {
-        path: 'modifier/:id',
-        loadComponent: () =>
-          import('./pages/organisations/modifier-organisation/modifier-organisation')
-            .then(m => m.ModifierOrganisation)
-      },
-
-  
-
-      // Demandes d'aide
+      // DEMANDES D'AIDE
       {
         path: 'demandes-aide',
-        loadComponent: () =>
-          import('./pages/organisations/demandes/list-demandes/list-demandes')
-            .then(m => m.ListDemandes)
-      },
-      {
-        path: 'add-demandes-aide',
-        loadComponent: () =>
-          import('./pages/organisations/demandes/add-demndes/add-demndes')
-            .then(m => m.AddDemndes)
-      },
-      {
-        path: 'demandes-aide/:id',
-        loadComponent: () =>
-          import('./pages/organisations/demandes/detail-demande/detail-demande')
-            .then(m => m.DetailDemande)
-      },
-      {
-        path: 'demandes-aide/:id/modifier',
-        loadComponent: () =>
-          import('./pages/organisations/demandes/edit-demandes/edit-demandes')
-            .then(m => m.EditDemandes)
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/organisations/demandes/list-demandes/list-demandes')
+                .then(m => m.ListDemandes)
+          },
+          {
+            path: 'add-demandes-aide',
+            loadComponent: () =>
+              import('./pages/organisations/demandes/add-demandes/add-demandes')
+                .then(m => m.AddDemandesAide)
+          },
+          {
+            path: ':id/modifier',
+            loadComponent: () =>
+              import('./pages/organisations/demandes/edit-demandes/edit-demandes')
+                .then(m => m.ModifierDemandesAide)
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./pages/organisations/demandes/detail-demande/detail-demande')
+                .then(m => m.DetailDemande)
+          }
+        ]
       },
 
-      // Bénéficiaires
+      // BÉNÉFICIAIRES
       {
         path: 'beneficiaires',
-        loadComponent: () =>
-          import('./pages/organisations/beneficiaires/liste-beneficiaires/liste-beneficiaires')
-            .then(m => m.ListeBeneficiaires)
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/organisations/beneficiaires/liste-beneficiaires/liste-beneficiaires')
+                .then(m => m.ListeBeneficiaires)
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./pages/organisations/beneficiaires/detail-beneficiaire/detail-beneficiaire')
+                .then(m => m.DetailBeneficiaire)
+          }
+        ]
       },
+
+      // DONS ATTRIBUÉS
       {
-        path: 'beneficiaires/:id',
-        loadComponent: () =>
-          import('./pages/organisations/beneficiaires/detail-beneficiaire/detail-beneficiaire')
-            .then(m => m.DetailBeneficiaire)
+        path: 'dons-attribues',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/organisations/dons-attribues/dons-attribues')
+                .then(m => m.DonsAttribues)
+          },
+          {
+            path: 'detail/:id',
+            loadComponent: () =>
+              import('./pages/organisations/detail-don-attribue/detail-don-attribue')
+                .then(m => m.DetailDonAttribue)
+          }
+        ]
       },
-      //don attribue par l'admin
- {
-  path: 'dons-attribues',
-  children: [
-    {
-      path: '',
-      loadComponent: () =>
-        import('./pages/organisations/dons-attribues/dons-attribues')
-          .then(m => m.DonsAttribues)
-    },
-    {
-      path: 'detail/:id',
-      loadComponent: () =>
-        import('./pages/organisations/detail-don-attribue/detail-don-attribue')
-          .then(m => m.DetailDonAttribue)
-    }
-  ]
-},
-//affection don 
-{
-  path: 'affectations-dons',
-  children: [
-    {
-      path: '',
-      loadComponent: () =>
-        import('./pages/organisations/affectations-dons/affectations-dons-list/affectations-dons-list')
-          .then(m => m.AffectationsDonsList)
-    },
-    {
-      path: 'add-affection-don',
-      loadComponent: () =>
-        import('./pages/organisations/affectations-dons/add-affection-don/add-affection-don')
-          .then(m => m.AddAffectionDon)
-    }
-  ]
-},
 
-//aides-distribuees
-{
-  path: 'aides-distribuees',
-  loadComponent: () =>
-    import('./pages/organisations/aides-distribuees/aides-distribuees')
-      .then(m => m.AidesDistribueesComponent)
+      // AFFECTATIONS DE DONS
+      {
+        path: 'affectations-dons',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/organisations/affectations-dons/affectations-dons-list/affectations-dons-list')
+                .then(m => m.AffectationsDonsList)
+          },
+          {
+            path: 'add-affection-don',
+            loadComponent: () =>
+              import('./pages/organisations/affectations-dons/add-affection-don/add-affection-don')
+                .then(m => m.AddAffectionDon)
+          }
+        ]
+      },
 
-},
+      // AIDES DISTRIBUÉES
+      {
+        path: 'aide-distribuee',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/organisations/aides-distribuees/aides-distribuees')
+                .then(m => m.AidesDistribueesComponent)
+          },
+          {
+            path: 'ajouter',
+            loadComponent: () =>
+              import('./pages/organisations/aides-distribuees/ajout-aide-distribuee/ajout-aide-distribuee')
+                .then(m => m.AjoutAideDistribueeComponent)
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./pages/organisations/aides-distribuees/detail-aide-distribuee/detail-aide-distribuee')
+                .then(m => m.DetailAideDistribueeComponent)
+          }
+        ]
+      },
 
-{
-  path: 'aides-distribuees/ajouter',
-  loadComponent: () =>
-    import('./pages/organisations/aides-distribuees/ajout-aide-distribuee/ajout-aide-distribuee')
-      .then(m => m.AjoutAideDistribueeComponent)
-},
+      // DONS REÇUS
+      {
+        path: 'dons-reçus',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./pages/organisations/liste-dons.component/liste-dons.component')
+                .then(m => m.ListeDonsComponent)
+          },
+          {
+            path: 'materiel/:id',
+            loadComponent: () =>
+              import('./pages/organisations/detail-don/detail-don')
+                .then(m => m.DetailDonComponent)
+          },
+          {
+            path: 'financier/:id',
+            loadComponent: () =>
+              import('./pages/organisations/detail-don/detail-don')
+                .then(m => m.DetailDonComponent)
+          }
+        ]
+      },
 
-//Dons reçus
-
-{
-  // Dons reçus
-  path: 'dons-reçus',
-  children: [
-    {
-      path: '',
-      loadComponent: () =>
-        import('./pages/organisations/liste-dons.component/liste-dons.component')
-          .then(m => m.ListeDonsComponent)
-    },
-    {
-      path: 'materiel/:id',
-      loadComponent: () =>
-        import('./pages/organisations/detail-don/detail-don')
-          .then(m => m.DetailDonComponent)
-    },
-    {
-      path: 'financier/:id',
-      loadComponent: () =>
-        import('./pages/organisations/detail-don/detail-don')
-          .then(m => m.DetailDonComponent)
-    }
-  ]
-},
-
-      // Études de terrain
+      // ÉTUDES DE TERRAIN ET RAPPORTS
       {
         path: 'etudes-terrain',
         children: [
@@ -248,7 +270,7 @@ export const routes: Routes = [
             path: '',
             loadComponent: () =>
               import('./pages/etude-terrain/etudes-liste/etudes-liste')
-                .then(m => m.EtudesListe)
+                .then(m => m.EtudesTerrainList)
           },
           {
             path: 'planifier',
@@ -257,10 +279,10 @@ export const routes: Routes = [
                 .then(m => m.EtudesPlanifier)
           },
           {
-            path: 'realiser/:id',
+            path: 'terminer/:id',
             loadComponent: () =>
-              import('./pages/etude-terrain/etude-terrain')
-                .then(m => m.EtudeTerrainComponent)
+              import('./pages/etude-terrain/etudes-terminer/etudes-terminer')
+                .then(m => m.EtudesTerminer)
           },
           {
             path: 'detail/:id',
@@ -269,28 +291,50 @@ export const routes: Routes = [
                 .then(m => m.EtudesDetail)
           },
           {
+            path: 'modifier/:id',
+            loadComponent: () =>
+              import('./pages/etude-terrain/modifier-etude-terrain/modifier-etude-terrain')
+                .then(m => m.ModifierEtudeTerrain)
+          },
+
+          // RAPPORTS DE BESOIN
+          {
             path: 'rapport-besoin/creer',
             loadComponent: () =>
               import('./pages/rapport-besoin/rapport-besoin')
-                .then(m => m.RapportBesoinComponent)
+                .then(m => m.AjouterRapportBesoin)
           },
           {
-            path: 'rapport-besoin/detail',
+            path: 'rapport-besoin/modifier/:id',
             loadComponent: () =>
-              import('./pages/rapport-besoin-detail/rapport-besoin-detail')
-                .then(m => m.RapportBesoinDetailComponent)
+              import('./pages/rapport-besoin/modifier-rapport-besoin/modifier-rapport-besoin')
+                .then(m => m.RapportBesoinModifier)
           },
+          {
+            path: 'rapport-besoin/detail/:id',
+            loadComponent: () =>
+              import('./pages/rapport-besoin/rapport-besoin-detail/rapport-besoin-detail')
+                .then(m => m.DetailRapportBesoin)
+          },
+
+          // RAPPORTS TECHNIQUES
           {
             path: 'rapport-technique/creer',
             loadComponent: () =>
-              import('./pages/rapport-technique/rapport-technique')
-                .then(m => m.RapportTechniqueComponent)
+              import('./pages/rapport-technique/ajouter-rapport-technique/ajouter-rapport-technique')
+                .then(m => m.AjouterRapportTechnique)
           },
           {
-            path: 'rapport-technique/detail',
+            path: 'rapport-technique/modifier/:id',
             loadComponent: () =>
-              import('./pages/rapport-technique-detail/rapport-technique-detail')
-                .then(m => m.RapportTechniqueDetailComponent)
+              import('./pages/rapport-technique/modifier-rapport-technique/modifier-rapport-technique')
+                .then(m => m.ModifierRapportTechnique)
+          },
+          {
+            path: 'rapport-technique/detail/:id',
+            loadComponent: () =>
+              import('./pages/rapport-technique/detail-rapport-technique/detail-rapport-technique')
+                .then(m => m.DetailRapportTechniqueComponent)
           }
         ]
       },
@@ -303,8 +347,8 @@ export const routes: Routes = [
       {
         path: 'add-demandes-aide',
         loadComponent: () =>
-          import('./pages/organisations/demandes/add-demndes/add-demndes')
-            .then(m => m.AddDemndes)
+          import('./pages/organisations/demandes/add-demandes/add-demandes')
+            .then(m => m.AddDemandesAide)
       },
       {
         path: 'demandes-aide/:id',
@@ -316,14 +360,14 @@ export const routes: Routes = [
         path: 'demandes-aide/:id/modifier',
         loadComponent: () =>
           import('./pages/organisations/demandes/edit-demandes/edit-demandes')
-            .then(m => m.EditDemandes)
+            .then(m => m.ModifierDemandesAide)
       }
     ]
   },
 
+  // ROUTE INCONNUE
   {
     path: '**',
     redirectTo: 'login'
   }
-
 ];

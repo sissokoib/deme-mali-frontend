@@ -1,0 +1,240 @@
+
+<div class="page-modification">
+
+  <!-- En-tête -->
+  <header class="entete-page">
+    <div>
+      <h1>Modifier un rapport de besoin</h1>
+      <p>Modifiez les besoins identifiés lors de l'étude de terrain.</p>
+    </div>
+
+    <button
+      type="button"
+      class="btn-retour"
+      (click)="retour()">
+      <mat-icon>arrow_back</mat-icon>
+      Retour
+    </button>
+  </header>
+
+  <!-- Chargement -->
+  <div class="message-chargement" *ngIf="chargement">
+    Chargement du rapport de besoin...
+  </div>
+
+  <!-- Erreur -->
+  <div class="message-erreur" *ngIf="!chargement && erreur">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ erreur }}</span>
+
+    <button type="button" (click)="chargerRapport()">
+      Réessayer
+    </button>
+  </div>
+
+  <ng-container *ngIf="!chargement && !erreur && rapport">
+
+    <!-- Demande validée -->
+    <div class="message-verrouille" *ngIf="demandeValidee">
+      <mat-icon>lock</mat-icon>
+
+      <div>
+        <strong>Modification impossible</strong>
+        <p>
+          La demande d'aide associée est validée.
+          Le rapport est disponible uniquement en lecture seule.
+        </p>
+      </div>
+    </div>
+
+    <form
+      #form="ngForm"
+      (ngSubmit)="enregistrer(form)"
+      novalidate>
+
+      <!-- Informations de l'étude -->
+      <section class="carte-etude">
+
+        <h2>
+          <mat-icon>fact_check</mat-icon>
+          Étude de terrain
+        </h2>
+
+        <p class="description-etude">
+          Informations de l'étude terminée.
+        </p>
+
+        <div class="infos-etude">
+
+          <div class="info-etude">
+            <span>Demande</span>
+            <strong>
+              {{ rapport.titre || 'Rapport de besoin' }}
+            </strong>
+          </div>
+
+          <div class="info-etude">
+            <span>Rapport</span>
+            <strong>#{{ rapport.id }}</strong>
+          </div>
+
+          <div class="info-etude">
+            <span>Date de création</span>
+            <strong>
+              {{
+                rapport.dateCreation
+                  ? (rapport.dateCreation | date:'dd MMM yyyy')
+                  : 'Non renseignée'
+              }}
+            </strong>
+          </div>
+
+          <div class="info-etude">
+            <span>Statut de modification</span>
+
+            <strong [class.statut-verrouille]="demandeValidee">
+              {{
+                demandeValidee
+                  ? 'Demande validée'
+                  : 'Modification autorisée'
+              }}
+            </strong>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Formulaire de modification -->
+      <section class="carte-formulaire">
+
+        <h2>Besoin identifié</h2>
+
+        <div class="grille-besoin">
+
+          <!-- Titre -->
+          <div class="champ">
+            <label for="titre">Titre du besoin</label>
+
+            <input
+              id="titre"
+              name="titre"
+              type="text"
+              [(ngModel)]="titre"
+              [readonly]="demandeValidee">
+          </div>
+
+          <!-- Besoin identifié -->
+          <div class="champ">
+            <label for="besoinIdentifie">
+              Besoin identifié
+            </label>
+
+            <textarea
+              id="besoinIdentifie"
+              name="besoinIdentifie"
+              [(ngModel)]="besoinIdentifie"
+              rows="3"
+              [readonly]="demandeValidee"></textarea>
+          </div>
+
+        </div>
+
+        <!-- Description -->
+        <div class="champ champ-large">
+          <label for="descriptionSituation">
+            Description détaillée du besoin
+          </label>
+
+          <textarea
+            id="descriptionSituation"
+            name="descriptionSituation"
+            [(ngModel)]="descriptionSituation"
+            rows="4"
+            [readonly]="demandeValidee"></textarea>
+        </div>
+
+        <!-- Solution proposée -->
+        <h2 class="titre-section">
+          Solution proposée
+        </h2>
+
+        <div class="champ solution">
+          <label for="solutionProposee">
+            Solution proposée
+          </label>
+
+          <textarea
+            id="solutionProposee"
+            name="solutionProposee"
+            [(ngModel)]="solutionProposee"
+            rows="3"
+            [readonly]="demandeValidee"></textarea>
+        </div>
+
+        <!-- Montant estimé -->
+        <h2 class="titre-section">
+          Estimation du besoin
+        </h2>
+
+        <div class="champ montant-champ">
+          <label for="montantEstime">
+            Montant estimé (FCFA)
+          </label>
+
+          <input
+            id="montantEstime"
+            name="montantEstime"
+            type="number"
+            [(ngModel)]="montantEstime"
+            #montantCtrl="ngModel"
+            min="1"
+            [readonly]="demandeValidee">
+
+          <small
+            class="erreur-champ"
+            *ngIf="
+              montantCtrl.invalid &&
+              montantCtrl.touched
+            ">
+            Le montant doit être supérieur à zéro s'il est renseigné.
+          </small>
+
+       
+        </div>
+
+      </section>
+
+      <!-- Actions -->
+      <footer class="actions-formulaire">
+
+        <button
+          type="button"
+          class="btn-annuler"
+          [disabled]="enregistrement"
+          (click)="retour()">
+          Annuler
+        </button>
+
+        <button
+          type="submit"
+          class="btn-enregistrer"
+          [disabled]="enregistrement || demandeValidee">
+
+          <mat-icon *ngIf="!enregistrement">
+            save
+          </mat-icon>
+
+          {{
+            enregistrement
+              ? 'Enregistrement...'
+              : 'Enregistrer'
+          }}
+        </button>
+
+      </footer>
+
+    </form>
+
+  </ng-container>
+
+</div>

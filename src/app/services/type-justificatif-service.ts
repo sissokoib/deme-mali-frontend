@@ -1,6 +1,7 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+
 import { TypeJustificatif } from '../models/type-justificatif.models';
 
 @Injectable({
@@ -8,15 +9,11 @@ import { TypeJustificatif } from '../models/type-justificatif.models';
 })
 export class TypeJustificatifService {
 
-  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:8080/api/types-justificatif';
 
-  private url =
-    'http://localhost:8080/api/types-justificatif';
+  constructor(private http: HttpClient) {}
 
-  getAll(): Observable<TypeJustificatif[]> {
-
-    return this.http.get<TypeJustificatif[]>(
-      this.url
-    );
+  getTypes(): Observable<TypeJustificatif[]> {
+    return this.http.get<TypeJustificatif[]>(this.apiUrl);
   }
 }

@@ -1,0 +1,224 @@
+
+<div class="page-technique">
+
+  <header class="page-header">
+    <div>
+      <h1>Modifier le rapport technique</h1>
+      <p>Modifiez la description et les ressources nécessaires.</p>
+    </div>
+
+    <button type="button" class="btn-retour" (click)="annuler()">
+      <mat-icon>arrow_back</mat-icon>
+      Retour
+    </button>
+  </header>
+
+  <div class="etat-chargement" *ngIf="chargement">
+    Chargement du rapport technique...
+  </div>
+
+  <div class="message-erreur" *ngIf="!chargement && erreur">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ erreur }}</span>
+
+    <button type="button" (click)="chargerRapport()">
+      Réessayer
+    </button>
+  </div>
+
+  <ng-container *ngIf="!chargement && !erreur && rapport">
+
+    <section class="carte-technique">
+
+      <div class="section-titre">
+        <div>
+          <h2>Description technique</h2>
+          <p>Ce champ est facultatif.</p>
+        </div>
+      </div>
+
+      <div class="champ">
+        <label for="descriptionTechnique">
+          Description de la solution proposée
+        </label>
+
+        <textarea
+          id="descriptionTechnique"
+          name="descriptionTechnique"
+          rows="4"
+          [(ngModel)]="descriptionTechnique"
+          placeholder="Décrivez la solution proposée...">
+        </textarea>
+      </div>
+
+      <div class="separateur"></div>
+
+      <div class="section-titre">
+        <div>
+          <h2>Ressources nécessaires</h2>
+          <p>Modifiez les lignes, ajoutez-en ou supprimez-les.</p>
+        </div>
+
+        <button
+          type="button"
+          class="btn-ajouter"
+          (click)="ajouterRessource()">
+          <mat-icon>add</mat-icon>
+          Ajouter
+        </button>
+      </div>
+
+      <!-- Ajout d'une nouvelle ressource -->
+      <div class="formulaire-ressource">
+
+        <div class="champ">
+          <label for="nouvelleDesignation">Désignation</label>
+          <input
+            id="nouvelleDesignation"
+            name="nouvelleDesignation"
+            type="text"
+            [(ngModel)]="nouvelleRessource.designation"
+            placeholder="Ex. Sacs de riz">
+        </div>
+
+        <div class="champ">
+          <label for="nouvelleQuantite">Quantité</label>
+          <input
+            id="nouvelleQuantite"
+            name="nouvelleQuantite"
+            type="number"
+            min="0"
+            [(ngModel)]="nouvelleRessource.quantite">
+        </div>
+
+        <div class="champ">
+          <label for="nouvelleUnite">Unité</label>
+          <input
+            id="nouvelleUnite"
+            name="nouvelleUnite"
+            type="text"
+            [(ngModel)]="nouvelleRessource.unite"
+            placeholder="Ex. sacs">
+        </div>
+
+        <div class="champ">
+          <label for="nouveauPrix">Prix unitaire (FCFA)</label>
+          <input
+            id="nouveauPrix"
+            name="nouveauPrix"
+            type="number"
+            min="0"
+            [(ngModel)]="nouvelleRessource.prixUnitaire">
+        </div>
+
+      </div>
+
+      <!-- Liste des ressources -->
+      <div class="table-responsive" *ngIf="ressources.length > 0">
+
+        <table>
+          <thead>
+            <tr>
+              <th>Désignation</th>
+              <th>Quantité</th>
+              <th>Unité</th>
+              <th>Prix unitaire</th>
+              <th>Montant</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let ressource of ressources; let i = index">
+
+              <td>
+                <input
+                  type="text"
+                  [name]="'designation-' + i"
+                  [(ngModel)]="ressource.designation"
+                  (ngModelChange)="recalculerMontant()"
+                  placeholder="Désignation">
+              </td>
+
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  [name]="'quantite-' + i"
+                  [(ngModel)]="ressource.quantite"
+                  (ngModelChange)="recalculerMontant()">
+              </td>
+
+              <td>
+                <input
+                  type="text"
+                  [name]="'unite-' + i"
+                  [(ngModel)]="ressource.unite"
+                  placeholder="Unité">
+              </td>
+
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  [name]="'prix-' + i"
+                  [(ngModel)]="ressource.prixUnitaire"
+                  (ngModelChange)="recalculerMontant()">
+              </td>
+
+              <td class="montant">
+                {{ calculerMontant(ressource) | number:'1.0-0' }} FCFA
+              </td>
+
+              <td>
+                <button
+                  type="button"
+                  class="btn-supprimer"
+                  title="Supprimer cette ressource"
+                  aria-label="Supprimer cette ressource"
+                  (click)="supprimerRessource(i)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ressources-vides" *ngIf="ressources.length === 0">
+        <mat-icon>inventory_2</mat-icon>
+        <p>Aucune ressource. Tu peux enregistrer le rapport sans ressource.</p>
+      </div>
+
+      <!-- Budget recalculé -->
+      <div class="budget-total">
+        <span>Budget total estimé</span>
+        <strong>{{ montantTotal | number:'1.0-0' }} FCFA</strong>
+      </div>
+
+      <div class="actions-bas">
+        <button
+          type="button"
+          class="btn-annuler"
+          [disabled]="enregistrement"
+          (click)="annuler()">
+          Annuler
+        </button>
+
+        <button
+          type="button"
+          class="btn-enregistrer"
+          [disabled]="enregistrement"
+          (click)="enregistrer()">
+
+          <mat-icon>{{ enregistrement ? 'hourglass_top' : 'save' }}</mat-icon>
+
+          {{ enregistrement ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+        </button>
+      </div>
+
+    </section>
+
+  </ng-container>
+</div>

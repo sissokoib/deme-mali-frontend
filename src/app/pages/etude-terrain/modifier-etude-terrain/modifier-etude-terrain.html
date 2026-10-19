@@ -1,0 +1,189 @@
+<div class="page-etude">
+
+  <header class="entete">
+    <div>
+      <h1>Étude de terrain</h1>
+      <p>Consultez ou modifiez les informations de l'étude.</p>
+    </div>
+
+    <button type="button" class="btn-retour" (click)="retour()">
+      <mat-icon>arrow_back</mat-icon>
+      Retour
+    </button>
+  </header>
+
+  <div class="chargement" *ngIf="chargement">
+    <span class="spinner"></span>
+    Chargement des informations de l'étude...
+  </div>
+
+  <div class="erreur-generale" *ngIf="erreur && !chargement">
+    <mat-icon>error_outline</mat-icon>
+    {{ erreur }}
+    <button type="button" (click)="chargerEtude()">Réessayer</button>
+  </div>
+
+  <ng-container *ngIf="!chargement && !erreur && etude">
+
+    <div class="message-verrouille" *ngIf="demandeValidee">
+      <mat-icon>lock</mat-icon>
+      <div>
+        <strong>Modification impossible</strong>
+        <p>La demande d'aide associée est validée. Les informations sont en lecture seule.</p>
+      </div>
+    </div>
+
+    <form #form="ngForm" (ngSubmit)="enregistrer(form)" novalidate>
+
+      <!-- Informations de l'étude -->
+      <section class="carte">
+        <h2>Informations de l'étude</h2>
+
+        <div class="informations">
+
+          <div class="information">
+            <label for="lieu">Lieu de la visite</label>
+            <input
+              id="lieu"
+              name="lieu"
+              type="text"
+              [(ngModel)]="lieu"
+              #lieuCtrl="ngModel"
+              required
+              minlength="2"
+              [readonly]="demandeValidee">
+
+            <small class="erreur-champ"
+              *ngIf="lieuCtrl.invalid && (lieuCtrl.touched || form.submitted)">
+              Le lieu est obligatoire (2 caractères minimum).
+            </small>
+          </div>
+
+          <div class="information">
+            <label for="datePlanification">Date de planification</label>
+            <input
+              id="datePlanification"
+              name="datePlanification"
+              type="date"
+              [(ngModel)]="datePlanification"
+              required
+              [readonly]="demandeValidee">
+          </div>
+
+          <div class="information">
+            <label for="heure">Heure de la visite</label>
+          <input
+  id="heure"
+  name="heure"
+  type="time"
+  [(ngModel)]="heure"
+  #heureCtrl="ngModel"
+  required
+  [readonly]="demandeValidee">
+          </div>
+
+          <div class="information">
+            <label>Statut de l'étude</label>
+            <span class="badge-statut"
+              [class.statut-termine]="etudeTerminee">
+              {{ etude.status }}
+            </span>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Objectif -->
+      <section class="carte">
+        <h2>Objectif de la visite</h2>
+
+        <div class="champ">
+          <label for="objectif">Objectif <span>*</span></label>
+          <textarea
+            id="objectif"
+            name="objectif"
+            [(ngModel)]="objectif"
+            #objectifCtrl="ngModel"
+            required
+            minlength="5"
+            rows="3"
+            placeholder="Décrivez l'objectif de la visite..."
+            [readonly]="demandeValidee"></textarea>
+
+          <small class="erreur-champ"
+            *ngIf="objectifCtrl.invalid && (objectifCtrl.touched || form.submitted)">
+            L'objectif doit contenir au moins 5 caractères.
+          </small>
+        </div>
+      </section>
+
+      <!-- Résultat de la visite -->
+      <section class="carte">
+        <h2>Résultat de la visite</h2>
+
+        <p class="message-info" *ngIf="!etudeTerminee">
+          Les informations de réalisation pourront être complétées après la visite.
+        </p>
+
+        <p class="message-info" *ngIf="etudeTerminee">
+          Cette étude est terminée. Tu peux modifier les informations de réalisation.
+        </p>
+
+        <div class="champ">
+          <label for="dateRealisation">Date de réalisation</label>
+          <input
+            id="dateRealisation"
+            name="dateRealisation"
+            type="date"
+            [(ngModel)]="dateRealisation"
+            [readonly]="demandeValidee">
+        </div>
+
+        <div class="champ">
+          <label for="observation">Observation</label>
+          <textarea
+            id="observation"
+            name="observation"
+            [(ngModel)]="observation"
+            rows="3"
+            placeholder="Observations effectuées sur le terrain..."
+            [readonly]="demandeValidee"></textarea>
+        </div>
+
+        <div class="champ">
+          <label for="resultat">Résultat</label>
+          <textarea
+            id="resultat"
+            name="resultat"
+            [(ngModel)]="resultat"
+            rows="3"
+            placeholder="Résultat de l'étude..."
+            [readonly]="demandeValidee"></textarea>
+        </div>
+      </section>
+
+      <!-- Actions -->
+      <footer class="actions">
+        <button
+          type="button"
+          class="btn-annuler"
+          [disabled]="enregistrement"
+          (click)="retour()">
+          Annuler
+        </button>
+
+        <button
+          type="submit"
+          class="btn-enregistrer"
+          [disabled]="enregistrement || demandeValidee || form.invalid">
+
+          <mat-icon *ngIf="!enregistrement">save</mat-icon>
+          <span>
+            {{ enregistrement ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+          </span>
+        </button>
+      </footer>
+
+    </form>
+  </ng-container>
+</div>

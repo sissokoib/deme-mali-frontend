@@ -1,346 +1,389 @@
 
-<div class="page">
+<div class="detail-page">
 
-  <h2>Détail de la demande</h2>
-
-  <p class="sous-titre">
-    Consultez la demande, son étude de terrain et les rapports associés.
-  </p>
-
-  <p *ngIf="chargement" class="message-chargement">
-    Chargement des informations...
-  </p>
-
-  <p *ngIf="erreur" class="message-erreur">
-    {{ erreur }}
-  </p>
-
-  <div class="carte-detail" *ngIf="demande as d">
-
-    <!-- EN-TÊTE -->
-    <div class="entete">
-
-      <h3>{{ d.titre }}</h3>
-
-      <div class="actions">
-
-        <button
-          class="btn-secondaire"
-          type="button"
-          (click)="ouvrirDecision()">
-
-          <mat-icon>assignment</mat-icon>
-          Traiter la demande
-        </button>
-
-        <button class="btn-principal" type="button">
-          <mat-icon>event</mat-icon>
-          Planifier une étude
-        </button>
-
-      </div>
-
+  <!-- En-tête -->
+  <header class="page-header">
+    <div>
+      <h1>Détail de la demande d’aide</h1>
+      <p>Consultez les informations et les besoins du bénéficiaire.</p>
     </div>
 
-    <!-- INFORMATIONS GÉNÉRALES -->
-    <div class="section">
-
-      <h4>Informations générales</h4>
-
-      <div class="infos">
-
-        <div class="info">
-          <span>Référence</span>
-          <strong>DA-{{ d.id }}</strong>
-        </div>
-
-        <div class="info">
-          <span>Type de demande</span>
-          <strong>{{ d.typeDemande }}</strong>
-        </div>
-
-        <div class="info">
-          <span>Date de création</span>
-          <strong>{{ d.dateCreation | date:'dd MMMM yyyy' }}</strong>
-        </div>
-
-        <div class="info">
-          <span>Bénéficiaire</span>
-          <strong>
-            {{ d.beneficiairePrenom }} {{ d.beneficiaireNom }}
-          </strong>
-        </div>
-
-        <div class="info">
-          <span>Nombre de personnes</span>
-          <strong>{{ d.nombrePersonne }} personnes</strong>
-        </div>
-
-        <div class="info">
-          <span>Urgence</span>
-          <strong>{{ d.niveauUrgence }}</strong>
-        </div>
-
-      </div>
-
-      <div class="description">
-        <span>Description de la situation</span>
-        <p>{{ d.descriptionSituation }}</p>
-      </div>
-
-    </div>
-
-    <!-- BUDGET ET COLLECTE -->
-    <div class="section">
-
-      <h4>Budget et collecte</h4>
-
-      <div class="budget">
-
-        <div class="info">
-          <span>Montant nécessaire</span>
-          <strong>
-            {{ d.montantNecessaire | number:'1.0-0' }} FCFA
-          </strong>
-        </div>
-
-        <div class="info">
-          <span>Montant collecté</span>
-          <strong class="vert">
-            {{ d.montantCollecte | number:'1.0-0' }} FCFA
-          </strong>
-        </div>
-
-        <div class="info">
-          <span>Reste à collecter</span>
-          <strong>
-            {{
-              (d.montantNecessaire - d.montantCollecte)
-                | number:'1.0-0'
-            }} FCFA
-          </strong>
-        </div>
-
-        <div class="info">
-          <span>Progression de la collecte</span>
-          <strong class="vert">
-            {{
-              d.montantNecessaire > 0
-                ? (d.montantCollecte / d.montantNecessaire * 100
-                    | number:'1.0-0')
-                : 0
-            }} %
-          </strong>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- ÉTUDE DE TERRAIN -->
-    <div class="section">
-
-      <h4>Étude de terrain</h4>
-
-      <div
-        *ngIf="etudeTerrain as etude; else aucuneEtude"
-        class="etude">
-
-        <div class="info">
-          <span>Lieu</span>
-          <strong>{{ etude.lieu }}</strong>
-        </div>
-
-        <div class="info">
-          <span>Date de planification</span>
-          <strong>
-            {{ etude.datePlanification | date:'dd MMMM yyyy' }}
-          </strong>
-        </div>
-
-        <div class="info">
-          <span>Date de réalisation</span>
-          <strong>
-            {{
-              etude.dateRealisation
-                ? (etude.dateRealisation | date:'dd MMMM yyyy')
-                : 'Non réalisée'
-            }}
-          </strong>
-        </div>
-
-        <div class="actions">
-          <button class="btn-secondaire petit" type="button">
-            Voir
-          </button>
-
-          <button class="btn-principal petit" type="button">
-            Modifier
-          </button>
-        </div>
-
-      </div>
-
-      <ng-template #aucuneEtude>
-        <p class="message-vide">
-          Aucune étude de terrain disponible pour cette demande.
-        </p>
-      </ng-template>
-
-    </div>
-
-    <!-- RAPPORTS ASSOCIÉS -->
-    <div class="section">
-
-      <h4>Rapports associés</h4>
-
-      <div class="rapports">
-
-        <!-- RAPPORT DE BESOIN -->
-        <div class="rapport">
-
-          <div class="rapport-infos">
-            <strong>Rapport de besoin</strong>
-
-            <p *ngIf="rapportBesoin">
-              {{ rapportBesoin.titre }}
-            </p>
-
-            <p *ngIf="rapportBesoin">
-              Réalisé le
-              {{ rapportBesoin.dateCreation | date:'dd MMMM yyyy' }}
-            </p>
-
-            <p *ngIf="!rapportBesoin" class="message-vide">
-              Aucun rapport de besoin disponible.
-            </p>
-          </div>
-
-          <div class="actions" *ngIf="rapportBesoin">
-
-            <button class="btn-secondaire petit" type="button">
-              Voir
-            </button>
-
-            <button class="btn-principal petit" type="button">
-              Modifier
-            </button>
-
-          </div>
-
-        </div>
-
-        <!-- RAPPORT TECHNIQUE -->
-        <div class="rapport">
-
-          <div class="rapport-infos">
-            <strong>Rapport technique</strong>
-
-            <p *ngIf="rapportTechnique">
-              Réalisé le
-              {{ rapportTechnique.dateCreation | date:'dd MMMM yyyy' }}
-            </p>
-
-            <p *ngIf="!rapportTechnique" class="message-vide">
-              Aucun rapport technique disponible.
-            </p>
-          </div>
-
-          <div class="actions" *ngIf="rapportTechnique">
-
-            <button class="btn-secondaire petit" type="button">
-              Voir
-            </button>
-
-            <button class="btn-principal petit" type="button">
-              Modifier
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- JUSTIFICATIFS -->
-    <div class="section justificatifs">
-
-      <h4>Justificatifs de la demande</h4>
-
-      <div
-        class="fichiers"
-        *ngIf="justificatifs.length > 0">
-
-        <ng-container *ngFor="let justificatif of justificatifs">
-
-          <!-- APERÇU DES IMAGES -->
-          <a
-            *ngIf="estUneImage(justificatif.cheminFichier)"
-            class="justificatif"
-            [href]="obtenirUrlJustificatif(justificatif.cheminFichier)"
-            target="_blank"
-            rel="noopener noreferrer">
-
-            <img
-              [src]="obtenirUrlJustificatif(justificatif.cheminFichier)"
-              alt="Justificatif de la demande">
-
-          </a>
-
-          <!-- AUTRES DOCUMENTS -->
-          <a
-            *ngIf="!estUneImage(justificatif.cheminFichier)"
-            class="fichier document"
-            [href]="obtenirUrlJustificatif(justificatif.cheminFichier)"
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Ouvrir le document">
-
-            <mat-icon>description</mat-icon>
-
-          </a>
-
-        </ng-container>
-
-      </div>
-
-      <p
-        class="message-vide"
-        *ngIf="justificatifs.length === 0">
-
-        Aucun justificatif disponible pour cette demande.
-      </p>
-
-    </div>
-
+    <a routerLink="/demandes-aide" class="btn-retour">
+      <mat-icon>arrow_back</mat-icon>
+      Retour aux demandes
+    </a>
+  </header>
+
+  <!-- Chargement -->
+  <div class="message-chargement" *ngIf="chargement">
+    <mat-icon>hourglass_empty</mat-icon>
+    <span>Chargement des informations...</span>
   </div>
 
+  <!-- Erreur de chargement -->
+  <div class="message-erreur" *ngIf="erreur && !chargement">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ erreur }}</span>
+  </div>
+
+  <ng-container *ngIf="!chargement && demande as d">
+
+    <div class="carte-detail">
+
+      <!-- En-tête de la demande -->
+      <div class="detail-header">
+        <div class="titre-demande">
+          <span class="reference">Demande #{{ d.id }}</span>
+
+          <h2>{{ d.titre }}</h2>
+
+          <span
+            class="badge-statut"
+            [ngClass]="(d.statut || '').toLowerCase()">
+            {{ d.statut || 'Statut non renseigné' }}
+          </span>
+        </div>
+
+        <button
+          type="button"
+          class="btn-principal"
+          *ngIf="d.statut === 'EN_ATTENTE'"
+          (click)="ouvrirDecision()">
+          <mat-icon>fact_check</mat-icon>
+          Traiter la demande
+        </button>
+      </div>
+
+      <!-- Informations générales -->
+      <section class="section">
+        <h3>
+          <mat-icon>info</mat-icon>
+          Informations générales
+        </h3>
+
+        <div class="grille-informations">
+
+          <div class="info-item">
+            <span>Identifiant</span>
+            <strong>#{{ d.id }}</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Type de demande d’aide</span>
+            <strong>{{ d.typeDemandeAide || 'Non renseigné' }}</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Type de bénéficiaire</span>
+            <strong>{{ d.typeDemande || 'Non renseigné' }}</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Date de création</span>
+            <strong>
+              {{
+                d.dateCreation
+                  ? (d.dateCreation | date:'dd/MM/yyyy')
+                  : 'Non renseignée'
+              }}
+            </strong>
+          </div>
+
+          <div class="info-item">
+            <span>Prénom du bénéficiaire</span>
+            <strong>{{ d.beneficiairePrenom || 'Non renseigné' }}</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Nom du bénéficiaire</span>
+            <strong>{{ d.beneficiaireNom || 'Non renseigné' }}</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Nombre de personnes</span>
+            <strong>{{ d.nombrePersonne ?? 'Non renseigné' }}</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Niveau d’urgence</span>
+            <strong>{{ d.niveauUrgence || 'Non renseigné' }}</strong>
+          </div>
+
+          <div class="info-item info-large">
+            <span>Motif</span>
+            <p>{{ d.motif || 'Aucun motif renseigné.' }}</p>
+          </div>
+
+          <div class="info-item info-large">
+            <span>Description de la situation</span>
+            <p>
+              {{ d.descriptionSituation || 'Aucune description renseignée.' }}
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Articles de la demande matérielle -->
+      <section class="section" *ngIf="estDemandeMaterielle">
+        <h3>
+          <mat-icon>inventory_2</mat-icon>
+          Articles nécessaires
+        </h3>
+
+        <p class="sous-description">
+          Liste des articles demandés et estimation du coût des besoins matériels.
+        </p>
+
+        <div
+          class="table-responsive"
+          *ngIf="articles.length > 0; else aucunArticle">
+
+          <table class="table-articles">
+            <thead>
+              <tr>
+                <th>Désignation</th>
+                <th>Quantité</th>
+                <th>Unité</th>
+                <th>Prix unitaire estimé</th>
+                <th>Total estimé</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let article of articles">
+                <td class="designation">
+                  {{ article.designation || 'Non renseignée' }}
+                </td>
+
+                <td>
+                  {{ article.quantiteDemandee ?? 0 }}
+                </td>
+
+                <td>
+                  {{ article.unite || '—' }}
+                </td>
+
+                <td>
+                  <ng-container
+                    *ngIf="article.prixUnitaireEstime != null; else prixNonEstime">
+                    {{ article.prixUnitaireEstime | number:'1.0-0' }} FCFA
+                  </ng-container>
+
+                  <ng-template #prixNonEstime>
+                    <span class="texte-secondaire">Non estimé</span>
+                  </ng-template>
+                </td>
+
+                <td class="montant-article">
+                  <ng-container
+                    *ngIf="article.prixUnitaireEstime != null; else totalNonEstime">
+                    {{
+                      (
+                        (article.quantiteDemandee ?? 0)
+                        * article.prixUnitaireEstime
+                      ) | number:'1.0-0'
+                    }} FCFA
+                  </ng-container>
+
+                  <ng-template #totalNonEstime>
+                    —
+                  </ng-template>
+                </td>
+              </tr>
+            </tbody>
+
+            <tfoot>
+              <tr>
+                <td colspan="4">Total estimé des articles</td>
+                <td class="montant-article">
+                  {{ totalEstimeArticles | number:'1.0-0' }} FCFA
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <ng-template #aucunArticle>
+          <div class="message-vide">
+            <mat-icon>inventory_2</mat-icon>
+            <p>
+              Aucun article n’est associé à cette demande matérielle.
+            </p>
+          </div>
+        </ng-template>
+      </section>
+
+      <!-- Budget de la demande financière -->
+      <section class="section" *ngIf="estDemandeFinanciere">
+        <h3>
+          <mat-icon>payments</mat-icon>
+          Budget et collecte
+        </h3>
+
+        <div class="grille-budget">
+
+          <div class="carte-budget">
+            <div class="icone-budget">
+              <mat-icon>account_balance_wallet</mat-icon>
+            </div>
+
+            <span>Montant nécessaire</span>
+
+            <strong>
+              {{ d.montantNecessaire ?? 0 | number:'1.0-0' }} FCFA
+            </strong>
+          </div>
+
+          <div class="carte-budget">
+            <div class="icone-budget">
+              <mat-icon>volunteer_activism</mat-icon>
+            </div>
+
+            <span>Montant collecté</span>
+
+            <strong>
+              {{ d.montantCollecte ?? 0 | number:'1.0-0' }} FCFA
+            </strong>
+          </div>
+
+          <div class="carte-budget">
+            <div class="icone-budget">
+              <mat-icon>trending_up</mat-icon>
+            </div>
+
+            <span>Montant restant</span>
+
+            <strong>
+              {{ montantRestant | number:'1.0-0' }} FCFA
+            </strong>
+          </div>
+
+        </div>
+
+      </section>
+
+      
+
+      <!-- Justificatifs -->
+      <section class="section">
+        <h3>
+          <mat-icon>folder_open</mat-icon>
+          Justificatifs
+        </h3>
+
+        <p class="sous-description">
+          Documents et images fournis pour justifier la demande.
+        </p>
+
+        <div
+          class="liste-justificatifs"
+          *ngIf="justificatifs.length > 0; else aucunJustificatif">
+
+          <div
+            class="carte-justificatif"
+            *ngFor="let justificatif of justificatifs">
+
+            <!-- Image -->
+            <ng-container
+              *ngIf="
+                estUneImage(justificatif.cheminFichier);
+                else documentJustificatif
+              ">
+
+              <a
+                class="lien-image"
+                [href]="obtenirUrlJustificatif(justificatif.cheminFichier)"
+                target="_blank"
+                rel="noopener noreferrer">
+
+                <img
+                  [src]="obtenirUrlJustificatif(justificatif.cheminFichier)"
+                  [alt]="justificatif.nomFichier || 'Justificatif'"
+                  class="image-justificatif">
+              </a>
+
+              <span class="nom-justificatif">
+                {{ justificatif.nomFichier || 'Image justificative' }}
+              </span>
+            </ng-container>
+
+            <!-- Document -->
+            <ng-template #documentJustificatif>
+              <mat-icon class="icone-document">description</mat-icon>
+
+              <a
+                [href]="obtenirUrlJustificatif(justificatif.cheminFichier)"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="lien-document">
+
+                {{
+                  justificatif.nomFichier
+                  || justificatif.cheminFichier
+                  || 'Consulter le document'
+                }}
+              </a>
+            </ng-template>
+
+          </div>
+        </div>
+
+        <ng-template #aucunJustificatif>
+          <div class="message-vide">
+            <mat-icon>folder_off</mat-icon>
+            <p>
+              Aucun justificatif n’est associé à cette demande.
+            </p>
+          </div>
+        </ng-template>
+      </section>
+
+    </div>
+  </ng-container>
 </div>
 
-<!-- POP-UP DE DÉCISION -->
-<div class="fond-popup" *ngIf="popupDecision">
+<!-- Fenêtre de validation ou de rejet -->
+<div
+  class="overlay-decision"
+  *ngIf="popupDecision"
+  (click)="fermerDecision()">
 
   <div
-    class="carte-decision"
+    class="popup-decision"
     role="dialog"
     aria-modal="true"
-    aria-labelledby="titre-decision">
+    aria-labelledby="titreDecision"
+    (click)="$event.stopPropagation()">
 
-    <h3 id="titre-decision">
-      Décision concernant la demande
-    </h3>
+    <!-- En-tête de la fenêtre -->
+    <div class="popup-header">
+      <div>
+        <span class="reference">Demande #{{ demande?.id }}</span>
+        <h3 id="titreDecision">Traiter la demande</h3>
+      </div>
 
-    <p class="description-decision">
-      Après examen de la demande et des rapports,
-      choisissez la décision à prendre.
+      <button
+        type="button"
+        class="btn-fermer"
+        aria-label="Fermer"
+        (click)="fermerDecision()"
+        [disabled]="traitementEnCours">
+
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <p class="description-popup">
+      Choisissez la décision à appliquer à cette demande.
     </p>
 
-    <!-- CHOIX SUR LA MÊME LIGNE -->
+    <!-- Choix de la décision -->
     <div class="choix-decision">
 
-      <label class="option valide">
+      <label
+        class="option-decision"
+        [class.option-selectionnee]="decisionChoisie === 'VALIDEE'">
 
         <input
           type="radio"
@@ -348,16 +391,17 @@
           value="VALIDEE"
           [(ngModel)]="decisionChoisie">
 
-        <span class="texte-option">
-          <strong>Valider la demande</strong>
-          <small>
-            Le besoin est confirmé et peut être pris en charge.
-          </small>
-        </span>
+        <mat-icon>check_circle</mat-icon>
 
+        <span>
+          <strong>Valider la demande</strong>
+          <small>La demande est acceptée.</small>
+        </span>
       </label>
 
-      <label class="option rejete">
+      <label
+        class="option-decision"
+        [class.option-selectionnee]="decisionChoisie === 'REJETEE'">
 
         <input
           type="radio"
@@ -365,62 +409,104 @@
           value="REJETEE"
           [(ngModel)]="decisionChoisie">
 
-        <span class="texte-option">
-          <strong>Rejeter la demande</strong>
-          <small>
-            La demande ne peut pas être prise en charge.
-          </small>
-        </span>
+        <mat-icon>cancel</mat-icon>
 
+        <span>
+          <strong>Rejeter la demande</strong>
+          <small>La demande est refusée.</small>
+        </span>
       </label>
 
     </div>
 
-    <!-- MOTIF OU COMMENTAIRE -->
-    <div class="champ-commentaire">
+    <!-- Avertissement pour la validation -->
+    <div
+      class="avertissement-decision"
+      *ngIf="
+        decisionChoisie === 'VALIDEE'
+        && !relationsCompletes
+      ">
 
-      <label for="motif">
-        Motif ou commentaire de la décision
-      </label>
+      <mat-icon>warning</mat-icon>
+
+      <span>
+        Impossible de valider : l'étude de terrain doit être terminée
+        et le rapport de besoin ainsi que le rapport technique doivent
+        être conformes.
+      </span>
+    </div>
+
+    <!-- Avertissement pour le rejet -->
+    <div
+      class="avertissement-decision"
+      *ngIf="
+        decisionChoisie === 'REJETEE'
+        && !etudeTerminee
+      ">
+
+      <mat-icon>warning</mat-icon>
+
+      <span>
+        Une étude de terrain terminée est nécessaire avant de rejeter
+        cette demande.
+      </span>
+    </div>
+
+    <!-- Motif obligatoire en cas de rejet -->
+    <div
+      class="champ-motif"
+      *ngIf="decisionChoisie === 'REJETEE'">
+
+      <label for="motifDecision">Motif du rejet *</label>
 
       <textarea
-        id="motif"
-        name="motif"
-        rows="4"
+        id="motifDecision"
+        name="motifDecision"
         [(ngModel)]="motifDecision"
-        placeholder="Saisissez une justification ou un commentaire...">
+        rows="4"
+        placeholder="Expliquez pourquoi la demande est rejetée...">
       </textarea>
-
-      <p
-        class="message-erreur"
-        *ngIf="erreurDecision !== ''">
-
-        {{ erreurDecision }}
-      </p>
-
     </div>
 
-    <!-- BOUTONS -->
-    <div class="boutons">
+    <!-- Message d'erreur -->
+    <p class="erreur-decision" *ngIf="erreurDecision">
+      <mat-icon>error_outline</mat-icon>
+      {{ erreurDecision }}
+    </p>
+
+    <!-- Actions -->
+    <div class="popup-actions">
 
       <button
         type="button"
         class="btn-annuler"
-        (click)="fermerDecision()">
+        (click)="fermerDecision()"
+        [disabled]="traitementEnCours">
 
         Annuler
       </button>
 
       <button
         type="button"
-        class="btn-confirmer"
-        (click)="confirmerDecision()">
+        class="btn-principal"
+        (click)="confirmerDecision()"
+        [disabled]="
+          traitementEnCours
+          || !decisionChoisie
+          || (decisionChoisie === 'VALIDEE' && !peutValider)
+          || (decisionChoisie === 'REJETEE' && !peutRejeter)
+        ">
 
-        Confirmer
+        <mat-icon *ngIf="!traitementEnCours">check</mat-icon>
+
+        {{
+          traitementEnCours
+            ? 'Traitement...'
+            : 'Confirmer la décision'
+        }}
       </button>
 
     </div>
 
   </div>
-
 </div>

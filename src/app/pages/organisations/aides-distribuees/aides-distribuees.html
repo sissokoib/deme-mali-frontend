@@ -1,109 +1,219 @@
 
-<div class="contenu">
+<div class="distributions-page">
 
-  <div class="entete">
+  <header class="page-header">
     <div>
-      <h2>Aides distribuées</h2>
-      <p>Consultez les aides distribuées aux bénéficiaires.</p>
+      <span class="sur-titre">DÈMÈ MALI · SOLIDARITÉ</span>
+      <h1>Aides distribuées</h1>
+      <p>Suivez les distributions et consultez leurs preuves.</p>
     </div>
 
     <button
       type="button"
-      class="bouton-ajouter"
-      (click)="ouvrirFormulaireAjout()"
+      class="btn-principal"
+      (click)="nouvelleDistribution()"
     >
-      <mat-icon>add</mat-icon>
-      Ajouter une aide
+      <span class="plus">+</span>
+      Nouvelle distribution
     </button>
+  </header>
+
+  <div *ngIf="messageErreur" class="message erreur" role="alert">
+    {{ messageErreur }}
   </div>
 
-  <div *ngIf="chargement" class="message">
-    Chargement des aides distribuées...
-  </div>
+  <section class="liste-section">
+    <div class="section-heading liste-heading">
+      <div>
+        <h2>Historique des distributions</h2>
+        <p>Les aides enregistrées et les preuves de leur réalisation.</p>
+      </div>
 
-  <div *ngIf="erreur && !chargement" class="message erreur">
-    {{ erreur }}
+      <span class="compteur">
+        {{ distributions.length }} distribution(s)
+      </span>
+    </div>
 
-    <button type="button" (click)="chargerAides()">
-      Réessayer
-    </button>
-  </div>
+    <div *ngIf="chargement" class="etat-message">
+      Chargement des distributions…
+    </div>
 
-  <div class="tableau" *ngIf="!chargement && !erreur">
+    <div
+      *ngIf="!chargement && distributions.length === 0"
+      class="etat-vide"
+    >
+      <div class="vide-icone">🤝</div>
+      <h3>Aucune distribution enregistrée</h3>
+      <p>Les distributions apparaîtront ici après leur enregistrement.</p>
 
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Date de distribution</th>
-          <th>Montant</th>
-          <th>Quantité</th>
-          <th>Mode de distribution</th>
-          <th>Lieu</th>
-          <th>Statut</th>
-          <th>Demande d'aide</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
+      <button
+        type="button"
+        class="btn-principal"
+        (click)="nouvelleDistribution()"
+      >
+        Ajouter une distribution
+      </button>
+    </div>
 
-      <tbody>
-        <tr *ngFor="let aide of aides">
-          <td>{{ aide.id }}</td>
+    <div
+      *ngIf="!chargement && distributions.length > 0"
+      class="distributions-grille"
+    >
+      <article
+        class="distribution-card"
+        *ngFor="let aide of distributions"
+      >
+        <div class="carte-media">
 
-          <td>
-            {{ aide.dateDistribution | date:'dd/MM/yyyy' }}
-          </td>
+          <ng-container
+            *ngIf="obtenirImage(aide) as image; else verifierVideo"
+          >
+            <img
+              class="media-principal"
+              [src]="urlPreuve(image.urlFichier)"
+              [alt]="'Preuve de la distribution ' + aide.id"
+              loading="lazy"
+            />
+          </ng-container>
 
-          <td>
-            {{ aide.montantDistribue === null ? '-' : aide.montantDistribue }}
-          </td>
-
-          <td>
-            {{ aide.quantiteDistribue === null ? '-' : aide.quantiteDistribue }}
-            {{ aide.unite }}
-          </td>
-
-          <td>{{ aide.modeDistribution }}</td>
-
-          <td>{{ aide.lieuDistribution }}</td>
-
-          <td>{{ aide.statut }}</td>
-
-          <td>{{ aide.demandeAideId }}</td>
-
-          <td class="actions-liste">
-
-            <button
-              type="button"
-              class="bouton-voir"
-              (click)="voir(aide.id)"
-              title="Voir les détails"
+          <ng-template #verifierVideo>
+            <ng-container
+              *ngIf="obtenirVideo(aide) as video; else sansMedia"
             >
-              <mat-icon>visibility</mat-icon>
-              Voir
-            </button>
+              <video
+                class="media-principal video-principal"
+                controls
+                preload="metadata"
+              >
+                <source [src]="urlPreuve(video.urlFichier)" />
+                Votre navigateur ne prend pas en charge la vidéo.
+              </video>
+            </ng-container>
+          </ng-template>
 
-            <button
-              type="button"
-              class="bouton-modifier"
-              (click)="modifier(aide.id)"
-              title="Modifier cette aide"
-            >
-              <mat-icon>edit</mat-icon>
-              Modifier
-            </button>
+          <ng-template #sansMedia>
+            <div class="media-placeholder">
+              <span>🤝</span>
+              <p>
+                {{
+                  possedePreuve(aide)
+                    ? 'Preuve documentaire'
+                    : 'Aucune preuve disponible'
+                }}
+              </p>
+            </div>
+          </ng-template>
 
-          </td>
-        </tr>
+          <span
+            class="statut-badge"
+            [class.statut-distribuee]="aide.statut === 'DISTRIBUEE'"
+            [class.statut-attente]="aide.statut === 'EN_ATTENTE'"
+          >
+            {{
+              aide.statut === 'DISTRIBUEE'
+                ? 'Distribuée'
+                : aide.statut === 'EN_ATTENTE'
+                  ? 'En attente'
+                  : aide.statut
+            }}
+          </span>
+        </div>
 
-        <tr *ngIf="aides.length === 0">
-          <td colspan="9" class="vide">
-            Aucune aide distribuée enregistrée.
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        <div class="carte-contenu">
+          <div class="carte-reference">
+            <span>Distribution #{{ aide.id }}</span>
+            <span>{{ aide.preuves?.length || 0 }} preuve(s)</span>
+          </div>
 
-  </div>
+          <h3>
+            {{
+              trouverDemande(aide.demandeAideId)?.titre
+                || 'Demande #' + aide.demandeAideId
+            }}
+          </h3>
 
+          <div class="information-ligne">
+            <span class="info-icone">📅</span>
+            <div>
+              <small>Date de distribution</small>
+              <p>{{ aide.dateDistribution | date:'dd/MM/yyyy' }}</p>
+            </div>
+          </div>
+
+          <div class="information-ligne">
+            <span class="info-icone">📍</span>
+            <div>
+              <small>Lieu de distribution</small>
+              <p>{{ aide.lieuDistribution }}</p>
+            </div>
+          </div>
+
+          <ng-container
+            *ngIf="trouverDemande(aide.demandeAideId) as demande"
+          >
+            <div class="beneficiaire">
+              <div class="beneficiaire-avatar">
+                {{ (demande.beneficiairePrenom || 'B').charAt(0) }}
+                {{ (demande.beneficiaireNom || '').charAt(0) }}
+              </div>
+
+              <div>
+                <small>Bénéficiaire</small>
+                <strong>
+                  {{ demande.beneficiairePrenom || '' }}
+                  {{ demande.beneficiaireNom || '' }}
+                </strong>
+              </div>
+            </div>
+
+            <div class="type-aide">
+              <span>Type d'aide</span>
+              <strong>
+                {{
+                  demande.typeDemandeAide === 'FINANCIERE'
+                    ? 'Financière'
+                    : demande.typeDemandeAide === 'MATERIELLE'
+                      ? 'Matérielle'
+                      : demande.typeDemandeAide
+                }}
+              </strong>
+            </div>
+          </ng-container>
+
+          <div class="affectations-resume">
+            <div class="affectation-mini">
+              <span class="affectation-icone financier">F</span>
+              <div>
+                <small>Financières</small>
+                <strong>
+                  {{ aide.affectationsFinancieres?.length || 0 }}
+                  affectation(s)
+                </strong>
+              </div>
+            </div>
+
+            <div class="affectation-mini">
+              <span class="affectation-icone materiel">M</span>
+              <div>
+                <small>Matérielles</small>
+                <strong>
+                  {{ aide.affectationsMaterielles?.length || 0 }}
+                  affectation(s)
+                </strong>
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="btn-detail"
+            (click)="voirDetail(aide.id)"
+          >
+            Voir le détail
+            <span>→</span>
+          </button>
+        </div>
+      </article>
+    </div>
+  </section>
 </div>

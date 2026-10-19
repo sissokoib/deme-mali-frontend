@@ -1,4 +1,3 @@
-
 import {
   Component,
   OnInit,
@@ -82,6 +81,9 @@ export class AddAffectionDon implements OnInit {
   listeDemandesOuverte = false;
   listeBeneficiairesOuverte = false;
   listeDonsOuverte = false;
+
+  // Fenêtre de confirmation
+  confirmationOuverte = false;
 
   // Erreurs affichées sous chaque champ
   erreurMontant = '';
@@ -258,7 +260,7 @@ export class AddAffectionDon implements OnInit {
     this.cdr.detectChanges();
   }
 
-  // Données filtrées
+  // Statistiques
   get donsFinanciersDisponibles(): number {
     return this.dons.filter(
       don =>
@@ -275,6 +277,7 @@ export class AddAffectionDon implements OnInit {
     ).length;
   }
 
+  // Données filtrées
   get demandesFiltrees(): Demande[] {
     const recherche = this.rechercheDemande.trim().toLowerCase();
 
@@ -542,7 +545,7 @@ export class AddAffectionDon implements OnInit {
     this.erreur = '';
   }
 
-  // Validation avec erreur sous le champ concerné
+  // Validation
   validerFormulaire(): boolean {
     this.effacerErreursChamps();
 
@@ -634,7 +637,7 @@ export class AddAffectionDon implements OnInit {
     );
   }
 
-  // Enregistrement
+  // Étape 1 : valider puis afficher la confirmation
   enregistrer(): void {
     if (!this.validerFormulaire()) {
       return;
@@ -647,11 +650,54 @@ export class AddAffectionDon implements OnInit {
       return;
     }
 
+    if (!this.donSelectionne) {
+      this.erreurDon = 'Le don sélectionné est introuvable.';
+      return;
+    }
+
+    this.confirmationOuverte = true;
+    this.cdr.detectChanges();
+  }
+
+  // Fermer la fenêtre sans enregistrer
+  fermerConfirmation(): void {
+    if (this.chargement) {
+      return;
+    }
+
+    this.confirmationOuverte = false;
+    this.cdr.detectChanges();
+  }
+
+  // Étape 2 : seul ce bouton lance l'enregistrement
+  confirmerAffectation(): void {
+    if (!this.confirmationOuverte || this.chargement) {
+      return;
+    }
+
+    // Revalider avant d'envoyer les données
+    if (!this.validerFormulaire()) {
+      this.confirmationOuverte = false;
+      return;
+    }
+
+    this.sauvegarderAffectation();
+  }
+
+  // Enregistrement réel dans le backend
+  private sauvegarderAffectation(): void {
+    if (this.organisationId === null) {
+      this.notificationService.erreur(
+        'Impossible de récupérer votre organisation.'
+      );
+      return;
+    }
+
     const don = this.donSelectionne;
 
     if (!don) {
       this.erreurDon = 'Le don sélectionné est introuvable.';
-      this.cdr.detectChanges();
+      this.confirmationOuverte = false;
       return;
     }
 
@@ -683,15 +729,24 @@ export class AddAffectionDon implements OnInit {
         )
         .subscribe({
           next: () => {
+            this.confirmationOuverte = false;
+
             this.notificationService.succes(
               'Affectation financière enregistrée avec succès.'
             );
 
-            this.cdr.detectChanges();
-            this.router.navigate(['/organisation/affectations-dons']);
+            this.router.navigate([
+              '/organisation/affectations-dons'
+            ]);
           },
+
           error: (err) => {
-            console.error('Erreur d’affectation financière :', err);
+            console.error(
+              'Erreur d’affectation financière :',
+              err
+            );
+
+            this.confirmationOuverte = false;
 
             this.notificationService.erreur(
               err.error?.message ||
@@ -705,7 +760,7 @@ export class AddAffectionDon implements OnInit {
       return;
     }
 
-    const demandeMaterielle = {
+    const demandeMaterielle: AffectationDonMaterielRequest = {
       donMaterielId: don.donId,
       demandeAideId:
         this.modeAffectation === 'DEMANDE'
@@ -718,7 +773,7 @@ export class AddAffectionDon implements OnInit {
       quantiteAffectee: this.quantiteAffectee!,
       unite: this.uniteFinale,
       organisationPartenaireId: this.organisationId
-    } as AffectationDonMaterielRequest;
+    };
 
     this.affectationMaterielService
       .creer(demandeMaterielle, this.organisationId)
@@ -730,15 +785,24 @@ export class AddAffectionDon implements OnInit {
       )
       .subscribe({
         next: () => {
+          this.confirmationOuverte = false;
+
           this.notificationService.succes(
             'Affectation matérielle enregistrée avec succès.'
           );
 
-          this.cdr.detectChanges();
-          this.router.navigate(['/organisation/affectations-dons']);
+          this.router.navigate([
+            '/organisation/affectations-dons'
+          ]);
         },
+
         error: (err) => {
-          console.error('Erreur d’affectation matérielle :', err);
+          console.error(
+            'Erreur d’affectation matérielle :',
+            err
+          );
+
+          this.confirmationOuverte = false;
 
           this.notificationService.erreur(
             err.error?.message ||
@@ -751,6 +815,10 @@ export class AddAffectionDon implements OnInit {
   }
 
   annuler(): void {
+    if (this.chargement) {
+      return;
+    }
+
     this.router.navigate(['/organisation/affectations-dons']);
   }
 }

@@ -1,0 +1,106 @@
+
+<div class="page-detail">
+
+  <div class="entete-page">
+    <h1>Détail du rapport de besoin</h1>
+    <p>Consultez les informations détaillées du rapport de besoin.</p>
+  </div>
+
+  <!-- Chargement -->
+  <div class="message chargement" *ngIf="chargement">
+    Chargement du rapport de besoin...
+  </div>
+
+  <!-- Erreur -->
+  <div class="message erreur" *ngIf="!chargement && erreur">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ erreur }}</span>
+
+    <button type="button" (click)="retour()">
+      Retour
+    </button>
+  </div>
+
+  <!-- Informations du rapport -->
+  <div class="carte-rapport" *ngIf="!chargement && !erreur && rapport">
+
+    <div class="carte-entete">
+      <div class="titre-carte">
+        <div class="icone-document">
+          <mat-icon>description</mat-icon>
+        </div>
+        <h2>Rapport de besoin</h2>
+      </div>
+
+      <!-- Visible uniquement si la demande n'est pas validée -->
+      <button
+        *ngIf="!demandeValidee"
+        type="button"
+        class="btn-modifier"
+        (click)="modifierRapport()">
+
+        <mat-icon>edit</mat-icon>
+        Modifier
+      </button>
+    </div>
+
+   
+
+    <div class="separateur"></div>
+
+    <div class="champ">
+      <h3>Titre</h3>
+      <p class="valeur-simple">{{ rapport.titre }}</p>
+    </div>
+
+    <div class="champ">
+      <h3>Besoin identifié</h3>
+      <div class="zone-texte">
+        {{ rapport.besoinIdentifie }}
+      </div>
+    </div>
+
+    <div class="champ">
+      <h3>Description de la situation</h3>
+      <div class="zone-texte">
+        {{ rapport.descriptionSituation || 'Aucune description disponible.' }}
+      </div>
+    </div>
+
+    <div class="champ">
+      <h3>Solution proposée</h3>
+      <div class="zone-texte">
+        {{ rapport.solutionProposee || 'Aucune solution renseignée.' }}
+      </div>
+    </div>
+
+    <div class="informations-bas">
+
+      <div class="information">
+        <h3>Montant estimé</h3>
+        <p class="montant">
+          {{ rapport.montantEstime | number:'1.0-0' }} FCFA
+        </p>
+      </div>
+
+      <div class="information">
+        <h3>Date de création</h3>
+        <p>
+          {{ rapport.dateCreation | date:'d MMMM yyyy':'':'fr' }}
+        </p>
+      </div>
+
+    </div>
+
+    <div class="pied-carte">
+      <button
+        type="button"
+        class="btn-retour"
+        (click)="retour()">
+        Retour à l'étude
+      </button>
+    </div>
+
+  </div>
+
+</div>

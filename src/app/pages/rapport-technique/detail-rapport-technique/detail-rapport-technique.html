@@ -1,0 +1,228 @@
+
+<div class="detail-page">
+
+  <!-- En-tête -->
+  <header class="page-header">
+    <div class="titre-page">
+      <span class="surtitre">ÉTUDE DE TERRAIN</span>
+      <h1>Détail du rapport technique</h1>
+      <p>
+        Consultation des ressources et du budget estimé.
+      </p>
+    </div>
+
+    <div class="actions-header">
+
+      <button
+        type="button"
+        class="btn-retour"
+        (click)="retour()">
+        <mat-icon>arrow_back</mat-icon>
+        Retour
+      </button>
+
+      <button
+        *ngIf="rapport && !demandeValidee"
+        type="button"
+        class="btn-modifier"
+        (click)="modifierRapport()">
+        <mat-icon>edit</mat-icon>
+        Modifier
+      </button>
+
+    </div>
+  </header>
+
+  <!-- Chargement -->
+  <div class="etat-chargement" *ngIf="chargement">
+   
+    <span>Chargement du rapport technique...</span>
+  </div>
+
+  <!-- Erreur -->
+  <div
+    class="message-erreur"
+    *ngIf="!chargement && erreur">
+
+    <mat-icon>error_outline</mat-icon>
+
+    <div>
+      <strong>Impossible d'afficher le rapport</strong>
+      <p>{{ erreur }}</p>
+    </div>
+
+    <button
+      type="button"
+      (click)="chargerRapport()">
+      Réessayer
+    </button>
+  </div>
+
+  <!-- Contenu -->
+  <ng-container *ngIf="!chargement && !erreur && rapport">
+
+    <main class="contenu-rapport">
+
+      <!-- Identité du rapport -->
+      <section class="carte-identite">
+
+        <div class="icone-document">
+          <mat-icon>description</mat-icon>
+        </div>
+
+        <div class="identite-infos">
+          <span class="libelle">RAPPORT TECHNIQUE</span>
+          <h2>Rapport technique </h2>
+
+          <p>
+            Créé le
+            {{
+              rapport.dateCreation
+                ? (rapport.dateCreation | date:'dd MMMM yyyy')
+                : 'Date non renseignée'
+            }}
+          </p>
+        </div>
+
+       
+      </section>
+
+      <!-- Description technique -->
+      <section class="carte-section">
+
+        <div class="titre-section">
+       
+
+          <div>
+            <h3>Description technique</h3>
+            <p>Solution proposée pour répondre aux besoins identifiés.</p>
+          </div>
+        </div>
+
+        <div class="description-technique">
+          {{
+            rapport.descriptionTechnique?.trim()
+              || 'Aucune description technique renseignée.'
+          }}
+        </div>
+
+      </section>
+
+     
+
+      <!-- Détails des ressources -->
+      <section class="carte-section">
+
+        <div class="titre-section">
+          <div class="icone-section">
+            <mat-icon>format_list_bulleted</mat-icon>
+          </div>
+
+          <div>
+            <h3>Ressources nécessaires</h3>
+            <p>
+              Liste des articles et coûts prévus pour l'aide.
+            </p>
+          </div>
+        </div>
+
+        <!-- Tableau -->
+        <div
+          class="table-responsive"
+          *ngIf="rapport.details && rapport.details.length > 0">
+
+          <table>
+            <thead>
+              <tr>
+                <th>Désignation</th>
+                <th>Quantité</th>
+                <th>Unité</th>
+                <th>Prix unitaire</th>
+                <th class="colonne-montant">Montant</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let detail of rapport.details">
+                <td>
+                  <div class="designation">
+                    <span class="puce-ressource"></span>
+                    <strong>{{ detail.designation }}</strong>
+                  </div>
+                </td>
+
+                <td>{{ detail.quantite }}</td>
+
+                <td>{{ detail.unite || '—' }}</td>
+
+                <td>
+                  {{ detail.prixUnitaire | number:'1.0-0' }} FCFA
+                </td>
+
+                <td class="colonne-montant">
+                  <strong>
+                    {{ calculerMontant(detail) | number:'1.0-0' }}
+                    FCFA
+                  </strong>
+                </td>
+              </tr>
+            </tbody>
+
+            <tfoot>
+              <tr>
+                <td colspan="4">Budget total estimé</td>
+                <td class="colonne-montant total-tableau">
+                  {{ montantTotal | number:'1.0-0' }} FCFA
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+
+        </div>
+
+        <!-- Aucune ressource -->
+        <div
+          class="etat-vide"
+          *ngIf="!rapport.details || rapport.details.length === 0">
+
+         
+          <strong>Aucune ressource enregistrée</strong>
+          <p>
+            Ce rapport ne contient actuellement aucun article.
+          </p>
+
+        </div>
+
+      </section>
+
+      <!-- Récapitulatif du budget -->
+      <section class="budget-final">
+
+        <div class="budget-texte">
+        
+            <mat-icon>account_balance_wallet</mat-icon>
+          </div>
+
+       
+
+        <strong>
+          {{ montantTotal | number:'1.0-0' }} FCFA
+        </strong>
+
+      </section>
+
+      <!-- Information de verrouillage -->
+      <div
+        class="message-verrouillage"
+        *ngIf="demandeValidee">
+
+   
+
+      </div>
+
+
+    </main>
+
+  </ng-container>
+
+</div>
