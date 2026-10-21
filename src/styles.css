@@ -1,1 +1,308 @@
 /* You can add global styles to this file, and also import other style files */
+
+:root {
+  --sidebar-w: 260px;
+  --sidebar-w-collapsed: 80px;
+  --bg-ivoire-creme: #F7F3EA;
+}
+
+/* ==========================================================================
+   Fond global Ivoire Crème #F7F3EA pour cohérence visuelle sur toutes les pages
+   ========================================================================== */
+html,
+body {
+  background-color: #F7F3EA !important;
+  color: #1F2937;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.app,
+.app-main,
+.app-content,
+main#main {
+  background-color: #F7F3EA !important;
+}
+
+/* Sidebar backdrop - masqué par défaut sur tous les écrans */
+.sidebar-backdrop {
+  display: none !important;
+}
+
+/* ==========================================================================
+   Navbar fixe au défilement (Organisation & Administration)
+   ========================================================================== */
+app-navbar,
+app-admin-navbar {
+  display: block !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1045 !important;
+  width: 100% !important;
+  background-color: #FFFFFF !important;
+  flex-shrink: 0 !important;
+}
+
+.topbar {
+  display: flex !important;
+  align-items: center !important;
+  height: 64px !important;
+  width: 100% !important;
+  background-color: #FFFFFF !important;
+  border-bottom: 1px solid #E5E7EB !important;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+.app-main {
+  overflow: visible !important;
+}
+
+/* Curseur et transitions pour les boutons de contrôle du sidebar */
+#sidebarCollapse {
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+#sidebarCollapse:hover {
+  background-color: rgba(15, 122, 75, 0.12) !important;
+  color: #0F7A4B !important;
+  border-color: rgba(15, 122, 75, 0.3) !important;
+}
+
+#sidebarCollapse:active {
+  transform: scale(0.92) !important;
+}
+
+/* État actif et rotation quand le sidebar est réduit */
+.sidebar-collapsed #sidebarCollapse {
+  background-color: rgba(15, 122, 75, 0.15) !important;
+  color: #0F7A4B !important;
+  border-color: rgba(15, 122, 75, 0.4) !important;
+}
+
+.sidebar-collapsed #sidebarCollapse svg {
+  transform: scaleX(-1);
+}
+
+#sidebarCollapse svg {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Bouton fermer (X) du sidebar : masqué par défaut sur desktop, affiché uniquement sur mobile/tablette */
+.sidebar-close {
+  display: none !important;
+  cursor: pointer !important;
+  transition: transform 0.15s ease, background-color 0.15s ease !important;
+}
+
+.sidebar-close:hover {
+  background-color: rgba(255, 255, 255, 0.22) !important;
+}
+
+.sidebar-close:active {
+  transform: scale(0.92) !important;
+}
+
+/* Gestion du sidebar sur mobile et tablette (< 992px) */
+@media (max-width: 991.98px) {
+  app-sidebar,
+  app-admin-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 280px !important;
+    max-width: 85vw !important;
+    height: 100vh !important;
+    z-index: 1060 !important;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
+  }
+
+  body.sidebar-open app-sidebar,
+  body.sidebar-open app-admin-sidebar {
+    transform: translateX(0) !important;
+  }
+
+  .sidebar-close {
+    display: grid !important;
+  }
+
+  /* Backdrop / overlay sombre quand le sidebar est ouvert sur mobile */
+  body.sidebar-open .sidebar-backdrop {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0, 0, 0, 0.45) !important;
+    z-index: 1055 !important;
+    backdrop-filter: blur(2px) !important;
+    -webkit-backdrop-filter: blur(2px) !important;
+  }
+}
+
+/* Gestion du mode réduit sur Desktop (>= 992px) */
+@media (min-width: 992px) {
+  .app {
+    display: grid !important;
+    grid-template-columns: var(--sidebar-w, 260px) minmax(0, 1fr) !important;
+    transition: grid-template-columns 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  .sidebar-collapsed .app {
+    grid-template-columns: var(--sidebar-w-collapsed, 80px) minmax(0, 1fr) !important;
+  }
+
+  app-sidebar,
+  app-admin-sidebar {
+    display: block !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    overflow: visible !important;
+    transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  .sidebar-collapsed app-sidebar,
+  .sidebar-collapsed app-admin-sidebar {
+    width: var(--sidebar-w-collapsed, 80px) !important;
+  }
+
+  .sidebar-collapsed .sidebar-inner {
+    width: var(--sidebar-w-collapsed, 80px) !important;
+    overflow-x: visible !important;
+    transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* Entête & Logo en mode réduit */
+  .sidebar-collapsed .sidebar-head {
+    padding: 16px 8px !important;
+    justify-content: center !important;
+  }
+
+  .sidebar-collapsed .brand {
+    justify-content: center !important;
+    gap: 0 !important;
+  }
+
+  .sidebar-collapsed .logos-image {
+    width: 40px !important;
+    height: 40px !important;
+    margin: 0 auto !important;
+    transition: width 0.2s ease, height 0.2s ease !important;
+  }
+
+  .sidebar-collapsed .brand-text {
+    display: none !important;
+  }
+
+  .sidebar-collapsed .sidebar-close {
+    display: none !important;
+  }
+
+  /* Titres de section en mode réduit (transformés en subtils séparateurs) */
+  .sidebar-collapsed .nav-heading {
+    height: 1px !important;
+    min-height: 1px !important;
+    margin: 16px 12px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    color: transparent !important;
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    border: none !important;
+  }
+
+  /* Navigation en mode réduit */
+  .sidebar-collapsed .sidebar-nav {
+    padding: 6px 10px 24px 10px !important;
+    overflow-x: visible !important;
+  }
+
+  .sidebar-collapsed .nav-list {
+    align-items: center !important;
+  }
+
+  .sidebar-collapsed .nav-item-link {
+    justify-content: center !important;
+    padding: 12px 0 !important;
+    width: 54px !important;
+    height: 46px !important;
+    margin: 0 auto !important;
+    gap: 0 !important;
+    position: relative !important;
+    overflow: visible !important;
+  }
+
+  .sidebar-collapsed .nav-item-link svg {
+    margin: 0 auto !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Tooltip flottant au survol pour le label */
+  .sidebar-collapsed .nav-item-link .nav-label {
+    position: absolute !important;
+    left: calc(100% + 14px) !important;
+    top: 50% !important;
+    transform: translateY(-50%) translateX(-6px) !important;
+    background-color: #0A5A35 !important;
+    color: #FFFFFF !important;
+    padding: 7px 12px !important;
+    border-radius: 8px !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.18s ease, transform 0.18s ease !important;
+    z-index: 1065 !important;
+  }
+
+  .sidebar-collapsed .nav-item-link .nav-label::before {
+    content: "" !important;
+    position: absolute !important;
+    right: 100% !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    border-width: 5px !important;
+    border-style: solid !important;
+    border-color: transparent #0A5A35 transparent transparent !important;
+  }
+
+  .sidebar-collapsed .nav-item-link:hover .nav-label,
+  .sidebar-collapsed .nav-item-link:focus-visible .nav-label {
+    opacity: 1 !important;
+    transform: translateY(-50%) translateX(0) !important;
+  }
+
+  /* Indicateurs actifs en mode réduit */
+  .sidebar-collapsed app-sidebar .nav-item-link.is-active {
+    background-color: #F5A623 !important;
+    border-radius: 12px !important;
+  }
+
+  .sidebar-collapsed app-admin-sidebar .nav-item-link.is-active {
+    background-color: rgba(255, 255, 255, 0.16) !important;
+    border-radius: 12px !important;
+  }
+
+  .sidebar-collapsed app-admin-sidebar .nav-item-link.is-active::before {
+    left: -2px !important;
+    width: 4px !important;
+    height: 24px !important;
+  }
+
+  /* Déconnexion en mode réduit */
+  .sidebar-collapsed .nav-logout {
+    justify-content: center !important;
+    width: 54px !important;
+    height: 46px !important;
+    margin: 0 auto !important;
+    padding: 12px 0 !important;
+  }
+}

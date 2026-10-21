@@ -461,22 +461,7 @@
   }
 
   function initSidebar() {
-    const btn = $('#sidebarCollapse');
-    const root = document.documentElement;
-    if (!btn) return;
-    const sync = () => btn.setAttribute('aria-expanded', String(!root.classList.contains('sidebar-collapsed')));
-    let anim = 0;
-    btn.addEventListener('click', () => {
-      // Animate only on a user toggle, never on load or resize.
-      root.classList.add('sidebar-anim');
-      clearTimeout(anim);
-      anim = setTimeout(() => root.classList.remove('sidebar-anim'), 320);
-      root.classList.toggle('sidebar-collapsed');
-      try { localStorage.setItem('registrar-sidebar', root.classList.contains('sidebar-collapsed') ? 'collapsed' : 'open'); } catch (e) { /* storage unavailable */ }
-      sync();
-    });
-    sync();
-    // Close the mobile off-canvas menu when a link inside it is followed.
+    // Angular components (Navbar & AdminNavbar) manage sidebarCollapse state and events directly
     const sidebar = $('#sidebar');
     if (sidebar) {
       sidebar.addEventListener('click', (e) => {

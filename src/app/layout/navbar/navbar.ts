@@ -35,4 +35,20 @@ export class Navbar {
 
     return `${initialePrenom}${initialeNom}`.toUpperCase();
   }
+
+  ouvrirSidebar(): void {
+    document.body.classList.toggle('sidebar-open');
+  }
+
+  toggleSidebarCollapse(): void {
+    if (window.innerWidth < 992) {
+      document.body.classList.toggle('sidebar-open');
+    } else {
+      const root = document.documentElement;
+      root.classList.add('sidebar-anim');
+      setTimeout(() => root.classList.remove('sidebar-anim'), 320);
+      const isCollapsed = root.classList.toggle('sidebar-collapsed');
+      document.body.classList.toggle('sidebar-collapsed', isCollapsed);
+    }
+  }
 }

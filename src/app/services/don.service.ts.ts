@@ -18,6 +18,14 @@ export class DonService {
 
   constructor(private http: HttpClient) {}
 
+  getAllDonsFinanciers(): Observable<DonFinancier[]> {
+    return this.http.get<DonFinancier[]>(this.financierUrl);
+  }
+
+  getAllDonsMateriels(): Observable<DonMateriel[]> {
+    return this.http.get<DonMateriel[]>(this.materielUrl);
+  }
+
   getDonsFinanciers(organisationId: number): Observable<DonFinancier[]> {
     return this.http.get<DonFinancier[]>(
       `${this.financierUrl}/organisation/${organisationId}`

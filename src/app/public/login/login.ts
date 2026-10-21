@@ -22,6 +22,7 @@ export class Login {
   form: FormGroup;
   loading = false;
   error: string | null = null;
+  infoMessage: string | null = null;
   showPassword = false;
 
   constructor(
@@ -36,6 +37,10 @@ export class Login {
         Validators.minLength(8)
       ]]
     });
+  }
+
+  motDePasseOublie(): void {
+    this.infoMessage = "Pour réinitialiser votre mot de passe, veuillez contacter l'administrateur ou le support Dèmè Mali.";
   }
 
   get f() {
@@ -78,23 +83,16 @@ export class Login {
         console.log('Rôle :', role);
 
         if (role === 'ORGANISATIONPARTENAIRE') {
-          
           this.router.navigate(['/organisation/dashboard']);
-          
-        } /*else if (role === 'ADMIN') {
-
+        } else if (role === 'ADMIN') {
           this.router.navigate(['/admin/dashboard']);
-
-        } */else {
-
+        } else {
           this.error = 'Rôle utilisateur non reconnu.';
           this.loading = false;
-
         }
       },
 
       error: (err) => {
-
 
         this.error = 'Téléphone ou mot de passe incorrect.';
         this.loading = false;

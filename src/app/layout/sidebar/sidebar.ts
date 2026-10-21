@@ -21,7 +21,10 @@ export class Sidebar {
   logout(): void {
     this.authService.logout();
   }
-    fermerSidebar(): void {
+  fermerSidebar(): void {
     document.body.classList.remove('sidebar-open');
+    if (window.innerWidth >= 992) {
+      document.documentElement.classList.toggle('sidebar-collapsed');
+    }
   }
 }

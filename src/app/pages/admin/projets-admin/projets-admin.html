@@ -1,7 +1,16 @@
 <div class="projets-container">
   <div class="page-header">
-    <h1 class="page-title">Gestion des projets - Dèmè Mali</h1>
-    <p class="page-subtitle">Gérez et consultez l'historique détaillé des projets collectés</p>
+    <div>
+      <h1 class="page-title">Gestion des projets - Dèmè Mali</h1>
+      <p class="page-subtitle">Gérez et consultez l'historique détaillé des projets d'aide et de développement.</p>
+    </div>
+    <button type="button" class="btn-primary" (click)="ouvrirModal()">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Nouveau Projet
+    </button>
   </div>
 
   <div class="main-grid">
@@ -9,60 +18,96 @@
       <!-- Liste Projets -->
       <div class="section-card">
         <div class="section-header">
-          <h2 class="section-title">Listes des projets validés et planifiés</h2>
           <div>
-            <button class="btn btn-light btn-sm mx-2" style="font-weight: 600; border-radius: 8px;">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="me-1"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-              Filtrer
-            </button>
-            <button class="btn btn-light btn-sm" style="font-weight: 600; border-radius: 8px;">
-              Filtrer par : Date 
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </button>
+            <h2 class="section-title">Liste des projets validés et planifiés</h2>
+            <p class="section-subtitle">Supervisez l'exécution, les responsables et l'avancement terrain.</p>
+          </div>
+          <div class="search-box">
+            <div class="search-input-wrapper">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" [(ngModel)]="searchTerm" placeholder="Rechercher un projet...">
+            </div>
           </div>
         </div>
 
-        <div class="table-wrapper">
+        <div class="table-responsive">
           <table class="custom-table">
             <thead>
               <tr>
-                <th>ID Projet</th>
-                <th>Nom du projet</th>
-                <th>Région cible</th>
-                <th>Responsable</th>
-                <th>Type de projet</th>
-                <th>Statut</th>
-                <th>Progression</th>
+                <th>ID PROJET</th>
+                <th>NOM DU PROJET</th>
+                <th>RÉGION CIBLE</th>
+                <th>RESPONSABLE</th>
+                <th>TYPE DE PROJET</th>
+                <th>STATUT</th>
+                <th>PROGRESSION</th>
+                <th>ACTIONS</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let p of projets">
-                <td><strong style="color:#000;">{{p.id}}</strong></td>
-                <td style="color:#888;">{{p.nom}}</td>
-                <td>{{p.region}}</td>
-                <td>{{p.responsable}}</td>
-                <td>{{p.type}}</td>
-                <td><span class="status-badge" [ngClass]="p.statutClass">{{p.statut}}</span></td>
-                <td><span class="progression-badge">{{p.progression}}%</span></td>
+              <tr *ngFor="let p of projetsFiltres">
+                <td><strong class="text-id">{{ p.id }}</strong></td>
+                <td>
+                  <strong class="project-title">{{ p.nom }}</strong>
+                </td>
+                <td>{{ p.region }}</td>
+                <td>{{ p.responsable }}</td>
+                <td><span class="type-badge">{{ p.type }}</span></td>
+                <td><span class="status-badge" [ngClass]="p.statutClass">{{ p.statut }}</span></td>
+                <td>
+                  <div class="progression-cell">
+                    <div class="progression-bar-bg">
+                      <div class="progression-bar-fill" [style.width.%]="p.progression"></div>
+                    </div>
+                    <span class="progression-badge">{{ p.progression }}%</span>
+                  </div>
+                </td>
+                <td class="actions-cell">
+                  <button type="button" class="btn-action-view" (click)="ouvrirDetails(p)" title="Gérer le projet">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="projetsFiltres.length === 0">
+                <td colspan="8" class="empty-cell">Aucun projet ne correspond à votre recherche.</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Calendrier Etapes Cles -->
+      <!-- Calendrier Étapes Clés (Interactif) -->
       <div class="section-card">
-        <h2 class="section-title" style="margin-bottom: 20px;">Calendrier des Etapes Clés</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <h2 class="section-title" style="margin: 0;">Calendrier des Étapes Clés</h2>
+          <span style="font-size: 11px; color: #0F7A4B; font-weight: 600;">(Cliquez sur une étape pour changer son statut)</span>
+        </div>
+        <p class="section-subtitle" style="margin-bottom: 20px;">Jalons majeurs et feuilles de route de réalisation.</p>
         
         <div class="steps-grid">
-          <div class="step-card" *ngFor="let etape of etapes; let i = index">
-            <div class="step-date">{{etape.date}}</div>
-            <div class="step-title">{{etape.titre}}</div>
-            <div class="step-badge">{{etape.statut}}</div>
+          <div
+            class="step-card"
+            *ngFor="let etape of etapes; let i = index"
+            (click)="toggleEtapeStatut(etape)"
+            style="cursor: pointer;"
+            title="Cliquer pour changer le statut (Planifié -> En cours -> Confirmé)"
+          >
+            <div class="step-date">{{ etape.date }}</div>
+            <div class="step-title">{{ etape.titre }}</div>
+            <div class="step-badge" [class.step-done]="etape.statut === 'Confirmé'" [class.step-active]="etape.statut === 'En cours'">
+              {{ etape.statut }}
+            </div>
             
-            <!-- Afficher la flèche sauf pour le dernier élément de la ligne -->
-            <div class="step-arrow" *ngIf="(i + 1) % 3 !== 0">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            <div class="step-arrow" *ngIf="(i + 1) % 3 !== 0 && (i + 1) < etapes.length">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
             </div>
           </div>
         </div>
@@ -70,60 +115,219 @@
     </div>
 
     <div class="right-col">
-      <!-- Stats Projets -->
-      <div style="margin-bottom: 30px;">
+      <!-- Stats Projets Dynamiques -->
+      <div class="stats-sidebar">
         <h2 class="section-title" style="margin-bottom: 15px;">Statistiques des Projets</h2>
         
-        <div class="stat-card">
+        <div class="stat-card clickable" [style.border]="filterStatus === 'Tous' ? '2px solid #0F7A4B' : '1px solid #E8E1D5'" (click)="setFilterStatus('Tous')">
           <div class="stat-info">
-            <span class="stat-label">Total des Projets</span>
-            <span class="stat-value">500 000 FCFA</span>
+            <span class="stat-label">Total des Projets Engagés</span>
+            <span class="stat-value">{{ getTotalBudget() }}</span>
           </div>
-          <div class="stat-count count-bg-light">5</div>
+          <div class="stat-count count-bg-light">{{ projets.length }}</div>
         </div>
         
-        <div class="stat-card">
+        <div class="stat-card clickable" [style.border]="filterStatus === 'En cours' ? '2px solid #D97706' : '1px solid #E8E1D5'" (click)="setFilterStatus('En cours')">
           <div class="stat-info">
-            <span class="stat-label">Projets en Cours</span>
-            <span class="stat-value">1 500 000 FCFA</span>
+            <span class="stat-label">Projets en Cours d'Exécution</span>
+            <span class="stat-value">{{ getTotalBudget('En cours') }}</span>
           </div>
-          <div class="stat-count count-bg-warning">10</div>
+          <div class="stat-count count-bg-warning">{{ getCountByStatut('En cours') }}</div>
         </div>
         
-        <div class="stat-card">
+        <div class="stat-card clickable" [style.border]="filterStatus === 'Clôturé' ? '2px solid #0F7A4B' : '1px solid #E8E1D5'" (click)="setFilterStatus('Clôturé')">
           <div class="stat-info">
-            <span class="stat-label">Projets Terminés</span>
-            <span class="stat-value">150 000 FCFA</span>
+            <span class="stat-label">Projets Clôturés & Validés</span>
+            <span class="stat-value">{{ getBudgetClotures() }}</span>
           </div>
-          <div class="stat-count count-bg-success">2</div>
+          <div class="stat-count count-bg-success">{{ getCountByStatut('Terminé') + getCountByStatut('Validé') }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Gestion / Détails du Projet -->
+  <div class="fond-modal" *ngIf="projetSelectionne" (click)="fermerDetails()">
+    <div class="modal-form-card" (click)="$event.stopPropagation()">
+      <div class="modal-entete">
+        <div>
+          <span class="surtitre">DÈMÈ MALI • SUIVI DE PROJET</span>
+          <h2>{{ projetSelectionne.nom }}</h2>
+        </div>
+        <button type="button" class="btn-fermer" (click)="fermerDetails()" aria-label="Fermer la boîte de dialogue">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-detail-body" style="padding: 24px 0;">
+        <div class="detail-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">ID Projet</span>
+            <p style="font-weight: 700; color: #0F7A4B; margin-top: 4px;">{{ projetSelectionne.id }}</p>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Statut d'exécution</span>
+            <p style="margin-top: 4px;">
+              <span class="status-badge" [ngClass]="projetSelectionne.statutClass">{{ projetSelectionne.statut }}</span>
+            </p>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Région</span>
+            <p style="font-weight: 600; margin-top: 4px;">{{ projetSelectionne.region }}</p>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Type / Secteur</span>
+            <p style="margin-top: 4px;"><span class="type-badge">{{ projetSelectionne.type }}</span></p>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Responsable</span>
+            <p style="font-weight: 600; margin-top: 4px;">{{ projetSelectionne.responsable }}</p>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Budget Engagé</span>
+            <p style="font-weight: 700; color: #0F7A4B; margin-top: 4px;">{{ projetSelectionne.budget }}</p>
+          </div>
+
+          <!-- Progression interactive -->
+          <div class="detail-item" style="grid-column: span 2; background: #F7F3EA; padding: 16px; border-radius: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-weight: 600; font-size: 13px; color: #1F1F1F;">Taux d'avancement terrain</span>
+              <strong style="color: #0F7A4B; font-size: 16px;">{{ projetSelectionne.progression }}%</strong>
+            </div>
+            <div class="progression-bar-bg" style="height: 10px; margin-bottom: 14px;">
+              <div class="progression-bar-fill" [style.width.%]="projetSelectionne.progression"></div>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <button type="button" class="btn-annuler" (click)="ajusterProgression(-10)" style="padding: 6px 12px; font-size: 12px;">- 10%</button>
+              <button type="button" class="btn-primary" (click)="ajusterProgression(10)" style="padding: 6px 12px; font-size: 12px;">+ 10%</button>
+              <button type="button" class="btn-primary" (click)="changerStatutProjet('Terminé')" style="padding: 6px 12px; font-size: 12px; background-color: #0F7A4B;">
+                Clôturer le projet (100%)
+              </button>
+              <button type="button" class="btn-annuler" *ngIf="projetSelectionne.statut !== 'En cours'" (click)="changerStatutProjet('En cours')" style="padding: 6px 12px; font-size: 12px;">
+                Remettre En cours
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Raccourcis -->
-      <div>
-        <h2 class="section-title" style="margin-bottom: 15px;">Raccourcis</h2>
-        
-        <button class="shortcut-btn">
-          <div class="shortcut-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          </div>
-          Calendrier des Projets
-        </button>
-        
-        <button class="shortcut-btn">
-          <div class="shortcut-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-          </div>
-          Equipe du Projet
-        </button>
-        
-        <button class="shortcut-btn">
-          <div class="shortcut-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          </div>
-          Cout du Projet
+      <div class="modal-actions" style="display: flex; justify-content: flex-end;">
+        <button type="button" class="btn-annuler" (click)="fermerDetails()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Nouveau Projet (Même mise en forme que l'organisation partenaire) -->
+  <div class="fond-modal" *ngIf="isModalOpen" (click)="fermerModal()">
+    <div class="modal-form-card" (click)="$event.stopPropagation()">
+      <div class="modal-entete">
+        <div>
+          <span class="surtitre">DÈMÈ MALI • ADMINISTRATION</span>
+          <h2>Nouveau Projet</h2>
+        </div>
+        <button type="button" class="btn-fermer" (click)="fermerModal()" aria-label="Fermer la boîte de dialogue">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
       </div>
+
+      <form (ngSubmit)="enregistrerProjet()">
+        <div class="form-grid">
+          <div class="form-group form-group-full">
+            <label for="prjNom">Intitulé du projet <span class="etoile">*</span></label>
+            <input
+              id="prjNom"
+              type="text"
+              [(ngModel)]="nouveauProjet.nom"
+              name="nom"
+              required
+              placeholder="Ex. : Installation de kits scolaires et solaires à Ségou"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="prjRegion">Région cible</label>
+            <select id="prjRegion" [(ngModel)]="nouveauProjet.region" name="region">
+              <option value="Bamako">Bamako</option>
+              <option value="Koulikoro">Koulikoro</option>
+              <option value="Sikasso">Sikasso</option>
+              <option value="Ségou">Ségou</option>
+              <option value="Kayes">Kayes</option>
+              <option value="Mopti">Mopti</option>
+              <option value="Tombouctou">Tombouctou</option>
+              <option value="Gao">Gao</option>
+              <option value="Kidal">Kidal</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="prjType">Secteur / Type</label>
+            <select id="prjType" [(ngModel)]="nouveauProjet.type" name="type">
+              <option value="Santé">Santé</option>
+              <option value="Éducation">Éducation</option>
+              <option value="Eau & Énergie">Eau & Énergie</option>
+              <option value="Social">Social</option>
+              <option value="Agriculture">Agriculture</option>
+              <option value="Alimentation">Alimentation</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="prjResp">Responsable du projet</label>
+            <input
+              id="prjResp"
+              type="text"
+              [(ngModel)]="nouveauProjet.responsable"
+              name="responsable"
+              placeholder="Ex. : Dialla Coulibaly"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="prjBudget">Budget estimé (FCFA)</label>
+            <input
+              id="prjBudget"
+              type="text"
+              [(ngModel)]="nouveauProjet.budget"
+              name="budget"
+              placeholder="Ex. : 1 200 000 FCFA"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="prjStatut">Statut initial</label>
+            <select id="prjStatut" [(ngModel)]="nouveauProjet.statut" name="statut">
+              <option value="En cours">En cours</option>
+              <option value="Validé">Validé</option>
+              <option value="Terminé">Terminé</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="prjProg">Progression initiale (%)</label>
+            <input
+              id="prjProg"
+              type="number"
+              min="0"
+              max="100"
+              [(ngModel)]="nouveauProjet.progression"
+              name="progression"
+            >
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-annuler" (click)="fermerModal()">Annuler</button>
+          <button type="submit" class="btn-enregistrer" [disabled]="!nouveauProjet.nom.trim()">
+            Créer le projet
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

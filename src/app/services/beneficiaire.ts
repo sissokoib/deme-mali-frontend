@@ -13,6 +13,10 @@ export class BeneficiaireService {
 
   private apiUrl = 'http://localhost:8080/api/beneficiaires';
 
+  getAllBeneficiaires(): Observable<Beneficiaire[]> {
+    return this.http.get<Beneficiaire[]>(this.apiUrl);
+  }
+
   trouverParOrganisation(
     organisationId: number
   ): Observable<Beneficiaire[]> {

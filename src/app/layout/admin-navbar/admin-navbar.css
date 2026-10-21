@@ -1,115 +1,83 @@
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px 30px;
-  background-color: transparent;
-  margin-bottom: 10px;
-}
+/* Styles spécifiques pour le topbar de l'interface Administrateur - Charte Dèmè Mali */
 
-.search-container {
-  position: relative;
-  width: 400px;
-}
-
-.search-icon {
-  position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #888;
-  width: 20px;
-  height: 20px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 12px 15px 12px 45px;
-  border-radius: 8px;
-  border: none;
-  background-color: #e2e8e4;
-  font-size: 14px;
-  color: #333;
-}
-
-.search-input::placeholder {
-  color: #888;
-}
-
-.search-input:focus {
-  outline: none;
-  background-color: #d8e0da;
-}
-
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 25px;
-}
-
-.notif-btn {
-  background: none;
-  border: none;
-  position: relative;
-  cursor: pointer;
-  padding: 5px;
-}
-
-.notif-btn svg {
-  width: 24px;
-  height: 24px;
-  stroke: #0F6C44;
-}
-
-.notif-badge {
-  position: absolute;
+:host {
+  display: block;
+  position: sticky;
   top: 0;
-  right: 0;
-  background-color: #f03e3e;
-  color: white;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  font-size: 11px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
+  z-index: 1045;
+  width: 100%;
 }
 
-.user-profile {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
+.topbar {
+  width: 100%;
+  height: 64px;
+  background-color: #FFFFFF !important;
+  border-bottom: 1px solid var(--rg-line, #E5E7EB);
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.06);
 }
 
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
+.icon-btn {
+  color: #0F7A4B;
+  transition: all 0.2s ease;
 }
 
-.user-info {
-  display: flex;
-  flex-direction: column;
+.icon-btn svg {
+  color: #0F7A4B;
 }
 
-.user-name {
-  font-weight: 700;
-  font-size: 14px;
-  color: #333;
+.icon-btn:hover {
+  background-color: #E2F2E9;
+  border-color: #D5EBDD;
+  color: #0B633D;
 }
 
-.user-role {
-  font-size: 12px;
-  font-weight: 600;
-  color: #666;
+.icon-btn:hover svg {
+  color: #0B633D;
 }
 
-.user-chevron {
-  width: 20px;
-  height: 20px;
-  color: #333;
+.notif-count {
+  background-color: #D97706;
+  color: #FFFFFF;
+  border-color: #FFFFFF;
+}
+
+.topbar-date {
+  background-color: #E2F2E9;
+  color: #0F7A4B;
+}
+
+.user-btn:hover svg {
+  color: #0F7A4B;
+}
+
+.dropdown-item svg {
+  color: #0F7A4B;
+  transition: transform 0.15s ease;
+}
+
+.dropdown-item:hover svg {
+  color: #0B633D;
+  transform: translateX(2px);
+}
+
+.dropdown-item.text-danger svg {
+  color: #DC2626;
+}
+
+.dropdown-item.text-danger:hover svg {
+  color: #B91C1C;
+}
+
+.notif-icon.tone-info {
+  background: #E2F2E9;
+  color: #0F7A4B;
+}
+
+.notif-icon.tone-warning {
+  background: #FFF9E6;
+  color: #D97706;
+}
+
+.notif.is-unread::after {
+  background: #0F7A4B;
 }

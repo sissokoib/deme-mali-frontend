@@ -4,66 +4,321 @@
       <h1 class="page-title">Gestion des Membres</h1>
       <p class="page-subtitle">Personnel de l'ONG et bénéficiaires affiliés, avec leur statut d'adhésion.</p>
     </div>
-    <button class="btn-primary">Nouveau Membre</button>
+    <button type="button" class="btn-primary" (click)="ouvrirModal()">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Nouveau Membre
+    </button>
   </div>
 
   <div class="tabs">
-    <button class="tab-btn" [class.active]="activeTab === 'Tous'" (click)="setTab('Tous')">Tous (25)</button>
-    <button class="tab-btn" [class.active]="activeTab === 'Personnel'" (click)="setTab('Personnel')">Personnel (10)</button>
-    <button class="tab-btn" [class.active]="activeTab === 'Bénéficiaires'" (click)="setTab('Bénéficiaires')">Bénéficiaires (15)</button>
-    <button class="tab-btn warning">Demandes en attente (3)</button>
-    <button class="tab-btn danger">Réjeter (1)</button>
+    <button type="button" class="tab-btn" [class.active]="activeTab === 'Tous'" (click)="setTab('Tous')">
+      Tous ({{ getCount('Tous') }})
+    </button>
+    <button type="button" class="tab-btn" [class.active]="activeTab === 'Personnel'" (click)="setTab('Personnel')">
+      Personnel ({{ getCount('Personnel') }})
+    </button>
+    <button type="button" class="tab-btn" [class.active]="activeTab === 'Bénéficiaires'" (click)="setTab('Bénéficiaires')">
+      Bénéficiaires ({{ getCount('Bénéficiaires') }})
+    </button>
+    <button type="button" class="tab-btn warning" [class.active]="activeTab === 'Demandes en attente'" (click)="setTab('Demandes en attente')">
+      En attente ({{ getCount('Demandes en attente') }})
+    </button>
+    <button type="button" class="tab-btn danger" [class.active]="activeTab === 'Rejetés'" (click)="setTab('Rejetés')">
+      Rejetés ({{ getCount('Rejetés') }})
+    </button>
   </div>
 
   <div class="section-card">
     <div class="section-header">
-      <h2 class="section-title">Listes Complètes des Dons et Contributions FCFA & Nature</h2>
+      <div>
+        <h2 class="section-title">Liste des membres enregistrés</h2>
+        <p class="section-subtitle">Consultez et administrez les adhérents et membres de la communauté.</p>
+      </div>
       
       <div class="search-box">
         <div class="search-input-wrapper">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <input type="text" placeholder="Rechercher...">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" [(ngModel)]="searchTerm" placeholder="Rechercher un membre...">
         </div>
-        <button class="filter-btn">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-          Filtrer
-        </button>
       </div>
     </div>
 
-    <table class="custom-table">
-      <thead>
-        <tr>
-          <th>Id Membre</th>
-          <th>Membre</th>
-          <th>Type</th>
-          <th>Role/Situation</th>
-          <th>Région</th>
-          <th>Date d'adhésion</th>
-          <th>Mode d'inscription</th>
-          <th>Statut</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let m of membres">
-          <td><strong style="color:#000;">{{m.id}}</strong></td>
-          <td>{{m.nom}}</td>
-          <td style="color:#f8f9f3;"><span class="type-badge">{{m.type}}</span></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td>{{m.inscription}}</td>
-          <td><span class="status-badge" [ngClass]="m.statutClass">{{m.statut}}</span></td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>ID MEMBRE</th>
+            <th>MEMBRE</th>
+            <th>TYPE</th>
+            <th>RÔLE / SITUATION</th>
+            <th>RÉGION</th>
+            <th>DATE D'ADHÉSION</th>
+            <th>MODE D'INSCRIPTION</th>
+            <th>STATUT</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of membresFiltres">
+            <td><strong class="text-id">{{ m.id }}</strong></td>
+            <td>
+              <div class="member-name-cell">
+                <span class="member-avatar">{{ m.nom.charAt(0) }}</span>
+                <strong>{{ m.nom }}</strong>
+              </div>
+            </td>
+            <td><span class="type-badge">{{ m.type }}</span></td>
+            <td>{{ m.role }}</td>
+            <td>{{ m.region }}</td>
+            <td>{{ m.date }}</td>
+            <td>{{ m.inscription }}</td>
+            <td><span class="status-badge" [ngClass]="m.statutClass">{{ m.statut }}</span></td>
+            <td class="actions-cell">
+              <div class="actions-group" style="display: flex; gap: 6px; align-items: center;">
+                <button type="button" class="btn-action-view" (click)="ouvrirDetails(m)" title="Consulter la fiche">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="btn-action-view"
+                  *ngIf="m.statut !== 'Approuvé'"
+                  (click)="changerStatut(m, 'Approuvé')"
+                  title="Approuver le membre"
+                  style="color: #0F7A4B;"
+                >
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="btn-action-view"
+                  *ngIf="m.statut !== 'Refusé'"
+                  (click)="changerStatut(m, 'Refusé')"
+                  title="Refuser / Rejeter"
+                  style="color: #D97706;"
+                >
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="membresFiltres.length === 0">
+            <td colspan="9" class="empty-cell">Aucun membre ne correspond à votre recherche.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <div class="pagination">
-      <span class="page-item"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg></span>
+      <span class="page-item" title="Précédent">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </span>
       <span class="page-item active">1</span>
       <span class="page-item">2</span>
-      <span class="page-item">3</span>
-      <span class="page-item"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
+      <span class="page-item" title="Suivant">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </span>
+    </div>
+  </div>
+
+  <!-- Modal Détails du Membre -->
+  <div class="fond-modal" *ngIf="membreSelectionne" (click)="fermerDetails()">
+    <div class="modal-form-card" (click)="$event.stopPropagation()">
+      <div class="modal-entete">
+        <div>
+          <span class="surtitre">DÈMÈ MALI • FICHE DU MEMBRE</span>
+          <h2>{{ membreSelectionne.nom }}</h2>
+        </div>
+        <button type="button" class="btn-fermer" (click)="fermerDetails()" aria-label="Fermer la boîte de dialogue">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-detail-body" style="padding: 24px 0;">
+        <div class="detail-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">ID Membre</span>
+            <p style="font-weight: 700; color: #0F7A4B; margin-top: 4px;">{{ membreSelectionne.id }}</p>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Statut d'adhésion</span>
+            <p style="margin-top: 4px;">
+              <span class="status-badge" [ngClass]="membreSelectionne.statutClass">{{ membreSelectionne.statut }}</span>
+            </p>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Type de Membre</span>
+            <p style="margin-top: 4px;"><span class="type-badge">{{ membreSelectionne.type }}</span></p>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Rôle / Situation</span>
+            <p style="font-weight: 600; margin-top: 4px;">{{ membreSelectionne.role }}</p>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Région</span>
+            <p style="margin-top: 4px;">{{ membreSelectionne.region }}</p>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Date d'adhésion</span>
+            <p style="margin-top: 4px;">{{ membreSelectionne.date }}</p>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Téléphone</span>
+            <p style="margin-top: 4px;">{{ membreSelectionne.phone || '+223 70 00 00 00' }}</p>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Mode d'inscription</span>
+            <p style="margin-top: 4px;">{{ membreSelectionne.inscription }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; gap: 8px;">
+          <button
+            type="button"
+            class="btn-primary"
+            *ngIf="membreSelectionne.statut !== 'Approuvé'"
+            (click)="changerStatut(membreSelectionne, 'Approuvé'); fermerDetails();"
+          >
+            Approuver le Membre
+          </button>
+          <button
+            type="button"
+            class="btn-annuler"
+            *ngIf="membreSelectionne.statut !== 'Refusé'"
+            (click)="changerStatut(membreSelectionne, 'Refusé'); fermerDetails();"
+            style="color: #EF4444; border-color: #EF4444;"
+          >
+            Rejeter le Membre
+          </button>
+        </div>
+        <button type="button" class="btn-annuler" (click)="fermerDetails()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Nouveau Membre (Même mise en forme que l'organisation partenaire) -->
+  <div class="fond-modal" *ngIf="isModalOpen" (click)="fermerModal()">
+    <div class="modal-form-card" (click)="$event.stopPropagation()">
+      <div class="modal-entete">
+        <div>
+          <span class="surtitre">DÈMÈ MALI • ADMINISTRATION</span>
+          <h2>Nouveau Membre</h2>
+        </div>
+        <button type="button" class="btn-fermer" (click)="fermerModal()" aria-label="Fermer la boîte de dialogue">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <form (ngSubmit)="enregistrerMembre()">
+        <div class="form-grid">
+          <div class="form-group form-group-full">
+            <label for="membreNom">Nom complet <span class="etoile">*</span></label>
+            <input
+              id="membreNom"
+              type="text"
+              [(ngModel)]="nouveauMembre.nom"
+              name="nom"
+              required
+              placeholder="Ex. : Ousmane Diarra"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="membreType">Type de membre</label>
+            <select id="membreType" [(ngModel)]="nouveauMembre.type" name="type">
+              <option value="Personnel">Personnel ONG</option>
+              <option value="Bénéficiaire">Bénéficiaire affilié</option>
+              <option value="Bénévole">Bénévole</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="membreRole">Rôle / Situation</label>
+            <input
+              id="membreRole"
+              type="text"
+              [(ngModel)]="nouveauMembre.role"
+              name="role"
+              placeholder="Ex. : Coordinateur, Étudiant..."
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="membreRegion">Région</label>
+            <select id="membreRegion" [(ngModel)]="nouveauMembre.region" name="region">
+              <option value="Bamako">Bamako</option>
+              <option value="Koulikoro">Koulikoro</option>
+              <option value="Sikasso">Sikasso</option>
+              <option value="Ségou">Ségou</option>
+              <option value="Kayes">Kayes</option>
+              <option value="Mopti">Mopti</option>
+              <option value="Tombouctou">Tombouctou</option>
+              <option value="Gao">Gao</option>
+              <option value="Kidal">Kidal</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="membreInscription">Mode d'inscription</label>
+            <select id="membreInscription" [(ngModel)]="nouveauMembre.inscription" name="inscription">
+              <option value="Création Admin">Création Admin</option>
+              <option value="Formulaire public">Formulaire public</option>
+              <option value="Affiliation partenaire">Affiliation partenaire</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="membrePhone">Téléphone</label>
+            <input
+              id="membrePhone"
+              type="tel"
+              [(ngModel)]="nouveauMembre.phone"
+              name="phone"
+              placeholder="+223 70 00 00 00"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="membreStatut">Statut d'adhésion</label>
+            <select id="membreStatut" [(ngModel)]="nouveauMembre.statut" name="statut">
+              <option value="Approuvé">Approuvé</option>
+              <option value="En attente">En attente</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-annuler" (click)="fermerModal()">Annuler</button>
+          <button type="submit" class="btn-enregistrer" [disabled]="!nouveauMembre.nom.trim()">
+            Enregistrer le membre
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

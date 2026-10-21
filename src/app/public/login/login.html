@@ -1,414 +1,160 @@
-<div class="auth">
+<div class="auth-page">
 
-  <aside
-    class="auth-aside"
-    aria-label="Présentation de Dèmè Mali"
-  >
+  <!-- Vague d'arrière-plan 50/50 (haut vert #0F7A4B, bas crème #F7F3EA) -->
+  <div class="auth-bg-wave" aria-hidden="true">
+    <svg viewBox="0 0 1440 1000" preserveAspectRatio="none">
+      <path d="M 0,0 L 1440,0 L 1440,500 C 1140,560 940,440 720,500 C 500,560 260,440 0,500 Z" fill="#0F7A4B"/>
+    </svg>
+  </div>
 
-    <img
-      class="auth-photo"
-      src="/assets/img/Accueil.jfif"
-      alt="Illustration de solidarité et d'entraide au Mali"
-      width="1200"
-      height="1500"
-    >
+  <div class="auth-container">
 
-    <div class="auth-aside-inner">
+    <!-- Carte centrale moderne harmonisée -->
+    <main class="auth-card" tabindex="-1">
 
-      <a
-        class="brand brand-on-dark"
-        routerLink="/login"
-        aria-label="Dèmè Mali"
-      >
-
-        <span class="brand-mark">
-
+      <!-- Logo Dèmè Mali officiel centré -->
+      <div class="auth-logo-wrapper">
+        <div class="auth-logo-frame">
           <img
-            src="/Group 522.png"
+            src="assets/img/logo-deme-mali.png"
             alt="Logo Dèmè Mali"
-            class="logo-image"
+            class="auth-logo-img"
           >
-
-        </span>
-
-        <span class="brand-text">
-
-          <span class="brand-name">
-            Dèmè Mali
-          </span>
-
-        </span>
-
-      </a>
-
-      <div class="auth-pitch">
-
-        <p class="auth-headline">
-          Ensemble, faisons de la solidarité une aide concrète et accessible à tous.
-        </p>
-
+        </div>
       </div>
 
-    </div>
+      <!-- En-tête : Titre & Sous-titre -->
+      <div class="auth-header">
+        <h1 class="auth-title">Connexion</h1>
+        <p class="auth-subtitle">Accédez à votre espace sécurisé Dèmè Mali</p>
+      </div>
 
-  </aside>
-
-
-  <div class="auth-main">
-
-    <header class="auth-top">
-
-      <a
-        class="brand auth-brand-sm"
-        routerLink="/login"
-        aria-label="Dèmè Mali"
-      >
-
-        <span class="brand-mark">
-
-          <img
-            src="/Group 522.png"
-            alt="Logo Dèmè Mali"
-            class="logo-image"
-          >
-
-        </span>
-
-        <span class="brand-text">
-
-          <span class="brand-name">
-            Dèmè Mali
-          </span>
-
-        </span>
-
-      </a>
-
-
-      <button
-        type="button"
-        class="icon-btn"
-        data-theme-toggle
-        aria-pressed="false"
-        aria-label="Mode sombre"
-        title="Activer ou désactiver le mode sombre"
-      >
-
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-          class="ic-moon"
-        >
-
-          <path
-            d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"
-          />
-
-        </svg>
-
-
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-          class="ic-sun"
-        >
-
-          <circle
-            cx="12"
-            cy="12"
-            r="4"
-          />
-
-          <path d="M12 2v2" />
-          <path d="M12 20v2" />
-          <path d="M4.9 4.9l1.4 1.4" />
-          <path d="M17.7 17.7l1.4 1.4" />
-          <path d="M2 12h2" />
-          <path d="M20 12h2" />
-          <path d="M4.9 19.1l1.4-1.4" />
-          <path d="M17.7 6.3l1.4-1.4" />
-
-        </svg>
-
-      </button>
-
-    </header>
-
-
-    <main
-      id="main"
-      class="auth-card"
-      tabindex="-1"
-    >
-
-      <span class="auth-lock">
-
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-        >
-
-          <rect
-            x="4"
-            y="11"
-            width="16"
-            height="10"
-            rx="2"
-          />
-
-          <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-
-        </svg>
-
-      </span>
-
-
-      <h1 class="auth-title">
-        Connexion
-      </h1>
-
-      <p class="auth-sub">
-        Connectez-vous à votre espace Dèmè Mali.
-      </p>
-
-
+      <!-- Message d'erreur -->
       @if (error) {
-
-        <div
-          class="alert alert-danger"
-          role="alert"
-        >
-          {{ error }}
+        <div class="auth-alert auth-alert-danger" role="alert">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span>{{ error }}</span>
         </div>
-
       }
 
+      <!-- Information mot de passe oublié -->
+      @if (infoMessage) {
+        <div class="auth-alert auth-alert-info" role="status">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <span>{{ infoMessage }}</span>
+        </div>
+      }
 
-      <form
-        [formGroup]="form"
-        (ngSubmit)="onSubmit()"
-        novalidate
-      >
+      <!-- Formulaire de connexion -->
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate class="auth-form">
 
-        <div class="mb-3">
-
-          <label
-            class="form-label"
-            for="loginTelephone"
-          >
-            Numéro de téléphone
-          </label>
-
-          <input
-            class="form-control form-control-lg"
-            id="loginTelephone"
-            type="tel"
-            autocomplete="tel"
-            formControlName="telephone"
-            placeholder="Ex. : 76000000"
-          >
-
-          @if (
-            f['telephone'].touched &&
-            f['telephone'].hasError('required')
-          ) {
-
-            <div class="invalid-feedback d-block">
+        <!-- Champ : Numéro de téléphone -->
+        <div class="auth-field">
+          <label class="auth-label" for="loginTelephone">Numéro de téléphone *</label>
+          <div class="auth-input-wrapper">
+            <input
+              type="tel"
+              class="auth-input"
+              id="loginTelephone"
+              placeholder="Ex. : 70 12 34 56"
+              autocomplete="tel"
+              formControlName="telephone"
+            >
+          </div>
+          @if (f['telephone'].touched && f['telephone'].hasError('required')) {
+            <span class="auth-field-error">
               Le numéro de téléphone est obligatoire.
-            </div>
-
+            </span>
           }
-
         </div>
 
-
-        <div class="mb-3">
-
-          <label
-            class="form-label"
-            for="loginPassword"
-          >
-            Mot de passe
-          </label>
-
-          <div class="input-group input-group-lg pw-group">
-
+        <!-- Champ : Mot de passe -->
+        <div class="auth-field">
+          <label class="auth-label" for="loginPassword">Mot de passe *</label>
+          <div class="auth-input-wrapper">
             <input
-              class="form-control"
-              id="loginPassword"
               [type]="showPassword ? 'text' : 'password'"
+              class="auth-input with-toggle"
+              id="loginPassword"
+              placeholder="Entrez votre mot de passe"
               autocomplete="current-password"
               formControlName="motDePasse"
-              placeholder="Entrez votre mot de passe"
             >
-
             <button
               type="button"
-              class="btn pw-toggle"
-              [attr.aria-pressed]="showPassword"
-              [attr.aria-label]="
-                showPassword
-                  ? 'Masquer le mot de passe'
-                  : 'Afficher le mot de passe'
-              "
-              aria-controls="loginPassword"
+              class="auth-pw-toggle"
+              [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
               (click)="showPassword = !showPassword"
             >
-
               @if (!showPassword) {
-
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                  class="ic-show"
-                >
-
-                  <path
-                    d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"
-                  />
-
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="3"
-                  />
-
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/>
+                  <circle cx="12" cy="12" r="3"/>
                 </svg>
-
-              }
-
-              @if (showPassword) {
-
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                  class="ic-hide"
-                >
-
-                  <path
-                    d="M9.9 4.2A10 10 0 0 1 12 4c6.4 0 10 8 10 8a17 17 0 0 1-2.2 3.2"
-                  />
-
-                  <path
-                    d="M6.6 6.6A17 17 0 0 0 2 12s3.6 8 10 8a9.7 9.7 0 0 0 5.4-1.6"
-                  />
-
-                  <path
-                    d="M14.1 14.1a3 3 0 1 1-4.2-4.2"
-                  />
-
-                  <path d="M2 2l20 20" />
-
+              } @else {
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9.9 4.2A10 10 0 0 1 12 4c6.4 0 10 8 10 8a17 17 0 0 1-2.2 3.2"/>
+                  <path d="M6.6 6.6A17 17 0 0 0 2 12s3.6 8 10 8a9.7 9.7 0 0 0 5.4-1.6"/>
+                  <path d="M14.1 14.1a3 3 0 1 1-4.2-4.2"/>
+                  <path d="M2 2l20 20"/>
                 </svg>
-
               }
-
             </button>
-
           </div>
-
-
-          @if (
-            f['motDePasse'].touched &&
-            f['motDePasse'].hasError('required')
-          ) {
-
-            <div class="invalid-feedback d-block">
+          @if (f['motDePasse'].touched && f['motDePasse'].hasError('required')) {
+            <span class="auth-field-error">
               Le mot de passe est obligatoire.
-            </div>
-
+            </span>
           }
-
-          @if (
-            f['motDePasse'].touched &&
-            f['motDePasse'].hasError('minlength')
-          ) {
-
-            <div class="invalid-feedback d-block">
-              Le mot de passe doit contenir au moins 8 caractères.
-            </div>
-
+          @if (f['motDePasse'].touched && f['motDePasse'].hasError('minlength')) {
+            <span class="auth-field-error">
+              Le mot de passe doit comporter au moins 8 caractères.
+            </span>
           }
-
         </div>
 
-
-        <div class="form-check mb-4">
-
-          <input
-            class="form-check-input"
-            type="checkbox"
-            id="loginRemember"
+        <!-- Lien : Mot de passe oublié ? en vert #0F7A4B -->
+        <div class="auth-forgot-row">
+          <a
+            href="javascript:void(0)"
+            class="auth-forgot-link"
+            (click)="motDePasseOublie()"
           >
-
-          <label
-            class="form-check-label"
-            for="loginRemember"
-          >
-            Rester connecté sur cet appareil
-          </label>
-
+            Mot de passe oublié ?
+          </a>
         </div>
 
-
+        <!-- Bouton pilule : Connexion -->
         <button
           type="submit"
-          class="btn btn-primary btn-lg w-100"
+          class="auth-submit-btn"
           [disabled]="loading"
         >
-
           @if (loading) {
-            Connexion en cours...
+            <span class="auth-spinner" aria-hidden="true"></span>
+            <span>Connexion en cours...</span>
           } @else {
-            Se connecter
+            <span>Connexion</span>
           }
-
         </button>
 
       </form>
 
-
-      <details class="auth-help">
-
-        <summary>
-          Mot de passe oublié ?
-        </summary>
-
-      </details>
-
-      <div class="mt-4 text-center" style="margin-top: 1.5rem; text-align: center; color: #555;">
-        <p>Vous n'avez pas encore de compte ? <a routerLink="/register" style="color: #117b48; text-decoration: none; font-weight: 600;">S'inscrire</a></p>
+      <!-- Lien d'inscription -->
+      <div class="auth-footer-link">
+        <span>Vous n'avez pas de compte ?</span>
+        <a routerLink="/register" class="auth-register-link">S'inscrire</a>
       </div>
 
     </main>
-
-
-   
 
   </div>
 
