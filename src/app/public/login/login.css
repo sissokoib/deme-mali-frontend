@@ -1,6 +1,6 @@
 /* ==========================================================================
    Page de connexion - Design épuré moderne Dèmè Mali
-   Arrière-plan : Vague #0F7A4B supérieure, fond #F7F3EA inférieur (50/50)
+   Arrière-plan : Haut vert #0F7A4B (trait plein droit 50%), Fond crème #F7F3EA
    ========================================================================== */
 
 /* Page globale : fond crème chaleureux #F7F3EA */
@@ -17,22 +17,17 @@
   overflow-x: hidden;
 }
 
-/* Vague d'arrière-plan #0F7A4B supérieure 50/50 (ondulation exactement au milieu) */
+/* Partie supérieure verte #0F7A4B en trait plein droit (50% de l'écran) */
+.auth-bg-split,
 .auth-bg-wave {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: 50vh;
+  background-color: #0F7A4B;
   pointer-events: none;
   z-index: 1;
-}
-
-.auth-bg-wave svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.08));
 }
 
 /* ==========================================================================
