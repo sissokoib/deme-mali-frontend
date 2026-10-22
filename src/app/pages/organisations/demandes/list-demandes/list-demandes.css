@@ -190,10 +190,6 @@
   font-size: 20px;
 }
 
-.nouvelle:hover {
-  border-color: #F7B500;
-  background-color: #09663E;
-}
 
 /* Bloc du tableau */
 .tableau {

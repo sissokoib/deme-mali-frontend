@@ -1,4 +1,3 @@
-
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -13,6 +12,8 @@ import { JustificatifService } from '../../../../services/justificatif-service';
 import { EtudeTerrainService } from '../../../../services/etude-terrain.service';
 import { RapportBesoinService } from '../../../../services/rapport-bessoin';
 import { RapportTechniqueService } from '../../../../services/rapport-technique';
+import { ImageDemandeService} from '../../../../services/image-demande.service';
+import { ImageDemande } from '../../../../models/image-demande.model';
 
 @Component({
   selector: 'app-detail-demande',
@@ -23,13 +24,23 @@ import { RapportTechniqueService } from '../../../../services/rapport-technique'
     FormsModule,
     MatIconModule
   ],
-  templateUrl:'./detail-demande.html',
+  templateUrl: './detail-demande.html',
   styleUrls: ['./detail-demande.css']
 })
 export class DetailDemande implements OnInit {
 
   demande?: Demande;
   justificatifs: any[] = [];
+
+  // Image illustrative associée à la demande
+  imageDemande: ImageDemande | null = null;
+  afficherFormulaireImage = false;
+  fichierImageSelectionne: File | null = null;
+  apercuImage: string | null = null;
+  chargementImage = false;
+  uploadEnCours = false;
+  suppressionImageEnCours = false;
+  erreurImage = '';
 
   chargement = true;
   erreur = '';
@@ -61,6 +72,7 @@ export class DetailDemande implements OnInit {
     private etudeTerrainService: EtudeTerrainService,
     private rapportBesoinService: RapportBesoinService,
     private rapportTechniqueService: RapportTechniqueService,
+    private imageDemandeService: ImageDemandeService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -79,6 +91,7 @@ export class DetailDemande implements OnInit {
 
       this.chargerDemande(id);
       this.chargerJustificatifs(id);
+      this.chargerImageDemande(id);
     });
   }
 
@@ -106,7 +119,6 @@ export class DetailDemande implements OnInit {
     return this.articles.reduce((total: number, article: any) => {
       const quantite = Number(article.quantiteDemandee ?? 0);
       const prix = Number(article.prixUnitaireEstime ?? 0);
-
       return total + quantite * prix;
     }, 0);
   }
@@ -237,7 +249,6 @@ export class DetailDemande implements OnInit {
       })
     ).subscribe({
       next: (etude: any) => {
-
         console.log('Étude de terrain reçue :', etude);
 
         // Aucune étude associée à la demande
@@ -406,6 +417,169 @@ export class DetailDemande implements OnInit {
   private finVerificationRelations(): void {
     this.chargementRelations = false;
     this.cdr.detectChanges();
+  }
+
+  // ============================
+  // Gestion de l'image de demande
+  // ============================
+
+  // Charger l'image associée à la demande
+  chargerImageDemande(demandeId: number): void {
+    this.chargementImage = true;
+    this.erreurImage = '';
+
+    this.imageDemandeService.getByDemande(demandeId).subscribe({
+      next: (images: ImageDemande[]) => {
+        this.imageDemande =
+          images && images.length > 0 ? images[0] : null;
+
+        this.chargementImage = false;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Erreur chargement image :', err);
+        this.imageDemande = null;
+        this.chargementImage = false;
+        this.erreurImage = 'Impossible de charger l’image.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // Ouvrir le formulaire d'ajout
+  ouvrirFormulaireImage(): void {
+      console.log('1. Bouton Ajouter une image cliqué');
+  console.log('2. Image existante :', this.imageDemande);
+    if (this.imageDemande) {
+      console.log('Une image existe déjà.');
+
+      return;
+    }
+
+    this.erreurImage = '';
+    this.afficherFormulaireImage = true;
+  }
+
+  // Sélectionner une image et afficher son aperçu
+  selectionnerImage(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const fichier = input.files?.[0];
+
+    this.erreurImage = '';
+
+    if (!fichier) {
+      return;
+    }
+
+    const typesAutorises = [
+      'image/jpeg',
+      'image/png',
+      'image/webp'
+    ];
+
+    if (!typesAutorises.includes(fichier.type)) {
+      this.erreurImage = 'Choisissez une image JPG, PNG ou WEBP.';
+      input.value = '';
+      return;
+    }
+
+    if (fichier.size > 100 * 1024 * 1024) {
+      this.erreurImage = 'La taille maximale autorisée est de 100 Mo.';
+      input.value = '';
+      return;
+    }
+
+    this.libererApercuImage();
+
+    this.fichierImageSelectionne = fichier;
+    this.apercuImage = URL.createObjectURL(fichier);
+  }
+
+  // Enregistrer l'image
+  ajouterImage(): void {
+    const demandeId = this.demande?.id;
+    const fichier = this.fichierImageSelectionne;
+
+    if (demandeId == null || !fichier) {
+      this.erreurImage = 'Veuillez sélectionner une image.';
+      return;
+    }
+
+    this.uploadEnCours = true;
+    this.erreurImage = '';
+
+    this.imageDemandeService.ajouterImage(demandeId, fichier).subscribe({
+      next: (image: ImageDemande) => {
+        this.imageDemande = image;
+        this.uploadEnCours = false;
+        this.annulerAjoutImage();
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Erreur ajout image :', err);
+        this.uploadEnCours = false;
+
+        this.erreurImage =
+          err?.error?.message ||
+          'Impossible d’enregistrer l’image.';
+
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // Construire l'URL de l'image enregistrée
+  obtenirUrlImage(cheminFichier: string): string {
+    return this.imageDemandeService.obtenirUrlImage(cheminFichier);
+  }
+
+  // Annuler l'ajout
+  annulerAjoutImage(): void {
+    this.afficherFormulaireImage = false;
+    this.fichierImageSelectionne = null;
+    this.libererApercuImage();
+  }
+
+  // Libérer l'aperçu temporaire
+  private libererApercuImage(): void {
+    if (this.apercuImage) {
+      URL.revokeObjectURL(this.apercuImage);
+      this.apercuImage = null;
+    }
+  }
+
+  // Supprimer l'image enregistrée
+  supprimerImageDemande(): void {
+    const imageId = this.imageDemande?.id;
+
+    if (imageId == null || this.suppressionImageEnCours) {
+      return;
+    }
+
+    if (!confirm('Voulez-vous vraiment supprimer cette image ?')) {
+      return;
+    }
+
+    this.suppressionImageEnCours = true;
+    this.erreurImage = '';
+
+    this.imageDemandeService.supprimerImage(imageId).subscribe({
+      next: () => {
+        this.imageDemande = null;
+        this.suppressionImageEnCours = false;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.error('Erreur suppression image :', err);
+        this.suppressionImageEnCours = false;
+
+        this.erreurImage =
+          err?.error?.message ||
+          'Impossible de supprimer l’image.';
+
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   // Construire l'URL du justificatif
