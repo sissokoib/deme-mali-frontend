@@ -28,7 +28,7 @@
 
 .entete-page p {
   margin: 0;
-  color: #777;
+  color: #1F1F1F;
   font-size: 13px;
 }
 
@@ -134,7 +134,7 @@
   padding: 14px 16px;
   border-radius: 6px;
   background: #F7F3EA;
-  color: #333333;
+  color: #1F1F1F;
   font-size: 13px;
   line-height: 1.7;
   white-space: pre-wrap;

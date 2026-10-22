@@ -1,3 +1,4 @@
+
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -10,8 +11,7 @@ import {
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
-  MatDialogRef,
-  
+  MatDialogRef
 } from '@angular/material/dialog';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,7 +19,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
-
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-reception-don-dialog',
@@ -32,7 +32,8 @@ import { MatDividerModule } from '@angular/material/divider';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-      MatDividerModule
+    MatDividerModule,
+    MatCheckboxModule
   ],
   templateUrl: './reception-don-dialog.component.html'
 })
@@ -40,9 +41,13 @@ export class ReceptionDonDialogComponent {
 
   formulaire;
 
+  // Action sélectionnée par l'utilisateur
+  modeChoisi: 'RECEPTION' | 'REFUS' | null = null;
+
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<ReceptionDonDialogComponent>,
+
     @Inject(MAT_DIALOG_DATA)
     public data: {
       id?: number;
@@ -61,6 +66,7 @@ export class ReceptionDonDialogComponent {
           Validators.max(data.quantite)
         ]
       ],
+
       motifRefus: [
         '',
         [
@@ -71,7 +77,22 @@ export class ReceptionDonDialogComponent {
     });
   }
 
+  // Choisir entre réception et refus
+  choisirMode(
+    mode: 'RECEPTION' | 'REFUS',
+    coche: boolean
+  ): void {
+
+    if (coche) {
+      this.modeChoisi = mode;
+    } else {
+      this.modeChoisi = null;
+    }
+  }
+
+  // Confirmer la réception
   confirmer(): void {
+
     const controle = this.formulaire.controls.quantiteRecue;
 
     controle.markAsTouched();
@@ -86,7 +107,9 @@ export class ReceptionDonDialogComponent {
     });
   }
 
+  // Refuser le don
   refuser(): void {
+
     const controle = this.formulaire.controls.motifRefus;
 
     controle.markAsTouched();
@@ -108,6 +131,7 @@ export class ReceptionDonDialogComponent {
     });
   }
 
+  // Fermer la fenêtre
   annuler(): void {
     this.dialogRef.close();
   }

@@ -233,8 +233,8 @@ td.montant {
   gap: 12px;
   margin-top: 22px;
   padding: 17px;
-  color: #fff;
-  background: #0f7a4b;
+  color: #1f1f1f;
+ 
   border-radius: 8px;
 }
 
@@ -266,13 +266,20 @@ td.montant {
   gap: 10px;
   padding: 16px;
   color: #a32118;
-  background: #fff0ef;
+ background: #fff0ef;
   border-radius: 8px;
 }
 
 .message-erreur button {
   margin-left: auto;
   padding: 7px 10px;
+}
+.erreur-champ {
+  display: block;
+  margin-top: 5px;
+  color: #D32F2F;
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 @media (max-width: 900px) {

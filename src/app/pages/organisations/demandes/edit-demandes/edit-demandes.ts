@@ -19,6 +19,7 @@ import { AuthService } from '../../../../services/auth.service';
 import { NotificationService } from '../../../../services/notification';
 import { TypeJustificatifService } from '../../../../services/type-justificatif-service';
 import { JustificatifService } from '../../../../services/justificatif-service';
+import { MatIconModule } from '@angular/material/icon';
 
 interface FichierJustificatif {
   id: number;
@@ -38,7 +39,7 @@ interface FichierJustificatif {
 @Component({
   selector: 'app-modifier-demandes-aide',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,MatIconModule],
   templateUrl: './edit-demandes.html',
   styleUrl: './edit-demandes.css'
 })

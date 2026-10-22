@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { MatIcon } from '@angular/material/icon';
+
 
 @Component({
   selector: 'app-sidebar',
@@ -9,7 +9,7 @@ import { MatIcon } from '@angular/material/icon';
   imports: [
     RouterLink,
     RouterLinkActive,
-    MatIcon
+  
   ],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css'

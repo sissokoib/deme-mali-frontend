@@ -1,16 +1,14 @@
 <div class="page-container" *ngIf="!chargement; else loadingTemplate">
   <header class="page-header">
     <div>
-      <span class="eyebrow">GESTION DES DEMANDES</span>
       <h1>Modifier la demande</h1>
-      <p *ngIf="demande">
-        Demande #{{ demande.id }} — {{ demande.titre }}
-      </p>
+    
     </div>
 
-    <button type="button" class="btn-secondary" (click)="annuler()">
-      ← Retour
-    </button>
+  <button type="button" class="btn-secondary" (click)="annuler()">
+  <mat-icon>arrow_back</mat-icon>
+  Retour
+</button>
   </header>
 
   <ng-container *ngIf="demande as d">
@@ -27,10 +25,10 @@
 
         <section class="form-card">
           <div class="section-heading">
-            <span class="section-number">01</span>
+            
             <div>
               <h2>Informations générales</h2>
-              <p>Modifie uniquement les informations nécessaires.</p>
+            
             </div>
           </div>
 
@@ -51,7 +49,7 @@
                 name="beneficiaireId"
                 [(ngModel)]="d.beneficiaireId">
                 <option [ngValue]="null">
-                  Conserver le bénéficiaire actuel
+                  Choisir le bénéficiaire
                 </option>
                 <option
                   *ngFor="let b of beneficiaires"
@@ -68,7 +66,7 @@
                 name="categorieDemandeId"
                 [(ngModel)]="d.categorieDemandeId">
                 <option [ngValue]="null">
-                  Conserver la catégorie actuelle
+                  choisir la catégorie 
                 </option>
                 <option
                   *ngFor="let categorie of categories"
@@ -113,14 +111,6 @@
               </select>
             </div>
 
-            <div class="field full-width">
-              <label for="motif">Motif</label>
-              <input
-                id="motif"
-                name="motif"
-                [(ngModel)]="d.motif"
-                maxlength="500">
-            </div>
 
             <div class="field full-width">
               <label for="descriptionSituation">
@@ -138,12 +128,10 @@
 
         <section class="form-card">
           <div class="section-heading">
-            <span class="section-number">02</span>
+            
             <div>
               <h2>Nature de l’aide</h2>
-              <p>
-                Le montant estimé est recalculé selon les modifications.
-              </p>
+            
             </div>
           </div>
 
@@ -156,10 +144,10 @@
                 name="typeDemandeAide"
                 value="FINANCIERE"
                 [(ngModel)]="d.typeDemandeAide">
-              <span class="aid-icon">FCFA</span>
+            
               <span>
                 <strong>Aide financière</strong>
-                <small>Un montant d’argent nécessaire.</small>
+                
               </span>
             </label>
 
@@ -171,10 +159,10 @@
                 name="typeDemandeAide"
                 value="MATERIELLE"
                 [(ngModel)]="d.typeDemandeAide">
-              <span class="aid-icon">OBJ</span>
+             
               <span>
                 <strong>Aide matérielle</strong>
-                <small>Des biens et fournitures nécessaires.</small>
+              
               </span>
             </label>
           </div>
@@ -213,7 +201,7 @@
             </div>
 
             <div class="amount-preview">
-              <span>Nouveau montant nécessaire</span>
+              <span>Montant nécessaire</span>
               <strong>
                 {{ montantEstime | number:'1.0-0' }} FCFA
               </strong>
@@ -225,11 +213,7 @@
             class="conditional-section">
 
             <h3>Articles nécessaires</h3>
-            <p class="help">
-              Les majuscules et minuscules ne créent pas de nouveaux
-              articles. À désignation, unité et prix identiques, les
-              quantités sont regroupées.
-            </p>
+          
 
             <div class="table-wrapper" *ngIf="d.articles?.length">
               <table>
@@ -240,7 +224,7 @@
                     <th>Unité</th>
                     <th>Prix unitaire (FCFA)</th>
                     <th>Total (FCFA)</th>
-                    <th>Retirer</th>
+                   <th>Actions</th>
                   </tr>
                 </thead>
 
@@ -310,7 +294,7 @@
             </div>
 
             <p *ngIf="!d.articles?.length" class="empty-articles">
-              Aucun article. Ajoute les articles nécessaires ci-dessous.
+              Aucun article ajouté.
             </p>
 
             <div class="article-form">
@@ -376,16 +360,16 @@
         <!-- SECTION JUSTIFICATIFS -->
         <section class="form-card">
           <div class="section-heading">
-            <span class="section-number">03</span>
+         
             <div>
               <h2>Justificatifs</h2>
-              <p>Conserve, retire ou ajoute des documents.</p>
+           
             </div>
           </div>
 
           <div class="field type-file">
             <label for="typeJustificatifId">
-              Type des nouveaux justificatifs
+              les justificatifs
             </label>
 
             <select
@@ -396,15 +380,11 @@
               <option
                 *ngFor="let type of typesJustificatif"
                 [ngValue]="type.id">
-                {{ type.nom || type.libelle || ('Type #' + type.id) }}
+                {{ type.nom || type.libelle || ('Type ' + type.id) }}
               </option>
             </select>
 
-            <small class="help">
-              Le type est prérempli si l’API fournit celui d’un
-              justificatif existant. Tu peux le changer pour les nouveaux
-              fichiers.
-            </small>
+         
           </div>
 
           <div
@@ -416,7 +396,7 @@
               *ngFor="let fichier of fichiersExistants"
               [class.to-delete]="fichierMarque(fichier)">
 
-              <div class="file-symbol">DOC</div>
+              <div class="file-symbol">Document fourni</div>
 
               <div class="file-info">
                 <strong>{{ nomFichier(fichier) }}</strong>
@@ -443,7 +423,7 @@
   (click)="ouvrirApercuImage(fichier)"
 >
 
-                  <span>Cliquer pour agrandir</span>
+                 
                 </button>
 
                 <!-- PDF ET AUTRES DOCUMENTS -->
@@ -455,7 +435,7 @@
                   [href]="urlFichier(fichier)"
                   target="_blank"
                   rel="noopener noreferrer">
-                  ↗ Ouvrir le fichier
+                  
                 </a>
 
                 <small *ngIf="!urlFichier(fichier)" class="help">
@@ -511,10 +491,10 @@
               accept="image/*,.pdf"
               (change)="selectionnerFichiers($event)">
 
-            <small class="help">
+            <!--<small class="help">
               Choisis un type de justificatif si tu ajoutes de nouveaux
               fichiers.
-            </small>
+            </small>-->
           </div>
 
           <ul class="new-files" *ngIf="fichiersAjoutes.length > 0">
@@ -525,22 +505,20 @@
                   {{ fichier.size / 1024 | number:'1.0-0' }} Ko
                 </small>
               </span>
-
-              <button
-                type="button"
-                class="remove-new-file"
-                (click)="retirerNouveauFichier(i)">
-                Retirer
-              </button>
+<button
+  type="button"
+  class="remove-new-file"
+  (click)="retirerNouveauFichier(i)"
+  aria-label="Supprimer le fichier"
+  title="Supprimer le fichier">
+  <mat-icon>delete</mat-icon>
+</button>
             </li>
           </ul>
         </section>
 
         <footer class="form-footer">
-          <p>
-            La demande conserve son identifiant. Sa modification ne la
-            valide pas automatiquement.
-          </p>
+      
 
           <div class="footer-actions">
             <button

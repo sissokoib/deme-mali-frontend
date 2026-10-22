@@ -4,7 +4,7 @@
   <header class="entete-page">
     <div>
       <h1>Créer un rapport de besoin</h1>
-      <p>Formalisez les besoins identifiés lors de l'étude de terrain.</p>
+      <p>Enregistrer les besoins identifiés lors de l'étude de terrain.</p>
     </div>
 
     <div class="actions-entete">
@@ -194,14 +194,12 @@
           Annuler
         </button>
 
-        <button
-          type="submit"
-          class="btn-enregistrer"
-          [disabled]="enregistrement">
-          <mat-icon *ngIf="!enregistrement">save</mat-icon>
-          <mat-icon *ngIf="enregistrement">hourglass_empty</mat-icon>
-          {{ enregistrement ? 'Enregistrement...' : 'Enregistrer' }}
-        </button>
+       <button
+  type="submit"
+  class="btn-enregistrer"
+  [disabled]="enregistrement">
+  {{ enregistrement ? 'Enregistrement...' : 'Enregistrer' }}
+</button>
       </footer>
 
     </form>

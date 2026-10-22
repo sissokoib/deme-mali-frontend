@@ -1,49 +1,28 @@
 
 <div class="page-container">
 
-  <!-- En-tête -->
   <header class="page-header">
-    <div class="header-icon">
-      <span class="material-symbol">volunteer_activism</span>
-    </div>
-
-    <div class="header-text">
-      <h1>Enregistrer une distribution</h1>
-      <p>
-        Enregistrez une aide distribuée et ajoutez les preuves
-        pour assurer la traçabilité.
-      </p>
-    </div>
+    <h1>Enregistrer une distribution</h1>
+    <p>
+      Enregistrez une aide distribuée et ajoutez les preuves
+      pour assurer la traçabilité.
+    </p>
   </header>
 
-  <!-- Formulaire -->
   <form
     class="distribution-form"
     (ngSubmit)="enregistrer()"
     novalidate>
 
-    <!-- 1. Cible de la distribution -->
+    <!-- Bénéficiaire de l'aide -->
     <section class="form-section">
-
-      <div class="section-heading">
-        <span class="section-number">1</span>
-        <div>
-          <h2>Bénéficiaire de l'aide</h2>
-          <p>Choisissez une demande d'aide ou un bénéficiaire.</p>
-        </div>
-      </div>
-
-      <div class="target-notice">
-        <span class="notice-icon">ⓘ</span>
-        <p>
-          Une seule option est autorisée : une demande
-          <strong>OU</strong> un bénéficiaire.
-        </p>
-      </div>
+      <h2>Bénéficiaire de l'aide</h2>
+      <p class="section-description">
+        Choisissez une demande d'aide ou un bénéficiaire.
+      </p>
 
       <div class="form-grid">
 
-        <!-- Demande d'aide -->
         <div class="form-group">
           <label for="demandeAideId">Demande d'aide</label>
 
@@ -61,28 +40,23 @@
             <option
               *ngFor="let demande of demandes"
               [ngValue]="demande.id">
-              {{ demande.titre }} — #{{ demande.id }}
+              {{ demande.titre }} — {{ demande.id }}
             </option>
           </select>
 
           <span
             class="field-hint"
-            *ngIf="!chargementDemandes">
-            Facultatif si un bénéficiaire est sélectionné.
-          </span>
-
-          <span class="field-hint" *ngIf="chargementDemandes">
+            *ngIf="chargementDemandes">
             Chargement des demandes...
           </span>
 
           <span
             class="field-hint"
             *ngIf="!chargementDemandes && demandes.length === 0">
-            Aucune demande éligible disponible.
+            Aucune demande disponible.
           </span>
         </div>
 
-        <!-- Bénéficiaire -->
         <div class="form-group">
           <label for="beneficiaireId">Bénéficiaire</label>
 
@@ -106,12 +80,6 @@
 
           <span
             class="field-hint"
-            *ngIf="!chargementBeneficiaires">
-            Facultatif si une demande est sélectionnée.
-          </span>
-
-          <span
-            class="field-hint"
             *ngIf="chargementBeneficiaires">
             Chargement des bénéficiaires...
           </span>
@@ -129,33 +97,31 @@
         class="selection-success"
         *ngIf="demandeAideId !== null || beneficiaireId !== null">
 
-        <span class="success-icon">✓</span>
-
         <span *ngIf="demandeAideId !== null">
-          Demande sélectionnée : #{{ demandeAideId }}
+          Demande sélectionnée : {{ demandeAideId }}
         </span>
 
         <span *ngIf="beneficiaireId !== null">
-          Bénéficiaire sélectionné
+          Bénéficiaire sélectionné.
         </span>
       </div>
 
+      <p
+        class="field-error"
+        *ngIf="formulaireSoumis && erreursChamps.cible">
+        {{ erreursChamps.cible }}
+      </p>
     </section>
 
-    <!-- 2. Informations de distribution -->
+    <!-- Informations de distribution -->
     <section class="form-section">
-
-      <div class="section-heading">
-        <span class="section-number">2</span>
-        <div>
-          <h2>Informations de distribution</h2>
-          <p>Renseignez la date et le lieu de distribution.</p>
-        </div>
-      </div>
+      <h2>Informations de distribution</h2>
+      <p class="section-description">
+        Renseignez la date et le lieu de distribution.
+      </p>
 
       <div class="form-grid">
 
-        <!-- Date -->
         <div class="form-group">
           <label for="dateDistribution">
             Date de distribution <span class="required">*</span>
@@ -168,9 +134,14 @@
             [(ngModel)]="dateDistribution"
             [disabled]="enregistrement"
             required />
+
+          <span
+            class="field-error"
+            *ngIf="formulaireSoumis && erreursChamps.dateDistribution">
+            {{ erreursChamps.dateDistribution }}
+          </span>
         </div>
 
-        <!-- Lieu -->
         <div class="form-group">
           <label for="lieuDistribution">
             Lieu de distribution <span class="required">*</span>
@@ -184,37 +155,36 @@
             [disabled]="enregistrement"
             placeholder="Ex. : Lafiabougou"
             required />
+
+          <span
+            class="field-error"
+            *ngIf="formulaireSoumis && erreursChamps.lieuDistribution">
+            {{ erreursChamps.lieuDistribution }}
+          </span>
         </div>
 
       </div>
-
     </section>
 
-    <!-- 3. Preuves de distribution -->
+    <!-- Preuves de distribution -->
     <section class="form-section">
-
-      <div class="section-heading">
-        <span class="section-number">3</span>
-        <div>
-          <h2>Preuves de distribution</h2>
-          <p>
-            Ajoutez au moins une photo, une vidéo ou un document
-            justificatif pour enregistrer la distribution.
-          </p>
-        </div>
-      </div>
+      <h2>Preuves de distribution</h2>
+      <p class="section-description">
+        Ajoutez une photo, une vidéo ou un document justificatif.
+      </p>
 
       <div class="upload-area">
         <label for="preuves" class="upload-label">
-          <span class="upload-icon">＋</span>
-
           <span class="upload-title">
             Sélectionner des fichiers
           </span>
 
           <span class="upload-description">
-            Images et documents : 100 Mo maximum par fichier.
-            Vidéos : 200 Mo maximum par fichier.
+            Images, vidéos ou documents justificatifs.
+          </span>
+
+          <span class="upload-formats">
+            Formats acceptés : images, vidéos, PDF, TXT, DOC et DOCX
           </span>
         </label>
 
@@ -228,7 +198,7 @@
           (change)="selectionnerFichiers($event)" />
       </div>
 
-      <!-- Liste des fichiers sélectionnés -->
+      <!-- Fichiers sélectionnés -->
       <div
         class="selected-files"
         *ngIf="fichiersSelectionnes.length > 0">
@@ -240,8 +210,6 @@
         <div
           class="file-item"
           *ngFor="let fichier of fichiersSelectionnes; let i = index">
-
-          <span class="file-icon">📎</span>
 
           <div class="file-details">
             <span class="file-name">{{ fichier.name }}</span>
@@ -257,59 +225,23 @@
             [disabled]="enregistrement"
             (click)="supprimerFichier(i)"
             [attr.aria-label]="'Supprimer ' + fichier.name">
-            ✕
+            Supprimer
           </button>
-
         </div>
       </div>
 
-      <!-- AFFICHAGE DES ERREURS SOUS LES FICHIERS -->
-      <div
-        class="upload-feedback"
-        *ngIf="formulaireSoumis && (
-          erreursChamps.cible ||
-          erreursChamps.dateDistribution ||
-          erreursChamps.lieuDistribution ||
-          messageErreur
-        )">
+    <div
+  class="erreur-champ"
+  *ngIf="formulaireSoumis && fichiersSelectionnes.length === 0"
+>
+  une preuve justificative est obligatoire.
+</div>
 
-        <p class="field-error" *ngIf="erreursChamps.cible">
-          {{ erreursChamps.cible }}
-        </p>
-
-        <p
-          class="field-error"
-          *ngIf="erreursChamps.dateDistribution">
-          {{ erreursChamps.dateDistribution }}
-        </p>
-
-        <p
-          class="field-error"
-          *ngIf="erreursChamps.lieuDistribution">
-          {{ erreursChamps.lieuDistribution }}
-        </p>
-
-        <p class="field-error" *ngIf="messageErreur">
-          {{ messageErreur }}
-        </p>
-
-      </div>
-
-      <!-- AFFICHAGE DU SUCCÈS SOUS LES FICHIERS -->
-      <div
-        class="upload-success"
-        *ngIf="messageSucces">
-
-        <span class="success-icon">✓</span>
-        <span>{{ messageSucces }}</span>
-
-      </div>
-
+   
     </section>
 
-    <!-- Actions -->
+    <!-- Boutons -->
     <footer class="form-actions">
-
       <button
         type="button"
         class="btn btn-secondary"
@@ -331,9 +263,7 @@
           <span class="spinner"></span>
           Enregistrement...
         </span>
-
       </button>
-
     </footer>
 
   </form>

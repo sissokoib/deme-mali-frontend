@@ -2,7 +2,7 @@
 <div class="page-planification">
   <header class="entete">
     <div>
-      <span class="surtitre">SUIVI DES DEMANDES D'AIDE</span>
+   
       <h1>Planifier une étude de terrain</h1>
       <p>
         Organisez une visite afin de vérifier le besoin présenté
@@ -59,7 +59,7 @@
 
         <div>
           <span>Référence</span>
-          <strong>Demande #{{ demande.id }}</strong>
+          <strong>Demande {{ demande.id }}</strong>
         </div>
       </div>
 
@@ -79,9 +79,7 @@
 
       <h2>Informations de la visite</h2>
 
-      <p class="indication">
-        <span>*</span> Champs obligatoires
-      </p>
+    
 
       <div class="grille-champs">
         <div class="champ">
@@ -179,18 +177,15 @@
         </button>
 
         <button
-          class="btn-principal"
-          type="submit"
-          [disabled]="enregistrement || chargement">
-          <mat-icon>
-            {{ enregistrement ? 'hourglass_empty' : 'arrow_forward' }}
-          </mat-icon>
-          {{
-            enregistrement
-              ? 'Enregistrement...'
-              : "Planifier l'étude"
-          }}
-        </button>
+  class="btn-principal"
+  type="submit"
+  [disabled]="enregistrement || chargement">
+  {{
+    enregistrement
+      ? 'Enregistrement...'
+      : "Planifier l'étude"
+  }}
+</button>
       </footer>
     </form>
   </ng-container>

@@ -1,107 +1,173 @@
- 
-<h2 mat-dialog-title>
-  <mat-icon class="icone-titre">inventory_2</mat-icon>
-  Réception du don matériel
-</h2>
 
-<mat-dialog-content>
-  <p class="description">
-    Confirmez la quantité reçue ou refusez le don en indiquant le motif.
-  </p>
+<div class="dialog-reception">
 
-  <div class="information">
-    <strong>Matériel :</strong>
-    {{ data.designation || 'Don matériel' }}
-  </div>
+  <!-- En-tête -->
+  <h2 mat-dialog-title>
+    <mat-icon class="icone-titre">inventory_2</mat-icon>
+    Réception du don matériel
+  </h2>
 
-  <div class="information">
-    <strong>Quantité annoncée :</strong>
-    {{ data.quantite }} {{ data.unite || '' }}
-  </div>
+  <mat-dialog-content>
 
-  <form [formGroup]="formulaire">
+    <p class="description">
+      Choisissez une action pour traiter ce don matériel.
+    </p>
 
-    <section class="section-action">
-      <h3>Confirmer la réception</h3>
+    <!-- Informations du don -->
+    <div class="information">
+      <p>
+        <strong>Matériel :</strong>
+        {{ data.designation || 'Don matériel' }}
+      </p>
 
-      <mat-form-field appearance="outline" class="champ">
-        <mat-label>Quantité réellement reçue</mat-label>
+      <p>
+        <strong>Quantité annoncée :</strong>
+        {{ data.quantite }} {{ data.unite || '' }}
+      </p>
+    </div>
 
-        <input
-          matInput
-          type="number"
-          min="1"
-          [max]="data.quantite"
-          formControlName="quantiteRecue"
-        />
+    <!-- Choix de l'action -->
+    <div class="choix-action">
 
-        <mat-error
-          *ngIf="formulaire.controls.quantiteRecue.hasError('required')">
-          La quantité reçue est obligatoire.
-        </mat-error>
+      <h3>Que souhaitez-vous faire ?</h3>
 
-        <mat-error
-          *ngIf="formulaire.controls.quantiteRecue.hasError('min')">
-          La quantité doit être supérieure à zéro.
-        </mat-error>
+      <mat-checkbox
+        color="primary"
+        [checked]="modeChoisi === 'RECEPTION'"
+        (change)="choisirMode('RECEPTION', $event.checked)">
+        <span class="texte-choix">Confirmer la réception</span>
+      </mat-checkbox>
 
-        <mat-error
-          *ngIf="formulaire.controls.quantiteRecue.hasError('max')">
-          La quantité ne peut pas dépasser la quantité annoncée.
-        </mat-error>
-      </mat-form-field>
+      <mat-checkbox
+        color="primary"
+        [checked]="modeChoisi === 'REFUS'"
+        (change)="choisirMode('REFUS', $event.checked)">
+        <span class="texte-choix">Refuser le don</span>
+      </mat-checkbox>
 
-      <button
-        mat-flat-button
-        class="bouton-confirmer"
-        type="button"
-        (click)="confirmer()">
-        <mat-icon>check</mat-icon>
-        Confirmer la réception
-      </button>
-    </section>
+    </div>
 
     <mat-divider></mat-divider>
 
-    <section class="section-action section-refus">
-      <h3>Refuser le don</h3>
+    <!-- Formulaire de confirmation -->
+    <section
+      *ngIf="modeChoisi === 'RECEPTION'"
+      class="section-formulaire">
 
-      <mat-form-field appearance="outline" class="champ">
-        <mat-label>Motif du refus</mat-label>
+      <h3>
+        <mat-icon>check_circle</mat-icon>
+        Confirmer la réception
+      </h3>
 
-        <textarea
-          matInput
-          rows="3"
-          formControlName="motifRefus"
-          placeholder="Expliquez pourquoi ce don est refusé">
-        </textarea>
+      <p class="description">
+        Indiquez la quantité réellement reçue par votre organisation.
+      </p>
 
-        <mat-error
-          *ngIf="formulaire.controls.motifRefus.hasError('required')">
-          Le motif du refus est obligatoire.
-        </mat-error>
+      <form [formGroup]="formulaire" (ngSubmit)="confirmer()">
 
-        <mat-error
-          *ngIf="formulaire.controls.motifRefus.hasError('minlength')">
-          Le motif doit contenir au moins 3 caractères.
-        </mat-error>
-      </mat-form-field>
+        <mat-form-field appearance="outline" class="champ">
+          <mat-label>Quantité réellement reçue</mat-label>
 
-      <button
-        mat-flat-button
-        class="bouton-refuser"
-        type="button"
-        (click)="refuser()">
-        <mat-icon>close</mat-icon>
-        Refuser le don
-      </button>
+          <input
+            matInput
+            type="number"
+            formControlName="quantiteRecue"
+            min="1"
+            [max]="data.quantite">
+
+          <mat-hint>
+            Maximum : {{ data.quantite }} {{ data.unite || '' }}
+          </mat-hint>
+
+          <mat-error
+            *ngIf="formulaire.controls.quantiteRecue.hasError('required')">
+            La quantité est obligatoire.
+          </mat-error>
+
+          <mat-error
+            *ngIf="formulaire.controls.quantiteRecue.hasError('min')">
+            La quantité doit être supérieure ou égale à 1.
+          </mat-error>
+
+          <mat-error
+            *ngIf="formulaire.controls.quantiteRecue.hasError('max')">
+            La quantité ne peut pas dépasser la quantité annoncée.
+          </mat-error>
+        </mat-form-field>
+
+        <button
+          mat-flat-button
+          type="submit"
+          class="bouton-confirmer">
+          <mat-icon>check</mat-icon>
+          Confirmer la réception
+        </button>
+
+      </form>
+
     </section>
 
-  </form>
-</mat-dialog-content>
+    <!-- Formulaire de refus -->
+    <section
+      *ngIf="modeChoisi === 'REFUS'"
+      class="section-formulaire">
 
-<mat-dialog-actions align="end">
-  <button mat-button type="button" (click)="annuler()">
-    Annuler
-  </button>
-</mat-dialog-actions>
+      <h3>
+        <mat-icon>cancel</mat-icon>
+        Refuser le don
+      </h3>
+
+      <p class="description">
+        Indiquez la raison pour laquelle votre organisation refuse ce don.
+      </p>
+
+      <form [formGroup]="formulaire" (ngSubmit)="refuser()">
+
+        <mat-form-field appearance="outline" class="champ">
+          <mat-label>Motif du refus</mat-label>
+
+          <textarea
+            matInput
+            formControlName="motifRefus"
+            rows="4"
+            maxlength="500"
+            placeholder="Expliquez la raison du refus...">
+          </textarea>
+
+          <mat-error
+            *ngIf="formulaire.controls.motifRefus.hasError('required')">
+            Le motif du refus est obligatoire.
+          </mat-error>
+
+          <mat-error
+            *ngIf="formulaire.controls.motifRefus.hasError('minlength')">
+            Le motif doit contenir au moins 3 caractères.
+          </mat-error>
+        </mat-form-field>
+
+        <button
+          mat-flat-button
+          type="submit"
+          class="bouton-refuser">
+          <mat-icon>close</mat-icon>
+          Refuser le don
+        </button>
+
+      </form>
+
+    </section>
+
+  </mat-dialog-content>
+
+  <!-- Pied de la fenêtre -->
+  <mat-dialog-actions align="end">
+    <button
+      mat-button
+      type="button"
+      class="bouton-annuler"
+      (click)="annuler()">
+      Annuler
+    </button>
+  </mat-dialog-actions>
+
+</div>

@@ -327,7 +327,7 @@ export class ListDemandes implements OnInit {
   // Ouvrir le formulaire de création
   nouvelleDemande(): void {
     this.router.navigate([
-      '/organisation/add-demandes-aide'
+      '/organisation/demandes-aide/add-demandes-aide'
     ]);
   }
 

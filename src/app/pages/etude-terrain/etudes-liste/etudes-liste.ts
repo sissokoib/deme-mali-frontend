@@ -25,7 +25,7 @@ interface DemandeEtude {
   selector: 'app-etudes-terrain-list',
   standalone: true,
   imports: [CommonModule, FormsModule, MatIconModule],
-  templateUrl: './etudes-liste.html',
+  templateUrl:'./etudes-liste.html',
   styleUrl: './etudes-liste.css'
 })
 export class EtudesTerrainList implements OnInit {
@@ -37,6 +37,9 @@ export class EtudesTerrainList implements OnInit {
   recherche = '';
   filtreStatut = 'TOUTES';
   organisationId: number | null = null;
+
+  pageActuelle = 1;
+  elementsParPage = 5;
 
   constructor(
     private authService: AuthService,
@@ -69,39 +72,32 @@ export class EtudesTerrainList implements OnInit {
     this.erreur = '';
 
     forkJoin({
-    demandes: this.demandeService.getDemandesParOrganisation(
-  this.organisationId
-),
+      demandes: this.demandeService.getDemandesParOrganisation(
+        this.organisationId
+      ),
       etudes: this.etudeService.getEtudesParOrganisation(
         this.organisationId
       )
     }).subscribe({
       next: ({ demandes, etudes }) => {
-        // Indexer les études par demande pour les retrouver facilement.
         const etudesParDemande = new Map<number, EtudeTerrain>();
 
         etudes.forEach(etude => {
           etudesParDemande.set(etude.demandeAideId, etude);
         });
 
-        // Commencer par les demandes disponibles pour planification.
         const demandesParId = new Map<number, Demande>();
 
         demandes.forEach(demande => {
           demandesParId.set(demande.id, demande);
         });
 
-        // Ajouter les demandes des études existantes.
-        // Une demande déjà présente ne sera pas ajoutée une seconde fois.
         etudes.forEach(etude => {
           if (!demandesParId.has(etude.demandeAideId)) {
-            // Cette demande doit être récupérée par son identifiant.
-            // La liste des études ne contient pas son titre ni
-            // les informations du bénéficiaire.
+            // La demande n'est pas présente dans la liste récupérée.
           }
         });
 
-        // Associer les études aux demandes connues.
         this.demandes = Array.from(demandesParId.values()).map(
           (demande: Demande) => {
             const etude = etudesParDemande.get(demande.id) ?? null;
@@ -154,6 +150,20 @@ export class EtudesTerrainList implements OnInit {
 
       return correspondRecherche && correspondStatut;
     });
+
+    this.demandesFiltrees.sort((a, b) => {
+      const dateA = a.demande.dateCreation
+        ? new Date(a.demande.dateCreation).getTime()
+        : 0;
+
+      const dateB = b.demande.dateCreation
+        ? new Date(b.demande.dateCreation).getTime()
+        : 0;
+
+      return dateB - dateA;
+    });
+
+    this.pageActuelle = 1;
   }
 
   get nombreAPlanifier(): number {
@@ -194,6 +204,48 @@ export class EtudesTerrainList implements OnInit {
           ]);
         }
         break;
+    }
+  }
+
+  get nombrePages(): number {
+    return Math.max(
+      1,
+      Math.ceil(this.demandesFiltrees.length / this.elementsParPage)
+    );
+  }
+
+  get pages(): number[] {
+    return Array.from(
+      { length: this.nombrePages },
+      (_, index) => index + 1
+    );
+  }
+
+  get demandesPagees(): DemandeEtude[] {
+    const debut = (this.pageActuelle - 1) * this.elementsParPage;
+
+    return this.demandesFiltrees.slice(
+      debut,
+      debut + this.elementsParPage
+    );
+  }
+
+  get debutElement(): number {
+    return this.demandesFiltrees.length === 0
+      ? 0
+      : (this.pageActuelle - 1) * this.elementsParPage + 1;
+  }
+
+  get finElement(): number {
+    return Math.min(
+      this.pageActuelle * this.elementsParPage,
+      this.demandesFiltrees.length
+    );
+  }
+
+  changerPage(page: number): void {
+    if (page >= 1 && page <= this.nombrePages) {
+      this.pageActuelle = page;
     }
   }
 }

@@ -220,7 +220,7 @@
           Aucun bénéficiaire trouvé.
         </p>
 
-        <div
+                <div
           class="selected-beneficiaire"
           *ngIf="demande.beneficiaireId > 0">
 
@@ -229,12 +229,6 @@
             <strong>{{ rechercheBeneficiaire }}</strong>
           </div>
 
-          <button
-            type="button"
-            class="btn-clear"
-            (click)="effacerBeneficiaire()">
-            Changer
-          </button>
         </div>
 
         <small
@@ -242,9 +236,9 @@
           *ngIf="soumis && !demande.beneficiaireId">
           Veuillez sélectionner un bénéficiaire accepté.
         </small>
+
       </div>
     </section>
-
     <!-- 3. Nature de l'aide -->
     <section class="form-card">
       <h2>Nature de l'aide</h2>
@@ -274,7 +268,7 @@
 
           <span class="type-aide-content">
             <strong>Aide financière</strong>
-            <small>Collecter de l'argent pour répondre au besoin.</small>
+          
           </span>
 
           <span class="radio-indicator"></span>
@@ -299,7 +293,7 @@
 
           <span class="type-aide-content">
             <strong>Aide matérielle</strong>
-            <small>Décrire les articles et les quantités nécessaires.</small>
+          
           </span>
 
           <span class="radio-indicator"></span>
@@ -314,7 +308,7 @@
 
         <div class="subsection-heading">
           <h3>Montant de l'aide</h3>
-          <p>Indiquez le montant total nécessaire.</p>
+        
         </div>
 
         <div class="form-group">
@@ -348,9 +342,7 @@
 </small>
 
 
-          <small class="help-text">
-            Montant exprimé en francs CFA.
-          </small>
+          
         </div>
       </div>
 
@@ -361,11 +353,7 @@
 
         <div class="subsection-heading">
           <h3>Articles nécessaires</h3>
-          <p>
-            Ajoutez les articles nécessaires. Les quantités seront
-            additionnées lorsque la désignation, l'unité et le prix
-            unitaire sont identiques.
-          </p>
+         
         </div>
 
         <div class="article-form">
@@ -515,12 +503,13 @@
                 </td>
 
                 <td>
-                  <button
-                    type="button"
-                    class="btn-delete"
-                    (click)="supprimerArticle(i)">
-                    Supprimer
-                  </button>
+                <button
+  type="button"
+  class="btn-delete"
+  (click)="supprimerArticle(i)"
+  matTooltip="Supprimer l'article">
+  <mat-icon>delete</mat-icon>
+</button>
                 </td>
               </tr>
             </tbody>
@@ -540,17 +529,11 @@
           class="empty-articles"
           *ngIf="demande.articles.length === 0">
 
-          <mat-icon>inventory_2</mat-icon>
+          
           <p>Aucun article ajouté pour le moment.</p>
         </div>
 
-        <div
-          class="total-estime"
-          *ngIf="demande.articles.length > 0">
-
-          <span>Montant total estimé de l'aide</span>
-          <strong>{{ montantEstime | number:'1.0-0' }} FCFA</strong>
-        </div>
+       
       </div>
     </section>
 
@@ -623,10 +606,7 @@
         </div>
       </div>
 
-      <p class="help-text" *ngIf="fichiers.length === 0">
-        Aucun fichier sélectionné. Les justificatifs sont facultatifs
-        dans ce formulaire.
-      </p>
+    
     </section>
 
     <!-- 5. Actions -->

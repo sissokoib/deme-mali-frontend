@@ -73,9 +73,7 @@ export class ModifierEtudeTerrain implements OnInit {
         // Préremplir tous les champs
         this.datePlanification = data.datePlanification ?? '';
 
-      this.heure = data.heure
-  ? data.heure.substring(11, 16)
-  : '';
+     this.heure = data.heure ? data.heure.substring(0, 5) : '';
         this.lieu = data.lieu ?? '';
         this.objectif = data.objectif ?? '';
 
@@ -144,10 +142,11 @@ export class ModifierEtudeTerrain implements OnInit {
       observation: this.observation.trim(),
       resultat: this.resultat.trim()
     };
-
+ console.log('Données envoyées au backend :', donnees);
     this.etudeService.modifier(this.etudeId, donnees).subscribe({
       next: (data) => {
         this.etude = data;
+       
         this.enregistrement = false;
 
         this.notificationService.succes(

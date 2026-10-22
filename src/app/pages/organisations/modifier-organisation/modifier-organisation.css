@@ -6,12 +6,10 @@
 .page {
   min-height: 100vh;
   padding: 30px;
-  background-color: #f7f3ea;
+  background-color: #F7F3EA;
   font-family: Arial, sans-serif;
-  color: #1f1f1f;
+  color: #1F1F1F;
 }
-
-/* EN-TÊTE */
 
 .entete {
   display: flex;
@@ -24,15 +22,14 @@
   margin: 0 0 8px;
   font-size: 24px;
   font-weight: bold;
+  color: #1F1F1F;
 }
 
 .entete p {
   margin: 0;
-  color: #666;
+  color: #1F1F1F;
   font-size: 14px;
 }
-
-/* FORMULAIRE */
 
 form {
   display: flex;
@@ -42,12 +39,10 @@ form {
   margin: 0 auto;
 }
 
-/* SECTIONS */
-
 .section {
   padding: 25px;
-  background-color: #ffffff;
-  border: 1px solid #e8e4dc;
+  background-color: #FFFFFF;
+  border: 1px solid #F7F3EA;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(31, 31, 31, 0.04);
 }
@@ -55,12 +50,11 @@ form {
 .section h2 {
   margin: 0 0 22px;
   padding-bottom: 14px;
-  border-bottom: 1px solid #eeeae2;
+  border-bottom: 1px solid #F7F3EA;
   font-size: 17px;
   font-weight: bold;
+  color: #0F7A4B;
 }
-
-/* CHAMPS DU FORMULAIRE */
 
 .form-grid {
   display: flex;
@@ -79,29 +73,26 @@ form {
 .form-group label {
   font-size: 13px;
   font-weight: bold;
-  color: #333333;
+  color: #1F1F1F;
 }
 
 .form-group input {
   width: 100%;
   min-height: 42px;
   padding: 11px 12px;
-  border: 1px solid #d8d5ce;
+  border: 1px solid #F7F3EA;
   border-radius: 5px;
-  background-color: #ffffff;
-  color: #1f1f1f;
+  background-color: #FFFFFF;
+  color: #1F1F1F;
   font-family: Arial, sans-serif;
   font-size: 14px;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .form-group input:focus {
-  border-color: #0f7a4b;
+  border-color: #0F7A4B;
   box-shadow: 0 0 0 3px rgba(15, 122, 75, 0.10);
 }
-
-/* MESSAGES */
 
 .message {
   max-width: 1000px;
@@ -113,23 +104,20 @@ form {
 
 .erreur {
   display: block;
-  color: #d00000;
+  color: #1F1F1F;
   font-size: 13px;
   margin-top: 5px;
 }
 
 .erreur-general {
-  color: #d00000;
+  color: #1F1F1F;
+  border-left: 3px solid #F7B500;
+  background-color: #FFFFFF;
 }
 
 .succes {
   color: #0F7A4B;
 }
-
-
-
-
-/* BOUTONS */
 
 .actions {
   display: flex;
@@ -151,27 +139,27 @@ form {
   font-size: 13px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
 }
 
 .bouton-annuler {
-  border: 1px solid #0f7a4b;
-  background-color: #ffffff;
-  color: #0f7a4b;
+  border: 1px solid #0F7A4B;
+  background-color: #FFFFFF;
+  color: #0F7A4B;
 }
 
 .bouton-annuler:hover:not(:disabled) {
-  background-color: #edf6f0;
+  background-color: #F7F3EA;
 }
 
 .bouton-enregistrer {
-  border: 1px solid #0f7a4b;
-  background-color: #0f7a4b;
-  color: #ffffff;
+  border: 1px solid #0F7A4B;
+  background-color: #0F7A4B;
+  color: #FFFFFF;
 }
 
 .bouton-enregistrer:hover:not(:disabled) {
-  background-color: #0b603a;
+  background-color: #0F7A4B;
+  border-color: #F7B500;
 }
 
 .bouton-annuler:disabled,
@@ -179,8 +167,6 @@ form {
   opacity: 0.6;
   cursor: not-allowed;
 }
-
-/* AFFICHAGE SUR MOBILE */
 
 @media (max-width: 600px) {
   .page {

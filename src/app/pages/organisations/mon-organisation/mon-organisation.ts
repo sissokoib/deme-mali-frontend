@@ -82,7 +82,7 @@ export class MonOrganisation implements OnInit {
   modifierOrganisation(id: number): void {
    
 
-    this.router.navigate(['/mon-organisation/modifier', id])
+    this.router.navigate(['/organisation/mon-organisation/modifier', id])
    
   }
 }

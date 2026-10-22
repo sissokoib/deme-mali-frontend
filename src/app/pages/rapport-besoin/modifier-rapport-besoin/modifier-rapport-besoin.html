@@ -1,48 +1,51 @@
 
-<div class="page-modification">
+<div class="rapport-page">
 
   <!-- En-tête -->
-  <header class="entete-page">
-    <div>
-      <h1>Modifier un rapport de besoin</h1>
-      <p>Modifiez les besoins identifiés lors de l'étude de terrain.</p>
-    </div>
-
-    <button
+  <div class="page-header">
+    <!--<button
       type="button"
       class="btn-retour"
-      (click)="retour()">
+      (click)="retour()"
+      aria-label="Retour au détail du rapport"
+    >
       <mat-icon>arrow_back</mat-icon>
       Retour
-    </button>
-  </header>
+    </button>-->
+
+    <div class="header-texte">
+    
+      <h1>Modifier le rapport de besoin</h1>
+      <p>Actualisez les informations du rapport de besoin.</p>
+    </div>
+  </div>
 
   <!-- Chargement -->
-  <div class="message-chargement" *ngIf="chargement">
-    Chargement du rapport de besoin...
+  <div class="etat-message" *ngIf="chargement">
+    <span class="spinner"></span>
+    <p>Chargement du rapport de besoin...</p>
   </div>
 
-  <!-- Erreur -->
+  <!-- Erreur de chargement -->
   <div class="message-erreur" *ngIf="!chargement && erreur">
-    <mat-icon>error_outline</mat-icon>
-    <span>{{ erreur }}</span>
-
-    <button type="button" (click)="chargerRapport()">
-      Réessayer
-    </button>
+   
+    <div>
+      <strong>Impossible de continuer</strong>
+      <p>{{ erreur }}</p>
+    </div>
   </div>
 
-  <ng-container *ngIf="!chargement && !erreur && rapport">
+  <!-- Formulaire -->
+  <ng-container *ngIf="!chargement && rapport && !erreur">
 
-    <!-- Demande validée -->
-    <div class="message-verrouille" *ngIf="demandeValidee">
-      <mat-icon>lock</mat-icon>
-
+    <!-- Demande déjà validée -->
+    <div class="message-avertissement" *ngIf="demandeValidee">
+      
       <div>
         <strong>Modification impossible</strong>
         <p>
-          La demande d'aide associée est validée.
-          Le rapport est disponible uniquement en lecture seule.
+          Cette demande a déjà été validée. Le rapport de besoin
+          ne peut plus être modifié.
         </p>
       </div>
     </div>
@@ -50,191 +53,195 @@
     <form
       #form="ngForm"
       (ngSubmit)="enregistrer(form)"
-      novalidate>
+      novalidate
+      class="rapport-form"
+    >
 
-      <!-- Informations de l'étude -->
-      <section class="carte-etude">
+      <!-- Informations générales -->
+      <section class="form-section">
+        <div class="section-header">
+          
 
-        <h2>
-          <mat-icon>fact_check</mat-icon>
-          Étude de terrain
-        </h2>
-
-        <p class="description-etude">
-          Informations de l'étude terminée.
-        </p>
-
-        <div class="infos-etude">
-
-          <div class="info-etude">
-            <span>Demande</span>
-            <strong>
-              {{ rapport.titre || 'Rapport de besoin' }}
-            </strong>
+          <div>
+            <h2>Informations générales</h2>
+          
           </div>
-
-          <div class="info-etude">
-            <span>Rapport</span>
-            <strong>#{{ rapport.id }}</strong>
-          </div>
-
-          <div class="info-etude">
-            <span>Date de création</span>
-            <strong>
-              {{
-                rapport.dateCreation
-                  ? (rapport.dateCreation | date:'dd MMM yyyy')
-                  : 'Non renseignée'
-              }}
-            </strong>
-          </div>
-
-          <div class="info-etude">
-            <span>Statut de modification</span>
-
-            <strong [class.statut-verrouille]="demandeValidee">
-              {{
-                demandeValidee
-                  ? 'Demande validée'
-                  : 'Modification autorisée'
-              }}
-            </strong>
-          </div>
-
         </div>
-      </section>
 
-      <!-- Formulaire de modification -->
-      <section class="carte-formulaire">
-
-        <h2>Besoin identifié</h2>
-
-        <div class="grille-besoin">
+        <div class="form-grid">
 
           <!-- Titre -->
-          <div class="champ">
-            <label for="titre">Titre du besoin</label>
+          <div class="champ champ-complet">
+            <label for="titre">
+              Titre du rapport <span class="obligatoire">*</span>
+            </label>
 
             <input
               id="titre"
-              name="titre"
               type="text"
+              name="titre"
               [(ngModel)]="titre"
-              [readonly]="demandeValidee">
+              #titreCtrl="ngModel"
+              placeholder="Ex. : Rapport de besoin alimentaire"
+              required
+              maxlength="150"
+              [readonly]="demandeValidee"
+              [class.champ-invalide]="titreCtrl.invalid && titreCtrl.touched"
+            />
+
+            <small
+              class="erreur-champ"
+              *ngIf="titreCtrl.invalid && titreCtrl.touched"
+            >
+              Le titre est obligatoire.
+            </small>
           </div>
 
           <!-- Besoin identifié -->
-          <div class="champ">
+          <div class="champ champ-complet">
             <label for="besoinIdentifie">
-              Besoin identifié
+              Besoin identifié <span class="obligatoire">*</span>
+            </label>
+
+            <input
+              id="besoinIdentifie"
+              type="text"
+              name="besoinIdentifie"
+              [(ngModel)]="besoinIdentifie"
+              #besoinCtrl="ngModel"
+              placeholder="Précisez le besoin identifié"
+              required
+              [readonly]="demandeValidee"
+              [class.champ-invalide]="besoinCtrl.invalid && besoinCtrl.touched"
+            />
+
+            <small
+              class="erreur-champ"
+              *ngIf="besoinCtrl.invalid && besoinCtrl.touched"
+            >
+              Le besoin identifié est obligatoire.
+            </small>
+          </div>
+
+          <!-- Description de la situation -->
+          <div class="champ champ-complet">
+            <label for="descriptionSituation">
+              Description de la situation
+              <span class="obligatoire">*</span>
             </label>
 
             <textarea
-              id="besoinIdentifie"
-              name="besoinIdentifie"
-              [(ngModel)]="besoinIdentifie"
-              rows="3"
-              [readonly]="demandeValidee"></textarea>
+              id="descriptionSituation"
+              name="descriptionSituation"
+              [(ngModel)]="descriptionSituation"
+              #descriptionCtrl="ngModel"
+              placeholder="Décrivez la situation constatée sur le terrain..."
+              rows="5"
+              required
+              [readonly]="demandeValidee"
+              [class.champ-invalide]="descriptionCtrl.invalid && descriptionCtrl.touched"
+            ></textarea>
+
+            <small
+              class="erreur-champ"
+              *ngIf="descriptionCtrl.invalid && descriptionCtrl.touched"
+            >
+              La description de la situation est obligatoire.
+            </small>
+          </div>
+
+          <!-- Solution proposée -->
+          <div class="champ champ-complet">
+            <label for="solutionProposee">
+              Solution proposée <span class="obligatoire">*</span>
+            </label>
+
+            <textarea
+              id="solutionProposee"
+              name="solutionProposee"
+              [(ngModel)]="solutionProposee"
+              #solutionCtrl="ngModel"
+              placeholder="Décrivez la solution envisagée pour répondre au besoin..."
+              rows="4"
+              required
+              [readonly]="demandeValidee"
+              [class.champ-invalide]="solutionCtrl.invalid && solutionCtrl.touched"
+            ></textarea>
+
+            <small
+              class="erreur-champ"
+              *ngIf="solutionCtrl.invalid && solutionCtrl.touched"
+            >
+              La solution proposée est obligatoire.
+            </small>
+          </div>
+
+          <!-- Montant estimé -->
+          <div class="champ champ-montant">
+            <label for="montantEstime">
+              Montant estimé (FCFA)
+              <span class="obligatoire">*</span>
+            </label>
+
+            <div class="input-avec-icone">
+              
+
+              <input
+                id="montantEstime"
+                type="number"
+                name="montantEstime"
+                [(ngModel)]="montantEstime"
+                #montantCtrl="ngModel"
+                placeholder="Ex. : 250000"
+                min="1"
+                step="1"
+                required
+                [readonly]="demandeValidee"
+                [class.champ-invalide]="montantCtrl.invalid && montantCtrl.touched"
+              />
+            </div>
+
+            
+
+            <small
+              class="erreur-champ"
+              *ngIf="montantCtrl.invalid && montantCtrl.touched"
+            >
+              Le montant est obligatoire et doit être supérieur à zéro.
+            </small>
           </div>
 
         </div>
-
-        <!-- Description -->
-        <div class="champ champ-large">
-          <label for="descriptionSituation">
-            Description détaillée du besoin
-          </label>
-
-          <textarea
-            id="descriptionSituation"
-            name="descriptionSituation"
-            [(ngModel)]="descriptionSituation"
-            rows="4"
-            [readonly]="demandeValidee"></textarea>
-        </div>
-
-        <!-- Solution proposée -->
-        <h2 class="titre-section">
-          Solution proposée
-        </h2>
-
-        <div class="champ solution">
-          <label for="solutionProposee">
-            Solution proposée
-          </label>
-
-          <textarea
-            id="solutionProposee"
-            name="solutionProposee"
-            [(ngModel)]="solutionProposee"
-            rows="3"
-            [readonly]="demandeValidee"></textarea>
-        </div>
-
-        <!-- Montant estimé -->
-        <h2 class="titre-section">
-          Estimation du besoin
-        </h2>
-
-        <div class="champ montant-champ">
-          <label for="montantEstime">
-            Montant estimé (FCFA)
-          </label>
-
-          <input
-            id="montantEstime"
-            name="montantEstime"
-            type="number"
-            [(ngModel)]="montantEstime"
-            #montantCtrl="ngModel"
-            min="1"
-            [readonly]="demandeValidee">
-
-          <small
-            class="erreur-champ"
-            *ngIf="
-              montantCtrl.invalid &&
-              montantCtrl.touched
-            ">
-            Le montant doit être supérieur à zéro s'il est renseigné.
-          </small>
-
-       
-        </div>
-
       </section>
 
-      <!-- Actions -->
-      <footer class="actions-formulaire">
+      
 
+      <!-- Actions -->
+      <div class="form-actions">
         <button
           type="button"
-          class="btn-annuler"
+          class="btn-secondaire"
+          (click)="retour()"
           [disabled]="enregistrement"
-          (click)="retour()">
+        >
           Annuler
         </button>
 
         <button
           type="submit"
-          class="btn-enregistrer"
-          [disabled]="enregistrement || demandeValidee">
+          class="btn-principal"
+          [disabled]="enregistrement || demandeValidee"
+        >
+        
+          <span class="spinner spinner-blanc" *ngIf="enregistrement"></span>
 
-          <mat-icon *ngIf="!enregistrement">
-            save
-          </mat-icon>
-
-          {{
-            enregistrement
-              ? 'Enregistrement...'
-              : 'Enregistrer'
-          }}
+          <span>
+            {{ enregistrement ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+          </span>
         </button>
-
-      </footer>
+      </div>
 
     </form>
-
   </ng-container>
 
 </div>

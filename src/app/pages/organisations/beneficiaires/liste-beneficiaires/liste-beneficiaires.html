@@ -1,3 +1,4 @@
+
 <div class="page">
 
   <div class="entete-page">
@@ -88,41 +89,43 @@
         </p>
       </div>
 
-      
-<!-- Statut du bénéficiaire -->
-<span
-  class="statut"
-  [ngClass]="{
-    'accepte': beneficiaire.statut === 'ACCEPTE',
-    'en-attente': beneficiaire.statut === 'EN_ATTENTE',
-    'refuse': beneficiaire.statut === 'REFUSE'
-  }"
->
-  {{
-    beneficiaire.statut === 'ACCEPTE'
-      ? 'Accepté'
-      : beneficiaire.statut === 'EN_ATTENTE'
-        ? 'En attente'
-        : 'Refusé'
-  }}
-</span>
+      <!-- Statut du bénéficiaire -->
+      <span
+        class="statut"
+        [ngClass]="{
+          'accepte': beneficiaire.statut === 'ACCEPTE',
+          'en-attente': beneficiaire.statut === 'EN_ATTENTE',
+          'refuse': beneficiaire.statut === 'REFUSE'
+        }"
+      >
+        {{
+          beneficiaire.statut === 'ACCEPTE'
+            ? 'Accepté'
+            : beneficiaire.statut === 'EN_ATTENTE'
+              ? 'En attente'
+              : 'Refusé'
+        }}
+      </span>
 
-<!-- Actions -->
+      <!-- Actions -->
+      <div class="actions-beneficiaire">
 
-<div class="actions-beneficiaire">
+        <button
+          type="button"
+          class="action-details"
+          (click)="voirDetails(beneficiaire.id)"
+        >
+          <mat-icon>visibility</mat-icon>
+          Voir les détails
+        </button>
 
-  <button
-    type="button"
-    class="action-details"
-    (click)="voirDetails(beneficiaire.id)"
-  >
-    <mat-icon>visibility</mat-icon>
-    Voir les détails
-  </button>
+      </div>
 
-</div>
+    </div>
+    <!-- Fin de la carte -->
 
-
+  </div>
+  <!-- Fin de la liste des bénéficiaires -->
 
   <!-- Aucun résultat -->
   <div
@@ -137,39 +140,51 @@
   </div>
 
   <!-- Pagination -->
-  <div
-    class="pagination"
-    *ngIf="
-      !chargement &&
-      !erreur &&
-      beneficiairesFiltres().length > 0
-    "
-  >
+<div
+  class="pagination"
+  *ngIf="
+    !chargement &&
+    !erreur &&
+    beneficiairesFiltres().length > 0
+  "
+>
+  <span class="pagination-info">
+    Affichage de
+    {{ (pageActuelle - 1) * taillePage + 1 }}
+    à
+   {{ finAffichage() }}
+    sur {{ beneficiairesFiltres().length }} bénéficiaires
+  </span>
 
-    <span>
-      Page {{ pageActuelle }} sur {{ nombrePages() }}
-    </span>
+  <div class="pagination-boutons">
+    <button
+      type="button"
+      class="bouton-pagination"
+      (click)="pagePrecedente()"
+      [disabled]="pageActuelle === 1"
+    >
+      Précédent
+    </button>
 
-    <div class="pagination-boutons">
+    <button
+      *ngFor="let page of pagesDisponibles()"
+      type="button"
+      class="numero-page"
+      [class.active]="pageActuelle === page"
+      (click)="changerPage(page)"
+    >
+      {{ page }}
+    </button>
 
-      <button
-        type="button"
-        (click)="pagePrecedente()"
-        [disabled]="pageActuelle === 1"
-      >
-        Précédent
-      </button>
-
-      <button
-        type="button"
-        (click)="pageSuivante()"
-        [disabled]="pageActuelle === nombrePages()"
-      >
-        Suivant
-      </button>
-
-    </div>
-
+    <button
+      type="button"
+      class="bouton-pagination"
+      (click)="pageSuivante()"
+      [disabled]="pageActuelle === nombrePages()"
+    >
+      Suivant
+    </button>
   </div>
+</div>
 
 </div>

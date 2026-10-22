@@ -1,6 +1,6 @@
 
 /* =========================================
-   PAGE
+   PAGE PRINCIPALE — DÈMÈ MALI
 ========================================= */
 
 .page-technique {
@@ -21,22 +21,22 @@
 ========================================= */
 
 .entete-page {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .entete-page h1 {
-  margin: 0 0 5px;
+  margin: 0 0 7px;
+  color: #0F7A4B;
   font-size: 25px;
   line-height: 1.35;
   font-weight: 700;
-  color: #252525;
 }
 
 .entete-page p {
   margin: 0;
-  font-size: 12px;
-  line-height: 1.5;
-  color: #555A56;
+  color: #1F1F1F;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 /* =========================================
@@ -44,32 +44,32 @@
 ========================================= */
 
 .carte {
-  padding: 18px 23px;
+  padding: 22px 24px;
   margin-bottom: 20px;
   background: #FFFFFF;
-  border: none;
-  border-radius: 11px;
+  border: 1px solid #E6E0D4;
+  border-radius: 12px;
 }
 
 .carte h2 {
-  margin: 0 0 13px;
+  margin: 0 0 16px;
   color: #0F7A4B;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
 }
 
 .carte-besoin {
-  padding-top: 16px;
-  padding-bottom: 17px;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .carte-technique {
-  padding-top: 17px;
-  padding-bottom: 23px;
+  padding-top: 22px;
+  padding-bottom: 24px;
 }
 
 .carte-technique > h2:first-child {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 /* =========================================
@@ -80,7 +80,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: 32px;
-  row-gap: 8px;
+  row-gap: 18px;
 }
 
 .information {
@@ -89,17 +89,17 @@
 
 .information strong {
   display: block;
-  margin-bottom: 3px;
-  color: #252525;
-  font-size: 11px;
+  margin-bottom: 5px;
+  color: #1F1F1F;
+  font-size: 13px;
   font-weight: 700;
 }
 
 .information p {
   margin: 0;
-  color: #303030;
-  font-size: 11px;
-  line-height: 1.55;
+  color: #1F1F1F;
+  font-size: 13px;
+  line-height: 1.6;
   overflow-wrap: anywhere;
 }
 
@@ -113,21 +113,21 @@
 }
 
 /* =========================================
-   CHAMPS
+   CHAMPS DU FORMULAIRE
 ========================================= */
 
 .champ {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  margin-bottom: 15px;
+  margin-bottom: 18px;
 }
 
 .champ label {
-  margin-bottom: 5px;
-  color: #303030;
-  font-size: 11px;
-  font-weight: 700;
+  margin-bottom: 7px;
+  color: #1F1F1F;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .champ input,
@@ -136,67 +136,71 @@
   display: block;
   width: 100%;
   min-width: 0;
-  padding: 9px 12px;
-  color: #303030;
+  padding: 11px 13px;
+  color: #1F1F1F;
   background: #FFFFFF;
-  border: 1px solid #DEDEDE;
-  border-radius: 7px;
+  border: 1px solid #D8D8D0;
+  border-radius: 8px;
   outline: none;
   font-family: inherit;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.5;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .champ input {
-  min-height: 38px;
+  min-height: 42px;
 }
 
 .champ textarea {
-  min-height: 54px;
+  min-height: 90px;
   resize: vertical;
 }
 
 .champ input::placeholder,
 .champ textarea::placeholder {
-  color: #969696;
+  color: #77776F;
+  opacity: 1;
 }
 
 .champ input:focus,
 .champ textarea:focus,
 .champ select:focus {
   border-color: #0F7A4B;
-  box-shadow: 0 0 0 2px rgba(15, 122, 75, 0.09);
+  box-shadow: 0 0 0 3px rgba(15, 122, 75, 0.12);
 }
 
 /* =========================================
-   RESSOURCES
+   TITRE ET DESCRIPTION DES RESSOURCES
 ========================================= */
 
 .carte-technique .titre-ressources {
-  margin-top: 27px;
-  margin-bottom: 5px;
+  margin-top: 28px;
+  margin-bottom: 8px;
+  color: #0F7A4B;
 }
 
 .description-section {
-  margin: 0 0 13px;
-  color: #777777;
-  font-size: 11px;
-  line-height: 1.5;
+  margin: 0 0 16px;
+  color: #1F1F1F;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
-/* Formulaire des ressources */
+/* =========================================
+   FORMULAIRE D'AJOUT DES RESSOURCES
+========================================= */
 
 .formulaire-ressource {
   display: grid;
   grid-template-columns: 1.5fr 0.8fr 0.8fr 1.3fr;
-  gap: 12px;
+  gap: 14px;
   align-items: start;
-  padding: 14px;
-  margin-bottom: 17px;
-  background: #FAF9F5;
-  border: 1px solid #EAE7DE;
-  border-radius: 8px;
+  padding: 18px;
+  margin-bottom: 20px;
+  background: #F7F3EA;
+  border: 1px solid #E6E0D4;
+  border-radius: 10px;
 }
 
 .formulaire-ressource .champ {
@@ -204,13 +208,13 @@
 }
 
 .formulaire-ressource .champ input {
-  min-height: 37px;
-  padding: 8px;
-  font-size: 11px;
+  min-height: 40px;
+  padding: 9px 10px;
+  font-size: 12px;
 }
 
 /* =========================================
-   BOUTON AJOUTER : EN HAUT À DROITE
+   BOUTON AJOUTER UNE RESSOURCE
 ========================================= */
 
 .formulaire-ressource .bouton-ajout {
@@ -223,24 +227,23 @@
 
 .bouton-ajout button {
   display: inline-flex;
-  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 7px;
   width: auto;
   max-width: 100%;
-  min-height: 32px;
-  padding: 6px 11px;
+  min-height: 38px;
+  padding: 9px 14px;
   color: #FFFFFF;
   background: #0F7A4B;
   border: 1px solid #0F7A4B;
-  border-radius: 6px;
+  border-radius: 7px;
   font-family: inherit;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .bouton-ajout button:hover {
@@ -248,68 +251,104 @@
   border-color: #095D38;
 }
 
+.bouton-ajout button:focus-visible {
+  outline: 3px solid #F7B500;
+  outline-offset: 3px;
+}
+
 .bouton-ajout button mat-icon {
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  font-size: 16px;
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
 }
 
 /* =========================================
-   ERREURS ET CHARGEMENT
+   MESSAGES DE CHARGEMENT ET D'ERREUR
 ========================================= */
 
-.erreur-champ {
-  display: block;
-  margin-top: 5px;
-  color: #B42318;
-  font-size: 11px;
-  line-height: 1.4;
+.message-chargement {
+  padding: 24px;
+  margin-bottom: 20px;
+  color: #0F7A4B;
+  background: #FFFFFF;
+  border: 1px solid #E6E0D4;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 14px;
 }
 
 .message-erreur {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px;
-  margin-bottom: 18px;
-  color: #B42318;
-  background: #FFF0EE;
-  border: 1px solid #F0C5C0;
+  gap: 12px;
+  padding: 15px;
+  margin-bottom: 20px;
+  color: #1F1F1F;
+  background: #F7F3EA;
+  border: 1px solid #F7B500;
+  border-left: 4px solid #F7B500;
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 13px;
+}
+
+.message-erreur mat-icon {
+  flex-shrink: 0;
+  color: #0F7A4B;
 }
 
 .message-erreur span {
   flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .message-erreur button {
-  padding: 7px 11px;
-  color: #B42318;
-  background: #FFFFFF;
-  border: 1px solid #E4B4AF;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.message-chargement {
-  padding: 22px;
+  flex-shrink: 0;
+  padding: 8px 12px;
   color: #0F7A4B;
   background: #FFFFFF;
-  border-radius: 9px;
-  text-align: center;
-  font-size: 13px;
+  border: 1px solid #0F7A4B;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.message-erreur button:hover {
+  color: #FFFFFF;
+  background: #0F7A4B;
+}
+
+.message-erreur button:focus-visible {
+  outline: 3px solid #F7B500;
+  outline-offset: 2px;
+}
+
+.erreur-champ {
+  display: block;
+  margin-top: 5px;
+  color: #1F1F1F;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.champ input.ng-invalid.ng-touched,
+.champ textarea.ng-invalid.ng-touched {
+  border-color: #F7B500;
 }
 
 /* =========================================
-   TABLEAU
+   TABLEAU DES RESSOURCES
 ========================================= */
 
 .table-responsive {
   width: 100%;
   overflow-x: auto;
-  border-radius: 6px;
+  border: 1px solid #E6E0D4;
+  border-radius: 8px;
 }
 
 .table-responsive table {
@@ -317,7 +356,7 @@
   border-collapse: collapse;
   background: #FFFFFF;
   text-align: left;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .table-responsive thead {
@@ -325,23 +364,28 @@
 }
 
 .table-responsive th {
-  padding: 9px 11px;
-  color: #292929;
-  font-size: 11px;
+  padding: 12px;
+  color: #1F1F1F;
+  font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
+  border-bottom: 1px solid #E6E0D4;
 }
 
 .table-responsive td {
-  padding: 8px 11px;
-  color: #343434;
-  border-bottom: 1px solid #EEEEEE;
-  line-height: 1.4;
+  padding: 11px 12px;
+  color: #1F1F1F;
+  border-bottom: 1px solid #E6E0D4;
+  line-height: 1.5;
   vertical-align: middle;
 }
 
+.table-responsive tbody tr:last-child td {
+  border-bottom: none;
+}
+
 .table-responsive tbody tr:hover {
-  background: #FCFBF8;
+  background: #F7F3EA;
 }
 
 .table-responsive td.montant {
@@ -350,72 +394,79 @@
   white-space: nowrap;
 }
 
-/* Bouton supprimer */
 
 .btn-supprimer {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 29px;
-  height: 29px;
+  width: 34px;
+  height: 34px;
   padding: 0;
   color: #0F7A4B;
-  background: #EAF4ED;
-  border: 1px solid #CFE4D5;
-  border-radius: 6px;
+  background: #FFFFFF;
+  border: 1px solid #0F7A4B;
+  border-radius: 7px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: color 0.2s ease, background 0.2s ease;
 }
 
 .btn-supprimer:hover {
   color: #FFFFFF;
   background: #0F7A4B;
-  border-color: #0F7A4B;
+}
+
+.btn-supprimer:focus-visible {
+  outline: 3px solid #F7B500;
+  outline-offset: 2px;
 }
 
 .btn-supprimer mat-icon {
-  width: 16px;
-  height: 16px;
-  font-size: 16px;
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
 }
 
-/* =========================================
-   BUDGET TOTAL
-========================================= */
+
 
 .budget-total {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 15px;
-  min-height: 34px;
-  padding: 8px 13px;
-  margin-top: 15px;
+  min-height: 44px;
+  padding: 12px 16px;
+  margin-top: 18px;
   color: #FFFFFF;
   background: #0F7A4B;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .budget-total span,
 .budget-total strong {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
 }
 
 .budget-total strong {
   text-align: right;
 }
+.budget-total strong::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin: 0 8px 2px 0;
+  background: #F7B500;
+  border-radius: 50%;
+}
 
-/* =========================================
-   ACTIONS EN BAS
-========================================= */
 
 .actions-page {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 16px;
-  margin-top: -8px;
+  gap: 12px;
+  margin-top: 4px;
 }
 
 .btn-annuler,
@@ -423,26 +474,24 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
-  min-width: 124px;
-  min-height: 38px;
-  padding: 9px 18px;
-  border-radius: 6px;
-  font-size: 11px;
+  gap: 8px;
+  min-width: 135px;
+  min-height: 42px;
+  padding: 10px 18px;
+  border-radius: 7px;
+  font-family: inherit;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .btn-annuler {
-  color: #292929;
+  color: #0F7A4B;
   background: #FFFFFF;
-  border: 1px solid #EEEEEE;
+  border: 1px solid #0F7A4B;
 }
 
-.btn-annuler:hover:not(:disabled) {
-  background: #F0F0F0;
-}
 
 .btn-enregistrer {
   color: #FFFFFF;
@@ -450,15 +499,17 @@
   border: 1px solid #0F7A4B;
 }
 
-.btn-enregistrer:hover:not(:disabled) {
-  background: #095D38;
-  border-color: #095D38;
+
+.btn-enregistrer:focus-visible,
+.btn-annuler:focus-visible {
+  outline: 3px solid #F7B500;
+  outline-offset: 3px;
 }
 
 .btn-enregistrer mat-icon {
-  width: 16px;
-  height: 16px;
-  font-size: 16px;
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
 }
 
 .btn-annuler:disabled,
@@ -468,7 +519,7 @@
 }
 
 /* =========================================
-   RESPONSIVE : TABLETTE
+   RESPONSIVE — TABLETTES
 ========================================= */
 
 @media (max-width: 1100px) {
@@ -485,9 +536,7 @@
   }
 }
 
-/* =========================================
-   RESPONSIVE : MOBILE
-========================================= */
+
 
 @media (max-width: 700px) {
   .page-technique {
@@ -498,14 +547,22 @@
     font-size: 22px;
   }
 
+  .entete-page p {
+    font-size: 12px;
+  }
+
   .carte {
     padding: 16px;
     margin-bottom: 16px;
   }
 
+  .carte h2 {
+    font-size: 16px;
+  }
+
   .informations-grid {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 14px;
   }
 
   .information-large {
@@ -521,12 +578,6 @@
   .formulaire-ressource .bouton-ajout {
     grid-column: 1;
     justify-content: flex-end;
-    margin-bottom: 2px;
-  }
-
-  .bouton-ajout button {
-    width: auto;
-    max-width: 100%;
   }
 
   .table-responsive table {
@@ -547,11 +598,24 @@
     flex-direction: column-reverse;
     align-items: stretch;
     gap: 10px;
-    margin-top: 12px;
+    margin-top: 16px;
   }
 
   .btn-annuler,
   .btn-enregistrer {
     width: 100%;
+  }
+
+  .message-erreur {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .message-erreur span {
+    flex-basis: calc(100% - 40px);
+  }
+
+  .message-erreur button {
+    margin-left: 30px;
   }
 }

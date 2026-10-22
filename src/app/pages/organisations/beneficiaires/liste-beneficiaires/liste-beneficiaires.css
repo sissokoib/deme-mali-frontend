@@ -1,8 +1,16 @@
 
+:host {
+  display: block;
+  min-width: 0;
+}
+
 * {
   box-sizing: border-box;
 }
 
+/* ========================================
+   PAGE PRINCIPALE
+======================================== */
 .page {
   min-height: 100%;
   padding: 28px;
@@ -11,93 +19,171 @@
   font-family: Arial, sans-serif;
 }
 
+/* ========================================
+   EN-TÊTE
+======================================== */
 .entete-page {
-  margin-bottom: 25px;
+  margin-bottom: 26px;
 }
 
 .entete-page h2 {
   margin: 0 0 8px;
-  color: #0F7A4B;
-  font-size: 26px;
-  font-weight: 600;
+  color: #1F1F1F;
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
 }
 
 .entete-page p {
   margin: 0;
-  color: #666;
+  color: #1F1F1F;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
+/* ========================================
+   CARTES STATISTIQUES
+======================================== */
 .statistiques {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin-bottom: 28px;
+  gap: 18px;
+  margin-bottom: 24px;
 }
 
 .statistique {
-  padding: 20px;
+  min-width: 0;
+  padding: 21px;
   background: #FFFFFF;
-  border: 1px solid #E8E2D7;
+  border: 1px solid #F7F3EA;
   border-radius: 12px;
-  border-top: 3px solid #0F7A4B;
+  box-shadow: 0 2px 8px rgb(31 31 31 / 3%);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-.statistique.attente {
-  border-top-color: #F7B500;
-}
-
+.statistique.attente,
 .statistique.acceptes {
-  border-top-color: #0F7A4B;
+  border-top: 1px solid #F7F3EA;
+}
+
+.statistique:hover {
+  box-shadow: 0 5px 14px rgb(31 31 31 / 6%);
+  transform: translateY(-2px);
 }
 
 .statistique p {
   margin: 0 0 12px;
-  color: #666;
-  font-size: 14px;
+  color: #0F7A4B;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.5;
 }
 
 .statistique h3 {
   margin: 0;
+  color: #0F7A4B;
   font-size: 28px;
-  font-weight: 600;
-  color: #1F1F1F;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
+/* ========================================
+   BARRE DE RECHERCHE
+======================================== */
+.recherche {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  max-width: 460px;
+  margin-bottom: 22px;
+  padding: 0 14px;
+  border: 1px solid #F7F3EA;
+  border-radius: 10px;
+  background: #FFFFFF;
+  color: #0F7A4B;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recherche:focus-within {
+  border-color: #0F7A4B;
+  box-shadow: 0 0 0 3px rgb(15 122 75 / 9%);
+}
+
+.recherche mat-icon {
+  flex-shrink: 0;
+  color: #0F7A4B;
+}
+
+.recherche input {
+  width: 100%;
+  min-width: 0;
+  padding: 14px 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #1F1F1F;
+  font: inherit;
+  font-size: 13px;
+}
+
+.recherche input::placeholder {
+  color: #1F1F1F;
+  opacity: 0.7;
+}
+
+/* ========================================
+   LISTE DES BÉNÉFICIAIRES
+======================================== */
 .liste-beneficiaires {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
+/* ========================================
+   CARTE BÉNÉFICIAIRE
+======================================== */
 .carte {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 18px;
-  background: #FFFFFF;
-  border: 1px solid #E8E2D7;
+  gap: 16px;
+  min-width: 0;
+  padding: 18px 20px;
+  border: 1px solid #F7F3EA;
   border-radius: 12px;
-  transition: box-shadow 0.2s;
+  background: #FFFFFF;
+  color: #1F1F1F;
+  box-shadow: 0 2px 6px rgb(31 31 31 / 3%);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.carte:hover {
-  box-shadow: 0 4px 14px rgba(31, 31, 31, 0.06);
-}
 
+
+/* ========================================
+   AVATAR
+======================================== */
 .avatar {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+ 
   background: #F7F3EA;
   color: #0F7A4B;
 }
 
+.avatar mat-icon {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+}
+
+/* ========================================
+   INFORMATIONS DU BÉNÉFICIAIRE
+======================================== */
 .informations {
   flex: 1;
   min-width: 0;
@@ -105,220 +191,104 @@
 
 .informations h3 {
   margin: 0 0 7px;
+  overflow: hidden;
+  color: #0F7A4B;
   font-size: 15px;
   font-weight: 600;
+  text-overflow: ellipsis;
 }
 
 .informations p {
   margin: 0;
-  color: #666;
+  color: #1F1F1F;
   font-size: 13px;
+  line-height: 1.5;
 }
 
 .informations p span {
-  margin: 0 4px;
+  margin: 0 5px;
   color: #F7B500;
-  font-weight: bold;
+  font-weight: 700;
 }
 
+/* ========================================
+   STATUTS
+======================================== */
 .statut {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
   padding: 7px 11px;
+  border: 1px solid transparent;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
+/* Accepté */
 .statut.accepte {
-  background: #E3F1E8;
-  color: #0F7A4B;
-}
-
-.statut.en-attente {
-  background: #FFF2CC;
-  color: #725300;
-}
-
-.statut.refuse {
-  background: #ECE8E1;
-  color: #555;
-}
-
-.message {
-  padding: 18px;
-  background: #FFFFFF;
-  border-radius: 10px;
-  color: #666;
-  font-size: 14px;
-}
-
-.recherche {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  padding: 0 14px;
-  background: #FFFFFF;
-  border: 1px solid #E8E2D7;
-  border-radius: 10px;
-}
-
-.recherche mat-icon {
-  color: #0F7A4B;
-}
-
-.recherche input {
-  width: 100%;
-  padding: 14px 0;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: #1F1F1F;
-  font-size: 14px;
-}
-
-.recherche:focus-within {
   border-color: #0F7A4B;
-}
-
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 22px;
-  padding: 16px;
-  background: #FFFFFF;
-  border: 1px solid #E8E2D7;
-  border-radius: 10px;
-  color: #666666;
-  font-size: 13px;
-}
-
-.pagination-boutons {
-  display: flex;
-  gap: 8px;
-}
-
-.pagination button {
-  padding: 9px 13px;
-  border: 1px solid #0F7A4B;
-  border-radius: 7px;
   background: #FFFFFF;
   color: #0F7A4B;
-  cursor: pointer;
 }
 
-.pagination button:hover:not(:disabled) {
-  background: #0F7A4B;
-  color: #FFFFFF;
+/* En attente */
+.statut.en-attente {
+  border-color: #F7B500;
+  background: #F7F3EA;
+  color: #1F1F1F;
 }
 
-.pagination button:disabled {
-  border-color: #DDD8CE;
-  color: #AAA49A;
-  cursor: not-allowed;
+/* Refusé */
+.statut.refuse {
+  border-color: #1F1F1F;
+  background: #F7F3EA;
+  color: #1F1F1F;
 }
 
-@media (max-width: 480px) {
-  .pagination {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-}
-
-
-@media (max-width: 650px) {
-  .page {
-    padding: 16px;
-  }
-
-  .statistiques {
-    gap: 8px;
-  }
-
-  .statistique {
-    padding: 13px;
-  }
-
-  .statistique p {
-    font-size: 12px;
-  }
-
-  .statistique h3 {
-    font-size: 23px;
-  }
-
-  .carte {
-    gap: 10px;
-    padding: 13px;
-  }
-
-  .avatar {
-    width: 38px;
-    height: 38px;
-  }
-
-  .statut {
-    padding: 6px 8px;
-    font-size: 11px;
-  }
-}
-
-@media (max-width: 380px) {
-  .carte {
-    flex-wrap: wrap;
-  }
-
-  .statut {
-    margin-left: auto;
-  }
-}
-
+/* ========================================
+   ACTIONS
+======================================== */
 .actions-beneficiaire {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: flex-end;
+  flex-shrink: 0;
   gap: 8px;
-  margin-left: auto;
+  margin-left: 4px;
 }
 
 .actions-beneficiaire button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  padding: 9px 11px;
-  border: 1px solid transparent;
-  border-radius: 7px;
+  gap: 7px;
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 1px solid #0F7A4B;
+  border-radius: 8px;
   background: #FFFFFF;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.actions-beneficiaire mat-icon {
-  width: 18px;
-  height: 18px;
-  font-size: 18px;
-}
-
-.action-details {
-  border-color: #E8E2D7 !important;
-  color: #1F1F1F;
-}
-
-.action-accepter {
-  background: #E6F2EB !important;
   color: #0F7A4B;
-}
-
-.action-refuser {
-  background: #FFF4CC !important;
-  color: #795900;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .actions-beneficiaire button:hover:not(:disabled) {
-  filter: brightness(0.96);
+  border-color: #0F7A4B;
+  background: #0F7A4B;
+  color: #FFFFFF;
+}
+
+.actions-beneficiaire button:focus-visible,
+.pagination button:focus-visible {
+  outline: 3px solid rgb(15 122 75 / 20%);
+  outline-offset: 2px;
 }
 
 .actions-beneficiaire button:disabled {
@@ -326,9 +296,270 @@
   cursor: not-allowed;
 }
 
-@media (max-width: 600px) {
+.actions-beneficiaire mat-icon {
+  width: 17px;
+  height: 17px;
+  font-size: 17px;
+}
+
+/* ========================================
+   MESSAGES
+======================================== */
+.message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 20px;
+  border: 1px solid #F7F3EA;
+  border-radius: 10px;
+  background: #FFFFFF;
+  color: #1F1F1F;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.message mat-icon {
+  flex-shrink: 0;
+  color: #0F7A4B;
+}
+
+.message.erreur {
+  border-color: #0F7A4B;
+  background: #F7F3EA;
+  color: #1F1F1F;
+}
+
+/* ========================================
+   PAGINATION
+======================================== */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 22px;
+  padding: 16px 0;
+  border: none;
+  background: transparent;
+  color: #1F1F1F;
+  font-size: 13px;
+}
+
+.pagination > span {
+  line-height: 1.5;
+}
+
+.pagination-boutons {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pagination button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  min-height: 36px;
+  padding: 8px 13px;
+  border: 1px solid #0F7A4B;
+  border-radius: 8px;
+  background: #FFFFFF;
+  color: #0F7A4B;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  border-color: #0F7A4B;
+  background: #0F7A4B;
+  color: #FFFFFF;
+}
+
+.pagination button.active {
+  border-color: #0F7A4B;
+  background: #0F7A4B;
+  color: #FFFFFF;
+}
+
+.pagination button:disabled {
+  border-color: #F7F3EA;
+  background: #F7F3EA;
+  color: #1F1F1F;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   TABLETTES
+======================================== */
+@media (max-width: 900px) {
+  .page {
+    padding: 22px;
+  }
+
+  .statistiques {
+    gap: 12px;
+  }
+
+  .carte {
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .actions-beneficiaire button {
+    padding: 8px 10px;
+  }
+}
+
+/* ========================================
+   MOBILES
+======================================== */
+@media (max-width: 650px) {
+  .page {
+    padding: 16px;
+  }
+
+  .entete-page {
+    margin-bottom: 20px;
+  }
+
+  .entete-page h2 {
+    font-size: 22px;
+  }
+
+  .statistiques {
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .statistique {
+    padding: 14px 12px;
+  }
+
+  .statistique p {
+    margin-bottom: 9px;
+    font-size: 12px;
+  }
+
+  .statistique h3 {
+    font-size: 23px;
+  }
+
+  .recherche {
+    max-width: none;
+    margin-bottom: 18px;
+  }
+
+  .carte {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 15px;
+  }
+
+  .avatar {
+    width: 42px;
+    height: 42px;
+  }
+
+  .informations {
+    flex-basis: calc(100% - 60px);
+  }
+
+  .statut {
+    margin-left: 54px;
+  }
+
+  .actions-beneficiaire {
+    margin-left: auto;
+  }
+
+  .pagination {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 15px 0;
+  }
+
+  .pagination-boutons {
+    width: 100%;
+    gap: 6px;
+  }
+
+  .pagination button {
+    flex: 1;
+  }
+}
+
+/* ========================================
+   PETITS ÉCRANS
+======================================== */
+@media (max-width: 380px) {
+  .page {
+    padding: 12px;
+  }
+
+  .statistiques {
+    gap: 7px;
+  }
+
+  .statistique {
+    padding: 12px 9px;
+  }
+
+  .statistique h3 {
+    font-size: 21px;
+  }
+
+  .carte {
+    gap: 10px;
+  }
+
+  .statut {
+    margin-left: 0;
+  }
+
   .actions-beneficiaire {
     width: 100%;
     margin-left: 0;
+  }
+
+  .actions-beneficiaire button {
+    width: 100%;
+  }
+
+  .pagination {
+    gap: 12px;
+  }
+
+  .pagination-boutons {
+    gap: 5px;
+  }
+
+  .pagination button {
+    min-width: 32px;
+    padding: 8px;
+    font-size: 11px;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITÉ
+======================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

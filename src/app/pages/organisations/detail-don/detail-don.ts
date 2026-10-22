@@ -1,6 +1,7 @@
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,6 +24,7 @@ import { ReceptionDonDialogComponent } from '../../../dialogs/reception-don-dial
 export class DetailDonComponent implements OnInit {
 
   don: any = null;
+
   typeDon: 'MATERIEL' | 'FINANCIER' = 'MATERIEL';
 
   chargement = true;
@@ -30,46 +32,55 @@ export class DetailDonComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private location: Location,
     private dialog: MatDialog,
     private donService: DonService
   ) {}
 
   ngOnInit(): void {
-    this.typeDon = this.route.snapshot.url.some(segment =>
-      segment.path === 'materiel'
-    ) ? 'MATERIEL' : 'FINANCIER';
 
-    // Le don est transmis depuis la liste lors du clic sur « Détails ».
-    const etat = this.location.getState() as { don?: any };
-    this.don = etat?.don ?? null;
+    // Déterminer le type du don à partir de l'URL
+    const segments = this.route.snapshot.url;
 
-    if (!this.don) {
+    for (const segment of segments) {
+      if (segment.path === 'materiel') {
+        this.typeDon = 'MATERIEL';
+      } else {
+        // On conserve le type initial si le segment ne correspond pas.
+      }
+    }
+
+    // Récupérer le don transmis par la page précédente
+    const etat: any = this.location.getState();
+
+    if (etat && etat.don) {
+      this.don = etat.don;
+    } else {
       this.erreur =
         'Les détails du don ne sont pas disponibles. Retournez à la liste et ouvrez le don à nouveau.';
-      this.chargement = false;
-      return;
     }
 
     this.chargement = false;
   }
 
+  // Vérifier si le don est matériel
   get estMateriel(): boolean {
     return this.typeDon === 'MATERIEL';
   }
 
+  // Afficher le bouton pour tous les dons matériels
   get peutConfirmerReception(): boolean {
-    return this.estMateriel &&
-      this.don?.statut === 'EN_ATTENTE';
+    return this.estMateriel;
   }
 
+  // Ouvrir la fenêtre de confirmation ou de refus
   ouvrirReception(): void {
-    if (!this.don || !this.peutConfirmerReception) {
+
+    if (!this.don || !this.estMateriel) {
       return;
     }
 
-    const dialogRef = this.dialog.open(ReceptionDonDialogComponent, {
+    const fenetre = this.dialog.open(ReceptionDonDialogComponent, {
       width: '500px',
       maxWidth: '95vw',
       data: {
@@ -81,44 +92,59 @@ export class DetailDonComponent implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (!result || !this.don) {
+    // Récupérer le choix fait dans la fenêtre
+    fenetre.afterClosed().subscribe((result) => {
+
+      if (!result) {
         return;
       }
 
+      // Si l'utilisateur confirme la réception
       if (result.action === 'RECEPTION') {
+
         this.donService.confirmerReception(
           this.don.id,
           result.quantiteRecue
         ).subscribe({
+
           next: (donMisAJour) => {
             this.don = donMisAJour;
           },
+
           error: (err) => {
-            console.error('Erreur de confirmation de réception :', err);
+            console.error(err);
             this.erreur = 'Impossible de confirmer la réception.';
           }
+
         });
       }
 
-      if (result.action === 'REFUS') {
+      // Si l'utilisateur refuse le don
+      else if (result.action === 'REFUS') {
+
         this.donService.refuserDon(
           this.don.id,
           result.motifRefus
         ).subscribe({
+
           next: (donMisAJour) => {
             this.don = donMisAJour;
           },
+
           error: (err) => {
-            console.error('Erreur de refus du don :', err);
+            console.error(err);
             this.erreur = 'Impossible de refuser le don.';
           }
+
         });
       }
+
     });
   }
 
+  // Retourner à la page précédente
   retourner(): void {
     this.location.back();
   }
+
 }

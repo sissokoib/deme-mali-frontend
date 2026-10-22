@@ -3,9 +3,9 @@
 
   <header class="page-header">
     <div>
-      <span class="sur-titre">DÈMÈ MALI · SOLIDARITÉ</span>
+   
       <h1>Aides distribuées</h1>
-      <p>Suivez les distributions et consultez leurs preuves.</p>
+   
     </div>
 
     <button
@@ -13,7 +13,7 @@
       class="btn-principal"
       (click)="nouvelleDistribution()"
     >
-      <span class="plus">+</span>
+     
       Nouvelle distribution
     </button>
   </header>
@@ -23,16 +23,7 @@
   </div>
 
   <section class="liste-section">
-    <div class="section-heading liste-heading">
-      <div>
-        <h2>Historique des distributions</h2>
-        <p>Les aides enregistrées et les preuves de leur réalisation.</p>
-      </div>
-
-      <span class="compteur">
-        {{ distributions.length }} distribution(s)
-      </span>
-    </div>
+ 
 
     <div *ngIf="chargement" class="etat-message">
       Chargement des distributions…
@@ -42,9 +33,9 @@
       *ngIf="!chargement && distributions.length === 0"
       class="etat-vide"
     >
-      <div class="vide-icone">🤝</div>
+      <mat-icon>image_not_supported</mat-icon>
       <h3>Aucune distribution enregistrée</h3>
-      <p>Les distributions apparaîtront ici après leur enregistrement.</p>
+     
 
       <button
         type="button"
@@ -86,14 +77,14 @@
                 preload="metadata"
               >
                 <source [src]="urlPreuve(video.urlFichier)" />
-                Votre navigateur ne prend pas en charge la vidéo.
+               
               </video>
             </ng-container>
           </ng-template>
 
           <ng-template #sansMedia>
             <div class="media-placeholder">
-              <span>🤝</span>
+      <mat-icon>image_not_supported</mat-icon>
               <p>
                 {{
                   possedePreuve(aide)
@@ -104,36 +95,23 @@
             </div>
           </ng-template>
 
-          <span
-            class="statut-badge"
-            [class.statut-distribuee]="aide.statut === 'DISTRIBUEE'"
-            [class.statut-attente]="aide.statut === 'EN_ATTENTE'"
-          >
-            {{
-              aide.statut === 'DISTRIBUEE'
-                ? 'Distribuée'
-                : aide.statut === 'EN_ATTENTE'
-                  ? 'En attente'
-                  : aide.statut
-            }}
-          </span>
+          
         </div>
 
         <div class="carte-contenu">
-          <div class="carte-reference">
-            <span>Distribution #{{ aide.id }}</span>
-            <span>{{ aide.preuves?.length || 0 }} preuve(s)</span>
-          </div>
+         
 
           <h3>
             {{
               trouverDemande(aide.demandeAideId)?.titre
-                || 'Demande #' + aide.demandeAideId
+                || 'Demande ' + aide.demandeAideId
             }}
           </h3>
 
           <div class="information-ligne">
-            <span class="info-icone">📅</span>
+         <span class="info-icone">
+  <mat-icon>calendar_month</mat-icon>
+</span>
             <div>
               <small>Date de distribution</small>
               <p>{{ aide.dateDistribution | date:'dd/MM/yyyy' }}</p>
@@ -141,7 +119,9 @@
           </div>
 
           <div class="information-ligne">
-            <span class="info-icone">📍</span>
+            <span class="info-icone">
+  <mat-icon>location_on</mat-icon>
+</span>
             <div>
               <small>Lieu de distribution</small>
               <p>{{ aide.lieuDistribution }}</p>
@@ -210,7 +190,7 @@
             (click)="voirDetail(aide.id)"
           >
             Voir le détail
-            <span>→</span>
+           
           </button>
         </div>
       </article>

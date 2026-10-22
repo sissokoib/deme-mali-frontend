@@ -15,6 +15,7 @@ export interface RapportTechnique {
   dateCreation: string;
   rapportBesoinId: number;
   montantFinal: number;
+    statutDemande?: string;
   details: DetailRapportTechnique[];
 }
 

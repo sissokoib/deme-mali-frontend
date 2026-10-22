@@ -1,32 +1,255 @@
-h2 {
+
+
+:host {
+  display: block;
+  color: #1F1F1F;
+ 
+}
+
+/* Fond principal beige */
+.dialogue-reception {
+  background: #F7F3EA;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* Titre */
+.titre-dialogue {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #0f7a4b;
+  margin: 0 0 10px;
+  color: #0F7A4B;
+  font-size: 21px;
+  font-weight: 600;
 }
 
 .icone-titre {
-  color: #0f7a4b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0F7A4B;
 }
 
-.description {
-  color: #666;
+.icone-titre mat-icon {
+  font-size: 26px;
+  width: 26px;
+  height: 26px;
+}
+
+.description-dialogue {
+  margin: 0 0 20px;
+  color: #1F1F1F;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Informations du don */
+.informations-don {
+  padding: 16px;
   margin-bottom: 20px;
+  background: #FFFFFF;
+  border-radius: 10px;
 }
 
-.information {
+.libelle-information {
+  display: block;
+  margin-bottom: 6px;
+  color: #1F1F1F;
+  font-size: 13px;
+}
+
+.valeur-information {
+  color: #0F7A4B;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.quantite-information {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #F7F3EA;
+  color: #0F7A4B;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Séparateur */
+mat-divider {
+  margin: 18px 0;
+  border-top-color: rgba(31, 31, 31, 0.12);
+}
+
+/* Choix de l'action */
+.titre-section {
+  display: block;
   margin-bottom: 12px;
-  padding: 12px;
-  background: #f7f3ea;
-  border-radius: 8px;
+  color: #1F1F1F;
+  font-size: 15px;
+  font-weight: 600;
 }
 
-.champ {
+.choix-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.option-action {
+  display: block;
+  padding: 14px;
+  background: #FFFFFF;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  transition: border-color 0.2s ease;
+}
+
+.option-action:hover,
+.option-action.selectionnee {
+  border-color: #0F7A4B;
+}
+
+.option-action.refus-selectionne {
+  border-color: #F7B500;
+}
+
+.option-action mat-checkbox {
   width: 100%;
-  margin-top: 12px;
 }
 
-.bouton-confirmer {
-  background: #0f7a4b !important;
-  color: white !important;
+.texte-option {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.titre-option {
+  color: #1F1F1F;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.description-option {
+  color: #1F1F1F;
+  font-size: 12px;
+  line-height: 1.5;
+  opacity: 0.75;
+}
+
+/* Formulaires conditionnels */
+.formulaire-action {
+  padding: 16px;
+  margin-top: 14px;
+  background: #FFFFFF;
+  border-radius: 10px;
+  animation: apparition 0.2s ease-out;
+}
+
+.formulaire-action h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  color: #0F7A4B;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.formulaire-action h3 mat-icon {
+  color: #0F7A4B;
+}
+
+.formulaire-action.refus h3 {
+  color: #1F1F1F;
+}
+
+.formulaire-action.refus h3 mat-icon {
+  color: #F7B500;
+}
+
+.texte-aide {
+  margin: 0 0 16px;
+  color: #1F1F1F;
+  font-size: 13px;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+
+.champ-formulaire,
+mat-form-field {
+  display: block;
+  width: 100%;
+}
+
+/* Boutons */
+.actions-dialogue {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.btn-annuler {
+  color: #1F1F1F !important;
+  border-radius: 6px !important;
+}
+
+.btn-confirmer {
+  background: #0F7A4B !important;
+  color: #FFFFFF !important;
+  border-radius: 6px !important;
+  font-weight: 600;
+}
+
+.btn-confirmer:hover:not(:disabled) {
+  background: #0B603A !important;
+}
+
+.btn-refuser {
+  background: #F7B500 !important;
+  color: #1F1F1F !important;
+  border-radius: 6px !important;
+  font-weight: 600;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Animation conservée */
+@keyframes apparition {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Téléphones */
+@media (max-width: 480px) {
+  .dialogue-reception {
+    padding: 16px;
+  }
+
+  .titre-dialogue {
+    font-size: 19px;
+  }
+
+  .actions-dialogue {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .actions-dialogue button {
+    width: 100%;
+  }
 }

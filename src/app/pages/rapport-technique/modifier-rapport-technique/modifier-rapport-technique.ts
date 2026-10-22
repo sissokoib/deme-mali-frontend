@@ -14,6 +14,13 @@ import {
   DetailRapportTechnique
 } from '../../../models/rapport-technique.model';
 
+interface ErreursRessource {
+  designation?: string;
+  unite?: string;
+  quantite?: string;
+  prixUnitaire?: string;
+}
+
 @Component({
   selector: 'app-modifier-rapport-technique',
   standalone: true,
@@ -29,11 +36,19 @@ export class ModifierRapportTechnique implements OnInit {
   descriptionTechnique = '';
   ressources: DetailRapportTechnique[] = [];
 
-  nouvelleRessource: DetailRapportTechnique = this.creerRessourceVide();
+  nouvelleRessource: DetailRapportTechnique =
+    this.creerRessourceVide();
 
   chargement = true;
   enregistrement = false;
   erreur = '';
+
+  // Erreurs affichées directement dans le formulaire.
+  erreurDescription = '';
+  erreurListeRessources = '';
+
+  erreursNouvelleRessource: ErreursRessource = {};
+  erreursRessources: { [index: number]: ErreursRessource } = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -66,10 +81,6 @@ export class ModifierRapportTechnique implements OnInit {
     };
   }
 
-  /**
-   * Charge les données enregistrées en base.
-   * Les identifiants des détails sont conservés.
-   */
   chargerRapport(): void {
     this.chargement = true;
     this.erreur = '';
@@ -87,7 +98,7 @@ export class ModifierRapportTechnique implements OnInit {
           this.descriptionTechnique =
             rapport.descriptionTechnique ?? '';
 
-          this.ressources = (rapport.details ?? []).map(detail => {
+          const details = (rapport.details ?? []).map(detail => {
             const quantite = Number(detail.quantite) || 0;
             const prixUnitaire = Number(detail.prixUnitaire) || 0;
 
@@ -99,6 +110,9 @@ export class ModifierRapportTechnique implements OnInit {
             };
           });
 
+          // Conserve le comportement existant de regroupement.
+          this.ressources = this.regrouperRessources(details);
+
           this.recalculerMontant();
         },
         error: err => {
@@ -109,9 +123,45 @@ export class ModifierRapportTechnique implements OnInit {
       });
   }
 
-  calculerMontant(
-    ressource: DetailRapportTechnique
-  ): number {
+  private regrouperRessources(
+    details: DetailRapportTechnique[]
+  ): DetailRapportTechnique[] {
+    const ressourcesRegroupees: DetailRapportTechnique[] = [];
+
+    for (const detail of details) {
+      const designation = detail.designation?.trim() ?? '';
+      const unite = detail.unite?.trim() ?? '';
+      const prix = Number(detail.prixUnitaire);
+
+      const existant = ressourcesRegroupees.find(ressource =>
+        ressource.designation.trim().toLowerCase() ===
+          designation.toLowerCase() &&
+        ressource.unite.trim().toLowerCase() ===
+          unite.toLowerCase() &&
+        Number(ressource.prixUnitaire) === prix
+      );
+
+      if (existant) {
+        existant.quantite =
+          Number(existant.quantite) + Number(detail.quantite);
+
+        existant.montant = existant.quantite * prix;
+      } else {
+        ressourcesRegroupees.push({
+          ...detail,
+          designation,
+          unite,
+          quantite: Number(detail.quantite),
+          prixUnitaire: prix,
+          montant: Number(detail.quantite) * prix
+        });
+      }
+    }
+
+    return ressourcesRegroupees;
+  }
+
+  calculerMontant(ressource: DetailRapportTechnique): number {
     const quantite = Number(ressource.quantite) || 0;
     const prix = Number(ressource.prixUnitaire) || 0;
 
@@ -126,9 +176,6 @@ export class ModifierRapportTechnique implements OnInit {
     );
   }
 
-  /**
-   * Actualise les montants affichés après une modification.
-   */
   recalculerMontant(): void {
     this.ressources = this.ressources.map(ressource => ({
       ...ressource,
@@ -136,57 +183,92 @@ export class ModifierRapportTechnique implements OnInit {
     }));
   }
 
-  /**
-   * Ajoute une nouvelle ressource.
-   * Une nouvelle ressource n'a pas encore d'identifiant.
-   */
   ajouterRessource(): void {
+    this.erreursNouvelleRessource = {};
+
     const designation =
       this.nouvelleRessource.designation?.trim() ?? '';
+
     const unite =
       this.nouvelleRessource.unite?.trim() ?? '';
+
+    const quantiteVide =
+      String(this.nouvelleRessource.quantite ?? '').trim() === '';
+
+    const prixVide =
+      String(this.nouvelleRessource.prixUnitaire ?? '').trim() === '';
+
     const quantite = Number(this.nouvelleRessource.quantite);
     const prix = Number(this.nouvelleRessource.prixUnitaire);
 
-    if (!designation && !unite) {
-      this.notificationService.erreur(
-        'Renseigne au moins la désignation et l’unité de la ressource.'
-      );
-      return;
+    if (!designation) {
+      this.erreursNouvelleRessource.designation =
+        'La désignation est obligatoire.';
+    }
+
+    if (!unite) {
+      this.erreursNouvelleRessource.unite =
+        'L’unité est obligatoire.';
     }
 
     if (
+      quantiteVide ||
       !Number.isFinite(quantite) ||
-      !Number.isFinite(prix) ||
-      quantite <= 0 ||
-      prix < 0
+      quantite <= 0
     ) {
-      this.notificationService.erreur(
-        'La quantité doit être supérieure à zéro et le prix doit être positif ou nul.'
-      );
+      this.erreursNouvelleRessource.quantite =
+        'La quantité doit être supérieure à zéro.';
+    }
+
+    if (
+      prixVide ||
+      !Number.isFinite(prix) ||
+      prix <= 0
+    ) {
+      this.erreursNouvelleRessource.prixUnitaire =
+        'Le prix unitaire doit être supérieur à zéro.';
+    }
+
+    if (Object.keys(this.erreursNouvelleRessource).length > 0) {
       return;
     }
 
-    this.ressources = [
-      ...this.ressources,
-      {
-        designation,
-        quantite,
-        unite,
-        prixUnitaire: prix,
-        montant: quantite * prix
-      }
-    ];
+    const articleExistant = this.ressources.find(ressource =>
+      ressource.designation.trim().toLowerCase() ===
+        designation.toLowerCase() &&
+      ressource.unite.trim().toLowerCase() ===
+        unite.toLowerCase() &&
+      Number(ressource.prixUnitaire) === prix
+    );
+
+    if (articleExistant) {
+      articleExistant.quantite =
+        Number(articleExistant.quantite) + quantite;
+
+      articleExistant.montant =
+        articleExistant.quantite * prix;
+
+      this.ressources = [...this.ressources];
+    } else {
+      this.ressources = [
+        ...this.ressources,
+        {
+          designation,
+          quantite,
+          unite,
+          prixUnitaire: prix,
+          montant: quantite * prix
+        }
+      ];
+    }
 
     this.nouvelleRessource = this.creerRessourceVide();
+    this.erreursNouvelleRessource = {};
+    this.erreurListeRessources = '';
+
     this.recalculerMontant();
   }
 
-  /**
-   * Retire la ressource de la liste affichée.
-   * La suppression en base sera effectuée par le backend
-   * lors de l'enregistrement du rapport.
-   */
   supprimerRessource(index: number): void {
     if (index < 0 || index >= this.ressources.length) {
       return;
@@ -196,52 +278,109 @@ export class ModifierRapportTechnique implements OnInit {
       (_, i) => i !== index
     );
 
+    this.erreursRessources = {};
+    this.erreurListeRessources = this.ressources.length === 0
+      ? 'Le rapport doit contenir au moins un article.'
+      : '';
+
     this.recalculerMontant();
   }
 
-  /**
-   * Les champs textuels peuvent être vides.
-   * Une liste de ressources vide est également autorisée.
-   */
   enregistrer(): void {
     if (!this.rapport || this.enregistrement) {
       return;
     }
 
-    for (const ressource of this.ressources) {
+    // Réinitialise les erreurs de validation précédentes.
+    this.erreurDescription = '';
+    this.erreurListeRessources = '';
+    this.erreursRessources = {};
+
+    let formulaireValide = true;
+
+    if (!this.descriptionTechnique.trim()) {
+      this.erreurDescription =
+        'La description technique est obligatoire.';
+      formulaireValide = false;
+    }
+
+    if (this.ressources.length === 0) {
+      this.erreurListeRessources =
+        'Le rapport doit contenir au moins un article.';
+      formulaireValide = false;
+    }
+
+    this.ressources.forEach((ressource, index) => {
+      const erreurs: ErreursRessource = {};
+
+      const designation =
+        ressource.designation?.trim() ?? '';
+
+      const unite =
+        ressource.unite?.trim() ?? '';
+
+      const quantiteVide =
+        String(ressource.quantite ?? '').trim() === '';
+
+      const prixVide =
+        String(ressource.prixUnitaire ?? '').trim() === '';
+
       const quantite = Number(ressource.quantite);
       const prix = Number(ressource.prixUnitaire);
 
-      if (
-        !Number.isFinite(quantite) ||
-        !Number.isFinite(prix) ||
-        quantite < 0 ||
-        prix < 0
-      ) {
-        this.notificationService.erreur(
-          'Vérifie les quantités et les prix des ressources.'
-        );
-        return;
+      if (!designation) {
+        erreurs.designation = 'La désignation est obligatoire.';
       }
+
+      if (!unite) {
+        erreurs.unite = 'L’unité est obligatoire.';
+      }
+
+      if (
+        quantiteVide ||
+        !Number.isFinite(quantite) ||
+        quantite <= 0
+      ) {
+        erreurs.quantite =
+          'La quantité doit être supérieure à zéro.';
+      }
+
+      if (
+        prixVide ||
+        !Number.isFinite(prix) ||
+        prix <= 0
+      ) {
+        erreurs.prixUnitaire =
+          'Le prix unitaire doit être supérieur à zéro.';
+      }
+
+      if (Object.keys(erreurs).length > 0) {
+        this.erreursRessources[index] = erreurs;
+        formulaireValide = false;
+      }
+    });
+
+    // Aucune notification pour une simple erreur de formulaire.
+    if (!formulaireValide) {
+      return;
     }
 
     this.enregistrement = true;
 
+    // Le format envoyé au backend reste inchangé.
     const donnees = {
       descriptionTechnique: this.descriptionTechnique.trim(),
       rapportBesoinId: this.rapport.rapportBesoinId,
       montantFinal: this.montantTotal,
 
       details: this.ressources.map(ressource => ({
-        // Indispensable pour reconnaître un détail existant.
         ...(ressource.id != null
           ? { id: ressource.id }
           : {}),
-
-        designation: ressource.designation?.trim() ?? '',
-        quantite: Number(ressource.quantite) || 0,
-        unite: ressource.unite?.trim() ?? '',
-        prixUnitaire: Number(ressource.prixUnitaire) || 0
+        designation: ressource.designation.trim(),
+        quantite: Number(ressource.quantite),
+        unite: ressource.unite.trim(),
+        prixUnitaire: Number(ressource.prixUnitaire)
       }))
     };
 
@@ -255,13 +394,14 @@ export class ModifierRapportTechnique implements OnInit {
       )
       .subscribe({
         next: () => {
+          // Notification uniquement après succès du backend.
           this.notificationService.succes(
             'Rapport technique modifié avec succès.'
           );
 
-          this.router.navigate(
-            ['/organisation/etudes-terrain']
-          );
+          this.router.navigate([
+            '/organisation/etudes-terrain'
+          ]);
         },
         error: err => {
           console.error(
@@ -269,6 +409,7 @@ export class ModifierRapportTechnique implements OnInit {
             err
           );
 
+          // Notification uniquement si la requête échoue.
           this.notificationService.erreur(
             err?.error?.message ??
             'Impossible de modifier le rapport technique.'
@@ -278,6 +419,8 @@ export class ModifierRapportTechnique implements OnInit {
   }
 
   annuler(): void {
-    this.router.navigate(['/organisation/etudes-terrain']);
+    this.router.navigate([
+      '/organisation/etudes-terrain'
+    ]);
   }
 }

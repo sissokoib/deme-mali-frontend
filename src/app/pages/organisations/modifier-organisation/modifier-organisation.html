@@ -19,7 +19,7 @@
   >
 
     <div class="section">
-      <h2>Informations personnelles</h2>
+      <h2>Informations personnelles du Répresentant</h2>
 
       <div class="form-grid">
 
@@ -61,22 +61,7 @@
           </small>
         </div>
 
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            name="email"
-            [(ngModel)]="organisation.email"
-            (ngModelChange)="verifierEmail()"
-            required
-            email
-          >
-
-          <small class="erreur" *ngIf="erreurEmail">
-            {{ erreurEmail }}
-          </small>
-        </div>
+        
 
       </div>
     </div>
@@ -131,6 +116,22 @@
             [(ngModel)]="organisation.adresse"
             required
           >
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            [(ngModel)]="organisation.email"
+            (ngModelChange)="verifierEmail()"
+            required
+            email
+          >
+
+          <small class="erreur" *ngIf="erreurEmail">
+            {{ erreurEmail }}
+          </small>
         </div>
 
       </div>
