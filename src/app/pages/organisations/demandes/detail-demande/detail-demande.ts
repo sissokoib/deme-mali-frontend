@@ -23,7 +23,7 @@ import { RapportTechniqueService } from '../../../../services/rapport-technique'
     FormsModule,
     MatIconModule
   ],
-  templateUrl: './detail-demande.html',
+  templateUrl:'./detail-demande.html',
   styleUrls: ['./detail-demande.css']
 })
 export class DetailDemande implements OnInit {

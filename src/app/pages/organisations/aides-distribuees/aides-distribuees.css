@@ -1,24 +1,19 @@
 
-
-
 :host {
   display: block;
   width: 100%;
   color: #1F1F1F;
 }
 
-
 .distributions-page {
   width: 100%;
   min-height: 100%;
   padding: 28px;
   margin: 0;
-  background-color: #F7F3EA;
   color: #1F1F1F;
+  background-color: #F7F3EA;
   box-sizing: border-box;
 }
-
-
 
 .page-header {
   display: flex;
@@ -43,10 +38,6 @@
   font-size: 13px;
   line-height: 1.6;
 }
-
-/* =========================================
-   BOUTONS GÉNÉRAUX
-========================================= */
 
 button,
 input,
@@ -83,23 +74,16 @@ button:disabled {
   background-color: #0F7A4B;
 }
 
+.btn-secondaire {
+  color: #0F7A4B;
+  background-color: #F7F3EA;
+}
 
 .plus {
   color: #F7B500;
   font-size: 21px;
   line-height: 1;
 }
-
-.btn-secondaire {
-  color: #0F7A4B;
-  background-color: #F7F3EA;
-}
-
-
-
-/* =========================================
-   MESSAGES
-========================================= */
 
 .message {
   display: flex;
@@ -116,17 +100,12 @@ button:disabled {
 
 .message.erreur {
   color: #C62828;
- 
 }
 
 .message.succes {
   color: #0F7A4B;
   background-color: #F7F3EA;
 }
-
-/* =========================================
-   SECTIONS
-========================================= */
 
 .formulaire-section {
   width: 100%;
@@ -149,10 +128,6 @@ button:disabled {
   font-size: 21px;
   font-weight: 700;
 }
-
-/* =========================================
-   CHAMPS DE FORMULAIRE
-========================================= */
 
 .champ {
   display: flex;
@@ -219,10 +194,6 @@ button:disabled {
   gap: 18px;
 }
 
-/* =========================================
-   DEMANDE SÉLECTIONNÉE
-========================================= */
-
 .demande-selectionnee {
   display: flex;
   align-items: flex-start;
@@ -266,7 +237,8 @@ button:disabled {
   overflow-wrap: anywhere;
 }
 
-.demande-infos strong {
+.demande-infos strong,
+.articles-demande > strong {
   color: #0F7A4B;
 }
 
@@ -277,13 +249,8 @@ button:disabled {
 }
 
 .articles-demande > strong {
-  color: #0F7A4B;
   font-size: 12px;
 }
-
-/* =========================================
-   SÉLECTION DES PREUVES
-========================================= */
 
 .zone-fichiers {
   position: relative;
@@ -297,8 +264,6 @@ button:disabled {
   border-radius: 10px;
   box-sizing: border-box;
 }
-
-
 
 .upload-icone {
   display: flex;
@@ -338,8 +303,6 @@ button:disabled {
   cursor: pointer;
   opacity: 0;
 }
-
-/* Fichiers sélectionnés */
 
 .fichiers-selectionnes {
   display: grid;
@@ -393,10 +356,6 @@ button:disabled {
   font-size: 11px;
 }
 
-/* =========================================
-   ACTIONS DU FORMULAIRE
-========================================= */
-
 .formulaire-actions {
   display: flex;
   justify-content: flex-end;
@@ -405,10 +364,6 @@ button:disabled {
   padding-top: 16px;
   border-top: 1px solid #F7F3EA;
 }
-
-/* =========================================
-   HISTORIQUE DES DISTRIBUTIONS
-========================================= */
 
 .liste-section {
   width: 100%;
@@ -437,10 +392,6 @@ button:disabled {
   white-space: nowrap;
 }
 
-/* =========================================
-   GRILLE DES CARTES
-========================================= */
-
 .distributions-grille {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -456,9 +407,6 @@ button:disabled {
   box-shadow: 0 3px 12px rgba(31, 31, 31, 0.06);
   box-sizing: border-box;
 }
-
-
-
 
 .carte-media {
   position: relative;
@@ -504,8 +452,6 @@ button:disabled {
   text-align: center;
 }
 
-/* Statuts */
-
 .statut-badge {
   position: absolute;
   top: 12px;
@@ -525,10 +471,6 @@ button:disabled {
   color: #1F1F1F;
   background-color: #F7B500;
 }
-
-/* =========================================
-   CONTENU DES CARTES
-========================================= */
 
 .carte-contenu {
   padding: 17px;
@@ -553,10 +495,6 @@ button:disabled {
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
-
-/* =========================================
-   INFORMATIONS : DATE ET LIEU
-========================================= */
 
 .information-ligne {
   display: flex;
@@ -596,10 +534,6 @@ button:disabled {
   overflow-wrap: anywhere;
 }
 
-/* =========================================
-   BÉNÉFICIAIRE
-========================================= */
-
 .beneficiaire {
   display: flex;
   align-items: center;
@@ -623,10 +557,6 @@ button:disabled {
   font-weight: 700;
 }
 
-/* =========================================
-   TYPE D'AIDE
-========================================= */
-
 .type-aide {
   display: flex;
   align-items: center;
@@ -645,10 +575,6 @@ button:disabled {
   color: #0F7A4B;
   text-align: right;
 }
-
-/* =========================================
-   RÉSUMÉ DES AFFECTATIONS
-========================================= */
 
 .affectations-resume {
   display: grid;
@@ -702,10 +628,6 @@ button:disabled {
   overflow-wrap: anywhere;
 }
 
-/* =========================================
-   BOUTON VOIR LE DÉTAIL
-========================================= */
-
 .btn-detail {
   display: flex;
   align-items: center;
@@ -725,15 +647,10 @@ button:disabled {
   box-sizing: border-box;
 }
 
-
 .btn-detail mat-icon {
   flex-shrink: 0;
   color: inherit;
 }
-
-/* =========================================
-   CHARGEMENT ET ÉTAT VIDE
-========================================= */
 
 .etat-message,
 .etat-vide {
@@ -774,19 +691,11 @@ button:disabled {
   line-height: 1.6;
 }
 
-/* =========================================
-   RESPONSIVE : TABLETTES
-========================================= */
-
 @media (max-width: 1100px) {
   .distributions-grille {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-
-/* =========================================
-   RESPONSIVE : MOBILES
-========================================= */
 
 @media (max-width: 700px) {
   .distributions-page {

@@ -121,7 +121,7 @@
             <!-- Demande -->
             <td>
               <strong class="titre-demande">
-                {{ item.demande?.titre || 'Titre indisponible' }}
+                {{ item.demande.titre || 'Titre indisponible' }}
               </strong>
             </td>
 
@@ -129,13 +129,13 @@
             <td>
               <span
                 *ngIf="
-                  item.demande?.beneficiairePrenom ||
-                  item.demande?.beneficiaireNom;
+                  item.demande.beneficiairePrenom ||
+                  item.demande.beneficiaireNom;
                   else beneficiaireIndisponible
                 "
               >
-                {{ item.demande?.beneficiairePrenom || '' }}
-                {{ item.demande?.beneficiaireNom || '' }}
+                {{ item.demande.beneficiairePrenom || '' }}
+                {{ item.demande.beneficiaireNom || '' }}
               </span>
 
               <ng-template #beneficiaireIndisponible>
@@ -150,23 +150,23 @@
               <span
                 class="urgence"
                 [class.urgence-faible]="
-                  item.demande?.niveauUrgence === 'FAIBLE'
+                  item.demande.niveauUrgence === 'FAIBLE'
                 "
                 [class.urgence-moyenne]="
-                  item.demande?.niveauUrgence === 'MOYENNE'
+                  item.demande.niveauUrgence === 'MOYENNE'
                 "
                 [class.urgence-forte]="
-                  item.demande?.niveauUrgence === 'FORTE'
+                  item.demande.niveauUrgence === 'FORTE'
                 "
               >
-                {{ item.demande?.niveauUrgence || 'Non précisée' }}
+                {{ item.demande.niveauUrgence || 'Non précisée' }}
               </span>
             </td>
 
             <!-- Type -->
             <td>
               <span class="type-demande">
-                {{ item.demande?.typeDemande || 'Non précisé' }}
+                {{ item.demande.typeDemande || 'Non précisé' }}
               </span>
             </td>
 

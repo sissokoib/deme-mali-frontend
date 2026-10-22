@@ -25,7 +25,7 @@ interface DemandeEtude {
   selector: 'app-etudes-terrain-list',
   standalone: true,
   imports: [CommonModule, FormsModule, MatIconModule],
-  templateUrl: './etudes-liste.html',
+  templateUrl:'./etudes-liste.html',
   styleUrl: './etudes-liste.css'
 })
 export class EtudesTerrainList implements OnInit {

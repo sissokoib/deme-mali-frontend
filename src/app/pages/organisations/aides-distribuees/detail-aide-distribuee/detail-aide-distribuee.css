@@ -1,7 +1,4 @@
 
-/* ==========================================
-   DÈMÈ MALI — DÉTAIL DE LA DISTRIBUTION
-   ========================================== */
 
 :host {
   display: block;
@@ -204,8 +201,6 @@
   font-weight: 400 !important;
 }
 
-
-
 .type-demande {
   display: flex;
   align-items: center;
@@ -219,11 +214,14 @@
 }
 
 /* Badge sans encadrement */
+
 .badge-type {
   display: inline-flex;
   align-items: center;
-  
+}
+
 /* Type matériel */
+
 .badge-type.type-materiel {
   border: none;
   background: transparent;
@@ -237,7 +235,6 @@
 }
 
 .badge-type.type-financier {
- 
   color: #1F1F1F;
 }
 
