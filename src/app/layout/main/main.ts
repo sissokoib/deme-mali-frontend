@@ -9,4 +9,8 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './main.html',
   styleUrl: './main.css',
 })
-export class Main {}
+export class Main {
+  fermerSidebar(): void {
+    document.body.classList.remove('sidebar-open');
+  }
+}

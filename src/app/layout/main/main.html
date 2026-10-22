@@ -1,11 +1,16 @@
 <div class="app">
 
   <app-sidebar></app-sidebar>
+  <div class="sidebar-backdrop" (click)="fermerSidebar()"></div>
 
-  <div class="app-main" style="background-color: #F8F9F3; min-height: 100vh; display: flex; flex-direction: column; position: relative;">
+  <div class="app-main" style="background-color: #F7F3EA; min-height: 100vh; display: flex; flex-direction: column; position: relative;">
 
     <app-navbar></app-navbar>
 
     <main id="main" class="app-content" tabindex="-1">
       <router-outlet></router-outlet>
     </main>
+
+  </div>
+
+</div>

@@ -11,4 +11,7 @@ import { AdminNavbar } from '../admin-navbar/admin-navbar';
   styleUrl: './admin-main.css'
 })
 export class AdminMain {
+  fermerSidebar(): void {
+    document.body.classList.remove('sidebar-open');
+  }
 }

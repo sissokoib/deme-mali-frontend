@@ -3,10 +3,8 @@
   <button
     type="button"
     class="icon-btn d-lg-none"
-    data-bs-toggle="offcanvas"
-    data-bs-target="#sidebar"
-    aria-controls="sidebar"
-    aria-label="Open menu"
+    aria-label="Ouvrir le menu"
+    (click)="ouvrirSidebar()"
   >
     <svg
       viewBox="0 0 24 24"
@@ -30,6 +28,7 @@
     aria-expanded="true"
     aria-label="Toggle sidebar"
     title="Collapse or expand the sidebar"
+    (click)="toggleSidebarCollapse()"
   >
     <svg
       viewBox="0 0 24 24"
@@ -55,45 +54,7 @@
       {{ obtenirDate() }}
     </span>
 
-    <button
-      type="button"
-      class="icon-btn"
-      data-theme-toggle
-      aria-pressed="false"
-      aria-label="Dark mode"
-      title="Toggle dark mode"
-    >
 
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-        focusable="false"
-        class="ic-moon"
-      >
-        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
-      </svg>
-
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-        focusable="false"
-        class="ic-sun"
-      >
-        <circle cx="12" cy="12" r="4"/>
-        <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
-      </svg>
-
-    </button>
 
     <div class="dropdown">
 
@@ -353,26 +314,10 @@
             </span>
 
           </span>
-
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <path d="m6 9 6 6 6-6"/>
-          </svg>
-
         </button>
 
-        <ul class="dropdown-menu dropdown-menu-end user-menu">
-
+        <!-- <ul class="dropdown-menu dropdown-menu-end user-menu">
           <li class="user-menu-head">
-
             <span
               class="avatar av-2 avatar-lg"
               aria-hidden="true"
@@ -392,15 +337,14 @@
 
             </span>
 
-          </li>
+          </li> -->
 
-          <li>
+          <!-- <li>
 
             <a
               class="dropdown-item"
               href="attendance.html"
             >
-
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -504,9 +448,9 @@
 
             </a>
 
-          </li>
+          </li> -->
 
-        </ul>
+        <!-- </ul> -->
 
       }
 

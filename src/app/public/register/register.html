@@ -1,160 +1,437 @@
-﻿<div class="auth">
-  <aside class="auth-aside" aria-label="Presentation de Deme Mali">
-    <img class="auth-photo" src="/assets/img/Accueil.jfif" alt="Illustration de solidarite et d'entraide au Mali" width="1200" height="1500">
-    <div class="auth-aside-inner">
-      <a class="brand brand-on-dark" routerLink="/login" aria-label="Deme Mali">
-        <span class="brand-mark">
-          <img src="/Group 522.png" alt="Logo Deme Mali" class="logo-image">
-        </span>
-        <span class="brand-text">
-          <span class="brand-name">Deme Mali</span>
-        </span>
-      </a>
+<div class="register-page">
 
-      <div class="auth-pitch" style="display: flex; flex-direction: column; align-items: center;">
-        <p class="auth-headline" style="margin-bottom: 20px; text-align: center;">Devenez une Organisation Partenaire certifiee.</p>
-        <ul class="auth-points" style="font-size: 0.95rem; width: 100%;">
-          <li style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px;">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
-            <span>Gerez vos demandes d'aide de maniere centralisee</span>
-          </li>
-          <li style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px;">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
-            <span>Collaborez avec les autres acteurs humanitaires</span>
-          </li>
-          <li style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
-            <span>Accedez a des statistiques et un tableau de bord complet</span>
-          </li>
-        </ul>
-      </div>
+  <div class="register-wrapper">
 
-    </div>
-  </aside>
-  
-  <div class="auth-wrapper">
-    <header class="auth-header">
-      <a class="brand brand-on-light" routerLink="/login" aria-label="Deme Mali">
-        <span class="brand-mark">
-          <img src="/Group 522.png" alt="Logo Deme Mali" class="logo-image">
-        </span>
-        <span class="brand-text">
-          <span class="brand-name">Deme Mali</span>
-        </span>
-      </a>
-    </header>
+    <!-- Carte divisée inspirée de la maquette -->
+    <div class="register-split-card">
 
-    <main id="main" class="auth-card" tabindex="-1" style="justify-content: center; overflow-y: auto; padding-top: 60px; padding-bottom: 20px;">
-      <h1 class="auth-title mb-1" style="font-size: 28px;">Formulaire d'inscription</h1>
-      <p class="auth-sub mb-3" style="font-size: 13px;">Remplissez le formulaire pour soumettre votre ONG ou Structure.</p>
-      
-      <!-- INDICATEUR D'ETAPE -->
-      <div class="d-flex justify-content-between mb-3 pb-2" style="border-bottom: 2px solid #F7F3EA; font-size: 14px;">
-        <div [style.color]="currentStep >= 1 ? '#0F7A4B' : '#999'" [style.fontWeight]="currentStep === 1 ? 'bold' : 'normal'">1. Structure</div>
-        <div [style.color]="currentStep >= 2 ? '#0F7A4B' : '#999'" [style.fontWeight]="currentStep === 2 ? 'bold' : 'normal'">2. Representant</div>
-        <div [style.color]="currentStep === 3 ? '#0F7A4B' : '#999'" [style.fontWeight]="currentStep === 3 ? 'bold' : 'normal'">3. Validation</div>
-      </div>
-      
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
-        
-        <ng-container *ngIf="currentStep === 1">
-          <div class="row gx-3 mb-2">
-            <div class="col-md-12 mb-2">
-              <label class="form-label mb-1" style="font-size: 13px;">Nom de l'organisation <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" formControlName="nomStructure" placeholder="Ex: Association Deme Mali">
-            </div>
-            <div class="col-md-6 mb-2">
-              <label class="form-label mb-1" style="font-size: 13px;">Type <span class="text-danger">*</span></label>
-              <select class="form-select" formControlName="typeOrganisation">
-                <option value="">Selectionnez...</option>
-                <option value="ONG">ONG</option>
-                <option value="ASSOCIATION">Association</option>
-                <option value="FONDATION">Fondation</option>
-              </select>
-            </div>
-            <div class="col-md-6 mb-2">
-              <label class="form-label mb-1" style="font-size: 13px;">Numero d'enregistrement <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" formControlName="numeroEnregistrement" placeholder="NINA, NIF...">
-            </div>
-            <div class="col-md-12 mb-2">
-              <label class="form-label mb-1" style="font-size: 13px;">Email professionnel <span class="text-danger">*</span></label>
-              <input type="email" class="form-control" formControlName="email" placeholder="contact@organisation.com">
-            </div>
-            <div class="col-md-6 mb-2">
-              <label class="form-label mb-1" style="font-size: 13px;">Ville <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" formControlName="ville" placeholder="Ex: Bamako">
-            </div>
-            <div class="col-md-6 mb-2">
-              <label class="form-label mb-1" style="font-size: 13px;">Adresse <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" formControlName="adresse" placeholder="Quartier, Rue...">
-            </div>
+      <!-- ========================================================
+           PARTIE GAUCHE : Vert #0F7A4B avec Logo Dèmè Mali centré fixe,
+           sans aucun texte
+           ======================================================== -->
+      <aside class="register-left-panel" aria-label="Présentation Dèmè Mali">
+        <div class="register-logo-frame">
+          <img
+            src="assets/img/logo-deme-mali.png"
+            alt="Logo Dèmè Mali"
+            class="register-fixed-logo"
+          >
+        </div>
+      </aside>
+
+      <!-- ========================================================
+           PARTIE DROITE : Fond #F7F3EA avec "Formulaire d'Inscription"
+           ======================================================== -->
+      <main class="register-right-panel" tabindex="-1">
+
+        <div class="register-header">
+          <!-- Titre principal -->
+          <h1 class="register-title">Formulaire d'Inscription</h1>
+
+          <!-- Sélecteur de rôle : Organisation / Administration -->
+          <div class="auth-role-tabs" role="tablist" aria-label="Type de compte à créer">
+            <button
+              type="button"
+              class="auth-role-tab"
+              [class.active]="selectedRole === 'ORGANISATION'"
+              (click)="selectRole('ORGANISATION')"
+              role="tab"
+              [attr.aria-selected]="selectedRole === 'ORGANISATION'"
+            >
+              Organisation
+            </button>
+            <button
+              type="button"
+              class="auth-role-tab"
+              [class.active]="selectedRole === 'ADMIN'"
+              (click)="selectRole('ADMIN')"
+              role="tab"
+              [attr.aria-selected]="selectedRole === 'ADMIN'"
+            >
+              Administration
+            </button>
           </div>
-          <button type="button" class="btn btn-primary w-100" style="min-height: 44px; padding: 0.5rem;" (click)="nextStep()">Suivant (Etape 2/3)</button>
-        </ng-container>
+        </div>
 
-        <ng-container *ngIf="currentStep === 2">
-          <div class="row gx-3 mb-2">
-            <div class="col-md-6 mb-2">
-              <label class="form-label mb-1" style="font-size: 13px;">Prenom <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" formControlName="prenom" placeholder="Votre prenom">
-            </div>
-            <div class="col-md-6 mb-2">
-              <label class="form-label mb-1" style="font-size: 13px;">Nom <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" formControlName="nom" placeholder="Votre nom">
-            </div>
-            <div class="col-md-6 mb-2">
-              <label class="form-label mb-1" style="font-size: 13px;">Fonction <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" formControlName="fonction" placeholder="Ex: Directeur...">
-            </div>
-            <div class="col-md-6 mb-2">
-              <label class="form-label mb-1" style="font-size: 13px;">Telephone <span class="text-danger">*</span></label>
-              <input type="tel" class="form-control" formControlName="telephone" placeholder="+223 ...">
-            </div>
-            <div class="col-md-12 mb-2">
-              <label class="form-label mb-1" for="registerPassword" style="font-size: 13px;">Mot de passe de connexion <span class="text-danger">*</span></label>
-              <div class="input-group pw-group">
-                <input class="form-control" id="registerPassword" [type]="showPassword ? 'text' : 'password'" formControlName="motDePasse" placeholder="Minimum 6 caracteres">
-                <button type="button" class="btn pw-toggle" (click)="showPassword = !showPassword" style="padding: 0 10px; min-width: 44px;">
-                  <ng-container *ngIf="!showPassword">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="ic-show" style="width:16px;height:16px;">
-                      <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>
+        <!-- Alerte d'erreur -->
+        <div *ngIf="error" class="register-alert register-alert-danger" role="alert">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span>{{ error }}</span>
+        </div>
+
+        <!-- Alerte de succès -->
+        <div *ngIf="successMessage" class="register-alert register-alert-success" role="status">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <span>{{ successMessage }}</span>
+        </div>
+
+        <!-- Formulaire Réactif -->
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate class="register-form">
+
+          <!-- ========================================================
+               ORGANISATION EN DEUX ÉTAPES
+               ======================================================== -->
+          <ng-container *ngIf="selectedRole === 'ORGANISATION'">
+
+            <!-- ÉTAPE 1 : STRUCTURE PARTENAIRE (sans numéro devant) -->
+            <ng-container *ngIf="currentStep === 1">
+
+              <div class="form-section-header">
+                <span class="section-title">Structure partenaire</span>
+                <span class="step-badge">1/2</span>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group col-span-2">
+                  <label class="form-label" for="nomStructure">Nom de l'organisation *</label>
+                  <input
+                    type="text"
+                    id="nomStructure"
+                    formControlName="nomStructure"
+                    class="form-input"
+                    placeholder="Ex. : Association Solidarité Espoir"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="typeOrganisation">Type d'organisation *</label>
+                  <select id="typeOrganisation" formControlName="typeOrganisation" class="form-input form-select">
+                    <option value="">Sélectionner...</option>
+                    <option value="ONG">ONG</option>
+                    <option value="ASSOCIATION">Association</option>
+                    <option value="FONDATION">Fondation</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="numeroEnregistrement">N° d'enregistrement / NIF *</label>
+                  <input
+                    type="text"
+                    id="numeroEnregistrement"
+                    formControlName="numeroEnregistrement"
+                    class="form-input"
+                    placeholder="NIF, NINA ou Accord-cadre"
+                  >
+                </div>
+
+                <div class="form-group col-span-2">
+                  <label class="form-label" for="orgEmail">Email professionnel *</label>
+                  <input
+                    type="email"
+                    id="orgEmail"
+                    formControlName="email"
+                    class="form-input"
+                    placeholder="contact@organisation.org"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="ville">Ville *</label>
+                  <input
+                    type="text"
+                    id="ville"
+                    formControlName="ville"
+                    class="form-input"
+                    placeholder="Ex. : Bamako"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="adresse">Adresse / Siège *</label>
+                  <input
+                    type="text"
+                    id="adresse"
+                    formControlName="adresse"
+                    class="form-input"
+                    placeholder="Commune, Rue, Porte..."
+                  >
+                </div>
+              </div>
+
+              <!-- Bouton Suivant pour l'Étape 1 -->
+              <button
+                type="button"
+                class="submit-btn"
+                (click)="nextStep()"
+              >
+                <span>Suivant</span>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                  <polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </button>
+
+            </ng-container>
+
+            <!-- ÉTAPE 2 : REPRÉSENTANT OFFICIEL & DOCUMENT JUSTIFICATIF -->
+            <ng-container *ngIf="currentStep === 2">
+
+              <div class="form-section-header">
+                <span class="section-title">Représentant </span>
+                <span class="step-badge">2/2</span>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label" for="orgPrenom">Prénom *</label>
+                  <input
+                    type="text"
+                    id="orgPrenom"
+                    formControlName="prenom"
+                    class="form-input"
+                    placeholder="Prénom"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="orgNom">Nom *</label>
+                  <input
+                    type="text"
+                    id="orgNom"
+                    formControlName="nom"
+                    class="form-input"
+                    placeholder="Nom"
+                  >
+                </div>
+
+                <div class="form-group col-span-2">
+                  <label class="form-label" for="orgTelephone">Téléphone de contact *</label>
+                  <input
+                    type="tel"
+                    id="orgTelephone"
+                    formControlName="telephone"
+                    class="form-input"
+                    placeholder="+223 ..."
+                  >
+                </div>
+
+                <div class="form-group col-span-2">
+                  <label class="form-label" for="orgPassword">Mot de passe de connexion *</label>
+                  <div class="input-with-toggle">
+                    <input
+                      [type]="showPassword ? 'text' : 'password'"
+                      id="orgPassword"
+                      formControlName="motDePasse"
+                      class="form-input with-toggle"
+                      placeholder="Minimum 6 caractères"
+                    >
+                    <button
+                      type="button"
+                      class="pw-toggle-btn"
+                      (click)="showPassword = !showPassword"
+                      [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+                    >
+                      <svg *ngIf="!showPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                      <svg *ngIf="showPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9.9 4.2A10 10 0 0 1 12 4c6.4 0 10 8 10 8a17 17 0 0 1-2.2 3.2"/>
+                        <path d="M6.6 6.6A17 17 0 0 0 2 12s3.6 8 10 8a9.7 9.7 0 0 0 5.4-1.6"/>
+                        <path d="M14.1 14.1a3 3 0 1 1-4.2-4.2"/>
+                        <path d="M2 2l20 20"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Document justificatif -->
+                <div class="form-group col-span-2">
+                  <label class="form-label">Document justificatif (Agrément, Statuts ou Récépissé)</label>
+                  <div class="file-dropzone">
+                    <input
+                      type="file"
+                      id="docFile"
+                      class="file-input-hidden"
+                      (change)="onFileSelected($event)"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                    >
+                    <label for="docFile" class="file-dropzone-label">
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="12" y1="18" x2="12" y2="12"/>
+                        <line x1="9" y1="15" x2="15" y2="15"/>
+                      </svg>
+                      <span>{{ selectedFileName ? selectedFileName : 'Sélectionner un fichier (PDF, JPG, PNG)' }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Ligne de boutons Étape 2 : Retour + Inscription -->
+              <div class="step-buttons-row">
+                <button
+                  type="button"
+                  class="secondary-back-btn"
+                  (click)="prevStep()"
+                  [disabled]="loading"
+                >
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12 19 5 12 12 5"/>
+                  </svg>
+                  <span>Retour</span>
+                </button>
+
+                <button
+                  type="submit"
+                  class="submit-btn"
+                  [disabled]="loading"
+                >
+                  <span *ngIf="loading" class="btn-spinner" aria-hidden="true"></span>
+                  <span>{{ loading ? 'Inscription en cours...' : "S'inscrire" }}</span>
+                </button>
+              </div>
+
+            </ng-container>
+
+          </ng-container>
+
+          <!-- ========================================================
+               ADMINISTRATION : SANS ÉTOILE/TITRE ET SANS ENCART D'AVERTISSEMENT
+               ======================================================== -->
+          <ng-container *ngIf="selectedRole === 'ADMIN'">
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="adminPrenom">Prénom *</label>
+                <input
+                  type="text"
+                  id="adminPrenom"
+                  formControlName="prenom"
+                  class="form-input"
+                  placeholder="Votre prénom"
+                >
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="adminNom">Nom *</label>
+                <input
+                  type="text"
+                  id="adminNom"
+                  formControlName="nom"
+                  class="form-input"
+                  placeholder="Votre nom"
+                >
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="adminTelephone">Numéro de téléphone *</label>
+                <input
+                  type="tel"
+                  id="adminTelephone"
+                  formControlName="telephone"
+                  class="form-input"
+                  placeholder="+223 ..."
+                >
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="adminEmail">Email professionnel</label>
+                <input
+                  type="email"
+                  id="adminEmail"
+                  formControlName="email"
+                  class="form-input"
+                  placeholder="admin@dememali.ml"
+                >
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="adminPassword">Mot de passe *</label>
+                <div class="input-with-toggle">
+                  <input
+                    [type]="showPassword ? 'text' : 'password'"
+                    id="adminPassword"
+                    formControlName="motDePasse"
+                    class="form-input with-toggle"
+                    placeholder="Minimum 6 caractères"
+                  >
+                  <button
+                    type="button"
+                    class="pw-toggle-btn"
+                    (click)="showPassword = !showPassword"
+                    [attr.aria-label]="showPassword ? 'Masquer' : 'Afficher'"
+                  >
+                    <svg *ngIf="!showPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/>
+                      <circle cx="12" cy="12" r="3"/>
                     </svg>
-                  </ng-container>
-                  <ng-container *ngIf="showPassword">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="ic-hide" style="width:16px;height:16px;">
+                    <svg *ngIf="showPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M9.9 4.2A10 10 0 0 1 12 4c6.4 0 10 8 10 8a17 17 0 0 1-2.2 3.2"/>
                       <path d="M6.6 6.6A17 17 0 0 0 2 12s3.6 8 10 8a9.7 9.7 0 0 0 5.4-1.6"/>
                       <path d="M14.1 14.1a3 3 0 1 1-4.2-4.2"/>
                       <path d="M2 2l20 20"/>
                     </svg>
-                  </ng-container>
-                </button>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="confirmPassword">Confirmer le mot de passe *</label>
+                <div class="input-with-toggle">
+                  <input
+                    [type]="showConfirmPassword ? 'text' : 'password'"
+                    id="confirmPassword"
+                    formControlName="confirmMotDePasse"
+                    class="form-input with-toggle"
+                    placeholder="Répétez le mot de passe"
+                  >
+                  <button
+                    type="button"
+                    class="pw-toggle-btn"
+                    (click)="showConfirmPassword = !showConfirmPassword"
+                    [attr.aria-label]="showConfirmPassword ? 'Masquer' : 'Afficher'"
+                  >
+                    <svg *ngIf="!showConfirmPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <svg *ngIf="showConfirmPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M9.9 4.2A10 10 0 0 1 12 4c6.4 0 10 8 10 8a17 17 0 0 1-2.2 3.2"/>
+                      <path d="M6.6 6.6A17 17 0 0 0 2 12s3.6 8 10 8a9.7 9.7 0 0 0 5.4-1.6"/>
+                      <path d="M14.1 14.1a3 3 0 1 1-4.2-4.2"/>
+                      <path d="M2 2l20 20"/>
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="d-flex gap-3 mt-1">
-            <button type="button" class="btn btn-outline-secondary w-50" (click)="prevStep()" style="min-height: 44px; padding: 0.5rem; border: 1px solid #D8D2C5; background: white;">Retour</button>
-            <button type="button" class="btn btn-primary w-50" (click)="nextStep()" style="min-height: 44px; padding: 0.5rem;">Suivant</button>
-          </div>
-        </ng-container>
 
-        <ng-container *ngIf="currentStep === 3">
-          <div class="mb-3">
-            <label class="form-label mb-1" style="font-size: 13px;">Document Justificatif <span class="text-danger">*</span></label>
-            <input type="file" class="form-control" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png">
-            <div class="form-text mt-1 text-muted" style="font-size: 12px;">Obligatoire. Votre compte sera valide apres verification.</div>
-          </div>
-          <div class="d-flex gap-3 mt-1">
-            <button type="button" class="btn btn-outline-secondary w-50" (click)="prevStep()" style="min-height: 44px; padding: 0.5rem; border: 1px solid #D8D2C5; background: white;">Retour</button>
-            <button type="submit" class="btn btn-primary w-50" style="min-height: 44px; padding: 0.5rem;" [disabled]="!registerForm.valid">Soumettre</button>
-          </div>
-        </ng-container>
+            <!-- Bouton Création Admin direct -->
+            <button
+              type="submit"
+              class="submit-btn"
+              [disabled]="loading"
+            >
+              <span *ngIf="loading" class="btn-spinner" aria-hidden="true"></span>
+              <span>
+                {{ loading ? 'Création en cours...' : 'Créer le compte Administrateur' }}
+              </span>
+            </button>
 
-      </form>
+          </ng-container>
 
-      <div class="mt-3 text-center pb-2">
-        <p style="font-size: 14px;">Vous avez deja un compte ? <a routerLink="/login" class="fw-semibold">Se connecter</a></p>
-      </div>
-    </main>
+          <!-- Lien bas de page vers la connexion -->
+          <div class="login-footer-link">
+            <span>Vous avez déjà un compte ?</span>
+            <a routerLink="/login" class="login-link">Se connecter</a>
+          </div>
+
+        </form>
+
+      </main>
+
+    </div>
+
   </div>
+
 </div>
