@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { Beneficiaire } from '../../../../models/beneficiaire.model';
 import { BeneficiaireService } from '../../../../services/beneficiaire';
+import {NotificationService} from '../../../../services/notification';
 
 @Component({
   selector: 'app-detail-beneficiaire',
@@ -26,6 +27,7 @@ export class DetailBeneficiaire implements OnInit {
   private router = inject(Router);
   private beneficiaireService = inject(BeneficiaireService);
   private cdr = inject(ChangeDetectorRef);
+  private notifServe = inject(NotificationService);
 
   beneficiaire: Beneficiaire | null = null;
 
@@ -90,6 +92,7 @@ export class DetailBeneficiaire implements OnInit {
   }
 
 
+
 confirmerDecision(): void {
   this.erreurDecision = '';
 
@@ -117,7 +120,12 @@ confirmerDecision(): void {
     this.beneficiaireService.accepter(id).subscribe({
       next: () => {
         this.fermerDecision();
-        this.chargerBeneficiaire(id);
+
+        this.notifServe.succes(
+          'Le bénéficiaire a été accepté avec succès.'
+        );
+
+        this.router.navigate(['/organisation/beneficiaires']);
       },
       error: (error) => {
         console.error('Erreur lors de l’acceptation :', error);
@@ -130,7 +138,12 @@ confirmerDecision(): void {
       .subscribe({
         next: () => {
           this.fermerDecision();
-          this.chargerBeneficiaire(id);
+
+          this.notifServe.succes(
+            'Le bénéficiaire a été refusé avec succès.'
+          );
+
+          this.router.navigate(['/organisation/beneficiaires']);
         },
         error: (error) => {
           console.error('Erreur lors du refus :', error);
@@ -139,5 +152,6 @@ confirmerDecision(): void {
       });
   }
 }
+
 
 }

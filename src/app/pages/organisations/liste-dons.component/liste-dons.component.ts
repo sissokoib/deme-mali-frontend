@@ -378,7 +378,7 @@ export class ListeDonsComponent implements OnInit {
       PARTIELLEMENT_RECU: 'Partiellement reçu',
       RECU: 'Reçu',
       REFUSE: 'Refusé',
-      PARTIELLEMENT_REFUSE: 'Partiellement refusé',
+    
       CONFIRME: 'Confirmé',
       ECHOUE: 'Échoué'
     };

@@ -2,7 +2,7 @@
 
   <header class="entete">
     <div class="titre-page">
-      <span class="surtitre">GESTION DES DONS</span>
+   
       <h1>Détail du don</h1>
       <p>Consultez les informations de la contribution reçue par votre organisation.</p>
     </div>
@@ -23,7 +23,7 @@
         type="button"
         class="bouton-reception"
         (click)="ouvrirReception()">
-        <mat-icon>inventory_2</mat-icon>
+        
         Confirmer la réception
       </button>
     </div>
@@ -40,30 +40,17 @@
   <section class="carte-detail" *ngIf="don && !chargement">
 
     <div class="identite-don">
-      <div class="icone-don">
-        <mat-icon>{{ estMateriel ? 'inventory_2' : 'payments' }}</mat-icon>
-      </div>
+    
 
       <div class="identite-contenu">
-        <span class="type-don">
-          {{ estMateriel ? 'DON MATÉRIEL' : 'DON FINANCIER' }}
-        </span>
+       
 
         <h2>
           {{ estMateriel ? (don.designation || 'Don matériel') : 'Don financier' }}
-          <span class="reference">#{{ don.id }}</span>
+        
         </h2>
 
-        <span
-          class="badge-statut"
-          [ngClass]="{
-            'attente': don.statut === 'EN_ATTENTE',
-            'confirme': don.statut === 'CONFIRME' || don.statut === 'RECU',
-            'refuse': don.statut === 'REFUSE',
-            'echec': don.statut === 'ECHOUE'
-          }">
-          {{ don.statut || 'Statut non renseigné' }}
-        </span>
+      
       </div>
     </div>
 
@@ -75,12 +62,12 @@
 
       <div class="information">
         <span>Référence du don</span>
-        <strong>#{{ don.id }}</strong>
+        <strong>{{ don.id }}</strong>
       </div>
 
       <div class="information" *ngIf="don.demandeAideId">
         <span>Demande associée</span>
-        <strong>#{{ don.demandeAideId }}</strong>
+        <strong>{{ don.demandeAideId }}</strong>
       </div>
 
       <div class="information" *ngIf="!don.demandeAideId">
@@ -126,7 +113,7 @@
 
     </div>
 
-    <div class="separateur"></div>
+    <!--<div class="separateur"></div>
 
     <section *ngIf="estMateriel" class="section-reception">
       <h3>État de la réception</h3>
@@ -146,15 +133,9 @@
         <mat-icon>cancel</mat-icon>
         Ce don a été refusé.
       </p>
-    </section>
+    </section>-->
 
-    <section *ngIf="!estMateriel" class="section-financiere">
-      <h3>Informations financières</h3>
-      <p>
-        Ce don est financier. La confirmation de réception de matériel
-        n'est pas applicable.
-      </p>
-    </section>
+ 
 
   </section>
 

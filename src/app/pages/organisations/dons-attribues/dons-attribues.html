@@ -75,9 +75,7 @@
     <!-- ERREUR -->
     <div class="message erreur" *ngIf="!chargement && erreur">
       Impossible de charger les dons attribués.
-      <button type="button" (click)="chargerAttributions()">
-        Réessayer
-      </button>
+    
     </div>
 
     <!-- TABLEAU -->
@@ -218,7 +216,7 @@
 
       <header class="modal-entete">
         <div>
-          <span class="surtitre">DÈMÈ MALI</span>
+      
           <h2 id="titre-details">Détails de l'attribution</h2>
         </div>
 
@@ -287,10 +285,7 @@
           <strong>{{ don.administrateurId }}</strong>
         </div>
 
-        <div class="detail-ligne">
-          <span>Score de priorité</span>
-          <strong>{{ don.scorePriorite }} / 100</strong>
-        </div>
+       
 
       </div>
 

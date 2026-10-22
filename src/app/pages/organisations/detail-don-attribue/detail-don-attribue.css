@@ -1,8 +1,9 @@
+
 .contenu {
   min-height: 100%;
   padding: 30px;
-  background: #f7f3ea;
-  color: #1f1f1f;
+  background: #F7F3EA;
+  color: #1F1F1F;
 }
 
 .btn-retour {
@@ -11,20 +12,27 @@
   gap: 8px;
   margin-bottom: 20px;
   padding: 10px 15px;
-  border: none;
+  border: 1px solid #0F7A4B;
   border-radius: 7px;
-  background: #fff;
-  color: #0f7a4b;
+  background: #FFFFFF;
+  color: #0F7A4B;
   cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.btn-retour:hover {
+  background: #0F7A4B;
+  color: #FFFFFF;
 }
 
 .carte-detail {
   max-width: 850px;
   margin: auto;
   padding: 28px;
-  background: #fff;
+  background: #FFFFFF;
+  border: 1px solid #F7F3EA;
   border-radius: 12px;
-  box-shadow: 0 3px 12px #0000000a;
+
 }
 
 .entete {
@@ -32,7 +40,7 @@
   align-items: center;
   gap: 15px;
   padding-bottom: 22px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #F7F3EA;
 }
 
 .icone {
@@ -42,18 +50,19 @@
   width: 55px;
   height: 55px;
   border-radius: 12px;
-  background: #e2f2e9;
-  color: #0f7a4b;
+  background: #F7F3EA;
+  color: #0F7A4B;
 }
 
 .entete h2 {
   margin: 0 0 7px;
+  color: #1F1F1F;
   font-size: 22px;
 }
 
 .entete p {
   margin: 0;
-  color: #777;
+  color: #1F1F1F;
   font-size: 13px;
 }
 
@@ -61,24 +70,26 @@
   margin: 24px 0;
   padding: 22px;
   text-align: center;
+  border: 1px solid #F7B500;
   border-radius: 10px;
-  background: #e2f2e9;
+  background: #F7F3EA;
 }
 
 .montant span {
-  color: #35694d;
+  color: #1F1F1F;
   font-size: 14px;
 }
 
 .montant h1 {
   margin: 10px 0;
-  color: #0f7a4b;
+  color: #0F7A4B;
   font-size: 27px;
   overflow-wrap: anywhere;
 }
 
 .carte-detail h3 {
   margin: 25px 0 12px;
+  color: #0F7A4B;
   font-size: 16px;
 }
 
@@ -87,26 +98,30 @@
   justify-content: space-between;
   gap: 20px;
   padding: 15px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #F7F3EA;
   font-size: 14px;
 }
 
 .ligne span {
-  color: #777;
+  color: #1F1F1F;
 }
 
 .ligne strong {
+  color: #1F1F1F;
   text-align: right;
   overflow-wrap: anywhere;
 }
 
 .message {
   padding: 30px;
+  color: #1F1F1F;
   text-align: center;
 }
 
 .erreur {
-  color: #b42318;
+  color: #1F1F1F;
+  border-left: 4px solid #F7B500;
+  padding-left: 12px;
 }
 
 @media (max-width: 600px) {

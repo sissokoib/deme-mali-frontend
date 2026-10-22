@@ -4,7 +4,7 @@
   <!-- En-tête -->
   <header class="page-header">
     <div class="titre-page">
-      <span class="surtitre">ÉTUDE DE TERRAIN</span>
+  
       <h1>Détail du rapport technique</h1>
       <p>
         Consultation des ressources et du budget estimé.
@@ -13,13 +13,13 @@
 
     <div class="actions-header">
 
-      <button
+      <!--<button
         type="button"
         class="btn-retour"
         (click)="retour()">
         <mat-icon>arrow_back</mat-icon>
         Retour
-      </button>
+      </button>-->
 
       <button
         *ngIf="rapport && !demandeValidee"
@@ -44,7 +44,7 @@
     class="message-erreur"
     *ngIf="!chargement && erreur">
 
-    <mat-icon>error_outline</mat-icon>
+    
 
     <div>
       <strong>Impossible d'afficher le rapport</strong>
@@ -66,9 +66,7 @@
       <!-- Identité du rapport -->
       <section class="carte-identite">
 
-        <div class="icone-document">
-          <mat-icon>description</mat-icon>
-        </div>
+   
 
         <div class="identite-infos">
           <span class="libelle">RAPPORT TECHNIQUE</span>
@@ -114,9 +112,7 @@
       <section class="carte-section">
 
         <div class="titre-section">
-          <div class="icone-section">
-            <mat-icon>format_list_bulleted</mat-icon>
-          </div>
+         
 
           <div>
             <h3>Ressources nécessaires</h3>
@@ -211,14 +207,7 @@
 
       </section>
 
-      <!-- Information de verrouillage -->
-      <div
-        class="message-verrouillage"
-        *ngIf="demandeValidee">
-
-   
-
-      </div>
+     
 
 
     </main>

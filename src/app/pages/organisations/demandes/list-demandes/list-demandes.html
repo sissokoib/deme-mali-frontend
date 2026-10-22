@@ -140,15 +140,15 @@
 
         <thead>
           <tr>
-            <th>DEMANDE</th>
-            <th>BÉNÉFICIAIRE</th>
-            <th>TYPE D'AIDE</th>
-            <th>DATE DE CRÉATION</th>
-            <th>MONTANT NÉCESSAIRE </th>
-            <th>MONTANT COLLECTÉ</th>
-            <th>URGENCE</th>
-            <th>STATUT</th>
-            <th>ACTIONS</th>
+            <th>Demande</th>
+  
+            <th>Type d'aide</th>
+            <th>Date de création</th>
+            <th>Montant nécessaire</th>
+            <th>Montant collecté</th>
+            <th>Urgence</th>
+            <th>Statut</th>
+            <th>Actions</th>
           </tr>
         </thead>
 
@@ -168,13 +168,7 @@
               </strong>
             </td>
 
-            <!-- Bénéficiaire -->
-            <td>
-              <strong class="nom-beneficiaire">
-                {{ demande.beneficiairePrenom }}
-                {{ demande.beneficiaireNom }}
-              </strong>
-            </td>
+           
 
             <!-- Type d'aide -->
             <td>
@@ -201,14 +195,7 @@
                 FCFA
               </span>
 
-              <small
-                *ngIf="demande.typeDemandeAide === 'MATERIELLE'"
-                class="detail-articles">
-
-                {{ getNombreArticles(demande) }}
-                article(s)
-
-              </small>
+             
             </td>
 
             <!-- Montant collecté -->
@@ -266,12 +253,11 @@
                   <mat-icon>visibility</mat-icon>
                 </button>
 
-                <button
+           <button
   type="button"
   class="action-icone"
   title="Modifier la demande"
   aria-label="Modifier la demande"
-  [disabled]="demande.statut !== 'EN_ATTENTE'"
   (click)="modifierDemande(demande.id)">
 
   <mat-icon>edit</mat-icon>

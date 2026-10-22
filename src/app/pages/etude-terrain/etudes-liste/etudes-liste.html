@@ -1,72 +1,106 @@
 
 <div class="contenu">
+  <!-- En-tête -->
   <header class="entete-page">
     <div>
-      <span class="surtitre">SUIVI DES DEMANDES D'AIDE</span>
       <h1>Études de terrain</h1>
       <p>Planifiez les visites et consultez les études réalisées.</p>
     </div>
-
-    <button class="btn-actualiser" type="button"
-      (click)="chargerDonnees()" [disabled]="chargement">
-      <mat-icon>refresh</mat-icon>
-      Actualiser
-    </button>
   </header>
 
+  <!-- Statistiques -->
   <section class="statistiques">
     <article class="carte-stat">
-      <div class="icone-stat vert"><mat-icon>event</mat-icon></div>
-      <div><span>À planifier</span><strong>{{ nombreAPlanifier }}</strong></div>
+      <div class="icone-stat vert">
+        <mat-icon>event</mat-icon>
+      </div>
+      <div>
+        <span>À planifier</span>
+        <strong>{{ nombreAPlanifier }}</strong>
+      </div>
     </article>
 
     <article class="carte-stat">
-      <div class="icone-stat jaune"><mat-icon>pending_actions</mat-icon></div>
-      <div><span>Planifiées</span><strong>{{ nombrePlanifiees }}</strong></div>
+      <div class="icone-stat jaune">
+        <mat-icon>pending_actions</mat-icon>
+      </div>
+      <div>
+        <span>Planifiées</span>
+        <strong>{{ nombrePlanifiees }}</strong>
+      </div>
     </article>
 
     <article class="carte-stat">
-      <div class="icone-stat gris"><mat-icon>task_alt</mat-icon></div>
-      <div><span>Terminées</span><strong>{{ nombreTerminees }}</strong></div>
+      <div class="icone-stat gris">
+        <mat-icon>task_alt</mat-icon>
+      </div>
+      <div>
+        <span>Terminées</span>
+        <strong>{{ nombreTerminees }}</strong>
+      </div>
     </article>
   </section>
 
+  <!-- Chargement -->
   <div class="message chargement" *ngIf="chargement">
     Chargement des demandes et des études...
   </div>
 
+  <!-- Erreur -->
   <div class="message erreur" *ngIf="erreur && !chargement">
     <mat-icon>error_outline</mat-icon>
     <span>{{ erreur }}</span>
-    <button type="button" (click)="chargerDonnees()">Réessayer</button>
   </div>
 
+  <!-- Liste -->
   <section class="section-liste" *ngIf="!chargement && !erreur">
+
+    <!-- Recherche et filtres -->
     <div class="outils-liste">
-      <div>
+      <div class="titre-section">
         <h2>Demandes à étudier</h2>
-        <p>{{ demandesFiltrees.length }} demande(s) affichée(s)</p>
+        <p>Consultez les demandes et suivez l'avancement des études.</p>
       </div>
 
       <div class="filtres">
         <div class="recherche">
           <mat-icon>search</mat-icon>
-          <input type="text"
+
+          <input
+            type="text"
             [(ngModel)]="recherche"
             (ngModelChange)="appliquerFiltres()"
-            placeholder="Rechercher une demande...">
+            placeholder="Rechercher une demande..."
+            aria-label="Rechercher une demande"
+          >
+
+          <button
+            *ngIf="recherche"
+            type="button"
+            class="btn-effacer-recherche"
+            (click)="recherche = ''; appliquerFiltres()"
+            aria-label="Effacer la recherche"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
         </div>
 
-        <select [(ngModel)]="filtreStatut"
-          (ngModelChange)="appliquerFiltres()">
-          <option value="TOUTES">Tous les états</option>
-          <option value="A_FAIRE">À planifier</option>
-          <option value="PLANIFIEE">Planifiées</option>
-          <option value="TERMINEE">Terminées</option>
-        </select>
+        <div class="filtre-statut">
+          <select
+            [(ngModel)]="filtreStatut"
+            (ngModelChange)="appliquerFiltres()"
+            aria-label="Filtrer par état de l'étude"
+          >
+            <option value="TOUTES">Tous les états</option>
+            <option value="A_FAIRE">À planifier</option>
+            <option value="PLANIFIEE">Planifiées</option>
+            <option value="TERMINEE">Terminées</option>
+          </select>
+        </div>
       </div>
     </div>
 
+    <!-- Tableau des demandes -->
     <div class="table-container">
       <table>
         <thead>
@@ -77,80 +111,206 @@
             <th>Type</th>
             <th>État de l'étude</th>
             <th>Visite prévue</th>
-            <th>Action</th>
+            <th>Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          <tr *ngFor="let item of demandesFiltrees">
+          <tr *ngFor="let item of demandesPagees">
+
+            <!-- Demande -->
             <td>
-              <strong class="titre-demande">{{ item.demande.titre }}</strong>
-              <small class="reference">Demande #{{ item.demande.id }}</small>
+              <strong class="titre-demande">
+                {{ item.demande?.titre || 'Titre indisponible' }}
+              </strong>
             </td>
 
+            <!-- Bénéficiaire -->
             <td>
-              {{ item.demande.beneficiairePrenom }}
-              {{ item.demande.beneficiaireNom }}
+              <span
+                *ngIf="
+                  item.demande?.beneficiairePrenom ||
+                  item.demande?.beneficiaireNom;
+                  else beneficiaireIndisponible
+                "
+              >
+                {{ item.demande?.beneficiairePrenom || '' }}
+                {{ item.demande?.beneficiaireNom || '' }}
+              </span>
+
+              <ng-template #beneficiaireIndisponible>
+                <span class="texte-secondaire">
+                  Bénéficiaire indisponible
+                </span>
+              </ng-template>
             </td>
 
+            <!-- Urgence -->
             <td>
-              <span class="urgence"
-                [class.urgence-forte]="item.demande.niveauUrgence === 'FORTE'">
-                {{ item.demande.niveauUrgence }}
+              <span
+                class="urgence"
+                [class.urgence-faible]="
+                  item.demande?.niveauUrgence === 'FAIBLE'
+                "
+                [class.urgence-moyenne]="
+                  item.demande?.niveauUrgence === 'MOYENNE'
+                "
+                [class.urgence-forte]="
+                  item.demande?.niveauUrgence === 'FORTE'
+                "
+              >
+                {{ item.demande?.niveauUrgence || 'Non précisée' }}
               </span>
             </td>
 
-            <td>{{ item.demande.typeDemande }}</td>
-
+            <!-- Type -->
             <td>
-              <span class="badge-statut"
+              <span class="type-demande">
+                {{ item.demande?.typeDemande || 'Non précisé' }}
+              </span>
+            </td>
+
+            <!-- État de l'étude -->
+            <td>
+              <span
+                class="badge-statut"
                 [class.statut-a-faire]="item.action === 'PLANIFIER'"
                 [class.statut-planifie]="item.action === 'CONTINUER'"
-                [class.statut-termine]="item.action === 'VOIR'">
+                [class.statut-termine]="item.action === 'VOIR'"
+              >
                 {{
-                  item.action === 'PLANIFIER' ? 'À planifier' :
-                  item.action === 'CONTINUER' ? 'Planifiée' : 'Terminée'
+                  item.action === 'PLANIFIER'
+                    ? 'À planifier'
+                    : item.action === 'CONTINUER'
+                      ? 'Planifiée'
+                      : 'Terminée'
                 }}
               </span>
             </td>
 
+            <!-- Visite prévue -->
             <td>
-              {{ item.etude?.datePlanification
-                ? (item.etude?.datePlanification | date:'dd/MM/yyyy')
-                : '—' }}
-              <small class="reference" *ngIf="item.etude?.heure">
-                {{ item.etude?.heure | date:'HH:mm' }}
-              </small>
+              <div class="cellule-visite">
+                <span *ngIf="item.etude?.datePlanification; else dateIndisponible">
+                  {{ item.etude?.datePlanification | date:'dd/MM/yyyy' }}
+                </span>
+
+                <ng-template #dateIndisponible>
+                  <span class="texte-secondaire">Non programmée</span>
+                </ng-template>
+
+                <small *ngIf="item.etude?.heure">
+                  {{ item.etude?.heure }}
+                </small>
+              </div>
             </td>
 
+            <!-- Actions : icônes conservées -->
             <td>
-              <button type="button" class="btn-action"
+              <button
+                type="button"
+                class="btn-action"
                 [class.btn-voir]="item.action === 'VOIR'"
                 [class.btn-continuer]="item.action === 'CONTINUER'"
-                (click)="ouvrirAction(item)">
+                [class.btn-planifier]="item.action === 'PLANIFIER'"
+                (click)="ouvrirAction(item)"
+                [attr.aria-label]="
+                  item.action === 'PLANIFIER'
+                    ? 'Planifier l’étude'
+                    : item.action === 'CONTINUER'
+                      ? 'Continuer l’étude'
+                      : 'Consulter l’étude'
+                "
+              >
                 <mat-icon>
                   {{
-                    item.action === 'PLANIFIER' ? 'calendar_month' :
-                    item.action === 'CONTINUER' ? 'check_circle' : 'visibility'
+                    item.action === 'PLANIFIER'
+                      ? 'calendar_month'
+                      : item.action === 'CONTINUER'
+                        ? 'edit_calendar'
+                        : 'visibility'
                   }}
                 </mat-icon>
-                {{
-                  item.action === 'PLANIFIER' ? 'Planifier' :
-                  item.action === 'CONTINUER' ? 'Continuer' : 'Voir'
-                }}
+
+                <span>
+                  {{
+                    item.action === 'PLANIFIER'
+                      ? 'Planifier'
+                      : item.action === 'CONTINUER'
+                        ? 'Continuer'
+                        : 'Voir'
+                  }}
+                </span>
               </button>
             </td>
           </tr>
 
+          <!-- Aucune demande -->
           <tr *ngIf="demandesFiltrees.length === 0">
             <td colspan="7" class="vide">
-              <mat-icon>inbox</mat-icon>
-              <strong>Aucune demande trouvée</strong>
-              <span>Modifiez les critères de recherche.</span>
+              <div class="etat-vide">
+                <strong>Aucune demande trouvée</strong>
+                <p>
+                  Aucune demande ne correspond à ta recherche ou au filtre sélectionné.
+                </p>
+
+                <button
+                  type="button"
+                  class="btn-reinitialiser"
+                  *ngIf="recherche || filtreStatut !== 'TOUTES'"
+                  (click)="recherche = ''; filtreStatut = 'TOUTES'; appliquerFiltres()"
+                >
+                  Réinitialiser les filtres
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Pagination -->
+    <div
+      class="pagination"
+      *ngIf="demandesFiltrees.length > 0"
+    >
+      <span class="pagination-info">
+        Affichage de {{ debutElement }} à {{ finElement }}
+        sur {{ demandesFiltrees.length }} demandes
+      </span>
+
+      <div class="pagination-actions">
+        <button
+          type="button"
+          (click)="changerPage(pageActuelle - 1)"
+          [disabled]="pageActuelle <= 1"
+          aria-label="Page précédente"
+          title="Page précédente"
+        >
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+
+        <button
+          type="button"
+          *ngFor="let page of pages"
+          [class.active]="page === pageActuelle"
+          [attr.aria-current]="page === pageActuelle ? 'page' : null"
+          (click)="changerPage(page)"
+          [attr.aria-label]="'Aller à la page ' + page"
+        >
+          {{ page }}
+        </button>
+
+        <button
+          type="button"
+          (click)="changerPage(pageActuelle + 1)"
+          [disabled]="pageActuelle >= nombrePages"
+          aria-label="Page suivante"
+          title="Page suivante"
+        >
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
     </div>
   </section>
 </div>

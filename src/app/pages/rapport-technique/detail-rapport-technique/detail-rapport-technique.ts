@@ -100,9 +100,13 @@ export class DetailRapportTechniqueComponent implements OnInit {
   }
 
  
+ 
   get demandeValidee(): boolean {
-    return this.demandeStatut === 'VALIDEE';
-  }
+  return (
+    this.rapport?.statutDemande?.toUpperCase() === 'VALIDEE' ||
+    this.demandeStatut?.toUpperCase() === 'VALIDEE'
+  );
+}
 
  
   get nombreRessources(): number {

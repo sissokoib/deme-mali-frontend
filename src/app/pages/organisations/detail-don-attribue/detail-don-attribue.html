@@ -2,7 +2,7 @@
 
   <button class="btn-retour" type="button" (click)="retour()">
     <mat-icon>arrow_back</mat-icon>
-    Retour aux dons attribués
+    Retour 
   </button>
 
   <div *ngIf="chargement" class="message">
@@ -17,15 +17,11 @@
   <section class="carte-detail" *ngIf="don as d">
 
     <header class="entete">
-      <div class="icone">
-        <mat-icon>
-          {{ d.donFinancierId !== null ? 'payments' : 'inventory_2' }}
-        </mat-icon>
-      </div>
+     
 
       <div>
         <h2>Détail du don attribué</h2>
-        <p>Attribution numéro {{ d.id }}</p>
+        
       </div>
     </header>
 
@@ -84,10 +80,7 @@
       <strong>{{ d.administrateurId ?? '—' }}</strong>
     </div>
 
-    <div class="ligne">
-      <span>Score de priorité</span>
-      <strong>{{ d.scorePriorite ?? '—' }}{{ d.scorePriorite != null ? ' / 100' : '' }}</strong>
-    </div>
+  
 
   </section>
 

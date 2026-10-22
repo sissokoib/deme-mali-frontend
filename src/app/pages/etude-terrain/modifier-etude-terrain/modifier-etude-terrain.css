@@ -1,37 +1,55 @@
+
+/* =========================================
+   1. CONFIGURATION GENERALE
+   ========================================= */
+
 :host {
   display: block;
   min-height: 100%;
-  background: #f7f3ea;
-  color: #1f2933;
+  background-color: #F7F3EA;
+  color: #1F1F1F;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
-.page-etude {
-  min-height: 100vh;
-  padding: 26px 29px 35px;
-  background: #f7f3ea;
+button {
+  font-family: inherit;
+  cursor: pointer;
 }
 
-/* EN-TÊTE */
+/* =========================================
+   2. PAGE PRINCIPALE
+   ========================================= */
+
+.page-etude {
+  min-height: 100vh;
+  padding: 30px 35px;
+  background-color: #F7F3EA;
+}
+
+/* =========================================
+   3. EN-TETE
+   ========================================= */
 
 .entete {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
+  justify-content: space-between;
   gap: 20px;
-  margin-bottom: 35px;
+  margin-bottom: 28px;
 }
 
 .entete h1 {
   margin: 0 0 10px;
-  color: #192630;
-  font-size: 27px;
+  color: #1F1F1F;
+  font-size: 25px;
   font-weight: 700;
-  letter-spacing: -0.5px;
+  line-height: 1.4;
 }
 
 .entete p {
@@ -41,127 +59,166 @@
   line-height: 1.6;
 }
 
-button {
-  font-family: inherit;
-}
+/* =========================================
+   4. BOUTON RETOUR
+   ========================================= */
 
 .btn-retour {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  min-height: 48px;
-  padding: 0 20px;
-  color: #222;
-  background: #f0ede7;
-  border: none;
-  border-radius: 10px;
+  gap: 8px;
+  min-height: 43px;
+  padding: 10px 17px;
+  border: 1px solid #0F7A4B;
+  border-radius: 7px;
+  background-color: #FFFFFF;
+  color: #0F7A4B;
   font-size: 14px;
   font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .btn-retour:hover {
-  background: #e7e2d9;
+  background-color: #0F7A4B;
+  border-color: #0F7A4B;
+  color: #FFFFFF;
 }
 
 .btn-retour mat-icon {
-  font-size: 21px;
-  width: 21px;
-  height: 21px;
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  line-height: 20px;
 }
 
-/* CARTES */
+button:focus-visible {
+  outline: 3px solid #F7B500;
+  outline-offset: 3px;
+}
+
+/* =========================================
+   5. CARTES
+   ========================================= */
 
 .carte {
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   padding: 27px 29px;
-  background: #fff;
-  border: 1px solid rgba(31, 31, 31, 0.025);
-  border-radius: 17px;
-  box-shadow: 0 4px 15px rgba(31, 31, 31, 0.025);
+  border: 1px solid #E8E3D9;
+  border-radius: 12px;
+  background-color: #FFFFFF;
+  box-shadow: 0 3px 12px rgb(31 31 31 / 4%);
 }
 
 .carte h2 {
-  margin: 0 0 25px;
-  color: #192630;
+  margin: 0 0 24px;
+  color: #0F7A4B;
   font-size: 20px;
   font-weight: 700;
+  line-height: 1.4;
 }
 
-/* INFORMATIONS DE L'ÉTUDE */
+/* =========================================
+   6. INFORMATIONS DE L'ETUDE
+   ========================================= */
 
 .informations {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 25px;
+  gap: 24px;
 }
 
 .information {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 9px;
   min-width: 0;
 }
 
 .information label {
-  color: #777;
+  color: #1F1F1F;
   font-size: 14px;
   font-weight: 600;
+  line-height: 1.5;
 }
 
 .information p {
   margin: 0;
-  color: #292929;
+  color: #1F1F1F;
   font-size: 14px;
+  line-height: 1.6;
 }
+
+/* =========================================
+   7. CHAMPS DES INFORMATIONS
+   ========================================= */
 
 .information input {
   width: 100%;
   min-width: 0;
-  padding: 12px;
-  color: #292929;
-  background: #faf9f7;
-  border: 1px solid #e6e1d9;
-  border-radius: 8px;
+  min-height: 46px;
+  padding: 11px 13px;
+  border: 1px solid #D8D2C7;
+  border-radius: 7px;
   outline: none;
+  background-color: #FFFFFF;
+  color: #1F1F1F;
+  font-family: inherit;
   font-size: 14px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .information input:focus {
-  border-color: #0f7a4b;
-  box-shadow: 0 0 0 3px rgba(15, 122, 75, 0.08);
+  border-color: #0F7A4B;
+  box-shadow: 0 0 0 3px rgb(15 122 75 / 12%);
 }
 
-/* STATUT */
+.information input[readonly] {
+  background-color: #F7F3EA;
+  color: #686868;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   8. BADGE DE STATUT
+   ========================================= */
 
 .badge-statut {
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
-  min-height: 34px;
-  padding: 0 15px;
-  color: #087b48;
-  background: #dff4e8;
+  min-height: 32px;
+  padding: 6px 13px;
+  border: 1px solid #D8D2C7;
   border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
+  background-color: #F7F3EA;
+  color: #1F1F1F;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
-.statut-termine {
-  color: #087b48;
-  background: #dff4e8;
+.badge-statut.statut-termine {
+  border-color: #0F7A4B;
+  background-color: #FFFFFF;
+  color: #0F7A4B;
 }
 
-/* CHAMPS DU FORMULAIRE */
+/* =========================================
+   9. CHAMPS DU FORMULAIRE
+   ========================================= */
 
 .champ {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 24px;
+  gap: 9px;
+  margin-bottom: 23px;
 }
 
 .champ:last-child {
@@ -169,143 +226,183 @@ button {
 }
 
 .champ label {
-  color: #252525;
+  color: #1F1F1F;
   font-size: 14px;
   font-weight: 600;
-}
-
-.champ label span {
-  color: #d83b3b;
+  line-height: 1.5;
 }
 
 .champ input,
 .champ textarea {
+  display: block;
   width: 100%;
-  padding: 14px 15px;
-  color: #292929;
-  background: #faf9f7;
-  border: 1px solid #e6e1d9;
-  border-radius: 10px;
+  padding: 13px 14px;
+  border: 1px solid #D8D2C7;
+  border-radius: 7px;
   outline: none;
+  background-color: #FFFFFF;
+  color: #1F1F1F;
   font-family: inherit;
   font-size: 14px;
-  line-height: 1.6;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  line-height: 1.7;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .champ input {
-  min-height: 53px;
+  min-height: 47px;
 }
 
 .champ textarea {
-  min-height: 95px;
+  min-height: 100px;
   resize: vertical;
 }
 
-.champ input:focus,
-.champ textarea:focus {
-  border-color: #0f7a4b;
-  box-shadow: 0 0 0 3px rgba(15, 122, 75, 0.08);
-}
-
-.champ input[readonly],
-.champ textarea[readonly] {
-  color: #686868;
-  background: #f2f0eb;
-  cursor: not-allowed;
-}
+/* Texte indicatif */
 
 .champ input::placeholder,
 .champ textarea::placeholder {
-  color: #a2a2a2;
+  color: #777777;
+  opacity: 1;
 }
 
+/* Focus : vert de la charte */
+
+.champ input:focus,
+.champ textarea:focus {
+  border-color: #0F7A4B;
+  box-shadow: 0 0 0 3px rgb(15 122 75 / 12%);
+}
+
+/* Champs en lecture seule */
+
+.champ input[readonly],
+.champ textarea[readonly] {
+  background-color: #F7F3EA;
+  color: #686868;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   10. VALIDATION ET ERREURS
+   ========================================= */
+
+.erreur-champ {
+  display: block;
+  color: #D32F2F;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* Bordure rouge uniquement lorsque le champ
+   invalide a été touché ou que le formulaire
+   a été soumis */
+
+.information input.ng-invalid.ng-touched,
 .champ input.ng-invalid.ng-touched,
 .champ textarea.ng-invalid.ng-touched {
-  border-color: #dc4545;
+  border-color: #D32F2F;
 }
 
-/* MESSAGES */
+/* =========================================
+   11. MESSAGE D'INFORMATION
+   ========================================= */
 
 .message-info {
-  margin: -5px 0 25px;
-  padding: 16px;
-  color: #626262;
-  background: #f7f3ea;
-  border-radius: 9px;
+  margin: 0 0 23px;
+  padding: 15px 17px;
+  border: 1px solid #E8E3D9;
+  border-radius: 7px;
+  background-color: #F7F3EA;
+  color: #1F1F1F;
   font-size: 14px;
   line-height: 1.7;
 }
 
+/* =========================================
+   12. DEMANDE VERROUILLEE
+   ========================================= */
+
 .message-verrouille {
   display: flex;
   align-items: flex-start;
-  gap: 14px;
-  margin-bottom: 20px;
-  padding: 18px 20px;
-  color: #7a4810;
-  background: #fff3d6;
-  border: 1px solid #f2d69b;
-  border-radius: 12px;
+  gap: 13px;
+  margin-bottom: 22px;
+  padding: 17px 19px;
+  border: 1px solid #E8C96B;
+  border-radius: 8px;
+  background-color: #FFF9E8;
+  color: #1F1F1F;
 }
 
 .message-verrouille mat-icon {
   flex-shrink: 0;
-  color: #b77912;
+  color: #8A6500;
 }
 
 .message-verrouille strong {
   display: block;
-  margin-bottom: 5px;
-  font-size: 14px;
+  margin-bottom: 6px;
+  font-size: 15px;
+  font-weight: 700;
 }
 
 .message-verrouille p {
   margin: 0;
+  color: #686868;
   font-size: 13px;
   line-height: 1.6;
 }
 
-.erreur-champ {
-  color: #d33e3e;
-  font-size: 12px;
-  line-height: 1.5;
-}
+/* =========================================
+   13. MESSAGE D'ERREUR GENERAL
+   ========================================= */
 
 .erreur-generale {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  padding: 16px;
-  color: #a52828;
-  background: #fff0f0;
-  border: 1px solid #f3cccc;
-  border-radius: 10px;
+  gap: 11px;
+  margin-bottom: 22px;
+  padding: 15px 17px;
+  border: 1px solid #F0C6C6;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  color: #D32F2F;
   font-size: 14px;
+  line-height: 1.6;
+}
+
+.erreur-generale mat-icon {
+  flex-shrink: 0;
 }
 
 .erreur-generale button {
   margin-left: auto;
-  padding: 9px 13px;
-  color: #a52828;
-  background: #fff;
-  border: 1px solid #f0cccc;
-  border-radius: 7px;
-  cursor: pointer;
+  padding: 8px 12px;
+  border: 1px solid #D32F2F;
+  border-radius: 6px;
+  background-color: #FFFFFF;
+  color: #D32F2F;
+  font-size: 13px;
+  font-weight: 600;
 }
 
-/* ACTIONS */
+/* =========================================
+   14. ACTIONS DU FORMULAIRE
+   ========================================= */
 
 .actions {
   display: flex;
-  justify-content: flex-end;
   align-items: center;
-  gap: 15px;
+  justify-content: flex-end;
+  gap: 12px;
   margin-top: 25px;
   padding-top: 22px;
-  border-top: 1px solid #eeece7;
+  border-top: 1px solid #E8E3D9;
 }
+
+/* Boutons Annuler et Enregistrer */
 
 .btn-annuler,
 .btn-enregistrer {
@@ -313,64 +410,89 @@ button {
   align-items: center;
   justify-content: center;
   gap: 9px;
-  min-height: 47px;
-  padding: 0 23px;
-  border: none;
-  border-radius: 9px;
+  min-height: 44px;
+  padding: 11px 19px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  font-family: inherit;
   font-size: 14px;
   font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
+  line-height: 1.4;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
+/* Bouton Annuler */
+
 .btn-annuler {
-  color: #292929;
-  background: #f0ede7;
+  border-color: #D8D2C7;
+  background-color: #FFFFFF;
+  color: #1F1F1F;
 }
 
 .btn-annuler:hover:not(:disabled) {
-  background: #e5e0d7;
+  border-color: #BDB5A8;
+  background-color: #F7F3EA;
 }
 
+/* Bouton Enregistrer */
+
 .btn-enregistrer {
-  color: #fff;
-  background: #0f7a4b;
+  border-color: #0F7A4B;
+  background-color: #0F7A4B;
+  color: #FFFFFF;
 }
 
 .btn-enregistrer:hover:not(:disabled) {
-  background: #09613a;
-  transform: translateY(-1px);
+  border-color: #0B623C;
+  background-color: #0B623C;
+  box-shadow: 0 3px 8px rgb(15 122 75 / 15%);
 }
 
+/* Icône du bouton */
+
 .btn-enregistrer mat-icon {
-  width: 19px;
-  height: 19px;
-  font-size: 19px;
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  line-height: 20px;
 }
+
+/* Boutons désactivés */
 
 .btn-annuler:disabled,
 .btn-enregistrer:disabled {
-  opacity: 0.55;
+  opacity: 0.6;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
-/* CHARGEMENT */
+/* =========================================
+   15. CHARGEMENT
+   ========================================= */
 
 .chargement {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 13px;
-  padding: 40px 20px;
-  color: #626262;
+  padding: 35px 20px;
+  border: 1px solid #E8E3D9;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  color: #1F1F1F;
   font-size: 14px;
+  line-height: 1.6;
 }
 
 .spinner {
   width: 22px;
   height: 22px;
-  border: 3px solid #d9e8df;
-  border-top-color: #0f7a4b;
+  flex-shrink: 0;
+  border: 3px solid #D8E7DE;
+  border-top-color: #0F7A4B;
   border-radius: 50%;
   animation: tourner 0.7s linear infinite;
 }
@@ -381,59 +503,109 @@ button {
   }
 }
 
-/* RESPONSIVE */
+/* =========================================
+   16. RESPONSIVE : TABLETTES
+   ========================================= */
 
 @media (max-width: 900px) {
-  .informations {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .page-etude {
+    padding: 24px 20px;
   }
 
-  .page-etude {
-    padding: 22px;
+  .informations {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .carte {
+    padding: 24px 22px;
   }
 }
 
+/* =========================================
+   17. RESPONSIVE : MOBILES
+   ========================================= */
+
 @media (max-width: 576px) {
   .page-etude {
-    padding: 17px 13px 25px;
+    padding: 18px 13px 25px;
   }
 
   .entete {
     flex-direction: column;
+    gap: 15px;
     margin-bottom: 23px;
   }
 
   .entete h1 {
-    font-size: 23px;
+    font-size: 24px;
+  }
+
+  .entete p {
+    font-size: 13px;
   }
 
   .btn-retour {
     align-self: flex-start;
-    min-height: 42px;
   }
 
   .carte {
     padding: 21px 16px;
-    border-radius: 13px;
+    border-radius: 10px;
   }
 
   .carte h2 {
-    margin-bottom: 21px;
+    margin-bottom: 20px;
     font-size: 18px;
   }
 
   .informations {
     grid-template-columns: 1fr;
-    gap: 21px;
+    gap: 19px;
+  }
+
+  .champ input,
+  .champ textarea,
+  .information input {
+    font-size: 14px;
   }
 
   .actions {
     flex-direction: column-reverse;
     align-items: stretch;
+    gap: 10px;
   }
 
   .btn-annuler,
   .btn-enregistrer {
     width: 100%;
+  }
+}
+
+/* =========================================
+   18. TRES PETITS ECRANS
+   ========================================= */
+
+@media (max-width: 380px) {
+  .page-etude {
+    padding: 15px 10px 20px;
+  }
+
+  .carte {
+    padding: 18px 13px;
+  }
+
+  .entete h1 {
+    font-size: 22px;
+  }
+
+  .carte h2 {
+    font-size: 17px;
+  }
+
+  .btn-annuler,
+  .btn-enregistrer {
+    padding: 10px 12px;
+    font-size: 13px;
   }
 }

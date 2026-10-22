@@ -20,7 +20,6 @@
   <div class="erreur-generale" *ngIf="erreur && !chargement">
     <mat-icon>error_outline</mat-icon>
     {{ erreur }}
-    <button type="button" (click)="chargerEtude()">Réessayer</button>
   </div>
 
   <ng-container *ngIf="!chargement && !erreur && etude">
@@ -29,7 +28,7 @@
       <mat-icon>lock</mat-icon>
       <div>
         <strong>Modification impossible</strong>
-        <p>La demande d'aide associée est validée. Les informations sont en lecture seule.</p>
+        <p>La demande d'aide associée est validée</p>
       </div>
     </div>
 
@@ -55,7 +54,7 @@
 
             <small class="erreur-champ"
               *ngIf="lieuCtrl.invalid && (lieuCtrl.touched || form.submitted)">
-              Le lieu est obligatoire (2 caractères minimum).
+              Le lieu est obligatoire.
             </small>
           </div>
 
@@ -98,7 +97,7 @@
         <h2>Objectif de la visite</h2>
 
         <div class="champ">
-          <label for="objectif">Objectif <span>*</span></label>
+          <label for="objectif">Objectif</label>
           <textarea
             id="objectif"
             name="objectif"
@@ -121,13 +120,13 @@
       <section class="carte">
         <h2>Résultat de la visite</h2>
 
-        <p class="message-info" *ngIf="!etudeTerminee">
+      <!--  <p class="message-info" *ngIf="!etudeTerminee">
           Les informations de réalisation pourront être complétées après la visite.
         </p>
 
         <p class="message-info" *ngIf="etudeTerminee">
           Cette étude est terminée. Tu peux modifier les informations de réalisation.
-        </p>
+        </p>-->
 
         <div class="champ">
           <label for="dateRealisation">Date de réalisation</label>
@@ -177,7 +176,6 @@
           class="btn-enregistrer"
           [disabled]="enregistrement || demandeValidee || form.invalid">
 
-          <mat-icon *ngIf="!enregistrement">save</mat-icon>
           <span>
             {{ enregistrement ? 'Enregistrement...' : 'Enregistrer les modifications' }}
           </span>

@@ -3,47 +3,13 @@
 
   <header class="entete-page">
     <div>
-      <span class="surtitre">GESTION DES AIDES</span>
-      <h1>Nouvelle affectation</h1>
-      <p>Affectez les dons attribués à votre organisation.</p>
+    
+      <h1>Ajouter affectation</h1>
+      <p>Affectez les dons attribués .</p>
     </div>
-    <mat-icon class="icone-entete">volunteer_activism</mat-icon>
+   
   </header>
 
-  <!-- STATISTIQUES -->
-  <section class="cartes-resume">
-    <article class="carte-resume">
-      <div class="resume-icone verte">
-        <mat-icon>payments</mat-icon>
-      </div>
-      <div>
-        <p>Dons financiers disponibles</p>
-        <h2>{{ donsFinanciersDisponibles }}</h2>
-      </div>
-    </article>
-
-    <article class="carte-resume">
-      <div class="resume-icone jaune">
-        <mat-icon>inventory_2</mat-icon>
-      </div>
-      <div>
-        <p>Dons matériels disponibles</p>
-        <h2>{{ donsMaterielsDisponibles }}</h2>
-      </div>
-    </article>
-
-    <article class="carte-resume">
-      <div class="resume-icone beige">
-        <mat-icon>assignment</mat-icon>
-      </div>
-      <div>
-        <p>Demandes disponibles</p>
-        <h2>{{ demandes.length }}</h2>
-      </div>
-    </article>
-  </section>
-
-  <!-- CHARGEMENT -->
   <div class="message chargement" *ngIf="chargementInitial">
     Chargement des données...
   </div>
@@ -69,7 +35,7 @@
           type="button"
           [class.actif]="modeAffectation === 'DEMANDE'"
           (click)="changerDestination('DEMANDE')">
-          <mat-icon>assignment</mat-icon>
+         
           Demande d'aide
         </button>
 
@@ -77,7 +43,7 @@
           type="button"
           [class.actif]="modeAffectation === 'BENEFICIAIRE'"
           (click)="changerDestination('BENEFICIAIRE')">
-          <mat-icon>person</mat-icon>
+         
           Bénéficiaire
         </button>
       </div>
@@ -109,7 +75,7 @@
 
           <span>
             <strong>{{ demande.titre }}</strong>
-            <small>Demande #{{ demande.id }}</small>
+            <small>Demande {{ demande.id }}</small>
             <small>
               Besoin :
               {{ demande.montantNecessaire | number:'1.0-0' }} FCFA
@@ -120,9 +86,7 @@
             </small>
           </span>
 
-          <mat-icon *ngIf="demandeAideId === demande.id">
-            check_circle
-          </mat-icon>
+    
         </button>
 
         <p
@@ -173,15 +137,13 @@
             <small>{{ beneficiaire.telephone }}</small>
           </span>
 
-          <mat-icon *ngIf="beneficiaireId === beneficiaire.id">
-            check_circle
-          </mat-icon>
+       
         </button>
 
         <p
           class="aucun-resultat"
           *ngIf="beneficiairesFiltres.length === 0">
-          Aucun bénéficiaire accepté disponible.
+          Aucun bénéficiaire  disponible.
         </p>
       </div>
 
@@ -200,7 +162,7 @@
           type="button"
           [class.actif]="typeAide === 'FINANCIER'"
           (click)="changerType('FINANCIER')">
-          <mat-icon>payments</mat-icon>
+          
           Don financier
         </button>
 
@@ -208,7 +170,7 @@
           type="button"
           [class.actif]="typeAide === 'MATERIEL'"
           (click)="changerType('MATERIEL')">
-          <mat-icon>inventory_2</mat-icon>
+          
           Don matériel
         </button>
       </div>
@@ -238,7 +200,7 @@
           (click)="selectionnerDon(don)">
 
           <span>
-            <strong>Don #{{ don.donId }}</strong>
+            <strong>Don {{ don.donId }}</strong>
 
             <small *ngIf="don.typeDon === 'FINANCIER'">
               Montant attribué :
@@ -264,13 +226,11 @@
             </small>
           </span>
 
-          <mat-icon *ngIf="donId === don.donId">
-            check_circle
-          </mat-icon>
+        
         </button>
 
         <p class="aucun-resultat" *ngIf="donsFiltres.length === 0">
-          Aucun don disponible pour ce type.
+          Aucun don disponible .
         </p>
       </div>
 
@@ -383,7 +343,7 @@
         *ngIf="utiliserUnitePersonnalisee">
 
         <label for="unitePersonnalisee">
-          Précisez l'unité
+          choisissez l'unité
         </label>
 
         <input
@@ -424,9 +384,7 @@
         class="bouton-principal"
         [disabled]="chargement || chargementInitial">
 
-        <mat-icon>
-          {{ chargement ? 'hourglass_empty' : 'check_circle' }}
-        </mat-icon>
+       
 
         {{
           chargement
@@ -447,7 +405,7 @@
 
     <div class="modal-entete">
       <div class="modal-icone">
-        <mat-icon>fact_check</mat-icon>
+       
       </div>
 
       <button
@@ -528,10 +486,10 @@
     </div>
 
     <div class="avertissement-modal">
-      <mat-icon>info</mat-icon>
+      
       <p>
-        Vérifiez attentivement le destinataire et les quantités.
-        Confirmez uniquement si toutes les informations sont correctes.
+        Vérifiez  le destinataire et les quantités.
+       
       </p>
     </div>
 
@@ -550,9 +508,7 @@
         [disabled]="chargement"
         (click)="confirmerAffectation()">
 
-        <mat-icon>
-          {{ chargement ? 'hourglass_empty' : 'check_circle' }}
-        </mat-icon>
+       
 
         {{ chargement ? 'Enregistrement...' : 'Confirmer l’affectation' }}
       </button>

@@ -1,9 +1,9 @@
-
 :host {
   display: block;
   min-height: 100vh;
   background: #F7F3EA;
   color: #1F1F1F;
+  font-family: Arial, sans-serif;
 }
 
 * {
@@ -30,8 +30,9 @@
 
 .page-header p,
 .section-description {
-  margin: 0;
-  color: #686868;
+  margin: 0 0 10px;
+  color: #1F1F1F;
+  opacity: 0.7;
   font-size: 14px;
   line-height: 1.6;
 }
@@ -40,15 +41,14 @@
   margin-bottom: 24px;
   padding: 26px;
   background: #FFFFFF;
-  border: 1px solid #e7e3da;
+  border: 1px solid #F7F3EA;
   border-radius: 14px;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 3px 12px rgba(31, 31, 31, 0.05);
 }
 
 .form-card h2 {
   margin: 0 0 22px;
   padding-bottom: 14px;
-  border-bottom: 1px solid #eeeae1;
   color: #0F7A4B;
   font-size: 20px;
   font-weight: 700;
@@ -80,7 +80,7 @@
 }
 
 .form-group label {
-  color: #333333;
+  color: #1F1F1F;
   font-size: 14px;
   font-weight: 600;
 }
@@ -91,7 +91,7 @@
   width: 100%;
   min-height: 44px;
   padding: 11px 12px;
-  border: 1px solid #d8d8d2;
+  border: 1px solid #F7F3EA;
   border-radius: 8px;
   outline: none;
   background: #FFFFFF;
@@ -110,12 +110,12 @@
 .form-group select:focus,
 .form-group textarea:focus {
   border-color: #0F7A4B;
-  box-shadow: 0 0 0 3px rgba(15, 122, 75, 0.1);
+  box-shadow: 0 0 0 3px rgba(15, 122, 75, 0.12);
 }
 
 .form-group input[readonly] {
-  background: #f3f3ef;
-  color: #666666;
+  background: #F7F3EA;
+  color: #1F1F1F;
   cursor: not-allowed;
 }
 
@@ -126,14 +126,21 @@
 
 .field-error {
   display: block;
-  color: #c62828;
+  margin: 4px 0 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: red;
   font-size: 12px;
+  font-weight: 400;
   line-height: 1.5;
 }
 
 .help-text {
   margin: 0;
-  color: #777777;
+  color: #1F1F1F;
+  opacity: 0.7;
   font-size: 12px;
   line-height: 1.6;
 }
@@ -158,9 +165,9 @@
   max-height: 240px;
   overflow-y: auto;
   background: #FFFFFF;
-  border: 1px solid #d8d8d2;
+  border: 1px solid #F7F3EA;
   border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 18px rgba(31, 31, 31, 0.1);
 }
 
 .beneficiaire-option {
@@ -171,14 +178,15 @@
   width: 100%;
   padding: 12px;
   border: none;
-  border-bottom: 1px solid #eeeeee;
+  border-bottom: 1px solid #F7F3EA;
   background: #FFFFFF;
   text-align: left;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
 .beneficiaire-option:hover {
-  background: #f2f8f4;
+  background: #F7F3EA;
 }
 
 .beneficiaire-option strong {
@@ -186,12 +194,14 @@
 }
 
 .beneficiaire-option span {
-  color: #777777;
+  color: #1F1F1F;
+  opacity: 0.7;
   font-size: 12px;
 }
 
 .empty-message {
-  color: #777777;
+  color: #1F1F1F;
+  opacity: 0.7;
   font-size: 13px;
 }
 
@@ -202,9 +212,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 14px;
-  border: 1px solid #b9ddca;
-  border-radius: 8px;
-  background: #f2f8f4;
+ 
 }
 
 .selected-beneficiaire > div {
@@ -214,7 +222,8 @@
 }
 
 .selected-label {
-  color: #777777;
+  color: #1F1F1F;
+  opacity: 0.7;
   font-size: 12px;
 }
 
@@ -224,20 +233,20 @@
 
 .btn-clear {
   padding: 8px 12px;
-  border: 1px solid #cfe3d5;
+  border: 1px solid #0F7A4B;
   border-radius: 7px;
   background: #FFFFFF;
   color: #0F7A4B;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
+  transition: background 0.2s, color 0.2s;
 }
 
 .btn-clear:hover {
-  background: #edf5ef;
+  background: #0F7A4B;
+  color: #FFFFFF;
 }
-
-/* Choix visuels du type d'aide */
 
 .type-aide-options {
   display: grid;
@@ -254,7 +263,7 @@
   min-width: 0;
   min-height: 110px;
   padding: 18px;
-  border: 1px solid #deded6;
+  border: 1px solid #F7F3EA;
   border-radius: 12px;
   background: #FFFFFF;
   cursor: pointer;
@@ -262,18 +271,17 @@
 }
 
 .type-aide-card:hover {
-  border-color: #80b69a;
-  background: #fbfdfb;
+  border-color: #0F7A4B;
+  background: #F7F3EA;
 }
 
 .type-aide-card.selected {
   border: 2px solid #0F7A4B;
   padding: 17px;
-  background: #f2f8f4;
+  background: #F7F3EA;
   box-shadow: 0 3px 10px rgba(15, 122, 75, 0.08);
 }
 
-/* Le vrai bouton radio reste fonctionnel mais est masqué visuellement. */
 .type-aide-card input[type="radio"] {
   position: absolute;
   width: 1px;
@@ -296,7 +304,7 @@
   width: 48px;
   height: 48px;
   border-radius: 10px;
-  background: #f7f3ea;
+  background: #F7F3EA;
   color: #0F7A4B;
 }
 
@@ -319,7 +327,8 @@
 }
 
 .type-aide-content small {
-  color: #707070;
+  color: #1F1F1F;
+  opacity: 0.7;
   font-size: 12px;
   line-height: 1.5;
 }
@@ -331,7 +340,7 @@
   justify-content: center;
   width: 20px;
   height: 20px;
-  border: 2px solid #bdbdb5;
+  border: 2px solid #F7B500;
   border-radius: 50%;
 }
 
@@ -350,7 +359,7 @@
 .type-aide-details {
   margin-top: 10px;
   padding-top: 22px;
-  border-top: 1px solid #eeeae1;
+  border-top: 1px solid #F7F3EA;
 }
 
 .subsection-heading {
@@ -364,12 +373,11 @@
 
 .subsection-heading p {
   margin: 0;
-  color: #777777;
+  color: #1F1F1F;
+  opacity: 0.7;
   font-size: 13px;
   line-height: 1.6;
 }
-
-/* Saisie des articles */
 
 .article-form {
   display: grid;
@@ -378,9 +386,9 @@
   align-items: end;
   margin-top: 18px;
   padding: 18px;
-  border: 1px solid #e5e2d9;
+  border: 1px solid #F7F3EA;
   border-radius: 10px;
-  background: #faf9f5;
+  background: #FFFFFF;
 }
 
 .article-form .form-group {
@@ -418,37 +426,42 @@
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #0b603b;
+  background: #0F7A4B;
+  opacity: 0.88;
+  transform: translateY(-1px);
 }
 
 .btn-secondary {
-  background: #F7B500;
-  color: #1F1F1F;
+  background: #0F7A4B;
+  color: #FFFFFF;
 }
 
-.btn-secondary:hover {
-  background: #e4a600;
+.btn-secondary:hover:not(:disabled) {
+  background: #0F7A4B;
+  opacity: 0.88;
+  transform: translateY(-1px);
 }
 
 .btn-cancel {
-  border: 1px solid #d8d8d2;
+  border: 1px solid #F7B500;
   background: #FFFFFF;
-  color: #333333;
+  color: #1F1F1F;
 }
 
 .btn-cancel:hover:not(:disabled) {
-  background: #f0efe9;
+  background: #F7F3EA;
 }
 
 .btn-delete {
   min-height: auto;
   padding: 7px 10px;
-  background: #fdecec;
-  color: #b42318;
+  background: #F7B500;
+  color: #1F1F1F;
 }
 
-.btn-delete:hover {
-  background: #f9d8d8;
+.btn-delete:hover:not(:disabled) {
+  background: #F7B500;
+  opacity: 0.85;
 }
 
 button:disabled {
@@ -456,13 +469,11 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Tableau des articles */
-
 .table-container {
   width: 100%;
   margin-top: 22px;
   overflow-x: auto;
-  border: 1px solid #e8e5dc;
+  border: 1px solid #F7F3EA;
   border-radius: 9px;
 }
 
@@ -474,26 +485,20 @@ table {
 }
 
 thead {
-  background: #edf5ef;
-  color: #0F7A4B;
+  background: #F7F3EA;
+  color: #1F1F1F;
 }
 
 th,
 td {
   padding: 13px 12px;
-  border-bottom: 1px solid #eae8e1;
+  border-bottom: 1px solid #F7F3EA;
   text-align: left;
   white-space: nowrap;
 }
 
-tbody tr:hover {
-  background: #faf9f5;
-}
 
-tfoot {
-  background: #fff8df;
-  font-weight: 700;
-}
+
 
 tfoot th {
   color: #1F1F1F;
@@ -506,9 +511,8 @@ tfoot th {
   gap: 10px;
   margin-top: 18px;
   padding: 28px 15px;
-  border: 1px dashed #d8d8d2;
-  border-radius: 10px;
-  color: #888888;
+  
+  color: #1F1F1F;
   text-align: center;
 }
 
@@ -525,13 +529,13 @@ tfoot th {
   gap: 12px;
   margin-top: 18px;
   padding: 18px;
-  border: 1px solid #f0d780;
+  border: 1px solid #F7B500;
   border-radius: 10px;
-  background: #fff8df;
+  background: #F7F3EA;
 }
 
 .total-estime span {
-  color: #444444;
+  color: #1F1F1F;
   font-size: 14px;
 }
 
@@ -540,19 +544,18 @@ tfoot th {
   font-size: 20px;
 }
 
-/* Fichiers justificatifs */
-
 .fichiers-selectionnes {
   margin: 16px 0;
   padding: 16px;
-  border: 1px solid #e5e2d9;
+  border: 1px solid #F7F3EA;
   border-radius: 9px;
-  background: #faf9f5;
+  background: #F7F3EA;
 }
 
 .fichiers-selectionnes h3 {
   margin-bottom: 12px;
   font-size: 14px;
+  color: #0F7A4B;
 }
 
 .fichier-item {
@@ -561,7 +564,7 @@ tfoot th {
   justify-content: space-between;
   gap: 12px;
   padding: 10px 0;
-  border-bottom: 1px solid #eae8e1;
+  border-bottom: 1px solid #F7F3EA;
 }
 
 .fichier-item:last-child {
@@ -570,11 +573,9 @@ tfoot th {
 
 .fichier-nom {
   overflow-wrap: anywhere;
-  color: #444444;
+  color: #1F1F1F;
   font-size: 13px;
 }
-
-/* Actions du formulaire */
 
 .form-actions {
   display: flex;
@@ -583,8 +584,6 @@ tfoot th {
   gap: 12px;
   margin-bottom: 30px;
 }
-
-/* Adaptation tablette */
 
 @media (max-width: 850px) {
   .article-form {
@@ -610,8 +609,6 @@ tfoot th {
     height: 40px;
   }
 }
-
-/* Adaptation mobile */
 
 @media (max-width: 600px) {
   .page-container {

@@ -7,6 +7,7 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 
 import { AideDistribuee } from '../../../../models/aide-distribuee.model';
 import { Demande } from '../../../../models/demande.model';
@@ -15,11 +16,15 @@ import { PreuveDistribution } from '../../../../models/preuve-distribution.model
 import { AideDistribueeService } from '../../../../services/aides-distribuees';
 import { demandeAideService } from '../../../../services/demande-aide';
 import { PreuveDistributionService } from '../../../../services/preuve-distribution.service';
+import { NotificationService } from '../../../../services/notification';
 
 @Component({
   selector: 'app-detail-aide-distribuee',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    MatIconModule
+  ],
   templateUrl: './detail-aide-distribuee.html',
   styleUrl: './detail-aide-distribuee.css'
 })
@@ -37,10 +42,14 @@ export class DetailAideDistribueeComponent implements OnInit {
     private aideService: AideDistribueeService,
     private demandeService: demandeAideService,
     private preuveService: PreuveDistributionService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private notifService:NotificationService
   ) {}
 
-  // Charger la distribution à partir de l'identifiant de la route.
+  // =========================================
+  // INITIALISATION
+  // =========================================
+
   ngOnInit(): void {
     this.route.paramMap.subscribe({
       next: (params) => {
@@ -51,24 +60,35 @@ export class DetailAideDistribueeComponent implements OnInit {
             'Identifiant de distribution invalide.';
 
           this.chargement = false;
+          this.aide = null;
+          this.demande = null;
+
           this.cdr.detectChanges();
           return;
         }
 
         this.chargerDetail(id);
       },
+
       error: (erreur) => {
-        console.error('Erreur de lecture de la route :', erreur);
+        console.error(
+          'Erreur de lecture de la route :',
+          erreur
+        );
 
         this.messageErreur =
           'Impossible de récupérer l’identifiant de la distribution.';
 
+        this.chargement = false;
         this.cdr.detectChanges();
       }
     });
   }
 
-  // Charger la distribution et sa demande associée.
+  // =========================================
+  // CHARGEMENT DU DÉTAIL
+  // =========================================
+
   chargerDetail(id: number): void {
     this.chargement = true;
     this.messageErreur = '';
@@ -81,40 +101,41 @@ export class DetailAideDistribueeComponent implements OnInit {
       next: (aide) => {
         this.aide = aide;
 
-        // Vérifier si la distribution est liée à une demande.
-        if (aide.demandeAideId == null) {
-          this.messageErreur =
-            'Aucune demande d’aide n’est associée à cette distribution.';
+      if (aide.demandeAideId == null) {
+  this.notifService.erreur(
+    'Aucune demande d’aide n’est associée à cette distribution.'
+  );
 
-          this.chargement = false;
-          this.cdr.detectChanges();
-          return;
-        }
+  this.chargement = false;
+  this.cdr.detectChanges();
+  return;
+}
 
-        this.cdr.detectChanges();
+        this.demandeService
+          .getById(aide.demandeAideId)
+          .subscribe({
+            next: (demande) => {
+              this.demande = demande;
+              this.chargement = false;
 
-        // Charger la demande associée.
-        this.demandeService.getById(aide.demandeAideId).subscribe({
-          next: (demande) => {
-            this.demande = demande;
-            this.chargement = false;
+              this.cdr.detectChanges();
+            },
 
-            this.cdr.detectChanges();
-          },
-          error: (erreur) => {
-            console.error(
-              'Erreur de chargement de la demande :',
-              erreur
-            );
+            error: (erreur) => {
+              console.error(
+                'Erreur de chargement de la demande :',
+                erreur
+              );
 
-            this.messageErreur =
-              'Impossible de charger la demande associée.';
+              this.messageErreur =
+                'Impossible de charger la demande associée.';
 
-            this.chargement = false;
-            this.cdr.detectChanges();
-          }
-        });
+              this.chargement = false;
+              this.cdr.detectChanges();
+            }
+          });
       },
+
       error: (erreur) => {
         console.error(
           'Erreur de chargement de la distribution :',
@@ -130,6 +151,39 @@ export class DetailAideDistribueeComponent implements OnInit {
       }
     });
   }
+
+
+  demandeAideType(
+    type: 'FINANCIERE' | 'MATERIELLE'
+  ): boolean {
+    return this.demande?.typeDemandeAide === type;
+  }
+
+ 
+  calculerTotalFinancier = (
+    total: number,
+    affectation: {
+      montantAffecte?: number | null;
+    }
+  ): number => {
+    return total + (affectation.montantAffecte ?? 0);
+  };
+
+  /**
+   * Additionne les valeurs des affectations matérielles.
+   */
+  calculerTotalMateriel = (
+    total: number,
+    affectation: {
+      valeurAffectee?: number | null;
+    }
+  ): number => {
+    return total + (affectation.valeurAffectee ?? 0);
+  };
+
+  // =========================================
+  // GESTION DES PREUVES
+  // =========================================
 
   // Construire l'URL publique d'une preuve.
   urlPreuve(url: string): string {
@@ -150,6 +204,10 @@ export class DetailAideDistribueeComponent implements OnInit {
   estDocument(preuve: PreuveDistribution): boolean {
     return preuve.typeMedia === 'DOCUMENT';
   }
+
+  // =========================================
+  // STATUT ET MONTANTS
+  // =========================================
 
   // Afficher un libellé lisible du statut.
   libelleStatut(statut: string): string {
@@ -172,6 +230,10 @@ export class DetailAideDistribueeComponent implements OnInit {
     return `${(montant ?? 0).toLocaleString('fr-FR')} FCFA`;
   }
 
+  // =========================================
+  // NAVIGATION
+  // =========================================
+
   // Revenir à la liste des distributions.
   retourListe(): void {
     this.router.navigate([
@@ -179,7 +241,7 @@ export class DetailAideDistribueeComponent implements OnInit {
     ]);
   }
 
-  // Ouvrir la demande si son identifiant existe.
+  // Ouvrir la demande associée.
   voirDemande(): void {
     if (this.aide?.demandeAideId != null) {
       this.router.navigate([
@@ -189,9 +251,16 @@ export class DetailAideDistribueeComponent implements OnInit {
     }
   }
 
-  // Confirmer une distribution en attente.
+  // =========================================
+  // CONFIRMATION DE LA DISTRIBUTION
+  // =========================================
+
   confirmerDistribution(): void {
-    if (!this.aide || this.aide.statut !== 'EN_ATTENTE') {
+    if (
+      !this.aide ||
+      this.aide.statut !== 'EN_ATTENTE' ||
+      this.chargement
+    ) {
       return;
     }
 
@@ -216,9 +285,6 @@ export class DetailAideDistribueeComponent implements OnInit {
         this.aideService.getById(id).subscribe({
           next: (aide) => {
             this.aide = aide;
-            this.chargement = false;
-
-            this.cdr.detectChanges();
 
             // Recharger également la demande associée.
             if (aide.demandeAideId != null) {
@@ -227,17 +293,31 @@ export class DetailAideDistribueeComponent implements OnInit {
                 .subscribe({
                   next: (demande) => {
                     this.demande = demande;
+                    this.chargement = false;
+
                     this.cdr.detectChanges();
                   },
+
                   error: (erreur) => {
                     console.error(
                       'Erreur de rechargement de la demande :',
                       erreur
                     );
+
+                    this.messageErreur =
+                      'La distribution a été confirmée, mais la demande n’a pas pu être rechargée.';
+
+                    this.chargement = false;
+                    this.cdr.detectChanges();
                   }
                 });
+            } else {
+              this.demande = null;
+              this.chargement = false;
+              this.cdr.detectChanges();
             }
           },
+
           error: (erreur) => {
             console.error(
               'Erreur de rechargement de la distribution :',
@@ -252,6 +332,7 @@ export class DetailAideDistribueeComponent implements OnInit {
           }
         });
       },
+
       error: (erreur) => {
         console.error(
           'Erreur de confirmation :',

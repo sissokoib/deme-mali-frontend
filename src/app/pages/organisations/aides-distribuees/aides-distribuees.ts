@@ -15,11 +15,12 @@ import { AideDistribueeService } from '../../../services/aides-distribuees';
 import { demandeAideService } from '../../../services/demande-aide';
 import { PreuveDistributionService } from '../../../services/preuve-distribution.service';
 import { AuthService } from '../../../services/auth.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-aides-distribuees',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './aides-distribuees.html',
   styleUrl: './aides-distribuees.css'
 })

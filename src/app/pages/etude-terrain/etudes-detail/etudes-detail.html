@@ -4,10 +4,7 @@
   <header class="page-header">
     <div>
       <h1>Détail de l'étude de terrain</h1>
-      <p>
-        Étude réalisée dans le cadre de la demande
-        #{{ demande?.id || etude?.demandeAideId }}
-      </p>
+     
     </div>
 
     <button
@@ -29,9 +26,7 @@
     <mat-icon>error_outline</mat-icon>
     <span>{{ erreur }}</span>
 
-    <button type="button" (click)="chargerDetail()">
-      Réessayer
-    </button>
+   
   </div>
 
   <ng-container *ngIf="!chargement && !erreur && etude">
@@ -59,7 +54,7 @@
           <div class="information">
             <span>Demande associée</span>
             <strong class="texte-vert">
-              #{{ demande?.id || etude.demandeAideId }}
+              {{ demande?.id || etude.demandeAideId }}
             </strong>
           </div>
 
@@ -125,9 +120,7 @@
 
         <h3>Rapports de l'étude</h3>
 
-        <p class="sous-titre">
-          {{ nombreRapports }} rapport(s) associé(s) à cette étude
-        </p>
+       
 
         <!-- Rapport de besoin présent -->
         <article
@@ -145,7 +138,7 @@
               Évaluation de la situation et des besoins
 
               <ng-container *ngIf="rapportBesoin.dateCreation">
-                — {{ rapportBesoin.dateCreation | date:'dd MMMM yyyy' }}
+                 {{ rapportBesoin.dateCreation | date:'dd MMMM yyyy' }}
               </ng-container>
             </p>
           </div>
@@ -216,10 +209,10 @@
             <strong>Rapport technique</strong>
 
             <p>
-              Analyse de la solution d'aide proposée
+            
 
               <ng-container *ngIf="rapportTechnique.dateCreation">
-                — {{ rapportTechnique.dateCreation | date:'dd MMMM yyyy' }}
+                {{ rapportTechnique.dateCreation | date:'dd MMMM yyyy' }}
               </ng-container>
             </p>
 

@@ -64,14 +64,14 @@ export class RapportBesoinModifier implements OnInit {
       next: (data) => {
         this.rapport = data;
 
-        // Remplir les champs avec les données existantes
+        // Conserver les valeurs existantes du rapport
         this.titre = data.titre ?? '';
         this.besoinIdentifie = data.besoinIdentifie ?? '';
         this.descriptionSituation = data.descriptionSituation ?? '';
         this.solutionProposee = data.solutionProposee ?? '';
         this.montantEstime = data.montantEstime ?? null;
 
-        // Vérifier si la demande est validée
+        // Vérifier si la demande est déjà validée
         this.demandeValidee =
           data.statutDemande?.trim().toUpperCase() === 'VALIDEE';
 
@@ -107,32 +107,54 @@ export class RapportBesoinModifier implements OnInit {
       return;
     }
 
-    // Vérifier le montant seulement s'il est renseigné
-    if (
-      this.montantEstime !== null &&
-      (
-        !Number.isFinite(this.montantEstime) ||
-        this.montantEstime <= 0
-      )
-    ) {
+    // Vérifier que tous les champs obligatoires sont remplis
+    if (form.invalid) {
+      form.form.markAllAsTouched();
+
       this.notificationService.erreur(
-        'Le montant doit être supérieur à zéro.'
+        'Veuillez remplir correctement tous les champs obligatoires.'
       );
       return;
     }
 
-    // Préparer les données à envoyer
+    // Vérifier que les champs textuels ne contiennent pas uniquement des espaces
+    if (
+      !this.titre.trim() ||
+      !this.besoinIdentifie.trim() ||
+      !this.descriptionSituation.trim() ||
+      !this.solutionProposee.trim()
+    ) {
+      this.notificationService.erreur(
+        'Tous les champs textuels sont obligatoires.'
+      );
+      return;
+    }
+
+    // Vérifier que le montant est obligatoire, numérique et strictement positif
+    const montant = Number(this.montantEstime);
+
+    if (
+      this.montantEstime === null ||
+      this.montantEstime === undefined ||
+      this.montantEstime === '' as unknown as number ||
+      !Number.isFinite(montant) ||
+      montant <= 0
+    ) {
+      this.notificationService.erreur(
+        'Le montant estimé est obligatoire et doit être supérieur à zéro.'
+      );
+      return;
+    }
+
+    // Préparer les données sans envoyer de champs vides
+    // Les valeurs non modifiées sont conservées dans les propriétés du composant
     const donnees: Partial<RapportBesoin> = {
       titre: this.titre.trim(),
       besoinIdentifie: this.besoinIdentifie.trim(),
       descriptionSituation: this.descriptionSituation.trim(),
-      solutionProposee: this.solutionProposee.trim()
+      solutionProposee: this.solutionProposee.trim(),
+      montantEstime: montant
     };
-
-    // Ajouter le montant uniquement s'il est renseigné
-    if (this.montantEstime !== null) {
-      donnees.montantEstime = this.montantEstime;
-    }
 
     this.enregistrement = true;
     this.cdr.detectChanges();

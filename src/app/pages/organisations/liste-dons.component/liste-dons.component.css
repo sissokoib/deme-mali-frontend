@@ -40,6 +40,7 @@
 
 .entete h2 {
   margin: 0 0 8px;
+  color: #1F1F1F;
   font-size: 27px;
   font-weight: 700;
 }
@@ -47,7 +48,7 @@
 .entete p,
 .tableau-entete p {
   margin: 0;
-  color: #77716A;
+  color: #1F1F1F;
   font-size: 13px;
   line-height: 1.6;
 }
@@ -62,7 +63,7 @@
   border: 1px solid #0F7A4B;
   border-radius: 7px;
   background: #0F7A4B;
-  color: white;
+  color: #FFFFFF;
   font-family: inherit;
   font-size: 12px;
   font-weight: 600;
@@ -70,10 +71,7 @@
   white-space: nowrap;
 }
 
-.btn-actualiser:hover,
-.btn-voir:hover {
-  background: #0B633D;
-}
+
 
 .btn-actualiser:disabled {
   opacity: 0.6;
@@ -102,7 +100,7 @@
   gap: 15px;
   min-width: 0;
   padding: 22px;
-  border: 1px solid #ECE5D9;
+  border: 1px solid #F7F3EA;
   border-radius: 10px;
   background: #FFFFFF;
   box-shadow: 0 2px 7px rgba(31, 31, 31, 0.035);
@@ -131,12 +129,12 @@
 
 .stat-icone.jaune {
   background: #FFF3CE;
-  color: #946800;
+  color: #1F1F1F;
 }
 
 .stat-label {
   margin: 0 0 8px;
-  color: #77716A;
+  color: #0F7A4B;
   font-size: 12px;
   line-height: 1.5;
 }
@@ -144,6 +142,7 @@
 .carte-statistique h3 {
   margin: 0;
   overflow-wrap: anywhere;
+  color: #1F1F1F;
   font-size: 20px;
   font-weight: 700;
 }
@@ -165,6 +164,7 @@
 
 .tableau-entete h3 {
   margin: 0 0 7px;
+  color: #1F1F1F;
   font-size: 18px;
 }
 
@@ -200,7 +200,7 @@
 
 .recherche mat-icon {
   flex-shrink: 0;
-  color: #89837A;
+  color: #0F7A4B;
 }
 
 .recherche input {
@@ -229,7 +229,7 @@
   border-radius: 7px;
   outline: none;
   background: #FFFFFF;
-  color: #393630;
+  color: #1F1F1F;
   font-family: inherit;
   font-size: 12px;
 }
@@ -243,7 +243,7 @@
   padding: 9px 12px;
   border-radius: 6px;
   background: #F7F3EA;
-  color: #625D54;
+  color: #1F1F1F;
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
@@ -279,6 +279,7 @@
 .onglet mat-icon {
   width: 19px;
   height: 19px;
+  color: #0F7A4B;
   font-size: 19px;
 }
 
@@ -299,8 +300,8 @@
   height: 23px;
   padding: 0 7px;
   border-radius: 6px;
-  background: #F1EFEA;
-  color: #625D54;
+  background: #F7F3EA;
+  color: #1F1F1F;
   font-size: 11px;
 }
 
@@ -325,13 +326,13 @@
 }
 
 .table-responsive thead {
-  background: #F9F7F2;
+  background: #F7F3EA;
 }
 
 .table-responsive th {
   padding: 15px 16px;
   border-bottom: 1px solid #EAE6DF;
-  color: #77716A;
+  color: #1F1F1F;
   font-size: 11px;
   font-weight: 700;
   white-space: nowrap;
@@ -340,23 +341,59 @@
 .table-responsive td {
   padding: 15px 16px;
   border-bottom: 1px solid #F0ECE6;
-  color: #393630;
+  color: #1F1F1F;
   font-size: 12px;
   vertical-align: middle;
 }
 
-.table-responsive tbody tr:hover {
-  background: #FCFAF6;
-}
 
 .table-responsive td strong {
-  color: #292722;
+  color: #1F1F1F;
   font-size: 12px;
 }
 
 .montant {
   color: #0F7A4B !important;
   white-space: nowrap;
+}
+
+/* ACTION DÉTAILS : ICÔNE VERTE SANS FOND NI BORDURE */
+
+.table-responsive .btn-voir {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 5px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: #0F7A4B;
+  box-shadow: none;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.table-responsive .btn-voir mat-icon {
+  width: 20px;
+  height: 20px;
+  color: #0F7A4B;
+  font-size: 20px;
+}
+
+.table-responsive .btn-voir:hover,
+.table-responsive .btn-voir:focus,
+.table-responsive .btn-voir:active {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #0F7A4B;
+  box-shadow: none;
+}
+
+.table-responsive .btn-voir:hover mat-icon {
+  color: #0F7A4B;
 }
 
 /* STATUTS */
@@ -390,8 +427,9 @@
 .badge-statut.refuse,
 .badge-statut.echec,
 .badge-statut.refus-partiel {
-  background: #FCE9E7;
-  color: #B42318;
+  background: #F7F3EA;
+  color: #1F1F1F;
+  border: 1px solid #F7B500;
 }
 
 /* LISTE VIDE ET CHARGEMENT */
@@ -417,11 +455,12 @@
 .etat-vide mat-icon {
   width: 30px;
   height: 30px;
+  color: #0F7A4B;
   font-size: 30px;
 }
 
 .etat-vide.erreur mat-icon {
-  color: #B42318;
+  color: #1F1F1F;
 }
 
 .etat-vide p {
@@ -479,18 +518,22 @@
   border: 1px solid #DED9D0;
   border-radius: 6px;
   background: #FFFFFF;
-  color: #393630;
+  color: #0F7A4B;
   font-family: inherit;
   font-size: 12px;
   cursor: pointer;
+  transition: none;
 }
 
-.btn-page:hover:not(:disabled) {
-  border-color: #0F7A4B;
+/* Aucun effet hover sur les numéros de pagination */
+.btn-page:hover {
+  border-color: #DED9D0;
+  background: #FFFFFF;
   color: #0F7A4B;
 }
 
-.btn-page.active {
+.btn-page.active,
+.btn-page.active:hover {
   border-color: #0F7A4B;
   background: #0F7A4B;
   color: #FFFFFF;
@@ -505,6 +548,7 @@
 .btn-page mat-icon {
   width: 18px;
   height: 18px;
+  color: inherit;
   font-size: 18px;
 }
 
@@ -591,14 +635,4 @@
     min-width: 32px;
     height: 32px;
   }
-}
-.badge-statut.refuse {
-  background-color: #F7F3EA;
-  color: #1F1F1F;
-  border: 1px solid #F7B500;
-}
-.badge-statut.refus-partiel {
-  background-color: #F7F3EA;
-  color: #1F1F1F;
-  border: 1px solid #F7B500;
 }

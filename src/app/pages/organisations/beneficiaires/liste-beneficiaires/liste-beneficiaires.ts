@@ -40,7 +40,7 @@ private router = inject(Router);
   recherche = '';
   traitementId: number | null = null;
 
-  taillePage = 10;
+ taillePage = 5;
   pageActuelle = 1;
 
   ngOnInit(): void {
@@ -130,6 +130,18 @@ private router = inject(Router);
       this.beneficiairesFiltres().length / this.taillePage
     );
   }
+    pagesDisponibles(): number[] {
+    return Array.from(
+      { length: this.nombrePages() },
+      (_, index) => index + 1
+    );
+  }
+finAffichage(): number {
+  return Math.min(
+    this.pageActuelle * this.taillePage,
+    this.beneficiairesFiltres().length
+  );
+}
 
   // Changer de page
   changerPage(page: number): void {

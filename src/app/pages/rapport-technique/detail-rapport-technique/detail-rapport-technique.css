@@ -1,21 +1,31 @@
 
 :host {
   display: block;
-  color: #252525;
-  font-family: Arial, sans-serif;
+  width: 100%;
+  min-height: 100%;
+  color: #1F1F1F;
+  background: #F7F3EA;
+
 }
 
 * {
   box-sizing: border-box;
 }
 
+/* =========================================
+   PAGE PRINCIPALE
+========================================= */
+
 .detail-page {
+  width: 100%;
   min-height: 100%;
   padding: 28px 24px;
-  background: #f7f3ea;
+  background: #F7F3EA;
 }
 
-/* EN-TÊTE */
+/* =========================================
+   EN-TÊTE
+========================================= */
 
 .page-header {
   display: flex;
@@ -25,16 +35,24 @@
   margin-bottom: 20px;
 }
 
+.titre-page {
+  min-width: 0;
+}
+
 .titre-page h1 {
   margin: 0 0 5px;
+  color: #1F1F1F;
   font-size: 21px;
   font-weight: 700;
+  line-height: 1.4;
 }
 
 .titre-page p {
   margin: 0;
-  color: #777;
+  color: #1F1F1F;
+  opacity: 0.75;
   font-size: 11px;
+  line-height: 1.6;
 }
 
 .surtitre {
@@ -45,13 +63,17 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 button {
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease,
+    color 0.2s ease, transform 0.2s ease;
 }
+
+/* Boutons */
 
 .btn-retour,
 .btn-modifier,
@@ -69,41 +91,66 @@ button {
 
 .btn-retour,
 .btn-retour-bas {
-  color: #333;
-  background: #fff;
-  border: 1px solid #e5dfd4;
+  color: #1F1F1F;
+  background: #FFFFFF;
+  border: 1px solid rgba(31, 31, 31, 0.16);
+}
+
+.btn-retour:hover,
+.btn-retour-bas:hover {
+  background: #F7F3EA;
+  border-color: #F7B500;
 }
 
 .btn-modifier,
 .btn-modifier-bas {
-  color: #fff;
-  background: #0f7a4b;
-  border: 1px solid #0f7a4b;
+  color: #FFFFFF;
+  background: #0F7A4B;
+  border: 1px solid #0F7A4B;
 }
 
 .btn-modifier:hover,
 .btn-modifier-bas:hover {
-  background: #095d38;
+  background: #0B623C;
+  border-color: #0B623C;
 }
 
-/* CONTENU PRINCIPAL */
+/* Icônes des boutons */
+
+.btn-retour mat-icon,
+.btn-modifier mat-icon,
+.btn-retour-bas mat-icon,
+.btn-modifier-bas mat-icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}
+
+/* =========================================
+   CONTENU PRINCIPAL
+========================================= */
 
 .contenu-rapport {
   width: 100%;
+  min-width: 0;
   padding: 15px 19px 25px;
-  background: #fff;
-  border: 1px solid #e9e3d9;
+  background: #FFFFFF;
+  border: 1px solid rgba(31, 31, 31, 0.08);
   border-radius: 9px;
+  box-shadow: 0 3px 12px rgba(31, 31, 31, 0.03);
 }
 
-/* IDENTITÉ DU RAPPORT */
+/* =========================================
+   IDENTITÉ DU RAPPORT
+========================================= */
 
 .carte-identite {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
   padding-bottom: 12px;
-  border-bottom: 1px solid #eee9df;
+  border-bottom: 1px solid rgba(15, 122, 75, 0.15);
 }
 
 .icone-document,
@@ -112,8 +159,8 @@ button {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: #0f7a4b;
-  background: #f7f3ea;
+  color: #0F7A4B;
+  background: #F7F3EA;
   border-radius: 7px;
 }
 
@@ -123,6 +170,9 @@ button {
 }
 
 .icone-document mat-icon {
+  width: 21px;
+  height: 21px;
+  color: #0F7A4B;
   font-size: 21px;
 }
 
@@ -137,6 +187,7 @@ button {
 
 .identite-infos h2 {
   margin: 0;
+  color: #1F1F1F;
   font-size: 16px;
   font-weight: 700;
 }
@@ -149,11 +200,18 @@ button {
   display: none;
 }
 
-/* SECTIONS */
+/* =========================================
+   SECTIONS
+========================================= */
 
 .carte-section {
+  min-width: 0;
   padding: 19px 0 17px;
-  border-bottom: 1px solid #eee9df;
+  border-bottom: 1px solid rgba(15, 122, 75, 0.15);
+}
+
+.carte-section:last-of-type {
+  border-bottom: none;
 }
 
 .titre-section {
@@ -169,41 +227,53 @@ button {
 
 .titre-section h3 {
   margin: 0 0 4px;
-  color: #0f7a4b;
+  color: #0F7A4B;
   font-size: 14px;
   font-weight: 700;
 }
 
 .titre-section p {
   margin: 0;
-  color: #858585;
+  color: #1F1F1F;
+  opacity: 0.7;
   font-size: 11px;
+  line-height: 1.6;
 }
 
-/* DESCRIPTION */
+/* =========================================
+   DESCRIPTION TECHNIQUE
+========================================= */
 
 .description-technique {
   min-height: 62px;
   padding: 11px 16px;
-  color: #333;
-  background: #f7f3ea;
+  color: #1F1F1F;
+  background: #F7F3EA;
+  border: 1px solid rgba(31, 31, 31, 0.05);
   border-radius: 6px;
   font-size: 11px;
-  line-height: 1.5;
+  line-height: 1.6;
   white-space: pre-line;
+  overflow-wrap: anywhere;
 }
 
-/* CARTES DE RÉSUMÉ */
+/* =========================================
+   CARTES DE RÉSUMÉ
+========================================= */
 
 .resume-grid {
   display: none;
 }
 
-/* TABLEAU DES RESSOURCES */
+/* =========================================
+   TABLEAU DES RESSOURCES
+========================================= */
 
 .table-responsive {
   width: 100%;
+  min-width: 0;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
@@ -213,33 +283,45 @@ table {
 }
 
 thead {
-  background: #f7f3ea;
+  background: #F7F3EA;
 }
 
 th {
   padding: 11px 16px;
-  color: #252525;
+  color: #1F1F1F;
   text-align: left;
   font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
+  border-bottom: 1px solid rgba(15, 122, 75, 0.16);
 }
 
 td {
   padding: 11px 16px;
-  border-bottom: 1px solid #eee9df;
-  color: #333;
+  color: #1F1F1F;
   font-size: 12px;
+  border-bottom: 1px solid rgba(31, 31, 31, 0.08);
+}
+
+tbody tr {
+  transition: background 0.2s ease;
+}
+
+tbody tr:hover {
+  background: rgba(15, 122, 75, 0.035);
 }
 
 .designation {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 
 .designation strong {
+  color: #1F1F1F;
   font-weight: 400;
+  overflow-wrap: anywhere;
 }
 
 .puce-ressource {
@@ -252,34 +334,42 @@ td {
 }
 
 td.colonne-montant strong {
-  color: #252525;
+  color: #0F7A4B;
   font-weight: 700;
 }
+
+/* Pied du tableau */
 
 tfoot td {
   padding-top: 14px;
   padding-bottom: 14px;
-  color: #858585;
+  color: #1F1F1F;
   border-bottom: none;
+  background: #FFFFFF;
 }
 
 tfoot td:first-child {
   text-align: right;
+  font-weight: 600;
 }
 
 tfoot .total-tableau {
-  color: #0f7a4b;
+  color: #0F7A4B;
   font-size: 13px;
   font-weight: 700;
 }
 
-/* BUDGET FINAL */
+/* =========================================
+   BUDGET FINAL
+========================================= */
 
 .budget-final {
   display: none;
 }
 
-/* AUCUNE RESSOURCE */
+/* =========================================
+   AUCUNE RESSOURCE
+========================================= */
 
 .etat-vide {
   display: flex;
@@ -287,26 +377,33 @@ tfoot .total-tableau {
   align-items: center;
   gap: 8px;
   padding: 25px 15px;
-  color: #777;
+  color: #1F1F1F;
   text-align: center;
-  background: #f7f3ea;
+  background: #F7F3EA;
+  border: 1px solid rgba(31, 31, 31, 0.06);
   border-radius: 6px;
 }
 
 .etat-vide mat-icon {
-  color: #0f7a4b;
+  color: #0F7A4B;
 }
 
 .etat-vide strong {
+  color: #1F1F1F;
   font-size: 13px;
 }
 
 .etat-vide p {
   margin: 0;
+  color: #1F1F1F;
+  opacity: 0.7;
   font-size: 11px;
+  line-height: 1.6;
 }
 
-/* VERROUILLAGE ET ACTIONS */
+/* =========================================
+   VERROUILLAGE
+========================================= */
 
 .message-verrouillage {
   display: flex;
@@ -314,25 +411,30 @@ tfoot .total-tableau {
   gap: 9px;
   margin-top: 16px;
   padding: 12px;
-  color: #555;
-  background: #f7f3ea;
+  color: #1F1F1F;
+  background: #F7F3EA;
+  border: 1px solid #F7B500;
   border-radius: 6px;
 }
 
 .message-verrouillage mat-icon {
-  color: #0f7a4b;
+  flex-shrink: 0;
+  color: #0F7A4B;
 }
 
 .message-verrouillage p {
   margin: 0;
   font-size: 11px;
+  line-height: 1.6;
 }
 
 .actions-bas {
   display: none;
 }
 
-/* CHARGEMENT ET ERREURS */
+/* =========================================
+   CHARGEMENT
+========================================= */
 
 .etat-chargement {
   display: flex;
@@ -340,39 +442,90 @@ tfoot .total-tableau {
   justify-content: center;
   gap: 10px;
   padding: 30px;
-  color: #666;
+  color: #1F1F1F;
+  background: #FFFFFF;
+  border: 1px solid rgba(31, 31, 31, 0.08);
+  border-radius: 8px;
   font-size: 12px;
 }
 
-.etat-chargement mat-icon {
-  color: #0f7a4b;
+.etat-chargement::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border: 2px solid #DCEBE1;
+  border-top-color: #0F7A4B;
+  border-radius: 50%;
+  animation: rotation 0.8s linear infinite;
 }
+
+/* =========================================
+   ERREUR
+========================================= */
 
 .message-erreur {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 16px;
-  color: #a32118;
-  background: #fff;
-  border: 1px solid #f0d5d2;
+  color: #D32F2F;
+  background: #FFFFFF;
+  border: 1px solid rgba(211, 47, 47, 0.25);
+  border-left: 4px solid #D32F2F;
   border-radius: 8px;
+}
+
+.message-erreur strong {
+  color: #D32F2F;
 }
 
 .message-erreur p {
   margin: 5px 0 0;
+  color: #D32F2F;
   font-size: 12px;
+  line-height: 1.6;
 }
 
 .message-erreur button {
+  flex-shrink: 0;
   margin-left: auto;
   padding: 8px 12px;
-  background: #f7f3ea;
-  border: 1px solid #e5dfd4;
+  color: #1F1F1F;
+  background: #F7F3EA;
+  border: 1px solid rgba(31, 31, 31, 0.12);
   border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
 }
 
-/* RESPONSIVE */
+.message-erreur button:hover {
+  color: #D32F2F;
+  border-color: #D32F2F;
+}
+
+/* =========================================
+   ACCESSIBILITÉ
+========================================= */
+
+button:focus-visible {
+  outline: 2px solid #F7B500;
+  outline-offset: 2px;
+}
+
+/* =========================================
+   ANIMATIONS
+========================================= */
+
+@keyframes rotation {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
 
 @media (max-width: 650px) {
   .detail-page {
@@ -382,6 +535,11 @@ tfoot .total-tableau {
   .page-header {
     align-items: flex-start;
     flex-direction: column;
+    gap: 12px;
+  }
+
+  .titre-page h1 {
+    font-size: 20px;
   }
 
   .actions-header {
@@ -411,5 +569,27 @@ tfoot .total-tableau {
 
   .description-technique {
     padding: 10px;
+  }
+
+  .message-erreur {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 14px;
+  }
+
+  .message-erreur button {
+    margin-left: 0;
+  }
+}
+
+/* Réduction des animations selon les préférences système */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

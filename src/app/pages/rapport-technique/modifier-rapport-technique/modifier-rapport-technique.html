@@ -4,13 +4,8 @@
   <header class="page-header">
     <div>
       <h1>Modifier le rapport technique</h1>
-      <p>Modifiez la description et les ressources nécessaires.</p>
+      <p>Modifiez les informations du rapport technique.</p>
     </div>
-
-    <button type="button" class="btn-retour" (click)="annuler()">
-      <mat-icon>arrow_back</mat-icon>
-      Retour
-    </button>
   </header>
 
   <div class="etat-chargement" *ngIf="chargement">
@@ -20,20 +15,16 @@
   <div class="message-erreur" *ngIf="!chargement && erreur">
     <mat-icon>error_outline</mat-icon>
     <span>{{ erreur }}</span>
-
-    <button type="button" (click)="chargerRapport()">
-      Réessayer
-    </button>
   </div>
 
   <ng-container *ngIf="!chargement && !erreur && rapport">
 
     <section class="carte-technique">
 
+      <!-- DESCRIPTION TECHNIQUE -->
       <div class="section-titre">
         <div>
           <h2>Description technique</h2>
-          <p>Ce champ est facultatif.</p>
         </div>
       </div>
 
@@ -49,14 +40,20 @@
           [(ngModel)]="descriptionTechnique"
           placeholder="Décrivez la solution proposée...">
         </textarea>
+
+        <small
+          class="erreur-champ"
+          *ngIf="erreurDescription">
+          {{ erreurDescription }}
+        </small>
       </div>
 
       <div class="separateur"></div>
 
+      <!-- RESSOURCES NÉCESSAIRES -->
       <div class="section-titre">
         <div>
           <h2>Ressources nécessaires</h2>
-          <p>Modifiez les lignes, ajoutez-en ou supprimez-les.</p>
         </div>
 
         <button
@@ -68,52 +65,93 @@
         </button>
       </div>
 
-      <!-- Ajout d'une nouvelle ressource -->
+      <!-- FORMULAIRE D'AJOUT D'UNE RESSOURCE -->
       <div class="formulaire-ressource">
 
+        <!-- Désignation -->
         <div class="champ">
           <label for="nouvelleDesignation">Désignation</label>
+
           <input
             id="nouvelleDesignation"
             name="nouvelleDesignation"
             type="text"
             [(ngModel)]="nouvelleRessource.designation"
             placeholder="Ex. Sacs de riz">
+
+          <small
+            class="erreur-champ"
+            *ngIf="erreursNouvelleRessource.designation">
+            {{ erreursNouvelleRessource.designation }}
+          </small>
         </div>
 
+        <!-- Quantité -->
         <div class="champ">
           <label for="nouvelleQuantite">Quantité</label>
+
           <input
             id="nouvelleQuantite"
             name="nouvelleQuantite"
             type="number"
             min="0"
+            step="any"
             [(ngModel)]="nouvelleRessource.quantite">
+
+          <small
+            class="erreur-champ"
+            *ngIf="erreursNouvelleRessource.quantite">
+            {{ erreursNouvelleRessource.quantite }}
+          </small>
         </div>
 
+        <!-- Unité -->
         <div class="champ">
           <label for="nouvelleUnite">Unité</label>
+
           <input
             id="nouvelleUnite"
             name="nouvelleUnite"
             type="text"
             [(ngModel)]="nouvelleRessource.unite"
             placeholder="Ex. sacs">
+
+          <small
+            class="erreur-champ"
+            *ngIf="erreursNouvelleRessource.unite">
+            {{ erreursNouvelleRessource.unite }}
+          </small>
         </div>
 
+        <!-- Prix unitaire -->
         <div class="champ">
           <label for="nouveauPrix">Prix unitaire (FCFA)</label>
+
           <input
             id="nouveauPrix"
             name="nouveauPrix"
             type="number"
             min="0"
+            step="any"
             [(ngModel)]="nouvelleRessource.prixUnitaire">
+
+          <small
+            class="erreur-champ"
+            *ngIf="erreursNouvelleRessource.prixUnitaire">
+            {{ erreursNouvelleRessource.prixUnitaire }}
+          </small>
         </div>
 
       </div>
 
-      <!-- Liste des ressources -->
+      <!-- MESSAGE SI AUCUNE RESSOURCE N'EST PRÉSENTE -->
+      <p
+        class="erreur-champ"
+        *ngIf="erreurListeRessources">
+        {{ erreurListeRessources }}
+      </p>
+
+      <!-- LISTE DES RESSOURCES -->
       <div class="table-responsive" *ngIf="ressources.length > 0">
 
         <table>
@@ -131,6 +169,7 @@
           <tbody>
             <tr *ngFor="let ressource of ressources; let i = index">
 
+              <!-- Désignation -->
               <td>
                 <input
                   type="text"
@@ -138,38 +177,69 @@
                   [(ngModel)]="ressource.designation"
                   (ngModelChange)="recalculerMontant()"
                   placeholder="Désignation">
+
+                <small
+                  class="erreur-champ"
+                  *ngIf="erreursRessources[i]?.designation">
+                  {{ erreursRessources[i].designation }}
+                </small>
               </td>
 
+              <!-- Quantité -->
               <td>
                 <input
                   type="number"
                   min="0"
+                  step="any"
                   [name]="'quantite-' + i"
                   [(ngModel)]="ressource.quantite"
                   (ngModelChange)="recalculerMontant()">
+
+                <small
+                  class="erreur-champ"
+                  *ngIf="erreursRessources[i]?.quantite">
+                  {{ erreursRessources[i].quantite }}
+                </small>
               </td>
 
+              <!-- Unité -->
               <td>
                 <input
                   type="text"
                   [name]="'unite-' + i"
                   [(ngModel)]="ressource.unite"
                   placeholder="Unité">
+
+                <small
+                  class="erreur-champ"
+                  *ngIf="erreursRessources[i]?.unite">
+                  {{ erreursRessources[i].unite }}
+                </small>
               </td>
 
+              <!-- Prix unitaire -->
               <td>
                 <input
                   type="number"
                   min="0"
+                  step="any"
                   [name]="'prix-' + i"
                   [(ngModel)]="ressource.prixUnitaire"
                   (ngModelChange)="recalculerMontant()">
+
+                <small
+                  class="erreur-champ"
+                  *ngIf="erreursRessources[i]?.prixUnitaire">
+                  {{ erreursRessources[i].prixUnitaire }}
+                </small>
               </td>
 
+              <!-- Montant calculé -->
               <td class="montant">
                 {{ calculerMontant(ressource) | number:'1.0-0' }} FCFA
               </td>
 
+              <!-- Suppression -->
               <td>
                 <button
                   type="button"
@@ -186,18 +256,21 @@
         </table>
       </div>
 
+      <!-- LISTE VIDE -->
       <div class="ressources-vides" *ngIf="ressources.length === 0">
         <mat-icon>inventory_2</mat-icon>
-        <p>Aucune ressource. Tu peux enregistrer le rapport sans ressource.</p>
+        <p>Aucune ressource.</p>
       </div>
 
-      <!-- Budget recalculé -->
+      <!-- BUDGET TOTAL -->
       <div class="budget-total">
         <span>Budget total estimé</span>
         <strong>{{ montantTotal | number:'1.0-0' }} FCFA</strong>
       </div>
 
+      <!-- ACTIONS -->
       <div class="actions-bas">
+
         <button
           type="button"
           class="btn-annuler"
@@ -211,11 +284,13 @@
           class="btn-enregistrer"
           [disabled]="enregistrement"
           (click)="enregistrer()">
-
-          <mat-icon>{{ enregistrement ? 'hourglass_top' : 'save' }}</mat-icon>
-
-          {{ enregistrement ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+          {{
+            enregistrement
+              ? 'Enregistrement...'
+              : 'Enregistrer les modifications'
+          }}
         </button>
+
       </div>
 
     </section>

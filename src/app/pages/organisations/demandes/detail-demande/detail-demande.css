@@ -1,29 +1,29 @@
 
-/* =========================================================
-   DÈMÈ MALI — DÉTAIL D'UNE DEMANDE D'AIDE
-   Fichier : detail-demande.css
-   ========================================================= */
+
 
 :host {
   display: block;
-  color: #1f1f1f;
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  background: #F7F3EA;
 }
 
-/* =========================================================
-   1. PAGE PRINCIPALE
-   ========================================================= */
-
-.detail-page {
-  min-height: 100vh;
-  padding: 28px;
-  background: #f7f3ea;
+.detail-page,
+.detail-page *,
+.detail-page *::before,
+.detail-page *::after {
   box-sizing: border-box;
 }
 
-/* =========================================================
-   2. EN-TÊTE
-   ========================================================= */
+.detail-page {
+  min-height: 100vh;
+  padding: 32px;
+  background: #F7F3EA;
+  color: #1F1F1F;
+ 
+  line-height: 1.6;
+}
+
+/* EN-TÊTE */
 
 .page-header {
   display: flex;
@@ -31,135 +31,69 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 18px;
-  margin-bottom: 25px;
+  max-width: 1200px;
+  margin: 0 auto 26px;
 }
-
+.title{
+  color:#0F7A4B;
+  font-size: 20px;
+  
+}
 .page-header h1 {
-  margin: 0 0 8px;
-  color: #1f1f1f;
+  margin: 0 0 6px;
+  color: #1F1F1F;
   font-size: 25px;
   font-weight: 700;
+  letter-spacing: -0.5px;
 }
 
 .page-header p {
   margin: 0;
-  color: #777;
+  color: #1F1F1F;
+  opacity: 0.7;
   font-size: 14px;
-  line-height: 1.6;
 }
 
-/* =========================================================
-   3. BOUTONS
-   ========================================================= */
+/* BOUTON RETOUR */
 
-.btn-retour,
-.btn-principal,
-.btn-annuler {
+.btn-retour {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 11px 16px;
-  border: none;
-  border-radius: 8px;
-  font-size: 13px;
+  gap: 9px;
+  min-height: 42px;
+  padding: 10px 16px;
+  border: 1px solid rgba(15, 122, 75, 0.2);
+  border-radius: 9px;
+  background: #FFFFFF;
+  color: #0F7A4B;
+  font-size: 14px;
   font-weight: 600;
-  text-decoration: none;
   cursor: pointer;
-  transition:
-    background 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease,
-    opacity 0.2s ease;
+  transition: all 0.2s ease;
+  text-decoration: none;
 }
 
-.btn-retour mat-icon,
-.btn-principal mat-icon,
-.btn-annuler mat-icon {
-  width: 20px;
-  height: 20px;
-  font-size: 20px;
-}
-
-.btn-retour,
-.btn-annuler {
-  background: #fff;
-  color: #333;
-  border: 1px solid #e8e3da;
-}
-
-.btn-retour:hover,
-.btn-annuler:hover {
-  background: #eee8dc;
-}
-
-.btn-principal {
-  background: #0f7a4b;
-  color: #fff;
-}
-
-.btn-principal:hover:not(:disabled) {
-  background: #0b633d;
+.btn-retour:hover {
+  border-color: #0F7A4B;
+  background: #F7F3EA;
   transform: translateY(-1px);
 }
 
-.btn-principal:disabled,
-.btn-annuler:disabled,
-.btn-retour:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* =========================================================
-   4. MESSAGES DE CHARGEMENT ET D'ERREUR
-   ========================================================= */
-
-.message-chargement,
-.message-erreur {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  padding: 16px;
-  border-radius: 9px;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.message-chargement {
-  background: #fff;
-  color: #555;
-  border: 1px solid #eee8dc;
-}
-
-.message-erreur {
-  background: #fff0f0;
-  color: #b42318;
-  border: 1px solid #ffd4d4;
-}
-
-.message-chargement mat-icon,
-.message-erreur mat-icon {
-  flex-shrink: 0;
-}
-
-/* =========================================================
-   5. CARTE PRINCIPALE
-   ========================================================= */
+/* CARTE PRINCIPALE */
 
 .carte-detail {
-  padding: 25px;
-  border: 1px solid #eee8dc;
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 4px 15px rgb(31 31 31 / 4%);
-  box-sizing: border-box;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px;
+  border: 1px solid rgba(15, 122, 75, 0.1);
+  border-radius: 16px;
+  background: #FFFFFF;
+  box-shadow: 0 8px 28px rgba(31, 31, 31, 0.06);
 }
 
-/* =========================================================
-   6. EN-TÊTE DE LA DEMANDE
-   ========================================================= */
+/* EN-TÊTE DE LA DEMANDE */
 
 .detail-header {
   display: flex;
@@ -168,539 +102,405 @@
   flex-wrap: wrap;
   gap: 20px;
   padding-bottom: 24px;
-  border-bottom: 1px solid #eeeae3;
+  border-bottom: 1px solid #F7F3EA;
 }
 
-.titre-demande {
-  min-width: 0;
-}
+
 
 .reference {
   display: block;
-  margin-bottom: 8px;
-  color: #0f7a4b;
-  font-size: 12px;
-  font-weight: 700;
+  margin-top: 8px;
+  color: #1F1F1F;
+  opacity: 0.65;
+  font-size: 13px;
+  font-weight: 400;
 }
 
-.detail-header h2 {
-  margin: 0 0 12px;
-  color: #1f1f1f;
-  font-size: 23px;
-  font-weight: 700;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
-}
-
-/* =========================================================
-   7. BADGES DE STATUT
-   ========================================================= */
+/* STATUT */
 
 .badge-statut {
   display: inline-flex;
   align-items: center;
-  padding: 6px 11px;
-  border-radius: 20px;
-  background: #f0f0f0;
-  color: #555;
-  font-size: 12px;
-  font-weight: 600;
+  justify-content: center;
+  min-height: 32px;
+  padding: 6px 13px;
+  border: 1px solid #F7B500;
+  border-radius: 999px;
+  background: #F7F3EA;
+  color: #1F1F1F;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
-.badge-statut.en_attente {
-  background: #fff4d6;
-  color: #946200;
+.badge-statut.en-attente,
+.badge-statut.attente {
+  border-color: #F7B500;
+  background: #F7F3EA;
 }
 
 .badge-statut.validee,
-.badge-statut.validee_definitivement,
-.badge-statut.validee_definitive {
-  background: #e2f5e9;
-  color: #0f7a4b;
+.badge-statut.approuvee {
+  border-color: #0F7A4B;
+  background: #FFFFFF;
+  color: #0F7A4B;
 }
 
-.badge-statut.rejetee {
-  background: #ffe7e7;
-  color: #b42318;
+.badge-statut.rejetee,
+.badge-statut.refusee {
+  border-color: #1F1F1F;
+  background: #F7F3EA;
+  color: #1F1F1F;
 }
 
-.badge-statut.en_cours {
-  background: #e8f0ff;
-  color: #2457a7;
+/* BOUTON PRINCIPAL */
+
+.btn-principal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 11px 20px;
+  border: 1px solid #0F7A4B;
+  border-radius: 9px;
+  background: #0F7A4B;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.badge-statut.terminee {
-  background: #e2f5e9;
-  color: #0f7a4b;
+.btn-principal:hover:not(:disabled) {
+  box-shadow: 0 5px 14px rgba(15, 122, 75, 0.18);
+  transform: translateY(-2px);
 }
 
-/* =========================================================
-   8. SECTIONS
-   ========================================================= */
+.btn-principal:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* SECTIONS */
 
 .section {
-  padding: 25px 0;
-  border-bottom: 1px solid #eeeae3;
+  margin: 0;
+  padding: 28px 0;
+  border: none;
+  border-bottom: 1px solid #F7F3EA;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .section:last-child {
+  padding-bottom: 0;
   border-bottom: none;
 }
 
+.section h2,
 .section h3 {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   margin: 0 0 20px;
-  color: #1f1f1f;
+  color: #0F7A4B;
   font-size: 17px;
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
+.section h2 mat-icon,
 .section h3 mat-icon {
-  flex-shrink: 0;
-  color: #0f7a4b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #0F7A4B;
 }
 
-.sous-description {
-  margin: -8px 0 18px;
-  color: #777;
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-/* =========================================================
-   9. INFORMATIONS GÉNÉRALES
-   ========================================================= */
+/* INFORMATIONS — FLEXBOX */
 
 .grille-informations {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 30px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
 }
 
 .info-item {
   display: flex;
+  flex: 1 1 calc(50% - 30px);
   flex-direction: column;
+  align-items: flex-start;
   gap: 7px;
-  min-width: 0;
+  min-width: 220px;
+  margin: 0;
+  padding: 17px 0;
+  border-bottom: 1px solid rgba(15, 122, 75, 0.1);
+  background: transparent;
 }
 
-.info-item > span {
-  color: #777;
-  font-size: 12px;
-  font-weight: 400;
+.info-item label,
+.info-item .label {
+  margin: 0;
+  color: #1F1F1F;
+  opacity: 0.65;
+  font-size: 13px;
+  font-weight: 500;
 }
 
-.info-item > strong {
-  color: #1f1f1f;
+.info-item p,
+.info-item .valeur {
+  margin: 0;
+  color: #1F1F1F;
   font-size: 14px;
   font-weight: 600;
-  line-height: 1.6;
+  line-height: 1.7;
   overflow-wrap: anywhere;
 }
 
-.info-item p {
-  margin: 0;
-  color: #444;
-  font-size: 14px;
-  line-height: 1.7;
+.info-item span {
   overflow-wrap: anywhere;
-  white-space: pre-line;
 }
 
 .info-large {
-  grid-column: 1 / -1;
+  flex: 1 1 100%;
+  min-width: 100%;
 }
 
-/* =========================================================
-   10. TABLEAU DES ARTICLES MATÉRIELS
-   ========================================================= */
+/* TABLEAU DES ARTICLES */
 
 .table-responsive {
   width: 100%;
   overflow-x: auto;
-  border: 1px solid #e8e3da;
-  border-radius: 10px;
-  -webkit-overflow-scrolling: touch;
+  border: 1px solid #F7F3EA;
+  border-radius: 12px;
+  background: #FFFFFF;
 }
 
 .table-articles {
   width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-}
-
-.table-articles thead {
-  background: #f7f3ea;
-}
-
-.table-articles th,
-.table-articles td {
-  padding: 14px 12px;
-  border-bottom: 1px solid #eeeae3;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #FFFFFF;
+  font-size: 14px;
   text-align: left;
-  font-size: 13px;
+}
+
+.table-articles thead,
+.table-articles thead tr,
+.table-articles thead th {
+  background: #F7F3EA;
+}
+
+.table-articles thead th {
+  padding: 15px 16px;
+  border-bottom: 1px solid rgba(15, 122, 75, 0.14);
+  color: #0F7A4B;
+  font-size: 12px;
+  font-weight: 700;
   white-space: nowrap;
 }
 
-.table-articles th {
-  color: #555;
-  font-weight: 600;
+.table-articles tbody,
+.table-articles tbody tr {
+  background: #FFFFFF;
 }
 
-.table-articles td {
-  color: #444;
+.table-articles tbody td {
+  padding: 15px 16px;
+  border-bottom: 1px solid #F7F3EA;
+  background: #FFFFFF;
+  color: #1F1F1F;
+  line-height: 1.6;
 }
 
-.table-articles tbody tr:hover {
-  background: #fcfaf6;
-}
-
-.table-articles .designation {
-  color: #1f1f1f;
-  font-weight: 600;
-}
-
-.table-articles .montant-article {
-  color: #0f7a4b;
-  font-weight: 700;
-}
-
-.table-articles tfoot td {
-  background: #f7f3ea;
+.table-articles tbody tr:last-child td {
   border-bottom: none;
+}
+
+
+
+.table-articles tfoot,
+.table-articles tfoot td {
+
+  color: #1F1F1F;
   font-weight: 700;
 }
 
-.table-articles tfoot td:first-child {
-  text-align: right;
-}
-
-.texte-secondaire {
-  color: #888;
-  font-size: 12px;
-}
-
-/* =========================================================
-   11. BUDGET DES DEMANDES FINANCIÈRES
-   ========================================================= */
+/* BUDGET — CARTES FLEXBOX */
 
 .grille-budget {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
 }
 
 .carte-budget {
+  display: flex;
+  flex: 1 1 220px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
   min-width: 0;
-  padding: 19px;
-  border: 1px solid #e8e3da;
-  border-radius: 10px;
-  background: #fff;
-  box-sizing: border-box;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  padding: 22px;
+ 
 }
 
 .carte-budget:hover {
-  border-color: #c8dfd1;
-  box-shadow: 0 4px 12px rgb(15 122 75 / 6%);
+  border-color: #0F7A4B;
+  transform: translateY(-2px);
+}
+
+.carte-budget h4 {
+  margin: 0;
+  color: #1F1F1F;
+  opacity: 0.7;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.carte-budget p,
+.carte-budget .montant {
+  margin: 0;
+  color: #0F7A4B;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .icone-budget {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 42px;
   height: 42px;
-  margin-bottom: 14px;
+  margin-bottom: 4px;
   border-radius: 10px;
-  background: #e8f5ed;
-  color: #0f7a4b;
+  background: #FFFFFF;
+  color: #0F7A4B;
 }
 
 .icone-budget mat-icon {
-  width: 23px;
-  height: 23px;
-  font-size: 23px;
+  color: #0F7A4B;
 }
 
-.carte-budget span {
-  display: block;
-  margin-bottom: 12px;
-  color: #777;
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.carte-budget strong {
-  display: block;
-  color: #0f7a4b;
-  font-size: 18px;
-  font-weight: 700;
-  overflow-wrap: anywhere;
-}
-
-/* Progression de la collecte */
-
-.progression-collecte {
-  margin-top: 24px;
-}
-
-.progression-label {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
-  color: #555;
-  font-size: 13px;
-}
-
-.progression-label strong {
-  color: #0f7a4b;
-}
-
-.progression-barre {
-  height: 9px;
-  overflow: hidden;
-  border-radius: 20px;
-  background: #e8e3da;
-}
-
-.progression-remplie {
-  height: 100%;
-  border-radius: 20px;
-  background: #0f7a4b;
-  transition: width 0.3s ease;
-}
-
-/* =========================================================
-   12. MESSAGES VIDES
-   ========================================================= */
-
-.message-vide {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 18px;
-  border: 1px dashed #ddd5c8;
-  border-radius: 10px;
-  background: #f7f3ea;
-  color: #777;
-}
-
-.message-vide mat-icon {
-  flex-shrink: 0;
-  color: #0f7a4b;
-}
-
-.message-vide p {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-/* =========================================================
-   13. JUSTIFICATIFS
-   ========================================================= */
+/* JUSTIFICATIFS */
 
 .liste-justificatifs {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .carte-justificatif {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 17px 0;
+  border-bottom: 1px solid #F7F3EA;
+  background: transparent;
+}
+
+.carte-justificatif:first-child {
+  padding-top: 0;
+}
+
+.carte-justificatif:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.nom-justificatif {
+  flex: 1 1 180px;
   min-width: 0;
-  padding: 12px;
-  border: 1px solid #e8e3da;
-  border-radius: 10px;
-  background: #fff;
-  box-sizing: border-box;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.carte-justificatif:hover {
-  border-color: #b9d9c6;
-  box-shadow: 0 4px 12px rgb(15 122 75 / 5%);
-}
-
-.carte-justificatif a {
-  color: #0f7a4b;
-  font-size: 13px;
-  line-height: 1.5;
+  margin: 0;
+  color: #1F1F1F;
+  font-size: 14px;
+  font-weight: 600;
   overflow-wrap: anywhere;
-  text-decoration: none;
 }
 
-.carte-justificatif a:hover {
+.lien-image,
+.lien-document {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #0F7A4B;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.lien-image:hover,
+.lien-document:hover {
   text-decoration: underline;
 }
 
-.carte-justificatif > span {
-  color: #555;
-  font-size: 12px;
-  overflow-wrap: anywhere;
-}
-
-.lien-image {
-  display: block;
-  width: 100%;
+.icone-document {
+  display: inline-flex;
+  color: #0F7A4B;
 }
 
 .image-justificatif {
   display: block;
   width: 100%;
-  height: 150px;
-  border-radius: 8px;
-  background: #f7f3ea;
-  object-fit: cover;
-}
-
-.icone-document {
-  color: #0f7a4b;
-  font-size: 36px;
-  width: 36px;
-  height: 36px;
-}
-
-/* =========================================================
-   14. VÉRIFICATION DE L'ÉTUDE ET DES RAPPORTS
-   ========================================================= */
-
-.section-relations h3 mat-icon {
-  color: #0f7a4b;
-}
-
-/* Chargement de la vérification */
-
-.chargement-relations {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 16px;
-  border: 1px solid #eee8dc;
-  border-radius: 9px;
-  background: #f7f3ea;
-  color: #555;
-  font-size: 13px;
-}
-
-.chargement-relations mat-icon {
-  flex-shrink: 0;
-  color: #0f7a4b;
-}
-
-/* Liste des résultats */
-
-.liste-relations {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.relation-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-  padding: 15px;
-  border: 1px solid #e8e3da;
+  max-width: 280px;
+  max-height: 230px;
+  margin-top: 12px;
+  border: 1px solid #F7F3EA;
   border-radius: 10px;
-  background: #fff;
-  box-sizing: border-box;
+  background: #FFFFFF;
+  object-fit: contain;
+  object-position: left center;
 }
 
-.relation-item > mat-icon {
-  flex-shrink: 0;
-}
+/* MESSAGES */
 
-.relation-ok {
-  border-color: #b9e4c9;
-  background: #f4fbf6;
-}
-
-.relation-ok > mat-icon {
-  color: #0f7a4b;
-}
-
-.relation-ko {
-  border-color: #f0d5a0;
-  background: #fffaf0;
-}
-
-.relation-ko > mat-icon {
-  color: #b77900;
-}
-
-.relation-contenu {
-  flex: 1;
-  min-width: 0;
-}
-
-.relation-contenu strong {
-  display: block;
-  margin-bottom: 5px;
-  color: #1f1f1f;
-  font-size: 13px;
-}
-
-.relation-contenu p {
-  margin: 0;
-  color: #666;
-  font-size: 12px;
-  line-height: 1.6;
-  overflow-wrap: anywhere;
-}
-
-.relation-statut {
-  flex-shrink: 0;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.relation-ok .relation-statut {
-  color: #0f7a4b;
-}
-
-.relation-ko .relation-statut {
-  color: #946200;
-}
-
-/* Résumé de conformité */
-
-.resume-relations {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 16px;
-  padding: 13px;
-  border: 1px solid #e8e3da;
+.chargement,
+.message-chargement,
+.message-erreur,
+.erreur {
+  padding: 14px 16px;
+  border: 1px solid #F7F3EA;
   border-radius: 9px;
-  background: #f7f3ea;
-  color: #444;
-  font-size: 13px;
+  background: #FFFFFF;
+  color: #1F1F1F;
+  font-size: 14px;
   line-height: 1.6;
 }
 
-.resume-relations mat-icon {
-  flex-shrink: 0;
-  color: #0f7a4b;
+.message-erreur,
+.erreur {
+  border-left: 4px solid #F7B500;
 }
 
-/* =========================================================
-   15. FENÊTRE DE DÉCISION
-   ========================================================= */
+.message-vide {
+ 
+  color: #1F1F1F;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.message-vide mat-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: #0F7A4B;
+}
+
+/* FENÊTRE DE DÉCISION */
 
 .overlay-decision {
   position: fixed;
@@ -710,144 +510,141 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: rgb(0 0 0 / 45%);
-  box-sizing: border-box;
+  background: rgba(31, 31, 31, 0.58);
+  backdrop-filter: blur(3px);
 }
 
 .popup-decision {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  max-width: 480px;
+  max-width: 540px;
   max-height: 90vh;
   overflow-y: auto;
-  padding: 25px;
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 15px 45px rgb(0 0 0 / 20%);
-  box-sizing: border-box;
+  padding: 28px;
+  border: 1px solid rgba(15, 122, 75, 0.12);
+  border-radius: 16px;
+  background: #FFFFFF;
+  box-shadow: 0 18px 50px rgba(31, 31, 31, 0.18);
 }
-
-/* En-tête de la fenêtre */
 
 .popup-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 15px;
+  gap: 16px;
+  margin-bottom: 18px;
 }
 
+.popup-header h2,
 .popup-header h3 {
   margin: 0;
-  color: #1f1f1f;
-  font-size: 19px;
-  line-height: 1.4;
+  color: #0F7A4B;
+  font-size: 21px;
+  font-weight: 700;
 }
 
 .btn-fermer {
-  display: flex;
+  display: inline-flex;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  padding: 6px;
-  border: none;
-  border-radius: 6px;
-  background: #f7f3ea;
-  color: #333;
+  width: 38px;
+  height: 38px;
+  border: 1px solid #F7F3EA;
+  border-radius: 9px;
+  background: #F7F3EA;
+  color: #1F1F1F;
   cursor: pointer;
-  transition: background 0.2s ease;
 }
 
-.btn-fermer:hover:not(:disabled) {
-  background: #eee8dc;
+.btn-fermer:hover {
+  border-color: #0F7A4B;
+  color: #0F7A4B;
 }
 
-.btn-fermer:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.btn-fermer::before {
+  content: "×";
+}
+
+.btn-fermer mat-icon {
+  display: none;
 }
 
 .description-popup {
-  margin: 0 0 18px;
-  color: #666;
-  font-size: 13px;
-  line-height: 1.6;
+  margin: 0 0 20px;
+  color: #1F1F1F;
+  opacity: 0.75;
+  font-size: 14px;
+  line-height: 1.7;
 }
 
-/* =========================================================
-   16. CHOIX DE LA DÉCISION
-   ========================================================= */
+/* OPTIONS DE DÉCISION */
 
 .choix-decision {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin: 22px 0;
+  margin-bottom: 18px;
 }
 
 .option-decision {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
-  padding: 15px;
-  border: 1px solid #e8e3da;
-  border-radius: 9px;
-  background: #fff;
+  padding: 16px;
+  border: 1px solid #F7F3EA;
+  border-radius: 10px;
+  background: #FFFFFF;
   cursor: pointer;
-  transition:
-    border-color 0.2s ease,
-    background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
-.option-decision:hover {
-  border-color: #b9d9c6;
-  background: #fcfefc;
-}
-
-.option-decision.option-selectionnee {
-  border-color: #0f7a4b;
-  background: #f1f9f4;
+.option-decision:hover,
+.option-decision:has(input:checked) {
+  border-color: #0F7A4B;
+  background: #F7F3EA;
 }
 
 .option-decision input {
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  accent-color: #0f7a4b;
-  cursor: pointer;
+  margin-top: 4px;
+  accent-color: #0F7A4B;
 }
 
 .option-decision > mat-icon {
+  display: inline-flex;
   flex-shrink: 0;
-  color: #0f7a4b;
-}
-
-.option-decision:nth-child(2) > mat-icon {
-  color: #b42318;
+  color: #0F7A4B;
 }
 
 .option-decision span {
+  color: #1F1F1F;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.avertissement-decision {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  min-width: 0;
-}
-
-.option-decision strong {
-  color: #1f1f1f;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 14px 0;
+  padding: 14px;
+ 
+  background: #F7F3EA;
+  color: #1F1F1F;
   font-size: 13px;
+  line-height: 1.7;
 }
 
-.option-decision small {
-  color: #777;
-  font-size: 12px;
-  line-height: 1.5;
+.avertissement-decision mat-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: #0F7A4B;
 }
 
-/* =========================================================
-   17. MOTIF DU REJET
-   ========================================================= */
+/* CHAMP MOTIF */
 
 .champ-motif {
   display: flex;
@@ -857,174 +654,111 @@
 }
 
 .champ-motif label {
-  color: #333;
+  color: #1F1F1F;
   font-size: 13px;
   font-weight: 600;
 }
 
 .champ-motif textarea {
-  display: block;
   width: 100%;
-  min-height: 100px;
-  padding: 12px;
-  border: 1px solid #ddd5c8;
-  border-radius: 8px;
-  background: #fff;
-  color: #1f1f1f;
-  font-family: inherit;
-  font-size: 13px;
+  min-height: 110px;
+  padding: 13px 14px;
+  border: 1px solid rgba(15, 122, 75, 0.2);
+  border-radius: 9px;
+  outline: none;
+  background: #FFFFFF;
+  color: #1F1F1F;
+  font: inherit;
+  font-size: 14px;
   line-height: 1.6;
   resize: vertical;
-  box-sizing: border-box;
-}
-
-.champ-motif textarea::placeholder {
-  color: #999;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .champ-motif textarea:focus {
-  outline: 2px solid rgb(15 122 75 / 18%);
-  border-color: #0f7a4b;
+  border-color: #0F7A4B;
+  box-shadow: 0 0 0 3px rgba(15, 122, 75, 0.12);
 }
 
-/* =========================================================
-   18. AVERTISSEMENTS ET ERREURS DE DÉCISION
-   ========================================================= */
-
-.avertissement-decision {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin: 16px 0;
-  padding: 12px;
-  border: 1px solid #f0d5a0;
-  border-radius: 8px;
-  background: #fff4d6;
-  color: #805b00;
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-.avertissement-decision mat-icon {
-  flex-shrink: 0;
-  color: #946200;
+.champ-motif textarea::placeholder {
+  color: #1F1F1F;
+  opacity: 0.45;
 }
 
 .erreur-decision {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  margin: 15px 0;
-  padding: 12px;
-  border: 1px solid #ffd4d4;
-  border-radius: 7px;
-  background: #fff0f0;
-  color: #b42318;
+  margin: 8px 0 0;
+  color: #1F1F1F;
   font-size: 13px;
   line-height: 1.6;
-  overflow-wrap: anywhere;
 }
 
-.erreur-decision mat-icon {
-  flex-shrink: 0;
-}
-
-/* =========================================================
-   19. ACTIONS DE LA FENÊTRE
-   ========================================================= */
+/* ACTIONS DE LA FENÊTRE */
 
 .popup-actions {
   display: flex;
   justify-content: flex-end;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 22px;
-  padding-top: 18px;
-  border-top: 1px solid #eeeae3;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #F7F3EA;
 }
 
-/* =========================================================
-   20. ACCESSIBILITÉ ET INTERACTIONS
-   ========================================================= */
+.btn-annuler {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid #F7B500;
+  border-radius: 9px;
+  background: #FFFFFF;
+  color: #1F1F1F;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-annuler:hover {
+  background: #F7F3EA;
+}
+
+/* ACCESSIBILITÉ */
 
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid #0f7a4b;
+  outline: 3px solid rgba(15, 122, 75, 0.25);
   outline-offset: 3px;
 }
 
-button,
-a,
-input,
-textarea {
-  -webkit-tap-highlight-color: transparent;
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
-/* =========================================================
-   21. RESPONSIVE — TABLETTES
-   ========================================================= */
+/* TABLETTE */
 
-@media (max-width: 1000px) {
+@media (max-width: 900px) {
   .detail-page {
     padding: 22px;
   }
 
   .carte-detail {
-    padding: 22px;
+    padding: 24px;
   }
 
-  .grille-budget {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .carte-budget:last-child {
-    grid-column: 1 / -1;
+  .grille-informations {
+    gap: 0 22px;
   }
 }
 
-/* =========================================================
-   22. RESPONSIVE — PETITES TABLETTES
-   ========================================================= */
-
-@media (max-width: 800px) {
-  .detail-page {
-    padding: 18px;
-  }
-
-  .carte-detail {
-    padding: 18px;
-  }
-
-  .detail-header {
-    align-items: flex-start;
-  }
-
-  .detail-header .btn-principal {
-    flex-shrink: 0;
-  }
-
-  .grille-budget {
-    grid-template-columns: 1fr;
-  }
-
-  .carte-budget:last-child {
-    grid-column: auto;
-  }
-
-  .relation-item {
-    align-items: flex-start;
-  }
-}
-
-/* =========================================================
-   23. RESPONSIVE — MOBILES
-   ========================================================= */
+/* MOBILE */
 
 @media (max-width: 600px) {
   .detail-page {
-    padding: 14px;
+    padding: 14px 12px;
   }
 
   .page-header {
@@ -1034,110 +768,66 @@ textarea {
   }
 
   .page-header h1 {
-    font-size: 21px;
+    font-size: 23px;
   }
 
-  .page-header p {
-    font-size: 13px;
-  }
-
-  .page-header .btn-retour {
+  .btn-retour {
     width: 100%;
-    box-sizing: border-box;
   }
 
   .carte-detail {
-    padding: 16px;
-    border-radius: 11px;
+    padding: 18px 14px;
+    border-radius: 12px;
   }
 
   .detail-header {
     align-items: flex-start;
     flex-direction: column;
-    gap: 16px;
   }
 
-  .detail-header h2 {
+  .titre-demande {
+    flex-basis: auto;
+    width: 100%;
     font-size: 20px;
   }
 
-  .detail-header .btn-principal {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
   .section {
-    padding: 21px 0;
-  }
-
-  .section h3 {
-    font-size: 16px;
+    padding: 22px 0;
   }
 
   .grille-informations {
-    grid-template-columns: 1fr;
-    gap: 18px;
+    flex-direction: column;
+    gap: 0;
   }
 
+  .info-item,
   .info-large {
-    grid-column: auto;
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
   }
 
   .grille-budget {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .carte-budget:last-child {
-    grid-column: auto;
+    flex-direction: column;
   }
 
   .carte-budget {
-    padding: 16px;
+    flex-basis: auto;
+    width: 100%;
   }
 
-  .carte-budget strong {
-    font-size: 17px;
+  .table-articles {
+    min-width: 540px;
   }
 
-  .table-articles th,
-  .table-articles td {
-    padding: 11px 9px;
-    font-size: 12px;
-  }
-
-  .liste-justificatifs {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .image-justificatif {
-    height: 125px;
-  }
-
-  .relation-item {
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 13px;
-  }
-
-  .relation-contenu {
-    flex: 1 1 calc(100% - 40px);
-  }
-
-  .relation-statut {
-    margin-left: 30px;
-  }
-
-  .resume-relations {
-    font-size: 12px;
+  .carte-justificatif {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .popup-decision {
-    padding: 18px;
-  }
-
-  .overlay-decision {
-    padding: 12px;
+    padding: 22px 18px;
+    border-radius: 12px;
   }
 
   .popup-actions {
@@ -1146,59 +836,5 @@ textarea {
 
   .popup-actions button {
     width: 100%;
-    box-sizing: border-box;
-  }
-}
-
-/* =========================================================
-   24. RESPONSIVE — TRÈS PETITS MOBILES
-   ========================================================= */
-
-@media (max-width: 400px) {
-  .detail-page {
-    padding: 10px;
-  }
-
-  .carte-detail {
-    padding: 13px;
-  }
-
-  .page-header h1 {
-    font-size: 19px;
-  }
-
-  .detail-header h2 {
-    font-size: 18px;
-  }
-
-  .liste-justificatifs {
-    grid-template-columns: 1fr;
-  }
-
-  .image-justificatif {
-    height: 170px;
-  }
-
-  .progression-label {
-    font-size: 12px;
-  }
-
-  .option-decision {
-    padding: 12px;
-  }
-}
-
-/* =========================================================
-   25. RESPECT DES PRÉFÉRENCES D'ANIMATION
-   ========================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
   }
 }

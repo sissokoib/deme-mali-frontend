@@ -2,7 +2,7 @@
 <div class="page-etude">
   <header class="entete">
     <div>
-      <span class="surtitre">SUIVI DES DEMANDES D'AIDE</span>
+     
       <h1>Terminer l'étude de terrain</h1>
       <p>
         Enregistrez les observations et les résultats de la visite.
@@ -14,7 +14,7 @@
       class="btn-secondaire"
       (click)="annuler()">
       <mat-icon>arrow_back</mat-icon>
-      Retour à la liste
+      Retour 
     </button>
   </header>
 
@@ -66,9 +66,7 @@
 
       <h2>Résultats de la visite</h2>
 
-      <p class="indication">
-        <span>*</span> Champs obligatoires
-      </p>
+    
 
       <div class="champ">
         <label for="dateRealisation">
@@ -87,8 +85,7 @@
         <small
           class="aide-champ"
           *ngIf="!champInvalide('dateRealisation')">
-          Date du système préremplie. Une date passée peut être choisie
-          si la visite a réellement eu lieu auparavant.
+         
         </small>
 
         <small
@@ -149,20 +146,18 @@
           Annuler
         </button>
 
-        <button
-          type="submit"
-          class="btn-principal"
-          [disabled]="enregistrement">
-          <mat-icon>
-            {{ enregistrement ? 'hourglass_empty' : 'check_circle' }}
-          </mat-icon>
+       <button
+  type="submit"
+  class="btn-principal"
+  [disabled]="enregistrement">
 
-          {{
-            enregistrement
-              ? 'Enregistrement...'
-              : "Terminer l'étude"
-          }}
-        </button>
+  {{
+    enregistrement
+      ? 'Enregistrement...'
+      : "Terminer l'étude"
+  }}
+
+</button>
       </footer>
     </form>
   </ng-container>
