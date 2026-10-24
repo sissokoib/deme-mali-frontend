@@ -160,10 +160,23 @@ app-admin-navbar {
   app-sidebar,
   app-admin-sidebar {
     display: block !important;
+    position: sticky !important;
+    top: 0 !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    align-self: start !important;
+    z-index: 1040 !important;
     min-width: 0 !important;
     width: 100% !important;
     overflow: visible !important;
     transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  .sidebar-inner {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
   }
 
   .sidebar-collapsed app-sidebar,
@@ -173,6 +186,8 @@ app-admin-navbar {
 
   .sidebar-collapsed .sidebar-inner {
     width: var(--sidebar-w-collapsed, 80px) !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
     overflow-x: visible !important;
     transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }

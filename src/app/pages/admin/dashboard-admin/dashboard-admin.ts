@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DashboardService } from '../../../services/dashboard.service';
 import { demandeAideService } from '../../../services/demande-aide';
+import { OrganisationService } from '../../../services/organisation';
+import { BeneficiaireService } from '../../../services/beneficiaire';
+import { DonService } from '../../../services/don.service.ts';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 export interface DashboardProjetItem {
   id: number;
@@ -53,7 +57,6 @@ export class DashboardAdmin implements OnInit {
   sortOrder = 'desc';
   selectedCalendarDay = 18;
 
-  // Calendrier dynamique
   calendarDays = [
     { day: 28, isCurrentMonth: false, hasTask: false },
     { day: 29, isCurrentMonth: false, hasTask: false },
@@ -75,7 +78,7 @@ export class DashboardAdmin implements OnInit {
     { day: 15, isCurrentMonth: true, hasTask: false },
     { day: 16, isCurrentMonth: true, hasTask: false },
     { day: 17, isCurrentMonth: true, hasTask: false },
-    { day: 18, isCurrentMonth: true, hasTask: true }, // Aujourd'hui
+    { day: 18, isCurrentMonth: true, hasTask: true },
     { day: 19, isCurrentMonth: true, hasTask: false },
     { day: 20, isCurrentMonth: true, hasTask: false },
     { day: 21, isCurrentMonth: true, hasTask: false },
@@ -93,12 +96,13 @@ export class DashboardAdmin implements OnInit {
   ];
 
   tasks: DashboardTask[] = [];
-
   projetsDons: DashboardProjetItem[] = [];
 
   constructor(
-    private dashboardService: DashboardService,
-    private demandeService: demandeAideService
+    private demandeService: demandeAideService,
+    private organisationService: OrganisationService,
+    private beneficiaireService: BeneficiaireService,
+    private donService: DonService
   ) {}
 
   ngOnInit() {
@@ -107,20 +111,34 @@ export class DashboardAdmin implements OnInit {
   }
 
   chargerStats() {
-    this.dashboardService.getAdminDashboardStats().subscribe({
-      next: (data) => {
-        if (data) {
-          this.stats = {
-            totalOrganisations: data.totalOrganisations || 0,
-            totalBeneficiaires: data.totalBeneficiaires || 0,
-            totalDemandesAide: data.totalDemandesAide || 0,
-            totalDons: data.totalDons || 0,
-            montantTotalCollecte: data.montantTotalCollecte || 0,
-            demandesEnAttente: data.demandesEnAttente || 0,
-            demandesValidees: data.demandesValidees || 0,
-            demandesRefusees: data.demandesRefusees || 0
-          };
-        }
+    forkJoin({
+      demandes: this.demandeService.getDemandes().pipe(catchError(() => of([]))),
+      organisations: this.organisationService.getAllOrganisations().pipe(catchError(() => of([]))),
+      beneficiaires: this.beneficiaireService.trouverTous().pipe(catchError(() => of([]))),
+      donsFinanciers: this.donService.getAllDonsFinanciers().pipe(catchError(() => of([]))),
+      donsGlobaux: this.donService.getAllDons().pipe(catchError(() => of([])))
+    }).subscribe({
+      next: ({ demandes, organisations, beneficiaires, donsFinanciers, donsGlobaux }) => {
+        const montantFinancierTotal = (donsFinanciers || []).reduce((sum: number, d: any) => sum + (d.montant || 0), 0);
+        const montantDemandes = (demandes || []).reduce((sum: number, d: any) => sum + (d.montantCollecte || 0), 0);
+        const montantTotal = montantFinancierTotal > 0 ? montantFinancierTotal : montantDemandes;
+
+        const enAttente = (demandes || []).filter((d: any) => d.statut === 'EN_ATTENTE' || !d.statut).length;
+        const validees = (demandes || []).filter((d: any) => d.statut === 'VALIDEE' || d.statut === 'Validé' || d.statut === 'TERMINEE').length;
+        const refusees = (demandes || []).filter((d: any) => d.statut === 'REFUSEE' || d.statut === 'Refusé').length;
+
+        const totalDonsCount = Math.max((donsFinanciers || []).length, (donsGlobaux || []).length);
+
+        this.stats = {
+          totalOrganisations: (organisations || []).length,
+          totalBeneficiaires: (beneficiaires || []).length,
+          totalDemandesAide: (demandes || []).length,
+          totalDons: totalDonsCount,
+          montantTotalCollecte: montantTotal,
+          demandesEnAttente: enAttente,
+          demandesValidees: validees,
+          demandesRefusees: refusees
+        };
       },
       error: (err: any) => {
         console.warn('Erreur chargement des stats dashboard', err);
@@ -133,8 +151,9 @@ export class DashboardAdmin implements OnInit {
       next: (demandes: any[]) => {
         if (demandes && demandes.length > 0) {
           this.projetsDons = demandes.map((d: any) => {
-            const isValide = d.statut === 'VALIDEE' || d.statut === 'Validé';
-            const isTermine = d.statut === 'TERMINEE' || d.statut === 'Terminé';
+            const raw = (d.statut || '').toUpperCase();
+            const isTermine = raw === 'TERMINEE' || raw === 'TERMINE';
+            const isValide = raw === 'VALIDEE' || raw === 'VALIDE';
             const statut = isTermine ? 'Terminé' : (isValide ? 'Validé' : 'En attente');
             const statutClass = isTermine || isValide ? 'status-termine' : 'status-attente';
 
@@ -148,7 +167,7 @@ export class DashboardAdmin implements OnInit {
               type: d.categorieDemandeNom || 'Social',
               statut: statut,
               statutClass: statutClass,
-              date: d.dateCreation ? new Date(d.dateCreation).toLocaleDateString('fr-FR') : '16/10/2026',
+              date: d.dateCreation ? new Date(d.dateCreation).toLocaleDateString('fr-FR') : 'Aujourd\'hui',
               priorite: urgence,
               prioriteClass: urgenceClass,
               beneficiaireNom: `${d.beneficiairePrenom || ''} ${d.beneficiaireNom || ''}`.trim() || 'Bénéficiaire',
@@ -156,13 +175,12 @@ export class DashboardAdmin implements OnInit {
             };
           });
 
-          // Génère les tâches réelles en attente d'action
           this.tasks = demandes
             .filter((d: any) => d.statut === 'EN_ATTENTE' || !d.statut)
             .map((d: any, index: number) => ({
               id: d.id,
               title: `Valider la demande : ${d.titre || 'Demande d\'aide'}`,
-              date: d.dateCreation ? new Date(d.dateCreation).toLocaleDateString('fr-FR') : '18 Octobre 2026',
+              date: d.dateCreation ? new Date(d.dateCreation).toLocaleDateString('fr-FR') : 'En attente',
               priority: d.niveauUrgence === 'FORTE' ? 'Urgente' : 'Moyenne',
               priorityClass: d.niveauUrgence === 'FORTE' ? 'priority-urgente' : 'priority-moyenne',
               iconBg: index % 2 === 0 ? '#E2F2E9' : '#FFF9E6',
@@ -184,14 +202,23 @@ export class DashboardAdmin implements OnInit {
 
   get projetsDonsFiltres(): DashboardProjetItem[] {
     return this.projetsDons.filter(p => {
-      if (this.filterStatut === 'Tous') return true;
-      return p.statut.toLowerCase() === this.filterStatut.toLowerCase();
+      const f = this.filterStatut;
+      if (!f || f === 'Tous') return true;
+      if (f === 'Validé' || f.toLowerCase().includes('valid')) {
+        return p.statut === 'Validé';
+      }
+      if (f === 'En attente' || f.toLowerCase().includes('attente')) {
+        return p.statut === 'En attente';
+      }
+      if (f === 'En cours' || f.toLowerCase().includes('cours')) {
+        return p.statut === 'En attente' || p.statut === 'Validé';
+      }
+      return p.statut.toLowerCase() === f.toLowerCase();
     });
   }
 
   toggleFilterStatut() {
-    if (this.filterStatut === 'Tous') this.filterStatut = 'En cours';
-    else if (this.filterStatut === 'En cours') this.filterStatut = 'Validé';
+    if (this.filterStatut === 'Tous') this.filterStatut = 'Validé';
     else if (this.filterStatut === 'Validé') this.filterStatut = 'En attente';
     else this.filterStatut = 'Tous';
   }
@@ -219,4 +246,3 @@ export class DashboardAdmin implements OnInit {
     this.selectedCalendarDay = day;
   }
 }
-

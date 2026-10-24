@@ -2,7 +2,7 @@
   <div class="page-header">
     <div>
       <h1 class="page-title">Gestion des Membres</h1>
-      <p class="page-subtitle">Personnel de l'ONG et bénéficiaires affiliés, avec leur statut d'adhésion.</p>
+      <p class="page-subtitle">Personnel de l'ONG, bénéficiaires (particuliers & structures) et statut d'adhésion.</p>
     </div>
     <button type="button" class="btn-primary" (click)="ouvrirModal()">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
@@ -44,7 +44,7 @@
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <input type="text" [(ngModel)]="searchTerm" placeholder="Rechercher un membre...">
+          <input type="text" [(ngModel)]="searchTerm" placeholder="Rechercher un membre, NIF, téléphone...">
         </div>
       </div>
     </div>
@@ -69,11 +69,20 @@
             <td><strong class="text-id">{{ m.id }}</strong></td>
             <td>
               <div class="member-name-cell">
-                <span class="member-avatar">{{ m.nom.charAt(0) }}</span>
-                <strong>{{ m.nom }}</strong>
+                <span class="member-avatar" [style.background-color]="m.typeBeneficiaire === 'STRUCTURE' ? '#3B82F6' : '#0F7A4B'">
+                  {{ m.nom.charAt(0) }}
+                </span>
+                <div>
+                  <strong>{{ m.nom }}</strong>
+                  <div *ngIf="m.phone" style="font-size: 11px; color: #6B7280;">{{ m.phone }}</div>
+                </div>
               </div>
             </td>
-            <td><span class="type-badge">{{ m.type }}</span></td>
+            <td>
+              <span class="type-badge" [style.background-color]="m.typeBeneficiaire === 'STRUCTURE' ? '#EFF6FF' : '#E6F4EA'" [style.color]="m.typeBeneficiaire === 'STRUCTURE' ? '#1D4ED8' : '#0F7A4B'">
+                {{ m.typeBeneficiaire === 'STRUCTURE' ? 'Structure' : (m.typeBeneficiaire === 'PARTICULIER' ? 'Particulier' : m.type) }}
+              </span>
+            </td>
             <td>{{ m.role }}</td>
             <td>{{ m.region }}</td>
             <td>{{ m.date }}</td>
@@ -81,7 +90,7 @@
             <td><span class="status-badge" [ngClass]="m.statutClass">{{ m.statut }}</span></td>
             <td class="actions-cell">
               <div class="actions-group" style="display: flex; gap: 6px; align-items: center;">
-                <button type="button" class="btn-action-view" (click)="ouvrirDetails(m)" title="Consulter la fiche">
+                <button type="button" class="btn-action-view" (click)="ouvrirDetails(m)" title="Consulter la fiche détaillée">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                     <circle cx="12" cy="12" r="3"></circle>
@@ -91,7 +100,7 @@
                   type="button"
                   class="btn-action-view"
                   *ngIf="m.statut !== 'Approuvé'"
-                  (click)="changerStatut(m, 'Approuvé')"
+                  (click)="approuver(m)"
                   title="Approuver le membre"
                   style="color: #0F7A4B;"
                 >
@@ -103,9 +112,9 @@
                   type="button"
                   class="btn-action-view"
                   *ngIf="m.statut !== 'Refusé'"
-                  (click)="changerStatut(m, 'Refusé')"
-                  title="Refuser / Rejeter"
-                  style="color: #D97706;"
+                  (click)="ouvrirRefusModal(m)"
+                  title="Refuser / Rejeter avec motif"
+                  style="color: #DC2626;"
                 >
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -129,7 +138,6 @@
         </svg>
       </span>
       <span class="page-item active">1</span>
-      <span class="page-item">2</span>
       <span class="page-item" title="Suivant">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="9 18 15 12 9 6"></polyline>
@@ -140,13 +148,13 @@
 
   <!-- Modal Détails du Membre -->
   <div class="fond-modal" *ngIf="membreSelectionne" (click)="fermerDetails()">
-    <div class="modal-form-card" (click)="$event.stopPropagation()">
+    <div class="modal-form-card" (click)="$event.stopPropagation()" style="max-width: 650px;">
       <div class="modal-entete">
         <div>
           <span class="surtitre">DÈMÈ MALI • FICHE DU MEMBRE</span>
           <h2>{{ membreSelectionne.nom }}</h2>
         </div>
-        <button type="button" class="btn-fermer" (click)="fermerDetails()" aria-label="Fermer la boîte de dialogue">
+        <button type="button" class="btn-fermer" (click)="fermerDetails()" aria-label="Fermer">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -154,42 +162,95 @@
         </button>
       </div>
 
-      <div class="modal-detail-body" style="padding: 24px 0;">
-        <div class="detail-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <!-- Alerte si le membre est refusé -->
+      <div *ngIf="membreSelectionne.statut === 'Refusé'" style="background-color: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 8px; padding: 12px; margin-top: 14px; color: #991B1B;">
+        <strong>Dossier Refusé :</strong> {{ membreSelectionne.motifRefus || 'Motif non spécifié' }}
+      </div>
+
+      <div class="modal-detail-body" style="padding: 20px 0;">
+        <div class="detail-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
           <div class="detail-item">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">ID Membre</span>
-            <p style="font-weight: 700; color: #0F7A4B; margin-top: 4px;">{{ membreSelectionne.id }}</p>
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">ID Membre</span>
+            <p style="font-weight: 700; color: #0F7A4B; margin-top: 2px;">{{ membreSelectionne.id }}</p>
           </div>
           <div class="detail-item">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Statut d'adhésion</span>
-            <p style="margin-top: 4px;">
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Statut d'adhésion</span>
+            <p style="margin-top: 2px;">
               <span class="status-badge" [ngClass]="membreSelectionne.statutClass">{{ membreSelectionne.statut }}</span>
             </p>
           </div>
           <div class="detail-item">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Type de Membre</span>
-            <p style="margin-top: 4px;"><span class="type-badge">{{ membreSelectionne.type }}</span></p>
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Type de Membre</span>
+            <p style="margin-top: 2px;">
+              <span class="type-badge" [style.background-color]="membreSelectionne.typeBeneficiaire === 'STRUCTURE' ? '#EFF6FF' : '#E6F4EA'" [style.color]="membreSelectionne.typeBeneficiaire === 'STRUCTURE' ? '#1D4ED8' : '#0F7A4B'">
+                {{ membreSelectionne.typeBeneficiaire === 'STRUCTURE' ? 'Structure Associative' : (membreSelectionne.typeBeneficiaire === 'PARTICULIER' ? 'Bénéficiaire Particulier' : membreSelectionne.type) }}
+              </span>
+            </p>
           </div>
           <div class="detail-item">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Rôle / Situation</span>
-            <p style="font-weight: 600; margin-top: 4px;">{{ membreSelectionne.role }}</p>
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Téléphone</span>
+            <p style="margin-top: 2px; font-weight: 600;">{{ membreSelectionne.phone || '+223 70 00 00 00' }}</p>
           </div>
           <div class="detail-item">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Région</span>
-            <p style="margin-top: 4px;">{{ membreSelectionne.region }}</p>
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Ville / Région</span>
+            <p style="margin-top: 2px;">{{ membreSelectionne.ville || membreSelectionne.region }}</p>
           </div>
           <div class="detail-item">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Date d'adhésion</span>
-            <p style="margin-top: 4px;">{{ membreSelectionne.date }}</p>
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Adresse</span>
+            <p style="margin-top: 2px;">{{ membreSelectionne.adresse || 'Non renseignée' }}</p>
           </div>
-          <div class="detail-item">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Téléphone</span>
-            <p style="margin-top: 4px;">{{ membreSelectionne.phone || '+223 70 00 00 00' }}</p>
-          </div>
-          <div class="detail-item">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Mode d'inscription</span>
-            <p style="margin-top: 4px;">{{ membreSelectionne.inscription }}</p>
-          </div>
+
+          <!-- Section Spécifique STRUCTURE -->
+          <ng-container *ngIf="membreSelectionne.typeBeneficiaire === 'STRUCTURE'">
+            <div class="detail-item">
+              <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Nom Structure</span>
+              <p style="margin-top: 2px; font-weight: 600;">{{ membreSelectionne.nomStructure || membreSelectionne.nom }}</p>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Email officiel</span>
+              <p style="margin-top: 2px;">{{ membreSelectionne.email || 'Non renseigné' }}</p>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Numéro NIF</span>
+              <p style="margin-top: 2px; font-weight: 600; color: #1E40AF;">{{ membreSelectionne.nif || 'En attente' }}</p>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Numéro NINA</span>
+              <p style="margin-top: 2px; font-weight: 600;">{{ membreSelectionne.nina || 'En attente' }}</p>
+            </div>
+            <div class="detail-item" style="grid-column: span 2;" *ngIf="membreSelectionne.documentJustificatif">
+              <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Document Justificatif</span>
+              <p style="margin-top: 4px;">
+                <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #F3F4F6; border-radius: 6px; font-size: 12px; color: #374151;">
+                  📄 {{ membreSelectionne.documentJustificatif }}
+                </span>
+              </p>
+            </div>
+          </ng-container>
+
+          <!-- Section Spécifique PARTICULIER -->
+          <ng-container *ngIf="membreSelectionne.typeBeneficiaire === 'PARTICULIER'">
+            <div class="detail-item">
+              <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Genre / Sexe</span>
+              <p style="margin-top: 2px;">{{ membreSelectionne.sexe || 'Non spécifié' }}</p>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Situation Matrimoniale</span>
+              <p style="margin-top: 2px;">{{ membreSelectionne.situationMatrimonial || 'Non spécifiée' }}</p>
+            </div>
+            <div class="detail-item" *ngIf="membreSelectionne.nombreEnfants !== undefined">
+              <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Enfants à charge</span>
+              <p style="margin-top: 2px;">{{ membreSelectionne.nombreEnfants }} enfant(s)</p>
+            </div>
+            <div class="detail-item" *ngIf="membreSelectionne.typeHandicap">
+              <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Type de Handicap</span>
+              <p style="margin-top: 2px; color: #DC2626; font-weight: 600;">{{ membreSelectionne.typeHandicap }}</p>
+            </div>
+            <div class="detail-item" style="grid-column: span 2;" *ngIf="membreSelectionne.descriptionSituation">
+              <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Description de la Situation</span>
+              <p style="margin-top: 2px; line-height: 1.4; color: #374151;">{{ membreSelectionne.descriptionSituation }}</p>
+            </div>
+          </ng-container>
         </div>
       </div>
 
@@ -199,18 +260,18 @@
             type="button"
             class="btn-primary"
             *ngIf="membreSelectionne.statut !== 'Approuvé'"
-            (click)="changerStatut(membreSelectionne, 'Approuvé'); fermerDetails();"
+            (click)="approuver(membreSelectionne)"
           >
-            Approuver le Membre
+            Approuver le membre
           </button>
           <button
             type="button"
             class="btn-annuler"
+            style="color: #DC2626; border-color: #FCA5A5;"
             *ngIf="membreSelectionne.statut !== 'Refusé'"
-            (click)="changerStatut(membreSelectionne, 'Refusé'); fermerDetails();"
-            style="color: #EF4444; border-color: #EF4444;"
+            (click)="ouvrirRefusModal(membreSelectionne)"
           >
-            Rejeter le Membre
+            Rejeter / Refuser
           </button>
         </div>
         <button type="button" class="btn-annuler" (click)="fermerDetails()">Fermer</button>
@@ -218,15 +279,15 @@
     </div>
   </div>
 
-  <!-- Modal Nouveau Membre (Même mise en forme que l'organisation partenaire) -->
-  <div class="fond-modal" *ngIf="isModalOpen" (click)="fermerModal()">
-    <div class="modal-form-card" (click)="$event.stopPropagation()">
+  <!-- Modal Refus avec Motif -->
+  <div class="fond-modal" *ngIf="isRefusModalOpen" (click)="fermerRefusModal()">
+    <div class="modal-form-card" (click)="$event.stopPropagation()" style="max-width: 500px;">
       <div class="modal-entete">
         <div>
-          <span class="surtitre">DÈMÈ MALI • ADMINISTRATION</span>
-          <h2>Nouveau Membre</h2>
+          <span class="surtitre">DÈMÈ MALI • REJET DU DOSSIER</span>
+          <h2>Motif du refus</h2>
         </div>
-        <button type="button" class="btn-fermer" (click)="fermerModal()" aria-label="Fermer la boîte de dialogue">
+        <button type="button" class="btn-fermer" (click)="fermerRefusModal()" aria-label="Fermer">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -234,87 +295,179 @@
         </button>
       </div>
 
+      <div style="padding: 16px 0;">
+        <p style="font-size: 13px; color: #4B5563; margin-bottom: 12px;">
+          Indiquez la raison du rejet pour <strong>{{ membreARefuser?.nom }}</strong>. Ce motif permettra d'orienter le membre.
+        </p>
+        <div class="form-group form-group-full">
+          <label for="motifRefus">Motif explicatif <span class="etoile">*</span></label>
+          <textarea
+            id="motifRefus"
+            [(ngModel)]="motifRefusTexte"
+            rows="3"
+            class="form-control"
+            placeholder="Ex. : Justificatifs illisibles, critères d'éligibilité non remplis..."
+            style="width: 100%; border: 1px solid #D1D5DB; border-radius: 8px; padding: 10px;"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="modal-actions" style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button type="button" class="btn-annuler" (click)="fermerRefusModal()">Annuler</button>
+        <button
+          type="button"
+          class="btn-primary"
+          style="background-color: #DC2626;"
+          [disabled]="!motifRefusTexte.trim()"
+          (click)="confirmerRefus()"
+        >
+          Confirmer le rejet
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Nouveau Membre -->
+  <div class="fond-modal" *ngIf="isModalOpen" (click)="fermerModal()">
+    <div class="modal-form-card" (click)="$event.stopPropagation()" style="max-width: 650px;">
+      <div class="modal-entete">
+        <div>
+          <span class="surtitre">DÈMÈ MALI • ADMINISTRATION</span>
+          <h2>Nouveau Membre</h2>
+        </div>
+        <button type="button" class="btn-fermer" (click)="fermerModal()" aria-label="Fermer">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Sélecteur de type d'enregistrement -->
+      <div style="display: flex; gap: 10px; margin: 16px 0 20px 0;">
+        <button
+          type="button"
+          class="tab-btn"
+          [class.active]="typeMembreAjout === 'Particulier'"
+          (click)="typeMembreAjout = 'Particulier'"
+          style="flex: 1;"
+        >
+          Bénéficiaire Particulier
+        </button>
+        <button
+          type="button"
+          class="tab-btn"
+          [class.active]="typeMembreAjout === 'Structure'"
+          (click)="typeMembreAjout = 'Structure'"
+          style="flex: 1;"
+        >
+          Structure Associative
+        </button>
+        <button
+          type="button"
+          class="tab-btn"
+          [class.active]="typeMembreAjout === 'Personnel'"
+          (click)="typeMembreAjout = 'Personnel'"
+          style="flex: 1;"
+        >
+          Personnel ONG
+        </button>
+      </div>
+
       <form (ngSubmit)="enregistrerMembre()">
-        <div class="form-grid">
+        <!-- FORMULAIRE PARTICULIER -->
+        <div class="form-grid" *ngIf="typeMembreAjout === 'Particulier'">
+          <div class="form-group">
+            <label for="pNom">Nom <span class="etoile">*</span></label>
+            <input id="pNom" type="text" [(ngModel)]="nouveauParticulier.nom" name="pNom" required placeholder="Ex. : Traoré">
+          </div>
+          <div class="form-group">
+            <label for="pPrenom">Prénom <span class="etoile">*</span></label>
+            <input id="pPrenom" type="text" [(ngModel)]="nouveauParticulier.prenom" name="pPrenom" required placeholder="Ex. : Ousmane">
+          </div>
+          <div class="form-group">
+            <label for="pTel">Téléphone <span class="etoile">*</span></label>
+            <input id="pTel" type="tel" [(ngModel)]="nouveauParticulier.telephone" name="pTel" required placeholder="+223 70 00 00 00">
+          </div>
+          <div class="form-group">
+            <label for="pVille">Ville</label>
+            <input id="pVille" type="text" [(ngModel)]="nouveauParticulier.ville" name="pVille" placeholder="Bamako">
+          </div>
+          <div class="form-group">
+            <label for="pSit">Situation Matrimoniale</label>
+            <select id="pSit" [(ngModel)]="nouveauParticulier.situationMatrimonial" name="pSit">
+              <option value="CELIBATAIRE">Célibataire</option>
+              <option value="MARIE">Marié(e)</option>
+              <option value="VEUF">Veuf / Veuve</option>
+              <option value="DIVORCE">Divorcé(e)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="pType">Profil Demandeur</label>
+            <select id="pType" [(ngModel)]="nouveauParticulier.typeBeneficiaireParticulier" name="pType">
+              <option value="DEMUNI">Démuni / Précaire</option>
+              <option value="PERSONNE">Personne en situation d'urgence</option>
+              <option value="ORPHELIN">Orphelin / Famille d'accueil</option>
+              <option value="REFUGIE">Réfugié / Déplacé</option>
+            </select>
+          </div>
           <div class="form-group form-group-full">
-            <label for="membreNom">Nom complet <span class="etoile">*</span></label>
-            <input
-              id="membreNom"
-              type="text"
-              [(ngModel)]="nouveauMembre.nom"
-              name="nom"
-              required
-              placeholder="Ex. : Ousmane Diarra"
-            >
+            <label for="pDesc">Description de la situation</label>
+            <textarea id="pDesc" [(ngModel)]="nouveauParticulier.descriptionSituation" name="pDesc" rows="2" placeholder="Explication du besoin d'accompagnement..."></textarea>
           </div>
+        </div>
 
-          <div class="form-group">
-            <label for="membreType">Type de membre</label>
-            <select id="membreType" [(ngModel)]="nouveauMembre.type" name="type">
-              <option value="Personnel">Personnel ONG</option>
-              <option value="Bénéficiaire">Bénéficiaire affilié</option>
-              <option value="Bénévole">Bénévole</option>
-            </select>
+        <!-- FORMULAIRE STRUCTURE -->
+        <div class="form-grid" *ngIf="typeMembreAjout === 'Structure'">
+          <div class="form-group form-group-full">
+            <label for="sNom">Nom de la Structure <span class="etoile">*</span></label>
+            <input id="sNom" type="text" [(ngModel)]="nouveauStructure.nomStructure" name="sNom" required placeholder="Ex. : Association Yeleen">
           </div>
-
           <div class="form-group">
-            <label for="membreRole">Rôle / Situation</label>
-            <input
-              id="membreRole"
-              type="text"
-              [(ngModel)]="nouveauMembre.role"
-              name="role"
-              placeholder="Ex. : Coordinateur, Étudiant..."
-            >
+            <label for="sTel">Téléphone <span class="etoile">*</span></label>
+            <input id="sTel" type="tel" [(ngModel)]="nouveauStructure.telephone" name="sTel" required placeholder="+223 70 00 00 00">
           </div>
-
           <div class="form-group">
-            <label for="membreRegion">Région</label>
-            <select id="membreRegion" [(ngModel)]="nouveauMembre.region" name="region">
-              <option value="Bamako">Bamako</option>
-              <option value="Koulikoro">Koulikoro</option>
-              <option value="Sikasso">Sikasso</option>
-              <option value="Ségou">Ségou</option>
-              <option value="Kayes">Kayes</option>
-              <option value="Mopti">Mopti</option>
-              <option value="Tombouctou">Tombouctou</option>
-              <option value="Gao">Gao</option>
-              <option value="Kidal">Kidal</option>
-            </select>
+            <label for="sEmail">Email officiel</label>
+            <input id="sEmail" type="email" [(ngModel)]="nouveauStructure.email" name="sEmail" placeholder="contact@yeleen.ml">
           </div>
-
           <div class="form-group">
-            <label for="membreInscription">Mode d'inscription</label>
-            <select id="membreInscription" [(ngModel)]="nouveauMembre.inscription" name="inscription">
-              <option value="Création Admin">Création Admin</option>
-              <option value="Formulaire public">Formulaire public</option>
-              <option value="Affiliation partenaire">Affiliation partenaire</option>
-            </select>
+            <label for="sNif">Numéro NIF</label>
+            <input id="sNif" type="text" [(ngModel)]="nouveauStructure.nif" name="sNif" placeholder="NIF123456">
           </div>
-
           <div class="form-group">
-            <label for="membrePhone">Téléphone</label>
-            <input
-              id="membrePhone"
-              type="tel"
-              [(ngModel)]="nouveauMembre.phone"
-              name="phone"
-              placeholder="+223 70 00 00 00"
-            >
+            <label for="sNina">Numéro NINA</label>
+            <input id="sNina" type="text" [(ngModel)]="nouveauStructure.nina" name="sNina" placeholder="NINA7890">
           </div>
+        </div>
 
+        <!-- FORMULAIRE PERSONNEL ONG -->
+        <div class="form-grid" *ngIf="typeMembreAjout === 'Personnel'">
           <div class="form-group">
-            <label for="membreStatut">Statut d'adhésion</label>
-            <select id="membreStatut" [(ngModel)]="nouveauMembre.statut" name="statut">
-              <option value="Approuvé">Approuvé</option>
-              <option value="En attente">En attente</option>
+            <label for="persNom">Nom <span class="etoile">*</span></label>
+            <input id="persNom" type="text" [(ngModel)]="nouveauPersonnel.nom" name="persNom" required placeholder="Ex. : Diarra">
+          </div>
+          <div class="form-group">
+            <label for="persPrenom">Prénom <span class="etoile">*</span></label>
+            <input id="persPrenom" type="text" [(ngModel)]="nouveauPersonnel.prenom" name="persPrenom" required placeholder="Ex. : Awa">
+          </div>
+          <div class="form-group">
+            <label for="persTel">Téléphone <span class="etoile">*</span></label>
+            <input id="persTel" type="tel" [(ngModel)]="nouveauPersonnel.phone" name="persTel" required placeholder="+223 70 00 00 00">
+          </div>
+          <div class="form-group">
+            <label for="persRole">Rôle / Poste</label>
+            <select id="persRole" [(ngModel)]="nouveauPersonnel.role" name="persRole">
+              <option value="ADMIN">Administrateur</option>
+              <option value="AGENT_TERRAIN">Agent de Terrain</option>
+              <option value="COORDINATEUR">Coordinateur Projets</option>
             </select>
           </div>
         </div>
 
-        <div class="modal-actions">
+        <div class="modal-actions" style="margin-top: 20px;">
           <button type="button" class="btn-annuler" (click)="fermerModal()">Annuler</button>
-          <button type="submit" class="btn-enregistrer" [disabled]="!nouveauMembre.nom.trim()">
+          <button type="submit" class="btn-enregistrer">
             Enregistrer le membre
           </button>
         </div>
