@@ -2,8 +2,15 @@
   <div class="page-header">
     <div>
       <h1 class="page-title">Gestion des Partenaires</h1>
-      <p class="page-subtitle">Gérez et consultez les organisations partenaires sur votre plateforme Dèmè Mali.</p>
+      <p class="page-subtitle">Organisations partenaires (ONG, Associations, Fondations) accréditées sur Dèmè Mali.</p>
     </div>
+    <button type="button" class="btn-primary" (click)="ouvrirModal()">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Nouveau Partenaire
+    </button>
   </div>
 
   <!-- Statistiques des Partenaires Interactives -->
@@ -18,23 +25,34 @@
         </svg>
       </div>
       <div class="stat-details">
-        <span class="stat-title">Total Partenaires</span>
-        <span class="stat-number">{{ partenaires.length }}</span>
+        <span class="stat-title">Total Organisations</span>
+        <span class="stat-number">{{ getCount('Tous') }}</span>
       </div>
     </div>
 
     <div class="stat-box clickable" [class.active-stat]="filterStatus === 'Validé'" (click)="setFilterStatus('Validé')">
-      <div class="stat-icon jaune">
+      <div class="stat-icon vert">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-          <polyline points="14 2 14 8 20 8"></polyline>
-          <line x1="16" y1="13" x2="8" y2="13"></line>
-          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="20 6 9 17 4 12"></polyline>
         </svg>
       </div>
       <div class="stat-details">
-        <span class="stat-title">Projets Co-financés</span>
-        <span class="stat-number">{{ getTotalProjetsCoFinances() }}</span>
+        <span class="stat-title">Validées & Actives</span>
+        <span class="stat-number">{{ getCount('Validé') }}</span>
+      </div>
+    </div>
+
+    <div class="stat-box clickable" [class.active-stat]="filterStatus === 'En attente'" (click)="setFilterStatus('En attente')">
+      <div class="stat-icon jaune">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <div class="stat-details">
+        <span class="stat-title">En Attente d'Examen</span>
+        <span class="stat-number">{{ getCount('En attente') }}</span>
       </div>
     </div>
 
@@ -45,7 +63,7 @@
         </svg>
       </div>
       <div class="stat-details">
-        <span class="stat-title">Secteurs Actifs</span>
+        <span class="stat-title">Types de Structures</span>
         <span class="stat-number">{{ getUniqueSecteursCount() }}</span>
       </div>
     </div>
@@ -55,20 +73,23 @@
     <div class="section-header">
       <div>
         <h2 class="section-title">Liste des organisations partenaires</h2>
-        <p class="section-subtitle">Consultez l'historique et les conventions de partenariat actives.</p>
+        <p class="section-subtitle">Consultez et administrez les accréditations d'ONG, associations et fondations.</p>
       </div>
       
       <div class="search-box-row" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
         <!-- Filter Tabs -->
         <div class="status-filter-pills">
           <button type="button" class="pill-btn" [class.active]="filterStatus === 'Tous'" (click)="setFilterStatus('Tous')">
-            Tous ({{ partenaires.length }})
+            Tous ({{ getCount('Tous') }})
           </button>
           <button type="button" class="pill-btn" [class.active]="filterStatus === 'Validé'" (click)="setFilterStatus('Validé')">
-            Validés
+            Validées ({{ getCount('Validé') }})
           </button>
           <button type="button" class="pill-btn" [class.active]="filterStatus === 'En attente'" (click)="setFilterStatus('En attente')">
-            En attente
+            En attente ({{ getCount('En attente') }})
+          </button>
+          <button type="button" class="pill-btn" [class.active]="filterStatus === 'Rejeté'" (click)="setFilterStatus('Rejeté')">
+            Rejetées ({{ getCount('Rejeté') }})
           </button>
         </div>
 
@@ -77,7 +98,7 @@
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <input type="text" [(ngModel)]="searchTerm" placeholder="Rechercher un partenaire...">
+          <input type="text" [(ngModel)]="searchTerm" placeholder="Rechercher par nom, NIF, contact...">
         </div>
       </div>
     </div>
@@ -87,11 +108,11 @@
         <thead>
           <tr>
             <th>ID PARTENAIRE</th>
-            <th>NOM DE L'ORGANISATION</th>
-            <th>SECTEUR D'ACTIVITÉ</th>
-            <th>DATE D'AFFILIATION</th>
+            <th>ORGANISATION</th>
+            <th>TYPE</th>
             <th>POINT DE CONTACT</th>
-            <th>PROJETS CO-FINANCÉS</th>
+            <th>TÉLÉPHONE & EMAIL</th>
+            <th>DATE D'INSCRIPTION</th>
             <th>STATUT</th>
             <th>ACTIONS</th>
           </tr>
@@ -101,28 +122,39 @@
             <td><strong class="text-id">{{ p.id }}</strong></td>
             <td>
               <div class="partner-name-cell">
-                <span class="partner-icon">
+                <span class="partner-icon" style="background-color: #E0F2FE; color: #0284C7;">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                     <circle cx="9" cy="7" r="4"></circle>
                   </svg>
                 </span>
-                <strong class="partner-title">{{ p.nom }}</strong>
+                <div>
+                  <strong class="partner-title">{{ p.nom }}</strong>
+                  <div style="font-size: 11px; color: #6B7280;">{{ p.ville }} • NIF: {{ p.nif || 'En cours' }}</div>
+                </div>
               </div>
             </td>
-            <td><span class="secteur-badge">{{ p.secteur }}</span></td>
-            <td>{{ p.date }}</td>
+            <td>
+              <span class="secteur-badge" [style.background-color]="p.typeOrganisation === 'ONG' ? '#E0F2FE' : (p.typeOrganisation === 'FONDATION' ? '#FEF3C7' : '#DCFCE7')" [style.color]="p.typeOrganisation === 'ONG' ? '#0369A1' : (p.typeOrganisation === 'FONDATION' ? '#B45309' : '#15803D')">
+                {{ p.typeOrganisation }}
+              </span>
+            </td>
             <td>
               <div class="contact-info">
-                <span class="contact-name">{{ p.contact }}</span>
-                <span class="contact-phone">{{ p.phone }}</span>
+                <span class="contact-name" style="font-weight: 600;">{{ p.contact }}</span>
               </div>
             </td>
-            <td>{{ p.projets }}</td>
+            <td>
+              <div class="contact-info">
+                <span class="contact-phone">{{ p.phone }}</span>
+                <span *ngIf="p.email" style="font-size: 11px; color: #6B7280;">{{ p.email }}</span>
+              </div>
+            </td>
+            <td>{{ p.date }}</td>
             <td><span class="status-badge" [ngClass]="p.statutClass">{{ p.statut }}</span></td>
             <td class="actions-cell">
               <div class="actions-group" style="display: flex; gap: 6px; align-items: center;">
-                <button type="button" class="btn-action-view" (click)="ouvrirDetails(p)" title="Consulter les détails">
+                <button type="button" class="btn-action-view" (click)="ouvrirDetails(p)" title="Consulter la fiche complète">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                     <circle cx="12" cy="12" r="3"></circle>
@@ -131,9 +163,9 @@
                 <button
                   type="button"
                   class="btn-action-view"
-                  *ngIf="p.statut === 'En attente'"
-                  (click)="changerStatut(p, 'Validé')"
-                  title="Valider le partenaire"
+                  *ngIf="p.statut !== 'Validé'"
+                  (click)="changerStatut(p, 'VALIDEE')"
+                  title="Valider l'organisation"
                   style="color: #0F7A4B;"
                 >
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
@@ -143,52 +175,36 @@
                 <button
                   type="button"
                   class="btn-action-view"
-                  *ngIf="p.statut === 'Validé'"
-                  (click)="changerStatut(p, 'En attente')"
-                  title="Suspendre / En attente"
-                  style="color: #D97706;"
+                  *ngIf="p.statut !== 'Rejeté'"
+                  (click)="changerStatut(p, 'REJETEE')"
+                  title="Refuser / Rejeter"
+                  style="color: #DC2626;"
                 >
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
                   </svg>
                 </button>
               </div>
             </td>
           </tr>
           <tr *ngIf="partenairesFiltres.length === 0">
-            <td colspan="8" class="empty-cell">Aucun partenaire ne correspond à votre recherche.</td>
+            <td colspan="8" class="empty-cell">Aucune organisation partenaire trouvée.</td>
           </tr>
         </tbody>
       </table>
     </div>
-
-    <div class="pagination">
-      <span class="page-item" title="Précédent">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
-      </span>
-      <span class="page-item active">1</span>
-      <span class="page-item">2</span>
-      <span class="page-item" title="Suivant">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </span>
-    </div>
   </div>
 
-  <!-- Modal Détails du Partenaire -->
+  <!-- Modal Détails de l'Organisation -->
   <div class="fond-modal" *ngIf="partenaireSelectionne" (click)="fermerDetails()">
-    <div class="modal-form-card" (click)="$event.stopPropagation()">
+    <div class="modal-form-card" (click)="$event.stopPropagation()" style="max-width: 600px;">
       <div class="modal-entete">
         <div>
-          <span class="surtitre">DÈMÈ MALI • FICHE PARTENAIRE</span>
+          <span class="surtitre">DÈMÈ MALI • CONVENTION PARTENAIRE</span>
           <h2>{{ partenaireSelectionne.nom }}</h2>
         </div>
-        <button type="button" class="btn-fermer" (click)="fermerDetails()" aria-label="Fermer la boîte de dialogue">
+        <button type="button" class="btn-fermer" (click)="fermerDetails()" aria-label="Fermer">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -196,63 +212,71 @@
         </button>
       </div>
 
-      <div class="modal-detail-body" style="padding: 24px 0;">
-        <div class="detail-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="modal-detail-body" style="padding: 20px 0;">
+        <div class="detail-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
           <div class="detail-item">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">ID Partenaire</span>
-            <p style="font-weight: 700; color: #0F7A4B; margin-top: 4px;">{{ partenaireSelectionne.id }}</p>
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">ID Partenaire</span>
+            <p style="font-weight: 700; color: #0F7A4B; margin-top: 2px;">{{ partenaireSelectionne.id }}</p>
           </div>
           <div class="detail-item">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Statut d'approbation</span>
-            <p style="margin-top: 4px;">
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Statut d'accréditation</span>
+            <p style="margin-top: 2px;">
               <span class="status-badge" [ngClass]="partenaireSelectionne.statutClass">{{ partenaireSelectionne.statut }}</span>
             </p>
           </div>
           <div class="detail-item">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Secteur d'Activité</span>
-            <p style="font-weight: 600; margin-top: 4px;">{{ partenaireSelectionne.secteur }}</p>
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Type d'Organisation</span>
+            <p style="margin-top: 2px;"><span class="secteur-badge">{{ partenaireSelectionne.typeOrganisation }}</span></p>
           </div>
           <div class="detail-item">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Date d'Affiliation</span>
-            <p style="margin-top: 4px;">{{ partenaireSelectionne.date }}</p>
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Numéro NIF</span>
+            <p style="margin-top: 2px; font-weight: 600; color: #1E40AF;">{{ partenaireSelectionne.nif || 'Non renseigné' }}</p>
           </div>
           <div class="detail-item">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Point de Contact</span>
-            <p style="font-weight: 600; margin-top: 4px;">{{ partenaireSelectionne.contact }}</p>
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Représentant / Point focal</span>
+            <p style="margin-top: 2px; font-weight: 600;">{{ partenaireSelectionne.contact }}</p>
           </div>
           <div class="detail-item">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Téléphone</span>
-            <p style="margin-top: 4px;">{{ partenaireSelectionne.phone }}</p>
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Téléphone officiel</span>
+            <p style="margin-top: 2px; font-weight: 600;">{{ partenaireSelectionne.phone }}</p>
           </div>
-          <div class="detail-item" style="grid-column: span 2;">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Email Professionnel</span>
-            <p style="margin-top: 4px;">{{ partenaireSelectionne.email || 'Non renseigné' }}</p>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Email officiel</span>
+            <p style="margin-top: 2px;">{{ partenaireSelectionne.email || 'Non renseigné' }}</p>
           </div>
-          <div class="detail-item" style="grid-column: span 2;">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Projets Co-financés</span>
-            <p style="margin-top: 4px; font-weight: 600; color: #1F2937;">{{ partenaireSelectionne.projets }}</p>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Localisation Siège</span>
+            <p style="margin-top: 2px;">{{ partenaireSelectionne.adresse ? partenaireSelectionne.adresse + ', ' : '' }}{{ partenaireSelectionne.ville || 'Bamako' }}</p>
+          </div>
+          <div class="detail-item" style="grid-column: span 2;" *ngIf="partenaireSelectionne.documentJustificatif">
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Justificatif d'Accréditation</span>
+            <p style="margin-top: 4px;">
+              <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #F3F4F6; border-radius: 6px; font-size: 12px; color: #374151;">
+                📄 {{ partenaireSelectionne.documentJustificatif }}
+              </span>
+            </p>
           </div>
         </div>
       </div>
 
       <div class="modal-actions" style="display: flex; justify-content: space-between; align-items: center;">
-        <div>
+        <div style="display: flex; gap: 8px;">
           <button
             type="button"
             class="btn-primary"
-            *ngIf="partenaireSelectionne.statut === 'En attente'"
-            (click)="changerStatut(partenaireSelectionne, 'Validé'); fermerDetails();"
+            *ngIf="partenaireSelectionne.statut !== 'Validé'"
+            (click)="changerStatut(partenaireSelectionne, 'VALIDEE')"
           >
             Valider le Partenaire
           </button>
           <button
             type="button"
             class="btn-annuler"
-            *ngIf="partenaireSelectionne.statut === 'Validé'"
-            (click)="changerStatut(partenaireSelectionne, 'En attente'); fermerDetails();"
-            style="color: #D97706; border-color: #D97706;"
+            style="color: #DC2626; border-color: #FCA5A5;"
+            *ngIf="partenaireSelectionne.statut !== 'Rejeté'"
+            (click)="changerStatut(partenaireSelectionne, 'REJETEE')"
           >
-            Suspendre / Mettre en attente
+            Rejeter la demande
           </button>
         </div>
         <button type="button" class="btn-annuler" (click)="fermerDetails()">Fermer</button>
@@ -260,7 +284,7 @@
     </div>
   </div>
 
-  <!-- Modal Nouveau Partenaire (Même mise en forme que l'organisation partenaire) -->
+  <!-- Modal Nouveau Partenaire -->
   <div class="fond-modal" *ngIf="isModalOpen" (click)="fermerModal()">
     <div class="modal-form-card" (click)="$event.stopPropagation()">
       <div class="modal-entete">
@@ -268,7 +292,7 @@
           <span class="surtitre">DÈMÈ MALI • ADMINISTRATION</span>
           <h2>Nouveau Partenaire</h2>
         </div>
-        <button type="button" class="btn-fermer" (click)="fermerModal()" aria-label="Fermer la boîte de dialogue">
+        <button type="button" class="btn-fermer" (click)="fermerModal()" aria-label="Fermer">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -279,85 +303,69 @@
       <form (ngSubmit)="enregistrerPartenaire()">
         <div class="form-grid">
           <div class="form-group form-group-full">
-            <label for="partNom">Nom de l'organisation <span class="etoile">*</span></label>
-            <input
-              id="partNom"
-              type="text"
-              [(ngModel)]="nouveauPartenaire.nom"
-              name="nom"
-              required
-              placeholder="Ex. : Fondation Dèmè Sahel"
-            >
+            <label for="nomOrg">Nom de l'Organisation / Structure <span class="etoile">*</span></label>
+            <input id="nomOrg" type="text" [(ngModel)]="nouveauPartenaire.nomOrganisation" name="nomOrganisation" required placeholder="Ex. : Croix-Rouge Malienne ou Fondation Yeleen">
           </div>
 
           <div class="form-group">
-            <label for="partSecteur">Secteur d'activité</label>
-            <select id="partSecteur" [(ngModel)]="nouveauPartenaire.secteur" name="secteur">
-              <option value="Social">Social</option>
-              <option value="Santé & Nutrition">Santé & Nutrition</option>
-              <option value="Éducation">Éducation</option>
-              <option value="Urgence Humanitaire">Urgence Humanitaire</option>
-              <option value="Développement Durable">Développement Durable</option>
-              <option value="Eau & Assainissement">Eau & Assainissement</option>
+            <label for="typeOrg">Type de structure</label>
+            <select id="typeOrg" [(ngModel)]="nouveauPartenaire.typeOrganisation" name="typeOrganisation">
+              <option value="ONG">ONG</option>
+              <option value="ASSOCIATION">Association</option>
+              <option value="FONDATION">Fondation</option>
+              <option value="ORGANISATIONPARTENAIRE">Organisation Partenaire</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label for="partContact">Point de contact (Nom)</label>
-            <input
-              id="partContact"
-              type="text"
-              [(ngModel)]="nouveauPartenaire.contact"
-              name="contact"
-              placeholder="Ex. : Oumar Traoré"
-            >
+            <label for="nifOrg">Numéro NIF / Agrément</label>
+            <input id="nifOrg" type="text" [(ngModel)]="nouveauPartenaire.nif" name="nif" placeholder="NIF-12345678">
           </div>
 
           <div class="form-group">
-            <label for="partPhone">Téléphone</label>
-            <input
-              id="partPhone"
-              type="tel"
-              [(ngModel)]="nouveauPartenaire.phone"
-              name="phone"
-              placeholder="+223 70 00 00 00"
-            >
+            <label for="telOrg">Téléphone Organisation <span class="etoile">*</span></label>
+            <input id="telOrg" type="tel" [(ngModel)]="nouveauPartenaire.telephoneOrganisation" name="telephoneOrganisation" required placeholder="+223 20 00 00 00">
           </div>
 
           <div class="form-group">
-            <label for="partEmail">Email professionnel</label>
-            <input
-              id="partEmail"
-              type="email"
-              [(ngModel)]="nouveauPartenaire.email"
-              name="email"
-              placeholder="contact@organisation.ml"
-            >
+            <label for="emailOrg">Email officiel</label>
+            <input id="emailOrg" type="email" [(ngModel)]="nouveauPartenaire.email" name="email" placeholder="contact@organisation.ml">
           </div>
 
           <div class="form-group">
-            <label for="partProjets">Projets co-financés</label>
-            <input
-              id="partProjets"
-              type="text"
-              [(ngModel)]="nouveauPartenaire.projets"
-              name="projets"
-              placeholder="Ex. : 1 projet co-financé"
-            >
+            <label for="villeOrg">Ville du siège</label>
+            <input id="villeOrg" type="text" [(ngModel)]="nouveauPartenaire.ville" name="ville" placeholder="Bamako">
           </div>
 
           <div class="form-group">
-            <label for="partStatut">Statut de validation</label>
-            <select id="partStatut" [(ngModel)]="nouveauPartenaire.statut" name="statut">
-              <option value="Validé">Validé</option>
-              <option value="En attente">En attente d'examen</option>
-            </select>
+            <label for="adrOrg">Adresse précise</label>
+            <input id="adrOrg" type="text" [(ngModel)]="nouveauPartenaire.adresse" name="adresse" placeholder="Quartier ACI 2000, Rue 320">
+          </div>
+
+          <div class="form-group">
+            <label for="contactNom">Nom du représentant</label>
+            <input id="contactNom" type="text" [(ngModel)]="nouveauPartenaire.nom" name="nom" placeholder="Nom du responsable">
+          </div>
+
+          <div class="form-group">
+            <label for="contactPrenom">Prénom du représentant</label>
+            <input id="contactPrenom" type="text" [(ngModel)]="nouveauPartenaire.prenom" name="prenom" placeholder="Prénom du responsable">
+          </div>
+
+          <div class="form-group">
+            <label for="contactPhone">Téléphone direct du responsable</label>
+            <input id="contactPhone" type="tel" [(ngModel)]="nouveauPartenaire.telephone" name="telephone" placeholder="+223 70 00 00 00">
+          </div>
+
+          <div class="form-group">
+            <label for="fichierJustif">Document justificatif (Agrément / Statuts)</label>
+            <input id="fichierJustif" type="file" (change)="onFileChange($event)" accept=".pdf,.png,.jpg,.jpeg">
           </div>
         </div>
 
-        <div class="modal-actions">
+        <div class="modal-actions" style="margin-top: 20px;">
           <button type="button" class="btn-annuler" (click)="fermerModal()">Annuler</button>
-          <button type="submit" class="btn-enregistrer" [disabled]="!nouveauPartenaire.nom.trim()">
+          <button type="submit" class="btn-enregistrer" [disabled]="!nouveauPartenaire.nomOrganisation.trim() || !nouveauPartenaire.telephoneOrganisation.trim()">
             Enregistrer le partenaire
           </button>
         </div>

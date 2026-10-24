@@ -48,6 +48,9 @@
                 <div class="filter-item" [class.active]="selectedCategory === 'Financier'" (click)="selectCategory('Financier')">
                   Financier
                 </div>
+                <div class="filter-item" [class.active]="selectedCategory === 'Matériel'" (click)="selectCategory('Matériel')">
+                  Matériel
+                </div>
                 <div class="filter-item" [class.active]="selectedCategory === 'Alimentaire'" (click)="selectCategory('Alimentaire')">
                   Alimentaire
                 </div>
@@ -195,7 +198,7 @@
           </div>
           <div class="detail-item">
             <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Date d'enregistrement</span>
-            <p style="margin-top: 4px;">{{ donSelectionne.date || '15/10/2026' }}</p>
+            <p style="margin-top: 4px;">{{ donSelectionne.date || 'Aujourd\'hui' }}</p>
           </div>
         </div>
       </div>
@@ -217,7 +220,7 @@
     </div>
   </div>
 
-  <!-- Modal Nouveau Don (Même mise en forme que l'organisation partenaire) -->
+  <!-- Modal Nouveau Don -->
   <div class="fond-modal" *ngIf="isModalOpen" (click)="fermerModal()">
     <div class="modal-form-card" (click)="$event.stopPropagation()">
       <div class="modal-entete">
@@ -251,6 +254,7 @@
             <label for="donCat">Catégorie de don</label>
             <select id="donCat" [(ngModel)]="nouveauDon.categorie" name="categorie">
               <option value="Financier">Financier</option>
+              <option value="Matériel">Matériel</option>
               <option value="Alimentaire">Alimentaire</option>
               <option value="Fournitures">Fournitures scolaires</option>
               <option value="Santé">Médicaments & Santé</option>

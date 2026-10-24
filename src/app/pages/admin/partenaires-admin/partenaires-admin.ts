@@ -2,12 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OrganisationService } from '../../../services/organisation';
+import {
+  OrganisationPartenaireRequestDTO,
+  OrganisationPartenaireResponseDTO,
+  TypeOrganisation
+} from '../../../models/organisation.model';
 
 export interface PartenaireItem {
   id: string;
   rawId?: number;
   nom: string;
   secteur: string;
+  typeOrganisation: TypeOrganisation;
   date: string;
   contact: string;
   phone: string;
@@ -15,6 +21,11 @@ export interface PartenaireItem {
   projets: string;
   statut: string;
   statutClass: string;
+  nif?: string;
+  adresse?: string;
+  ville?: string;
+  documentJustificatif?: string;
+  rawStatutValidation?: string;
 }
 
 @Component({
@@ -32,15 +43,20 @@ export class PartenairesAdmin implements OnInit {
   isLoading = false;
 
   nouveauPartenaire = {
-    nom: '',
-    secteur: 'Social',
-    contact: '',
-    phone: '',
+    nomOrganisation: '',
+    typeOrganisation: 'ONG' as TypeOrganisation,
+    nif: '',
+    adresse: '',
+    ville: 'Bamako',
+    telephoneOrganisation: '',
     email: '',
-    projets: '1 projet',
-    statut: 'Validé'
+    prenom: '',
+    nom: '',
+    telephone: '',
+    motDePasse: '123456'
   };
 
+  selectedFile: File | null = null;
   partenaires: PartenaireItem[] = [];
 
   constructor(private organisationService: OrganisationService) {}
@@ -52,29 +68,37 @@ export class PartenairesAdmin implements OnInit {
   chargerOrganisations() {
     this.isLoading = true;
     this.organisationService.getAllOrganisations().subscribe({
-      next: (data: any[]) => {
+      next: (data: OrganisationPartenaireResponseDTO[]) => {
         this.isLoading = false;
         if (data && data.length > 0) {
-          this.partenaires = data.map((org: any) => {
-            const isValide = org.statutValidation === 'VALIDEE' || org.statutValidation === 'Validé';
-            const isRejete = org.statutValidation === 'REJETEE' || org.statutValidation === 'Rejeté';
+          this.partenaires = data.map((org: OrganisationPartenaireResponseDTO) => {
+            const rawStatus = (org.statutValidation || org.statut || '').toUpperCase();
+            const isValide = rawStatus === 'VALIDEE' || rawStatus === 'VALIDE';
+            const isRejete = rawStatus === 'REJETEE' || rawStatus === 'REFUSEE';
             const statut = isValide ? 'Validé' : (isRejete ? 'Rejeté' : 'En attente');
             const statutClass = isValide ? 'status-valide' : (isRejete ? 'status-refuse' : 'status-attente');
-            const formattedDate = org.dateInscription ? new Date(org.dateInscription).toLocaleDateString('fr-FR') : '08/10/2026';
-            const contactName = (org.prenom && org.nom) ? `${org.prenom} ${org.nom}` : (org.nomOrganisation || 'Point focal');
+
+            const dateAffiliation = org.dateInscription ? new Date(org.dateInscription).toLocaleDateString('fr-FR') : 'Non renseignée';
+            const contactName = (org.prenom || org.nom) ? `${org.prenom || ''} ${org.nom || ''}`.trim() : (org.nomOrganisation || 'Point focal');
 
             return {
               id: 'PAR' + String(org.id).padStart(3, '0'),
               rawId: org.id,
               nom: org.nomOrganisation || 'Organisation Partenaire',
-              secteur: org.typeOrganisation || 'Social',
-              date: formattedDate,
+              secteur: org.typeOrganisation || 'ONG',
+              typeOrganisation: org.typeOrganisation || 'ONG',
+              date: dateAffiliation,
               contact: contactName,
               phone: org.telephoneOrganisation || org.telephone || '+223 70 00 00 00',
               email: org.email || '',
-              projets: '2 projets co-financés',
+              projets: 'Convention active',
               statut: statut,
-              statutClass: statutClass
+              statutClass: statutClass,
+              nif: org.nif,
+              adresse: org.adresse,
+              ville: org.ville || 'Bamako',
+              documentJustificatif: org.documentJustificatif,
+              rawStatutValidation: org.statutValidation
             };
           });
         } else {
@@ -91,17 +115,24 @@ export class PartenairesAdmin implements OnInit {
 
   get partenairesFiltres(): PartenaireItem[] {
     return this.partenaires.filter(p => {
-      const matchStatus =
-        this.filterStatus === 'Tous' ? true :
-        this.filterStatus === 'Validé' ? p.statut === 'Validé' :
-        this.filterStatus === 'En attente' ? p.statut === 'En attente' : true;
+      const f = this.filterStatus;
+      let matchStatus = true;
+      if (f === 'Validé' || f.toLowerCase().includes('valid')) {
+        matchStatus = p.statut === 'Validé' || (p.rawStatutValidation ? p.rawStatutValidation.toUpperCase().includes('VALID') : false);
+      } else if (f === 'En attente' || f.toLowerCase().includes('attente')) {
+        matchStatus = p.statut === 'En attente';
+      } else if (f === 'Rejeté' || f.toLowerCase().includes('rejet') || f.toLowerCase().includes('refus')) {
+        matchStatus = p.statut === 'Rejeté' || (p.rawStatutValidation ? p.rawStatutValidation.toUpperCase().includes('REJET') : false);
+      }
 
       const q = this.searchTerm.trim().toLowerCase();
       const matchSearch = !q ? true :
-        p.nom.toLowerCase().includes(q) ||
-        p.id.toLowerCase().includes(q) ||
-        p.secteur.toLowerCase().includes(q) ||
-        p.contact.toLowerCase().includes(q);
+        (p.nom && p.nom.toLowerCase().includes(q)) ||
+        (p.id && p.id.toLowerCase().includes(q)) ||
+        (p.secteur && p.secteur.toLowerCase().includes(q)) ||
+        (p.contact && p.contact.toLowerCase().includes(q)) ||
+        (p.nif ? p.nif.toLowerCase().includes(q) : false) ||
+        (p.phone && p.phone.includes(q));
 
       return matchStatus && matchSearch;
     });
@@ -111,32 +142,54 @@ export class PartenairesAdmin implements OnInit {
     this.filterStatus = status;
   }
 
+  getCount(status: string): number {
+    if (status === 'Tous') return this.partenaires.length;
+    if (status === 'Validé' || status.toLowerCase().includes('valid')) {
+      return this.partenaires.filter(p => p.statut === 'Validé').length;
+    }
+    if (status === 'En attente' || status.toLowerCase().includes('attente')) {
+      return this.partenaires.filter(p => p.statut === 'En attente').length;
+    }
+    if (status === 'Rejeté' || status.toLowerCase().includes('rejet')) {
+      return this.partenaires.filter(p => p.statut === 'Rejeté').length;
+    }
+    return 0;
+  }
+
   getUniqueSecteursCount(): number {
     return new Set(this.partenaires.map(p => p.secteur)).size;
   }
 
-  getTotalProjetsCoFinances(): number {
-    return this.partenaires.reduce((sum, p) => {
-      const match = p.projets.match(/\d+/);
-      return sum + (match ? parseInt(match[0], 10) : 1);
-    }, 0);
+  getTotalValides(): number {
+    return this.partenaires.filter(p => p.statut === 'Validé').length;
   }
 
   ouvrirModal() {
     this.nouveauPartenaire = {
-      nom: '',
-      secteur: 'Social',
-      contact: '',
-      phone: '',
+      nomOrganisation: '',
+      typeOrganisation: 'ONG' as TypeOrganisation,
+      nif: '',
+      adresse: '',
+      ville: 'Bamako',
+      telephoneOrganisation: '',
       email: '',
-      projets: '1 projet',
-      statut: 'Validé'
+      prenom: '',
+      nom: '',
+      telephone: '',
+      motDePasse: '123456'
     };
+    this.selectedFile = null;
     this.isModalOpen = true;
   }
 
   fermerModal() {
     this.isModalOpen = false;
+  }
+
+  onFileChange(event: any) {
+    if (event.target.files && event.target.files.length > 0) {
+      this.selectedFile = event.target.files[0];
+    }
   }
 
   ouvrirDetails(p: PartenaireItem) {
@@ -147,62 +200,58 @@ export class PartenairesAdmin implements OnInit {
     this.partenaireSelectionne = null;
   }
 
-  changerStatut(p: PartenaireItem, nouveauStatut: 'Validé' | 'En attente') {
-    p.statut = nouveauStatut;
-    p.statutClass = nouveauStatut === 'Validé' ? 'status-valide' : 'status-attente';
+  changerStatut(p: PartenaireItem, nouveauStatutValidation: 'VALIDEE' | 'EN_ATTENTE' | 'REJETEE') {
+    const labelStatut = nouveauStatutValidation === 'VALIDEE' ? 'Validé' :
+                        (nouveauStatutValidation === 'REJETEE' ? 'Rejeté' : 'En attente');
+    const statutClass = nouveauStatutValidation === 'VALIDEE' ? 'status-valide' :
+                        (nouveauStatutValidation === 'REJETEE' ? 'status-refuse' : 'status-attente');
+
+    p.statut = labelStatut;
+    p.statutClass = statutClass;
+    p.rawStatutValidation = nouveauStatutValidation;
+
+    if (this.partenaireSelectionne && this.partenaireSelectionne.id === p.id) {
+      this.partenaireSelectionne.statut = labelStatut;
+      this.partenaireSelectionne.statutClass = statutClass;
+      this.partenaireSelectionne.rawStatutValidation = nouveauStatutValidation;
+    }
 
     if (p.rawId) {
-      const backendStatut = nouveauStatut === 'Validé' ? 'VALIDEE' : 'EN_ATTENTE';
-      this.organisationService.changerStatut(p.rawId, backendStatut).subscribe({
+      this.organisationService.changerStatut(p.rawId, nouveauStatutValidation).subscribe({
         next: () => {},
-        error: (err: any) => console.warn('Statut changé localement (API warning)', err)
+        error: (err: any) => console.warn('Erreur changement de statut partenaire', err)
       });
     }
   }
 
   enregistrerPartenaire() {
-    if (!this.nouveauPartenaire.nom.trim()) {
+    if (!this.nouveauPartenaire.nomOrganisation.trim() || !this.nouveauPartenaire.telephoneOrganisation.trim()) {
       return;
     }
 
-    const nextNumber = this.partenaires.length + 1;
-    const nextId = 'PAR' + String(nextNumber).padStart(3, '0');
-    const today = new Date().toLocaleDateString('fr-FR');
-    const statutClass = this.nouveauPartenaire.statut === 'Validé' ? 'status-valide' : 'status-attente';
-
-    const item: PartenaireItem = {
-      id: nextId,
-      nom: this.nouveauPartenaire.nom.trim(),
-      secteur: this.nouveauPartenaire.secteur,
-      date: today,
-      contact: this.nouveauPartenaire.contact.trim() || 'Non renseigné',
-      phone: this.nouveauPartenaire.phone.trim() || '+223 00 00 00 00',
+    const payload: OrganisationPartenaireRequestDTO = {
+      nomOrganisation: this.nouveauPartenaire.nomOrganisation.trim(),
+      typeOrganisation: this.nouveauPartenaire.typeOrganisation,
+      nif: this.nouveauPartenaire.nif.trim(),
+      adresse: this.nouveauPartenaire.adresse.trim(),
+      ville: this.nouveauPartenaire.ville,
+      telephoneOrganisation: this.nouveauPartenaire.telephoneOrganisation.trim(),
       email: this.nouveauPartenaire.email.trim(),
-      projets: this.nouveauPartenaire.projets,
-      statut: this.nouveauPartenaire.statut,
-      statutClass: statutClass
+      prenom: this.nouveauPartenaire.prenom.trim() || 'Représentant',
+      nom: this.nouveauPartenaire.nom.trim() || this.nouveauPartenaire.nomOrganisation.trim(),
+      telephone: this.nouveauPartenaire.telephone.trim() || this.nouveauPartenaire.telephoneOrganisation.trim(),
+      motDePasse: this.nouveauPartenaire.motDePasse || '123456'
     };
 
-    // Call backend API if possible
-    const backendData = {
-      nomOrganisation: item.nom,
-      typeOrganisation: item.secteur,
-      telephoneOrganisation: item.phone,
-      email: item.email,
-      statutValidation: this.nouveauPartenaire.statut === 'Validé' ? 'VALIDEE' : 'EN_ATTENTE'
-    };
-
-    this.organisationService.creerOrganisation(backendData).subscribe({
-      next: (createdOrg: any) => {
-        if (createdOrg && createdOrg.id) {
-          item.rawId = createdOrg.id;
-        }
+    this.organisationService.creerOrganisation(payload, this.selectedFile || undefined).subscribe({
+      next: () => {
+        this.chargerOrganisations();
+        this.fermerModal();
       },
-      error: (err: any) => console.warn('Enregistré localement (API warning)', err)
+      error: (err: any) => {
+        console.error('Erreur enregistrement partenaire', err);
+        this.fermerModal();
+      }
     });
-
-    this.partenaires.unshift(item);
-    this.isModalOpen = false;
   }
 }
-

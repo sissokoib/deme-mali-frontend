@@ -143,13 +143,21 @@ export class AuthService {
     }
   }
 
-  // VERIFIER SI LE TOKEN EST EXPIRE
-  private isTokenExpired(token: string): boolean {
+  // VERIFIER SI LE TOKEN EST EXPIRE OU INVALIDE
+  public isTokenExpired(token: string): boolean {
+    if (!token || typeof token !== 'string' || !token.includes('.')) {
+      return true;
+    }
 
     try {
+      const parts = token.split('.');
+      if (parts.length < 2) {
+        return true;
+      }
+
       const payload = JSON.parse(
         atob(
-          token.split('.')[1]
+          parts[1]
             .replace(/-/g, '+')
             .replace(/_/g, '/')
         )

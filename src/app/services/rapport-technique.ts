@@ -1,4 +1,3 @@
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -18,14 +17,21 @@ export class RapportTechniqueService {
 
   constructor(private http: HttpClient) {}
 
-  // Récupérer un rapport technique par son ID
+  // Récupérer tous les rapports techniques (GET /api/rapports-techniques)
+  getAll(): Observable<RapportTechnique[]> {
+    return this.http.get<RapportTechnique[]>(
+      this.apiUrl
+    );
+  }
+
+  // Récupérer un rapport technique par son ID (GET /api/rapports-techniques/{id})
   getById(id: number): Observable<RapportTechnique> {
     return this.http.get<RapportTechnique>(
       `${this.apiUrl}/${id}`
     );
   }
 
-  // Récupérer le rapport technique associé à un rapport de besoin
+  // Récupérer le rapport technique associé à un rapport de besoin (GET /api/rapports-techniques/rapport-besoin/{rapportBesoinId})
   getByRapportBesoin(
     rapportBesoinId: number
   ): Observable<RapportTechnique> {
@@ -34,7 +40,7 @@ export class RapportTechniqueService {
     );
   }
 
-  // Créer un rapport technique
+  // Créer un rapport technique (POST /api/rapports-techniques)
   creer(
     donnees: RapportTechniqueRequest
   ): Observable<RapportTechnique> {
@@ -44,7 +50,7 @@ export class RapportTechniqueService {
     );
   }
 
-  // Modifier un rapport technique existant
+  // Modifier un rapport technique existant (PUT /api/rapports-techniques/{id})
   modifier(
     id: number,
     donnees: RapportTechniqueRequest
@@ -54,5 +60,11 @@ export class RapportTechniqueService {
       donnees
     );
   }
-  
+
+  // Supprimer un rapport technique (DELETE /api/rapports-techniques/{id})
+  supprimer(id: number): Observable<void> {
+    return this.http.delete<void>(
+      `${this.apiUrl}/${id}`
+    );
+  }
 }

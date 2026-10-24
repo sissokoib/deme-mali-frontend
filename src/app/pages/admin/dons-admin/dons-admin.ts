@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { DonService } from '../../../services/don.service.ts';
 
 export interface DonItem {
@@ -15,6 +17,7 @@ export interface DonItem {
   statut: string;
   statutClass: string;
   date?: string;
+  titreDemandeAide?: string;
 }
 
 @Component({
@@ -32,6 +35,7 @@ export class DonsAdmin implements OnInit {
   searchTerm = '';
   donSelectionne: DonItem | null = null;
   isLoading = false;
+  totalMontantStat: number | null = null;
 
   nouveauDon = {
     donateur: '',
@@ -50,12 +54,22 @@ export class DonsAdmin implements OnInit {
 
   ngOnInit() {
     this.chargerDons();
+    this.chargerStatistiques();
+  }
+
+  chargerStatistiques() {
+    this.donService.getTotalDonsStatistiques().pipe(catchError(() => of(null))).subscribe({
+      next: (total) => {
+        if (total !== null && total !== undefined) {
+          this.totalMontantStat = total;
+        }
+      }
+    });
   }
 
   chargerDons() {
     this.isLoading = true;
-    // Charge les donateurs pour afficher les vrais noms
-    this.http.get<any[]>('http://localhost:8080/api/donateurs').subscribe({
+    this.http.get<any[]>('http://localhost:8080/api/donateurs').pipe(catchError(() => of([]))).subscribe({
       next: (donateurs: any[]) => {
         const donateurMap = new Map<number, string>();
         if (donateurs) {
@@ -63,50 +77,91 @@ export class DonsAdmin implements OnInit {
             donateurMap.set(d.id, `${d.prenom || ''} ${d.nom || ''}`.trim());
           });
         }
-        this.recupererDonsFinanciers(donateurMap);
+        this.recupererDons(donateurMap);
       },
       error: () => {
-        this.recupererDonsFinanciers(new Map());
+        this.recupererDons(new Map());
       }
     });
   }
 
-  private recupererDonsFinanciers(donateurMap: Map<number, string>) {
-    this.donService.getAllDonsFinanciers().subscribe({
-      next: (donsFinanciers) => {
+  private recupererDons(donateurMap: Map<number, string>) {
+    forkJoin({
+      financiers: this.donService.getAllDonsFinanciers().pipe(catchError(() => of([]))),
+      globaux: this.donService.getAllDons().pipe(catchError(() => of([])))
+    }).subscribe({
+      next: ({ financiers, globaux }) => {
         this.isLoading = false;
-        if (donsFinanciers && donsFinanciers.length > 0) {
-          this.dons = donsFinanciers.map((df: any) => {
-            const nomDonateur = df.anonyme
-              ? 'Donateur anonyme'
-              : (df.donateurId && donateurMap.has(df.donateurId)
-                  ? donateurMap.get(df.donateurId)!
-                  : (df.nomDonateur || 'Bienfaiteur Dèmè'));
-            
-            const mode = df.modePaiement
-              ? df.modePaiement.replace('_', ' ')
-              : 'Orange Money';
 
-            const statut = df.statut === 'VALIDEE' || df.statut === 'Terminé' || !df.statut
-              ? 'Terminé'
-              : (df.statut === 'EN_ATTENTE' ? 'En attente' : 'Terminé');
+        const listeDons: DonItem[] = [];
+        const seenFinancierIds = new Set<number>();
 
-            return {
-              id: 'DON' + String(df.id).padStart(3, '0'),
-              rawId: df.id,
-              donateur: nomDonateur,
-              montant: `${(df.montant || 0).toLocaleString('fr-FR')} FCFA`,
-              montantValue: df.montant || 0,
-              categorie: 'Financier',
-              mode: mode,
-              statut: statut,
-              statutClass: statut === 'Terminé' ? 'status-termine' : 'status-attente',
-              date: df.dateDon ? new Date(df.dateDon).toLocaleDateString('fr-FR') : '12/10/2026'
-            };
+        // 1. Dons financiers avec les vrais montants et modes de paiement
+        (financiers || []).forEach((df: any) => {
+          if (df && df.id) {
+            seenFinancierIds.add(df.id);
+          }
+          const nomDonateur = (df.donateurId && donateurMap.has(df.donateurId))
+            ? donateurMap.get(df.donateurId)!
+            : (df.nomDonateur || (df.anonyme ? 'Donateur anonyme' : 'Bienfaiteur Dèmè'));
+
+          const mode = df.modePaiement
+            ? df.modePaiement.replace(/_/g, ' ')
+            : 'Orange Money';
+
+          const statut = (df.statut === 'VALIDEE' || df.statut === 'Terminé' || !df.statut)
+            ? 'Terminé'
+            : (df.statut === 'EN_ATTENTE' ? 'En attente' : 'Terminé');
+
+          listeDons.push({
+            id: 'DON-FIN-' + String(df.id).padStart(3, '0'),
+            rawId: df.id,
+            donateur: nomDonateur,
+            montant: `${(df.montant || 0).toLocaleString('fr-FR')} FCFA`,
+            montantValue: df.montant || 0,
+            categorie: 'Financier',
+            mode: mode,
+            statut: statut,
+            statutClass: statut === 'Terminé' ? 'status-termine' : 'status-attente',
+            date: df.dateDon ? new Date(df.dateDon).toLocaleDateString('fr-FR') : 'Aujourd\'hui',
+            titreDemandeAide: df.titreDemandeAide || 'Aide solidaire'
           });
-        } else {
-          this.dons = [];
-        }
+        });
+
+        // 2. Dons matériels ou autres depuis globaux
+        (globaux || []).forEach((g: any) => {
+          if (g.typeDon === 'FINANCIER' && seenFinancierIds.has(g.id)) {
+            return; // Déjà pris en compte avec le montant exact
+          }
+          const isMateriel = g.typeDon === 'MATERIEL' || g.quantite || g.designation;
+          const nomDonateur = (g.donateurId && donateurMap.has(g.donateurId))
+            ? donateurMap.get(g.donateurId)!
+            : (g.donateurPrenom || g.donateurNom ? `${g.donateurPrenom || ''} ${g.donateurNom || ''}`.trim() : (g.anonyme ? 'Donateur anonyme' : 'Bienfaiteur Dèmè'));
+
+          const statut = (g.statut === 'VALIDEE' || g.statut === 'RECUE' || g.statut === 'Terminé' || !g.statut)
+            ? 'Terminé'
+            : (g.statut === 'REFUSEE' ? 'Refusé' : 'En attente');
+
+          const montantAffiche = isMateriel
+            ? `${g.quantite || 1} ${g.unite || 'unité(s)'} (${g.designation || 'Don matériel'})`
+            : `${(g.montant || 0).toLocaleString('fr-FR')} FCFA`;
+
+          listeDons.push({
+            id: (isMateriel ? 'DON-MAT-' : 'DON-') + String(g.id).padStart(3, '0'),
+            rawId: g.id,
+            donateur: nomDonateur,
+            montant: montantAffiche,
+            montantValue: isMateriel ? 0 : (g.montant || 0),
+            categorie: isMateriel ? 'Matériel' : 'Financier',
+            mode: g.modePaiement ? g.modePaiement.replace(/_/g, ' ') : (isMateriel ? 'Nature' : 'Orange Money'),
+            statut: statut,
+            statutClass: statut === 'Terminé' ? 'status-termine' : (statut === 'Refusé' ? 'status-refuse' : 'status-attente'),
+            date: g.dateDon ? new Date(g.dateDon).toLocaleDateString('fr-FR') : 'Aujourd\'hui',
+            titreDemandeAide: g.titreDemandeAide || 'Don direct'
+          });
+        });
+
+        this.dons = listeDons;
       },
       error: (err: any) => {
         this.isLoading = false;
@@ -118,13 +173,23 @@ export class DonsAdmin implements OnInit {
 
   get donsFiltres(): DonItem[] {
     return this.dons.filter(d => {
+      const selCatNorm = (this.selectedCategory || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const dCatNorm = (d.categorie || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       const matchCat =
-        this.selectedCategory === 'Toutes les Catégories' ? true :
-        d.categorie.toLowerCase() === this.selectedCategory.toLowerCase();
+        !this.selectedCategory ||
+        this.selectedCategory === 'Toutes les Catégories' ||
+        selCatNorm.includes('toute')
+          ? true
+          : dCatNorm === selCatNorm;
 
+      const selStatNorm = (this.selectedStatut || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const dStatNorm = (d.statut || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       const matchStatut =
-        this.selectedStatut === 'Tous' ? true :
-        d.statut.toLowerCase() === this.selectedStatut.toLowerCase();
+        !this.selectedStatut ||
+        this.selectedStatut === 'Tous' ||
+        selStatNorm === 'tous'
+          ? true
+          : dStatNorm === selStatNorm;
 
       const q = this.searchTerm.trim().toLowerCase();
       const matchSearch = !q ? true :
@@ -151,12 +216,19 @@ export class DonsAdmin implements OnInit {
   }
 
   getTotalMontantFinancier(): string {
+    if (this.totalMontantStat !== null && this.totalMontantStat > 0) {
+      return this.totalMontantStat.toLocaleString('fr-FR') + ' FCFA';
+    }
     const total = this.dons.reduce((sum, d) => sum + (d.montantValue || 0), 0);
     return total.toLocaleString('fr-FR') + ' FCFA';
   }
 
   getCountByStatut(statut: string): number {
-    return this.dons.filter(d => d.statut.toLowerCase() === statut.toLowerCase()).length;
+    const target = (statut || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return this.dons.filter(d => {
+      const s = (d.statut || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      return s === target;
+    }).length;
   }
 
   ouvrirDetails(d: DonItem) {
@@ -170,6 +242,12 @@ export class DonsAdmin implements OnInit {
   confirmerReception(d: DonItem) {
     d.statut = 'Terminé';
     d.statutClass = 'status-termine';
+    if (d.categorie === 'Matériel' && d.rawId) {
+      this.donService.confirmerReception(d.rawId, 1).subscribe({
+        next: () => {},
+        error: () => {}
+      });
+    }
     if (this.donSelectionne && this.donSelectionne.id === d.id) {
       this.donSelectionne.statut = 'Terminé';
       this.donSelectionne.statutClass = 'status-termine';
@@ -196,25 +274,48 @@ export class DonsAdmin implements OnInit {
       return;
     }
 
-    const nextId = 'DON' + String(this.dons.length + 1).padStart(3, '0');
-    const statutClass = this.nouveauDon.statut === 'Terminé' ? 'status-termine' : 'status-attente';
     const parsedAmount = parseInt(this.nouveauDon.montant.replace(/\D/g, ''), 10) || 0;
-    const today = new Date().toLocaleDateString('fr-FR');
 
-    const item: DonItem = {
-      id: nextId,
-      donateur: this.nouveauDon.donateur.trim(),
-      montant: this.nouveauDon.montant.trim(),
-      montantValue: parsedAmount,
-      categorie: this.nouveauDon.categorie,
-      mode: this.nouveauDon.mode,
-      statut: this.nouveauDon.statut,
-      statutClass: statutClass,
-      date: today
-    };
+    if (this.nouveauDon.categorie === 'Financier') {
+      const dto = {
+        montant: parsedAmount,
+        modePaiement: this.nouveauDon.mode.toUpperCase().replace(/\s+/g, '_'),
+        anonyme: false,
+        nomDonateur: this.nouveauDon.donateur.trim(),
+        statut: 'VALIDEE'
+      };
 
-    this.dons.unshift(item);
-    this.isModalOpen = false;
+      this.donService.creerDonFinancier(dto).subscribe({
+        next: () => {
+          this.chargerDons();
+          this.chargerStatistiques();
+          this.isModalOpen = false;
+        },
+        error: () => {
+          this.chargerDons();
+          this.isModalOpen = false;
+        }
+      });
+    } else {
+      const dto = {
+        designation: this.nouveauDon.montant.trim(),
+        quantite: 1,
+        unite: 'lot',
+        etatMateriel: 'BON_ETAT',
+        anonyme: false,
+        nomDonateur: this.nouveauDon.donateur.trim()
+      };
+
+      this.donService.creerDonMateriel(dto).subscribe({
+        next: () => {
+          this.chargerDons();
+          this.isModalOpen = false;
+        },
+        error: () => {
+          this.chargerDons();
+          this.isModalOpen = false;
+        }
+      });
+    }
   }
 }
-
