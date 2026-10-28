@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -14,12 +14,25 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './admin-navbar.html',
   styleUrl: './admin-navbar.css'
 })
-export class AdminNavbar {
+export class AdminNavbar implements OnInit {
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   readonly currentUser$ = this.authService.currentUser$;
 
   currentDate = new Date();
+
+  ngOnInit(): void {
+    const role = this.authService.getRole();
+    if (role && role !== 'ADMIN') {
+      console.warn('[AdminNavbar] Utilisateur non-administrateur détecté dans l\'espace admin. Redirection...');
+      if (role === 'ORGANISATIONPARTENAIRE') {
+        this.router.navigate(['/organisation/dashboard']);
+      } else {
+        this.authService.logout();
+      }
+    }
+  }
 
   obtenirDate(): string {
     const jour = this.currentDate.getDate();
@@ -35,6 +48,15 @@ export class AdminNavbar {
     const initiales = `${initialePrenom}${initialeNom}`.toUpperCase();
 
     return initiales || 'AD';
+  }
+
+  obtenirLibelleRole(role?: string): string {
+    if (!role) return 'Administrateur';
+    if (role === 'ADMIN') return 'Administrateur Plateforme';
+    if (role === 'ORGANISATIONPARTENAIRE') return 'Organisation Partenaire';
+    if (role === 'DONATEUR') return 'Donateur';
+    if (role === 'BENEFICIARE') return 'Bénéficiaire';
+    return role;
   }
 
   logout(): void {

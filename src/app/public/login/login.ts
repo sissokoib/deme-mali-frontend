@@ -57,30 +57,18 @@ export class Login {
     this.loading = true;
     this.error = null;
 
+    // Réinitialiser tout résidu de session avant une nouvelle connexion
+    this.authService.clearSession();
+
     this.authService.login({
       telephone: this.form.value.telephone.trim(),
       motDePasse: this.form.value.motDePasse
     }).subscribe({
 
       next: (response) => {
-        
+        const role = this.authService.getRole() || (response.user?.role ? response.user.role.replace('ROLE_', '') : null);
 
-        console.log('Réponse login :', response);
-
-        const token = this.authService.getAccessToken();
-
-
-        if (token) {
-          const payload = JSON.parse(
-            atob(token.split('.')[1])
-          );
-
-          console.log('Payload JWT :', payload);
-        }
-
-        const role = this.authService.getRole();
-
-        console.log('Rôle :', role);
+        console.log('Connexion réussie pour :', response.user?.prenom, response.user?.nom, '| Rôle :', role);
 
         if (role === 'ORGANISATIONPARTENAIRE') {
           this.router.navigate(['/organisation/dashboard']);
@@ -93,10 +81,9 @@ export class Login {
       },
 
       error: (err) => {
-
-        this.error = 'Téléphone ou mot de passe incorrect.';
+        console.error('Erreur de connexion :', err);
+        this.error = 'Numéro de téléphone ou mot de passe incorrect.';
         this.loading = false;
-
       }
 
     });

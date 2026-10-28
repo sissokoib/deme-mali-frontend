@@ -81,9 +81,78 @@ export class AffectationsDonsList implements OnInit {
     });
   }
 
+  // Pagination (10 éléments par page)
+  pageActuelleFinanciere = 1;
+  pageActuelleMaterielle = 1;
+  elementsParPage = 10;
+
+  get totalPagesFinancieres(): number {
+    return Math.max(1, Math.ceil(this.financieres.length / this.elementsParPage));
+  }
+
+  get pagesFinancieres(): number[] {
+    return Array.from({ length: this.totalPagesFinancieres }, (_, i) => i + 1);
+  }
+
+  get financieresPaginees(): AffectationFinanciere[] {
+    const debut = (this.pageActuelleFinanciere - 1) * this.elementsParPage;
+    return this.financieres.slice(debut, debut + this.elementsParPage);
+  }
+
+  get totalPagesMaterielles(): number {
+    return Math.max(1, Math.ceil(this.materielles.length / this.elementsParPage));
+  }
+
+  get pagesMaterielles(): number[] {
+    return Array.from({ length: this.totalPagesMaterielles }, (_, i) => i + 1);
+  }
+
+  get materiellesPaginees(): AffectationMaterielle[] {
+    const debut = (this.pageActuelleMaterielle - 1) * this.elementsParPage;
+    return this.materielles.slice(debut, debut + this.elementsParPage);
+  }
+
+  allerPageFinanciere(page: number): void {
+    if (page >= 1 && page <= this.totalPagesFinancieres) {
+      this.pageActuelleFinanciere = page;
+    }
+  }
+
+  pagePrecedenteFinanciere(): void {
+    if (this.pageActuelleFinanciere > 1) {
+      this.pageActuelleFinanciere--;
+    }
+  }
+
+  pageSuivanteFinanciere(): void {
+    if (this.pageActuelleFinanciere < this.totalPagesFinancieres) {
+      this.pageActuelleFinanciere++;
+    }
+  }
+
+  allerPageMaterielle(page: number): void {
+    if (page >= 1 && page <= this.totalPagesMaterielles) {
+      this.pageActuelleMaterielle = page;
+    }
+  }
+
+  pagePrecedenteMaterielle(): void {
+    if (this.pageActuelleMaterielle > 1) {
+      this.pageActuelleMaterielle--;
+    }
+  }
+
+  pageSuivanteMaterielle(): void {
+    if (this.pageActuelleMaterielle < this.totalPagesMaterielles) {
+      this.pageActuelleMaterielle++;
+    }
+  }
+
   // Changer d'onglet
   changerOnglet(onglet: TypeOnglet): void {
     this.ongletActif = onglet;
+    this.pageActuelleFinanciere = 1;
+    this.pageActuelleMaterielle = 1;
   }
 
   // Ouvrir les détails d'une affectation financière

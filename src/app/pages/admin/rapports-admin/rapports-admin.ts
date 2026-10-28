@@ -141,7 +141,47 @@ export class RapportsAdmin implements OnInit {
     });
   }
 
+  // Pagination (10 par page)
+  pageActuelle: number = 1;
+  elementsParPage: number = 10;
+
+  get totalPages(): number {
+    return Math.ceil(this.rapportsFiltres.length / this.elementsParPage) || 1;
+  }
+
+  get pages(): number[] {
+    const arr: number[] = [];
+    for (let i = 1; i <= this.totalPages; i++) {
+      arr.push(i);
+    }
+    return arr;
+  }
+
+  get rapportsPaginees(): RapportItem[] {
+    const startIndex = (this.pageActuelle - 1) * this.elementsParPage;
+    return this.rapportsFiltres.slice(startIndex, startIndex + this.elementsParPage);
+  }
+
+  allerPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.pageActuelle = page;
+    }
+  }
+
+  pagePrecedente() {
+    if (this.pageActuelle > 1) {
+      this.pageActuelle--;
+    }
+  }
+
+  pageSuivante() {
+    if (this.pageActuelle < this.totalPages) {
+      this.pageActuelle++;
+    }
+  }
+
   filtrerParType(type: string) {
+    this.pageActuelle = 1;
     if (this.filtreType === type) {
       this.filtreType = 'Tous les types';
     } else {
@@ -150,6 +190,7 @@ export class RapportsAdmin implements OnInit {
   }
 
   reinitialiserFiltres() {
+    this.pageActuelle = 1;
     this.filtrePeriode = 'Toutes les périodes';
     this.filtreType = 'Tous les types';
     this.filtreStatut = 'Tous les statuts';

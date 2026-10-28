@@ -233,6 +233,22 @@
   font-size: 0.86rem;
 }
 
+.form-textarea {
+  height: auto !important;
+  min-height: 68px;
+  resize: vertical;
+  padding: 8px 12px;
+  font-family: inherit;
+  line-height: 1.45;
+}
+
+.field-hint {
+  font-size: 0.72rem;
+  color: #6B7280;
+  margin-top: 4px;
+  line-height: 1.35;
+}
+
 /* Champ avec bouton œil */
 .input-with-toggle {
   position: relative;

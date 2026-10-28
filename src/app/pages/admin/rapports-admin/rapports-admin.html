@@ -126,7 +126,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let r of rapportsFiltres">
+          <tr *ngFor="let r of rapportsPaginees">
             <td>
               <div class="rapport-name-cell">
                 <span class="rapport-icon">
@@ -162,19 +162,43 @@
       </table>
     </div>
 
-    <div class="pagination">
-      <span class="page-item" title="Précédent">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+    <!-- Pagination mode défilement (dès que la liste dépasse 10 éléments, modèle Image 3) -->
+    <div class="pagination" *ngIf="rapportsFiltres.length > elementsParPage">
+      <button
+        type="button"
+        class="page-item"
+        [class.disabled]="pageActuelle === 1"
+        [disabled]="pageActuelle === 1"
+        (click)="pagePrecedente()"
+        title="Page précédente"
+        aria-label="Précédent">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="15 18 9 12 15 6"></polyline>
         </svg>
-      </span>
-      <span class="page-item active">1</span>
-      <span class="page-item">2</span>
-      <span class="page-item" title="Suivant">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+      </button>
+
+      <button
+        type="button"
+        class="page-item"
+        *ngFor="let p of pages"
+        [class.active]="p === pageActuelle"
+        (click)="allerPage(p)"
+        [attr.aria-label]="'Page ' + p">
+        {{ p }}
+      </button>
+
+      <button
+        type="button"
+        class="page-item"
+        [class.disabled]="pageActuelle === totalPages"
+        [disabled]="pageActuelle === totalPages"
+        (click)="pageSuivante()"
+        title="Page suivante"
+        aria-label="Suivant">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="9 18 15 12 9 6"></polyline>
         </svg>
-      </span>
+      </button>
     </div>
   </div>
 
@@ -242,20 +266,6 @@
       </div>
 
       <div class="modal-actions">
-        <button
-          type="button"
-          class="btn-annuler"
-          *ngIf="rep.rawType !== 'ETUDE'"
-          (click)="supprimerRapport(rep)"
-          style="background-color: #FEE2E2; color: #DC2626; border-color: #FECACA;"
-          title="Supprimer ce rapport"
-        >
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="3 6 5 6 21 6"></polyline>
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-          </svg>
-          Supprimer
-        </button>
         <button type="button" class="btn-annuler" (click)="imprimerRapport()">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="me-1">
             <polyline points="6 9 6 2 18 2 18 9"></polyline>

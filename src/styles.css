@@ -177,6 +177,22 @@ app-admin-navbar {
     max-height: 100vh !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .sidebar-inner::-webkit-scrollbar,
+  .sidebar-nav::-webkit-scrollbar,
+  app-sidebar::-webkit-scrollbar,
+  app-admin-sidebar::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  .sidebar-nav {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
   }
 
   .sidebar-collapsed app-sidebar,
@@ -321,3 +337,63 @@ app-admin-navbar {
     padding: 12px 0 !important;
   }
 }
+
+/* ==========================================================================
+   Harmonisation des Boutons d'Action (Identique à l'Organisation Partenaire)
+   ========================================================================== */
+.action-icone {
+  display: inline-flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 34px !important;
+  height: 34px !important;
+  padding: 0 !important;
+  border: 1px solid #F7F3EA !important;
+  border-radius: 6px !important;
+  background-color: #FFFFFF !important;
+  color: #0F7A4B !important;
+  cursor: pointer !important;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s !important;
+}
+
+.action-icone mat-icon,
+.action-icone svg {
+  width: 19px !important;
+  height: 19px !important;
+  font-size: 19px !important;
+  line-height: 19px !important;
+}
+
+.action-icone:hover:not(:disabled) {
+  border-color: #0F7A4B !important;
+  background-color: #F7F3EA !important;
+  color: #0F7A4B !important;
+}
+
+.action-icone.action-icone-success,
+.action-icone.action-success {
+  color: #0F7A4B !important;
+}
+
+.action-icone.action-icone-success:hover:not(:disabled),
+.action-icone.action-success:hover:not(:disabled) {
+  border-color: #0F7A4B !important;
+  background-color: #DDF3E7 !important;
+}
+
+.action-icone.action-icone-danger,
+.action-icone.action-danger {
+  color: #DC2626 !important;
+}
+
+.action-icone.action-icone-danger:hover:not(:disabled),
+.action-icone.action-danger:hover:not(:disabled) {
+  border-color: #DC2626 !important;
+  background-color: #FEE2E2 !important;
+}
+
+.action-icone:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+

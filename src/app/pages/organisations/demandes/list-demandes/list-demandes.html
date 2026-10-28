@@ -161,11 +161,14 @@
                         :pageActuelle * demandesParPage
             ">
 
-            <!-- Titre -->
+            <!-- Titre & Bénéficiaire -->
             <td>
               <strong class="titre-demande">
                 {{ demande.titre }}
               </strong>
+              <div *ngIf="demande.beneficiairePrenom || demande.beneficiaireNom" style="font-size: 12px; color: #666; margin-top: 3px;">
+                Bénéficiaire : {{ demande.beneficiairePrenom }} {{ demande.beneficiaireNom }}
+              </div>
             </td>
 
            
@@ -283,10 +286,10 @@
 
     </div>
 
-    <!-- Pagination -->
+    <!-- Pagination mode défilement (si > 10 éléments) -->
     <div
       class="pagination"
-      *ngIf="demandesFiltrees.length > 0">
+      *ngIf="demandesFiltrees.length > demandesParPage">
 
       <p class="pagination-info">
         Affichage de
@@ -301,38 +304,40 @@
       </p>
 
       <div class="pagination-boutons">
-
         <button
           type="button"
-          class="pagination-bouton"
+          class="page-item"
+          [class.disabled]="pageActuelle === 1"
           [disabled]="pageActuelle === 1"
-          (click)="pagePrecedente()">
-
-          Précédent
-
+          (click)="pagePrecedente()"
+          title="Page précédente"
+          aria-label="Page précédente">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
         </button>
 
         <button
           type="button"
-          class="pagination-numero"
+          class="page-item"
           *ngFor="let page of pages"
           [class.active]="page === pageActuelle"
           (click)="allerPage(page)">
-
           {{ page }}
-
         </button>
 
         <button
           type="button"
-          class="pagination-bouton"
+          class="page-item"
+          [class.disabled]="pageActuelle === nombrePages"
           [disabled]="pageActuelle === nombrePages"
-          (click)="pageSuivante()">
-
-          Suivant
-
+          (click)="pageSuivante()"
+          title="Page suivante"
+          aria-label="Page suivante">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
         </button>
-
       </div>
 
     </div>

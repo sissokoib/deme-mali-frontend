@@ -1,167 +1,258 @@
 <div class="dons-container">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Gestion des Dons - Dèmè Mali</h1>
+      <h1 class="page-title">Dons</h1>
       <p class="page-subtitle">Gérez et consultez les contributions financières et matérielles collectées.</p>
     </div>
   </div>
 
-  <div class="main-grid">
-    <div class="left-col">
-      <div class="section-card">
-        <div class="section-header">
-          <div>
-            <h2 class="section-title">Liste des dons et contributions</h2>
-            <p class="section-subtitle">Dons financiers (Orange Money, Moov, virement) et dons en nature.</p>
-          </div>
+  <!-- Statistiques des Dons (alignées horizontalement au-dessus de la liste) -->
+  <div class="stats-cards-row">
+    <div class="stat-card clickable" [style.border]="selectedStatut === 'Tous' ? '2px solid #0F7A4B' : '1px solid #E8E1D5'" (click)="setStatutFilter('Tous')">
+      <div class="stat-info">
+        <span class="stat-label">Total des Dons Financiers</span>
+        <span class="stat-value">{{ getTotalMontantFinancier() }}</span>
+      </div>
+      <div class="stat-count count-bg-light">{{ nombreDonsFinanciers }}</div>
+    </div>
+    
+    <div class="stat-card clickable" [style.border]="ongletActif === 'MATERIEL' ? '2px solid #0F7A4B' : '1px solid #E8E1D5'" (click)="changerOnglet('MATERIEL')">
+      <div class="stat-info">
+        <span class="stat-label">Contributions Matérielles</span>
+        <span class="stat-value">{{ nombreDonsMateriels }} lots enregistrés</span>
+      </div>
+      <div class="stat-count count-bg-light">{{ nombreDonsMateriels }}</div>
+    </div>
+    
+    <div class="stat-card clickable" [style.border]="selectedStatut === 'En attente' ? '2px solid #D97706' : '1px solid #E8E1D5'" (click)="setStatutFilter('En attente')">
+      <div class="stat-info">
+        <span class="stat-label">Dons en Attente de Traitement</span>
+        <span class="stat-value">Dons financiers & matériels</span>
+      </div>
+      <div class="stat-count count-bg-warning">{{ getCountByStatut('En attente') }}</div>
+    </div>
+  </div>
+
+  <!-- Contenu Principal : Liste des dons pleine largeur -->
+  <div class="section-card">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Liste des dons et contributions</h2>
+        <p class="section-subtitle">Dons financiers et Dons matériels</p>
+      </div>
           
           <div class="filter-actions">
+            <!-- Recherche textuelle -->
             <div class="search-input-wrapper">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              <input type="text" [(ngModel)]="searchTerm" placeholder="Rechercher un don...">
+              <mat-icon>search</mat-icon>
+              <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="pageActuelle = 1" placeholder="Rechercher un don, donateur...">
             </div>
 
+            <!-- Filtre Catégorie dynamique depuis la base de données (sans Financier ni Matériel) -->
             <div class="filter-dropdown-wrapper">
               <button type="button" class="filter-btn" (click)="toggleFilterMenu()">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="4" y1="21" x2="4" y2="14"></line>
-                  <line x1="4" y1="10" x2="4" y2="3"></line>
-                  <line x1="12" y1="21" x2="12" y2="12"></line>
-                  <line x1="12" y1="8" x2="12" y2="3"></line>
-                  <line x1="20" y1="21" x2="20" y2="16"></line>
-                  <line x1="20" y1="12" x2="20" y2="3"></line>
-                </svg>
                 {{ selectedCategory }}
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
                   <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
               </button>
 
-              <!-- Dropdown -->
+              <!-- Dropdown avec UNIQUEMENT les catégories de la base de données -->
               <div class="filter-menu" *ngIf="isFilterMenuOpen">
-                <div class="filter-item" [class.active]="selectedCategory === 'Toutes les Catégories'" (click)="selectCategory('Toutes les Catégories')">
+                <div
+                  class="filter-item"
+                  [class.active]="selectedCategory === 'Toutes les Catégories'"
+                  (click)="selectCategory('Toutes les Catégories')">
                   Toutes les Catégories
                 </div>
-                <div class="filter-item" [class.active]="selectedCategory === 'Financier'" (click)="selectCategory('Financier')">
-                  Financier
-                </div>
-                <div class="filter-item" [class.active]="selectedCategory === 'Matériel'" (click)="selectCategory('Matériel')">
-                  Matériel
-                </div>
-                <div class="filter-item" [class.active]="selectedCategory === 'Alimentaire'" (click)="selectCategory('Alimentaire')">
-                  Alimentaire
-                </div>
-                <div class="filter-item" [class.active]="selectedCategory === 'Fournitures'" (click)="selectCategory('Fournitures')">
-                  Fournitures
-                </div>
-                <div class="filter-item" [class.active]="selectedCategory === 'Santé'" (click)="selectCategory('Santé')">
-                  Santé
-                </div>
-                <div class="filter-item" [class.active]="selectedCategory === 'Vêtements'" (click)="selectCategory('Vêtements')">
-                  Vêtements
+                <div
+                  *ngFor="let cat of categoriesList"
+                  class="filter-item"
+                  [class.active]="selectedCategory === cat.nom"
+                  (click)="selectCategory(cat.nom)">
+                  {{ cat.nom }}
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="table-responsive">
+        <!-- Onglets Dons financiers / Dons matériels (Modèle Organisation Partenaire) -->
+        <div class="onglets-dons">
+          <button
+            type="button"
+            class="onglet"
+            [class.actif]="ongletActif === 'FINANCIER'"
+            (click)="changerOnglet('FINANCIER')">
+            Dons financiers
+            <span class="compteur">{{ nombreDonsFinanciers }}</span>
+          </button>
+
+          <button
+            type="button"
+            class="onglet"
+            [class.actif]="ongletActif === 'MATERIEL'"
+            (click)="changerOnglet('MATERIEL')">
+            Dons matériels
+            <span class="compteur">{{ nombreDonsMateriels }}</span>
+          </button>
+        </div>
+
+        <!-- TABLEAU DONS FINANCIERS -->
+        <div class="table-responsive" *ngIf="ongletActif === 'FINANCIER'">
           <table class="custom-table">
             <thead>
               <tr>
                 <th>ID DON</th>
                 <th>DONATEUR</th>
-                <th>MONTANT / QUANTITÉ</th>
+                <th>DEMANDE D'AIDE</th>
                 <th>CATÉGORIE</th>
+                <th>MONTANT</th>
                 <th>MODE DE RÈGLEMENT</th>
                 <th>STATUT DU DON</th>
                 <th>ACTIONS</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let d of donsFiltres">
+              <tr *ngFor="let d of donsPagines">
                 <td><strong class="text-id">{{ d.id }}</strong></td>
                 <td>
                   <strong class="donateur-name">{{ d.donateur }}</strong>
                 </td>
                 <td>
-                  <span class="montant-valeur">{{ d.montant }}</span>
+                  <span class="demande-titre">{{ d.titreDemandeAide || 'Don direct' }}</span>
                 </td>
                 <td><span class="type-badge">{{ d.categorie }}</span></td>
+                <td>
+                  <span class="montant-valeur">{{ d.montant }}</span>
+                </td>
                 <td>{{ d.mode }}</td>
                 <td><span class="status-badge" [ngClass]="d.statutClass">{{ d.statut }}</span></td>
                 <td class="actions-cell">
-                  <div class="actions-group" style="display: flex; gap: 6px; align-items: center;">
-                    <button type="button" class="btn-action-view" (click)="ouvrirDetails(d)" title="Consulter le don">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                      </svg>
-                    </button>
+                  <div class="actions-group" style="display: flex; gap: 8px; align-items: center;">
                     <button
                       type="button"
-                      class="btn-action-view"
-                      *ngIf="d.statut === 'En attente'"
-                      (click)="confirmerReception(d)"
-                      title="Confirmer la réception"
-                      style="color: #0F7A4B;"
-                    >
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
+                      class="action-icone"
+                      (click)="ouvrirDetails(d)"
+                      title="Consulter le don"
+                      aria-label="Consulter le don">
+                      <mat-icon>visibility</mat-icon>
                     </button>
                   </div>
                 </td>
               </tr>
               <tr *ngIf="donsFiltres.length === 0">
-                <td colspan="7" class="empty-cell">Aucun don ne correspond à votre filtre.</td>
+                <td colspan="8" class="empty-cell">Aucun don financier ne correspond à vos filtres.</td>
               </tr>
             </tbody>
           </table>
         </div>
-      </div>
-    </div>
 
-    <div class="right-col">
-      <div class="stats-sidebar">
-        <h2 class="section-title" style="margin-bottom: 15px;">Statistiques des Dons</h2>
-        
-        <div class="stat-card clickable" [style.border]="selectedStatut === 'Tous' ? '2px solid #0F7A4B' : '1px solid #E8E1D5'" (click)="setStatutFilter('Tous')">
-          <div class="stat-info">
-            <span class="stat-label">Total des Dons Collectés</span>
-            <span class="stat-value">{{ getTotalMontantFinancier() }}</span>
-          </div>
-          <div class="stat-count count-bg-light">{{ dons.length }}</div>
+        <!-- TABLEAU DONS MATÉRIELS -->
+        <div class="table-responsive" *ngIf="ongletActif === 'MATERIEL'">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>ID DON</th>
+                <th>DONATEUR</th>
+                <th>DEMANDE D'AIDE</th>
+                <th>CATÉGORIE</th>
+                <th>DÉSIGNATION & QUANTITÉ</th>
+                <th>LIEU / ACHEMINEMENT</th>
+                <th>STATUT DU DON</th>
+                <th>ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let d of donsPagines">
+                <td><strong class="text-id">{{ d.id }}</strong></td>
+                <td>
+                  <strong class="donateur-name">{{ d.donateur }}</strong>
+                </td>
+                <td>
+                  <span class="demande-titre">{{ d.titreDemandeAide || 'Don direct' }}</span>
+                </td>
+                <td><span class="type-badge">{{ d.categorie }}</span></td>
+                <td>
+                  <span class="montant-valeur">{{ d.montant }}</span>
+                </td>
+                <td>{{ d.mode }}</td>
+                <td><span class="status-badge" [ngClass]="d.statutClass">{{ d.statut }}</span></td>
+                <td class="actions-cell">
+                  <div class="actions-group" style="display: flex; gap: 8px; align-items: center;">
+                    <button
+                      type="button"
+                      class="action-icone"
+                      (click)="ouvrirDetails(d)"
+                      title="Consulter le don"
+                      aria-label="Consulter le don">
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                    <button
+                      type="button"
+                      class="action-icone action-icone-success"
+                      *ngIf="d.statut === 'En attente'"
+                      (click)="confirmerReception(d)"
+                      title="Confirmer la réception"
+                      aria-label="Confirmer la réception">
+                      <mat-icon>check</mat-icon>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="donsFiltres.length === 0">
+                <td colspan="8" class="empty-cell">Aucun don matériel ne correspond à vos filtres.</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        
-        <div class="stat-card clickable" [style.border]="selectedStatut === 'En attente' ? '2px solid #D97706' : '1px solid #E8E1D5'" (click)="setStatutFilter('En attente')">
-          <div class="stat-info">
-            <span class="stat-label">Dons en Attente de Traitement</span>
-            <span class="stat-value">Nature & Espèces</span>
-          </div>
-          <div class="stat-count count-bg-warning">{{ getCountByStatut('En attente') }}</div>
-        </div>
-        
-        <div class="stat-card clickable" [style.border]="selectedStatut === 'Terminé' ? '2px solid #0F7A4B' : '1px solid #E8E1D5'" (click)="setStatutFilter('Terminé')">
-          <div class="stat-info">
-            <span class="stat-label">Dons Encaissés & Reçus</span>
-            <span class="stat-value">100% Tracés</span>
-          </div>
-          <div class="stat-count count-bg-success">{{ getCountByStatut('Terminé') }}</div>
+
+        <!-- Pagination mode défilement (si > 10 éléments, modèle Image 3) -->
+        <div class="pagination" *ngIf="donsFiltres.length > elementsParPage">
+          <button
+            type="button"
+            class="page-item"
+            [class.disabled]="pageActuelle === 1"
+            [disabled]="pageActuelle === 1"
+            (click)="pagePrecedente()"
+            title="Page précédente"
+            aria-label="Page précédente">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            class="page-item"
+            *ngFor="let p of pages"
+            [class.active]="p === pageActuelle"
+            (click)="allerPage(p)"
+            [attr.aria-label]="'Page ' + p">
+            {{ p }}
+          </button>
+
+          <button
+            type="button"
+            class="page-item"
+            [class.disabled]="pageActuelle === totalPages"
+            [disabled]="pageActuelle === totalPages"
+            (click)="pageSuivante()"
+            title="Page suivante"
+            aria-label="Page suivante">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
         </div>
       </div>
-    </div>
-  </div>
 
   <!-- Modal Détails du Don -->
   <div class="fond-modal" *ngIf="donSelectionne" (click)="fermerDetails()">
     <div class="modal-form-card" (click)="$event.stopPropagation()">
       <div class="modal-entete">
         <div>
-          <span class="surtitre">DÈMÈ MALI • REÇU DU DON</span>
+          <span class="surtitre">DÈMÈ MALI • REÇU DU DON ({{ donSelectionne.typeDon === 'FINANCIER' ? 'FINANCIER' : 'MATÉRIEL' }})</span>
           <h2>{{ donSelectionne.donateur }}</h2>
         </div>
         <button type="button" class="btn-fermer" (click)="fermerDetails()" aria-label="Fermer la boîte de dialogue">
@@ -185,15 +276,19 @@
             </p>
           </div>
           <div class="detail-item">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Montant / Don</span>
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">{{ donSelectionne.typeDon === 'FINANCIER' ? 'Montant du Don' : 'Quantité & Désignation' }}</span>
             <p style="font-weight: 700; color: #1F1F1F; font-size: 16px; margin-top: 4px;">{{ donSelectionne.montant }}</p>
           </div>
           <div class="detail-item">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Catégorie</span>
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Catégorie de Besoin</span>
             <p style="margin-top: 4px;"><span class="type-badge">{{ donSelectionne.categorie }}</span></p>
           </div>
           <div class="detail-item">
-            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Moyen de Paiement / Acheminement</span>
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Demande d'Aide Liée</span>
+            <p style="font-weight: 600; margin-top: 4px; color: #1F1F1F;">{{ donSelectionne.titreDemandeAide || 'Attribution libre' }}</p>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 12px; color: #6B7280; text-transform: uppercase;">Moyen / Acheminement</span>
             <p style="font-weight: 600; margin-top: 4px;">{{ donSelectionne.mode }}</p>
           </div>
           <div class="detail-item">
@@ -203,18 +298,15 @@
         </div>
       </div>
 
-      <div class="modal-actions" style="display: flex; justify-content: space-between; align-items: center;">
+      <div class="modal-actions" style="display: flex; justify-content: flex-end; align-items: center; gap: 12px;">
         <button
           type="button"
           class="btn-primary"
-          *ngIf="donSelectionne.statut === 'En attente'"
+          *ngIf="donSelectionne.statut === 'En attente' && donSelectionne.typeDon === 'MATERIEL'"
           (click)="confirmerReception(donSelectionne)"
         >
           Confirmer la Réception
         </button>
-        <span *ngIf="donSelectionne.statut === 'Terminé'" style="font-size: 12px; color: #0F7A4B; font-weight: 600;">
-          ✓ Don encaissé et traçabilité confirmée
-        </span>
         <button type="button" class="btn-annuler" (click)="fermerDetails()">Fermer</button>
       </div>
     </div>
@@ -251,15 +343,17 @@
           </div>
 
           <div class="form-group">
-            <label for="donCat">Catégorie de don</label>
+            <label for="donType">Type de don</label>
+            <select id="donType" [(ngModel)]="nouveauDon.typeDon" name="typeDon">
+              <option value="FINANCIER">Don Financier</option>
+              <option value="MATERIEL">Don Matériel</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="donCat">Catégorie du besoin (BD)</label>
             <select id="donCat" [(ngModel)]="nouveauDon.categorie" name="categorie">
-              <option value="Financier">Financier</option>
-              <option value="Matériel">Matériel</option>
-              <option value="Alimentaire">Alimentaire</option>
-              <option value="Fournitures">Fournitures scolaires</option>
-              <option value="Santé">Médicaments & Santé</option>
-              <option value="Vêtements">Vêtements</option>
-              <option value="Logement">Équipements & Logement</option>
+              <option *ngFor="let cat of categoriesList" [value]="cat.nom">{{ cat.nom }}</option>
             </select>
           </div>
 
@@ -305,3 +399,4 @@
     </div>
   </div>
 </div>
+

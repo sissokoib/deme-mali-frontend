@@ -37,7 +37,15 @@ export class RoleGuard implements CanActivate {
       return true;
     }
 
-    // Si le rôle ne correspond pas, rediriger.
+    // Si le rôle ne correspond pas, rediriger vers son espace dédié
+    if (roleUtilisateur === 'ORGANISATIONPARTENAIRE') {
+      return this.router.createUrlTree(['/organisation/dashboard']);
+    }
+
+    if (roleUtilisateur === 'ADMIN') {
+      return this.router.createUrlTree(['/admin/dashboard']);
+    }
+
     return this.router.createUrlTree(['/login']);
   }
 }
