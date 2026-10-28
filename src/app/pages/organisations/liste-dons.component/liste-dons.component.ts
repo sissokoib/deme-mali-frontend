@@ -77,7 +77,7 @@ export class ListeDonsComponent implements OnInit {
 
   // Pagination
   pageActuelle = 1;
-  taillePage = 5;
+  taillePage = 10;
 
   constructor(
     private donService: DonService,

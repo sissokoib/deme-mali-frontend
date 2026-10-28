@@ -31,10 +31,10 @@ export class JwtInterceptor implements HttpInterceptor {
     // Récupérer l'access token
     const token = this.authService.getAccessToken();
 
-    // Si le token stocké est expiré ou invalide, le supprimer
+    // Si le token stocké est expiré ou invalide, nettoyer la session
     if (token && this.authService.isTokenExpired(token)) {
-      console.warn('[JwtInterceptor] Jeton JWT expiré ou invalide détecté. Nettoyage du token local.');
-      localStorage.removeItem('access_token');
+      console.warn('[JwtInterceptor] Jeton JWT expiré ou invalide détecté. Nettoyage de la session locale.');
+      this.authService.clearSession();
     }
 
     const validToken = this.authService.getAccessToken();
@@ -53,10 +53,10 @@ export class JwtInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
         // Le backend Spring Boot renvoie 500 quand un Bearer token possède une signature invalide suite à un redémarrage
         if (validToken && (error.status === 401 || error.status === 500)) {
-          console.warn(`[JwtInterceptor] Erreur ${error.status} reçue avec le Bearer token. Tentative de secours sans Authorization...`);
+          console.warn(`[JwtInterceptor] Erreur ${error.status} reçue avec le Bearer token. Nettoyage de la session et tentative de secours sans Authorization...`);
 
-          // Supprimer le token invalide pour ne plus polluer les futures requêtes
-          localStorage.removeItem('access_token');
+          // Supprimer la session invalide pour ne plus polluer les futures requêtes
+          this.authService.clearSession();
 
           // Réessayer la requête sans l'en-tête Authorization
           const fallbackReq = req.clone({

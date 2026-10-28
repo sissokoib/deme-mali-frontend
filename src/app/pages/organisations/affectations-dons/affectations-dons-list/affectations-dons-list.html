@@ -112,24 +112,21 @@
             </thead>
 
             <tbody>
-              <tr *ngFor="let a of financieres">
+              <tr *ngFor="let a of financieresPaginees">
                 <td><strong>{{ a.id }}</strong></td>
 
                 <td>
                   <span class="don-reference">
-                 
                     Don {{ a.donFinancierId }}
                   </span>
                 </td>
 
                 <td>
                   <span class="destination" *ngIf="a.demandeAideId != null">
-                   
                     Demande {{ a.demandeAideId }}
                   </span>
 
                   <span class="destination" *ngIf="a.beneficiaireId != null">
-                   
                     Bénéficiaire {{ a.beneficiaireId }}
                   </span>
 
@@ -162,13 +159,50 @@
 
               <tr *ngIf="financieres.length === 0">
                 <td colspan="6" class="vide">
-                
                   <strong>Aucune affectation financière</strong>
-                 
                 </td>
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Pagination mode défilement (si > 10 éléments, modèle Image 3) -->
+        <div class="pagination" *ngIf="financieres.length > elementsParPage">
+          <button
+            type="button"
+            class="page-item"
+            [class.disabled]="pageActuelleFinanciere === 1"
+            [disabled]="pageActuelleFinanciere === 1"
+            (click)="pagePrecedenteFinanciere()"
+            title="Page précédente"
+            aria-label="Page précédente">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            class="page-item"
+            *ngFor="let p of pagesFinancieres"
+            [class.active]="p === pageActuelleFinanciere"
+            (click)="allerPageFinanciere(p)"
+            [attr.aria-label]="'Page ' + p">
+            {{ p }}
+          </button>
+
+          <button
+            type="button"
+            class="page-item"
+            [class.disabled]="pageActuelleFinanciere === totalPagesFinancieres"
+            [disabled]="pageActuelleFinanciere === totalPagesFinancieres"
+            (click)="pageSuivanteFinanciere()"
+            title="Page suivante"
+            aria-label="Page suivante">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
         </div>
       </div>
 
@@ -177,7 +211,6 @@
 
         <div class="entete-tableau">
           <div>
-          
             <p>Consultez les quantités de matériel distribuées ou attribuées.</p>
           </div>
         </div>
@@ -196,12 +229,11 @@
             </thead>
 
             <tbody>
-              <tr *ngFor="let a of materielles">
+              <tr *ngFor="let a of materiellesPaginees">
                 <td><strong>{{ a.id }}</strong></td>
 
                 <td>
                   <span class="don-reference">
-                   
                     {{ a.designation || ('Don ' + a.donMaterielId) }}
                   </span>
                   <small class="texte-secondaire" *ngIf="a.designation">
@@ -211,12 +243,10 @@
 
                 <td>
                   <span class="destination" *ngIf="a.demandeAideId != null">
-                  
                     Demande {{ a.demandeAideId }}
                   </span>
 
                   <span class="destination" *ngIf="a.beneficiaireId != null">
-                    
                     Bénéficiaire {{ a.beneficiaireId }}
                   </span>
 
@@ -249,13 +279,50 @@
 
               <tr *ngIf="materielles.length === 0">
                 <td colspan="6" class="vide">
-                  
                   <strong>Aucune affectation matérielle</strong>
-                 
                 </td>
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Pagination mode défilement (si > 10 éléments, modèle Image 3) -->
+        <div class="pagination" *ngIf="materielles.length > elementsParPage">
+          <button
+            type="button"
+            class="page-item"
+            [class.disabled]="pageActuelleMaterielle === 1"
+            [disabled]="pageActuelleMaterielle === 1"
+            (click)="pagePrecedenteMaterielle()"
+            title="Page précédente"
+            aria-label="Page précédente">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            class="page-item"
+            *ngFor="let p of pagesMaterielles"
+            [class.active]="p === pageActuelleMaterielle"
+            (click)="allerPageMaterielle(p)"
+            [attr.aria-label]="'Page ' + p">
+            {{ p }}
+          </button>
+
+          <button
+            type="button"
+            class="page-item"
+            [class.disabled]="pageActuelleMaterielle === totalPagesMaterielles"
+            [disabled]="pageActuelleMaterielle === totalPagesMaterielles"
+            (click)="pageSuivanteMaterielle()"
+            title="Page suivante"
+            aria-label="Page suivante">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
         </div>
       </div>
 

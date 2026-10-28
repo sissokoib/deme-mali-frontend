@@ -33,6 +33,7 @@ export class Register {
       email: ['', [Validators.required, Validators.email]],
       ville: ['', Validators.required],
       adresse: ['', Validators.required],
+      description: [''],
       documentJustificatif: [null],
 
       // Champs du représentant
@@ -120,7 +121,8 @@ export class Register {
       adresse: this.registerForm.value.adresse,
       ville: this.registerForm.value.ville,
       email: this.registerForm.value.email,
-      telephoneOrganisation: this.registerForm.value.telephone
+      telephoneOrganisation: this.registerForm.value.telephone,
+      description: this.registerForm.value.description
     };
 
     const formData = new FormData();

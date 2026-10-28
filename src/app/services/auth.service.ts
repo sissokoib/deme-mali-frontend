@@ -1,8 +1,7 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {
-  BehaviorSubject,
+import {BehaviorSubject,
   Observable,
   tap,
   catchError,
@@ -46,27 +45,33 @@ export class AuthService {
     );
   }
 
-  // DECONNEXION LOCALE
-  logout(): void {
-
+  // NETTOYAGE COMPLET DE LA SESSION
+  clearSession(): void {
     localStorage.removeItem('access_token');
     localStorage.removeItem('current_user');
-
     this.currentUserSubject.next(null);
+  }
 
+  // DECONNEXION LOCALE
+  logout(): void {
+    this.clearSession();
     this.router.navigate(['/login']);
   }
 
   // VERIFIER SI L'UTILISATEUR EST CONNECTE
   isLoggedIn(): boolean {
-
     const token = this.getAccessToken();
 
     if (!token) {
       return false;
     }
 
-    return !this.isTokenExpired(token);
+    if (this.isTokenExpired(token)) {
+      this.clearSession();
+      return false;
+    }
+
+    return true;
   }
 
   // RECUPERER LE TOKEN
@@ -81,6 +86,9 @@ export class AuthService {
 
   // ENREGISTRER LES DONNEES DE CONNEXION
   private storeAuthData(response: AuthResponse): void {
+    if (!response || !response.accessToken || !response.user) {
+      return;
+    }
 
     localStorage.setItem(
       'access_token',
@@ -112,35 +120,42 @@ export class AuthService {
     }
   }
 
-  // RECUPERER LE ROLE DEPUIS LE TOKEN
+  // RECUPERER LE ROLE DEPUIS LE TOKEN (OU L'UTILISATEUR CONNECTE)
   getRole(): string | null {
 
     const token = this.getAccessToken();
 
-    if (!token) {
+    if (!token || this.isTokenExpired(token)) {
       return null;
     }
 
     try {
-      const payload = JSON.parse(
-        atob(
-          token.split('.')[1]
-            .replace(/-/g, '+')
-            .replace(/_/g, '/')
-        )
-      );
+      const parts = token.split('.');
+      if (parts.length >= 2) {
+        const payload = JSON.parse(
+          atob(
+            parts[1]
+              .replace(/-/g, '+')
+              .replace(/_/g, '/')
+          )
+        );
 
-      const role = payload.role;
+        const role = payload.role;
 
-      if (!role || typeof role !== 'string') {
-        return null;
+        if (role && typeof role === 'string') {
+          return role.replace('ROLE_', '');
+        }
       }
-
-      return role.replace('ROLE_', '');
-
     } catch {
-      return null;
+      // Échec de décodage du token, repli sur l'utilisateur en session
     }
+
+    const user = this.getCurrentUser();
+    if (user?.role) {
+      return user.role.replace('ROLE_', '');
+    }
+
+    return null;
   }
 
   // VERIFIER SI LE TOKEN EST EXPIRE OU INVALIDE
@@ -173,4 +188,16 @@ export class AuthService {
       return true;
     }
   }
+
+  // VERIFIER SI L'UTILISATEUR EST L'ADMINISTRATEUR PAR DEFAUT DU BACKEND (SUPER-ADMIN)
+  isSuperAdmin(): boolean {
+    const user = this.getCurrentUser();
+    if (!user) return false;
+    if (user.role !== 'ADMIN') return false;
+
+    const tel = (user.telephone || '').replace(/\D/g, '');
+    // Initialisé dans InsererAdmin.java (Ibrahim Coulibaly / 77990488 / id=1)
+    return tel.endsWith('77990488') || user.id === 1 || (user.nom === 'Coulibaly' && user.prenom === 'Ibrahim');
+  }
 }
+

@@ -18,6 +18,7 @@ export interface OrganisationPartenaireResponseDTO {
   statutValidation?: StatutValidation;
   statut?: string;
   documentJustificatif?: string;
+  description?: string;
 }
 
 export interface OrganisationPartenaireRequestDTO {
@@ -32,6 +33,7 @@ export interface OrganisationPartenaireRequestDTO {
   ville?: string;
   email?: string;
   telephoneOrganisation?: string;
+  description?: string;
 }
 
 export type Organisation = OrganisationPartenaireResponseDTO;

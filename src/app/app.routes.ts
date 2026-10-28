@@ -4,7 +4,7 @@ import { Routes } from '@angular/router';
 import { Main } from './layout/main/main';
 import { Login } from './public/login/login';
 
-import { AuthGuard } from './guards/auth.guard';
+import { AuthGuard, GuestGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
@@ -18,6 +18,7 @@ export const routes: Routes = [
   // CONNEXION
   {
     path: 'login',
+    canActivate: [GuestGuard],
     component: Login
   },
 
@@ -32,6 +33,10 @@ export const routes: Routes = [
   // ROUTES ADMINISTRATEUR
   {
     path: 'admin',
+    canActivate: [AuthGuard, RoleGuard],
+    data: {
+      role: 'ADMIN'
+    },
     loadComponent: () =>
       import('./layout/admin-main/admin-main')
         .then(m => m.AdminMain),
@@ -61,6 +66,17 @@ export const routes: Routes = [
             .then(m => m.DonsAdmin)
       },
       {
+        path: 'affectations-dons',
+        loadComponent: () =>
+          import('./pages/admin/affectations-dons-admin/affectations-dons-admin')
+            .then(m => m.AffectationsDonsAdmin)
+      },
+      {
+        path: 'attributions-dons',
+        redirectTo: 'affectations-dons',
+        pathMatch: 'full'
+      },
+      {
         path: 'rapports',
         loadComponent: () =>
           import('./pages/admin/rapports-admin/rapports-admin')
@@ -73,10 +89,31 @@ export const routes: Routes = [
             .then(m => m.MembresAdmin)
       },
       {
-        path: 'partenaires',
+        path: 'beneficiaires-partenaires',
+        redirectTo: 'membres',
+        pathMatch: 'full'
+      },
+      {
+        path: 'beneficiaires',
+        redirectTo: 'membres',
+        pathMatch: 'full'
+      },
+      {
+        path: 'donateurs',
         loadComponent: () =>
-          import('./pages/admin/partenaires-admin/partenaires-admin')
-            .then(m => m.PartenairesAdmin)
+          import('./pages/admin/donateurs-admin/donateurs-admin')
+            .then(m => m.DonateursAdmin)
+      },
+      {
+        path: 'admins',
+        loadComponent: () =>
+          import('./pages/admin/admins-admin/admins-admin')
+            .then(m => m.AdminsAdmin)
+      },
+      {
+        path: 'partenaires',
+        redirectTo: 'admins',
+        pathMatch: 'full'
       }
     ]
   },

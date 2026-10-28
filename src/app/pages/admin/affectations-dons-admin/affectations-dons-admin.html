@@ -1,0 +1,678 @@
+<!-- NOTIFICATION TOAST EN HAUT DE L'ÉCRAN -->
+<div
+  *ngIf="notificationMessage"
+  class="modal-top-notification"
+  [ngClass]="notificationType === 'success' ? 'notification-top-success' : 'notification-top-error'"
+  role="alert">
+  <div class="notification-content">
+    <mat-icon>{{ notificationType === 'success' ? 'check_circle' : 'error' }}</mat-icon>
+    <span class="notification-text">{{ notificationMessage }}</span>
+  </div>
+  <button type="button" class="btn-fermer-notif" (click)="fermerNotification()" aria-label="Fermer la notification">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<div class="contenu">
+
+  <!-- EN-TÊTE -->
+  <div class="entete-page">
+    <div>
+      <h2>Attribution des dons</h2>
+      <p>Consultez les dons libres attribués aux organisations partenaires et gérez les nouvelles attributions.</p>
+    </div>
+
+    <button class="btn-ajouter" type="button" (click)="ouvrirModalAffectation()">
+      <mat-icon>add</mat-icon>
+      Nouvelle attribution
+    </button>
+  </div>
+
+  <!-- STATISTIQUES -->
+  <section class="statistiques">
+    <article class="statistique">
+      <div class="stat-icone verte">
+        <mat-icon>payments</mat-icon>
+      </div>
+      <div>
+        <span>Dons financiers</span>
+        <strong>{{ financieres.length }}</strong>
+      </div>
+    </article>
+
+    <article class="statistique">
+      <div class="stat-icone jaune">
+        <mat-icon>inventory_2</mat-icon>
+      </div>
+      <div>
+        <span>Dons matériels</span>
+        <strong>{{ materielles.length }}</strong>
+      </div>
+    </article>
+
+    <article class="statistique">
+      <div class="stat-icone sombre">
+        <mat-icon>assignment_turned_in</mat-icon>
+      </div>
+      <div>
+        <span>Total des attributions</span>
+        <strong>{{ attributions.length }}</strong>
+      </div>
+    </article>
+  </section>
+
+  <!-- CHARGEMENT -->
+  <div *ngIf="chargement" class="message">
+    <mat-icon>hourglass_empty</mat-icon>
+    Chargement des attributions...
+  </div>
+
+  <!-- ERREUR -->
+  <div *ngIf="erreur && !chargement" class="message erreur">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ erreurMessage || 'Impossible de charger les attributions.' }}</span>
+  </div>
+
+  <ng-container *ngIf="!chargement && !erreur">
+
+    <!-- SECTION TABLEAU AVEC ONGLETS -->
+    <section class="section-tableau">
+
+      <div class="barre-onglets">
+        <button
+          type="button"
+          class="onglet"
+          [class.actif]="ongletActif === 'FINANCIER'"
+          (click)="changerOnglet('FINANCIER')">
+          Dons financiers
+          <span class="compteur">{{ financieres.length }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="onglet"
+          [class.actif]="ongletActif === 'MATERIEL'"
+          (click)="changerOnglet('MATERIEL')">
+          Dons matériels
+          <span class="compteur">{{ materielles.length }}</span>
+        </button>
+      </div>
+
+      <!-- TABLEAU FINANCIER -->
+      <div *ngIf="ongletActif === 'FINANCIER'">
+
+        <div class="entete-tableau">
+          <div>
+            <p>Suivez les montants attribués aux organisations partenaires.</p>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>N° attribution</th>
+                <th>Don</th>
+                <th>Destination</th>
+                <th>Montant attribué</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let a of financieresPaginees">
+                <td><strong>{{ a.id }}</strong></td>
+
+                <td>
+                  <span class="don-reference">
+                    Don {{ a.donFinancierId }}
+                  </span>
+                </td>
+
+                <td>
+                  <span class="destination">
+                    {{ a.nomOrganisation || ('Organisation #' + a.organisationPartenaireId) }}
+                  </span>
+                </td>
+
+                <td class="montant">
+                  {{ a.montantAttribue | number:'1.0-0' }} FCFA
+                </td>
+
+                <td>
+                  {{ a.dateAttribution ? (a.dateAttribution | date:'dd/MM/yyyy') : '—' }}
+                </td>
+
+                <td>
+                  <button
+                    type="button"
+                    class="btn-details"
+                    (click)="voirDetailsFinanciers(a)"
+                    aria-label="Voir les détails de cette attribution">
+                    <mat-icon>visibility</mat-icon>
+                    Détails
+                  </button>
+                </td>
+              </tr>
+
+              <tr *ngIf="financieres.length === 0">
+                <td colspan="6" class="vide">
+                  <strong>Aucune attribution financière</strong>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination mode défilement (si > 10 éléments, modèle Image 3) -->
+        <div class="pagination" *ngIf="financieres.length > elementsParPage">
+          <button
+            type="button"
+            class="page-item"
+            [class.disabled]="pageActuelleFinanciere === 1"
+            [disabled]="pageActuelleFinanciere === 1"
+            (click)="pagePrecedenteFinanciere()"
+            title="Page précédente"
+            aria-label="Page précédente">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            class="page-item"
+            *ngFor="let p of pagesFinancieres"
+            [class.active]="p === pageActuelleFinanciere"
+            (click)="allerPageFinanciere(p)"
+            [attr.aria-label]="'Page ' + p">
+            {{ p }}
+          </button>
+
+          <button
+            type="button"
+            class="page-item"
+            [class.disabled]="pageActuelleFinanciere === totalPagesFinancieres"
+            [disabled]="pageActuelleFinanciere === totalPagesFinancieres"
+            (click)="pageSuivanteFinanciere()"
+            title="Page suivante"
+            aria-label="Page suivante">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- TABLEAU MATÉRIEL -->
+      <div *ngIf="ongletActif === 'MATERIEL'">
+
+        <div class="entete-tableau">
+          <div>
+            <p>Consultez les quantités de matériel attribuées aux organisations partenaires.</p>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>N° attribution</th>
+                <th>Désignation</th>
+                <th>Destination</th>
+                <th>Quantité attribuée</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let a of materiellesPaginees">
+                <td><strong>{{ a.id }}</strong></td>
+
+                <td>
+                  <span class="don-reference">
+                    {{ a.designation || ('Don ' + a.donMaterielId) }}
+                  </span>
+                  <small class="texte-secondaire" *ngIf="a.designation">
+                    Don {{ a.donMaterielId }}
+                  </small>
+                </td>
+
+                <td>
+                  <span class="destination">
+                    {{ a.nomOrganisation || ('Organisation #' + a.organisationPartenaireId) }}
+                  </span>
+                </td>
+
+                <td class="quantite">
+                  {{ a.quantiteAttribuee }} {{ a.unite || 'unités' }}
+                </td>
+
+                <td>
+                  {{ a.dateAttribution ? (a.dateAttribution | date:'dd/MM/yyyy') : '—' }}
+                </td>
+
+                <td>
+                  <button
+                    type="button"
+                    class="btn-details"
+                    (click)="voirDetailsMateriels(a)"
+                    aria-label="Voir les détails de cette attribution">
+                    <mat-icon>visibility</mat-icon>
+                    Détails
+                  </button>
+                </td>
+              </tr>
+
+              <tr *ngIf="materielles.length === 0">
+                <td colspan="6" class="vide">
+                  <strong>Aucune attribution matérielle</strong>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination mode défilement (si > 10 éléments, modèle Image 3) -->
+        <div class="pagination" *ngIf="materielles.length > elementsParPage">
+          <button
+            type="button"
+            class="page-item"
+            [class.disabled]="pageActuelleMaterielle === 1"
+            [disabled]="pageActuelleMaterielle === 1"
+            (click)="pagePrecedenteMaterielle()"
+            title="Page précédente"
+            aria-label="Page précédente">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            class="page-item"
+            *ngFor="let p of pagesMaterielles"
+            [class.active]="p === pageActuelleMaterielle"
+            (click)="allerPageMaterielle(p)"
+            [attr.aria-label]="'Page ' + p">
+            {{ p }}
+          </button>
+
+          <button
+            type="button"
+            class="page-item"
+            [class.disabled]="pageActuelleMaterielle === totalPagesMaterielles"
+            [disabled]="pageActuelleMaterielle === totalPagesMaterielles"
+            (click)="pageSuivanteMaterielle()"
+            title="Page suivante"
+            aria-label="Page suivante">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+    </section>
+  </ng-container>
+</div>
+
+<!-- ========================================================================
+     FENÊTRE DE DÉTAILS (IDENTIQUE À L'ORGANISATION PARTENAIRE)
+     ======================================================================== -->
+<div
+  class="modal-overlay"
+  *ngIf="detailsOuverts"
+  (click)="fermerDetails()">
+
+  <section
+    class="modal-details"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titreDetails"
+    (click)="$event.stopPropagation()">
+
+    <h2 id="titreDetails">Détails de l'attribution</h2>
+    <p class="modal-description">
+      Consultez les informations de cette attribution enregistrée.
+    </p>
+
+    <!-- DÉTAILS FINANCIERS -->
+    <ng-container *ngIf="typeDetails === 'FINANCIER' && detailFinancier">
+      <div class="details-montant">
+        <span>Montant attribué</span>
+        <strong>{{ detailFinancier.montantAttribue | number:'1.0-0' }} FCFA</strong>
+      </div>
+
+      <div class="details-liste">
+        <div class="detail-ligne">
+          <span>Numéro de l'attribution</span>
+          <strong>{{ detailFinancier.id }}</strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Don financier</span>
+          <strong>Don {{ detailFinancier.donFinancierId }}</strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Destination</span>
+          <strong>{{ detailFinancier.nomOrganisation || ('Organisation #' + detailFinancier.organisationPartenaireId) }}</strong>
+        </div>
+
+        <div class="detail-ligne" *ngIf="detailFinancier.scorePriorite != null">
+          <span>Score de priorité calculé</span>
+          <strong>{{ detailFinancier.scorePriorite | number:'1.0-0' }} / 100</strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Date d'attribution</span>
+          <strong>
+            {{ detailFinancier.dateAttribution ? (detailFinancier.dateAttribution | date:'dd/MM/yyyy') : 'Non renseignée' }}
+          </strong>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- DÉTAILS MATÉRIELS -->
+    <ng-container *ngIf="typeDetails === 'MATERIEL' && detailMateriel">
+      <div class="details-montant details-quantite">
+        <span>Quantité attribuée</span>
+        <strong>{{ detailMateriel.quantiteAttribuee }} {{ detailMateriel.unite || 'unités' }}</strong>
+      </div>
+
+      <div class="details-liste">
+        <div class="detail-ligne">
+          <span>Numéro de l'attribution</span>
+          <strong>{{ detailMateriel.id }}</strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Don matériel</span>
+          <strong>Don {{ detailMateriel.donMaterielId }}</strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Désignation</span>
+          <strong>{{ detailMateriel.designation || 'Non renseignée' }}</strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Destination</span>
+          <strong>{{ detailMateriel.nomOrganisation || ('Organisation #' + detailMateriel.organisationPartenaireId) }}</strong>
+        </div>
+
+        <div class="detail-ligne" *ngIf="detailMateriel.scorePriorite != null">
+          <span>Score de priorité calculé</span>
+          <strong>{{ detailMateriel.scorePriorite | number:'1.0-0' }} / 100</strong>
+        </div>
+
+        <div class="detail-ligne">
+          <span>Date d'attribution</span>
+          <strong>
+            {{ detailMateriel.dateAttribution ? (detailMateriel.dateAttribution | date:'dd/MM/yyyy') : 'Non renseignée' }}
+          </strong>
+        </div>
+      </div>
+    </ng-container>
+
+    <div class="actions-modal">
+      <button type="button" class="btn-fermer-details" (click)="fermerDetails()">
+        Fermer
+      </button>
+    </div>
+  </section>
+</div>
+
+<!-- ========================================================================
+     MODAL DE NOUVELLE AFFECTATION (LOGIQUE MÉTIER ADMIN)
+     ======================================================================== -->
+<div
+  class="modal-overlay"
+  *ngIf="isModalAffectationOpen"
+  (click)="fermerModalAffectation()">
+
+  <section
+    class="modal-details modal-form"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titreNouvelleAffectation"
+    (click)="$event.stopPropagation()">
+
+    <div class="modal-form-header">
+      <div>
+        <h2 id="titreNouvelleAffectation">Nouvelle attribution de don libre</h2>
+        <p class="modal-description">Attribuez un don libre (spontané) à l'organisation partenaire prioritaire selon les besoins du terrain.</p>
+      </div>
+      <button type="button" class="btn-fermer-x" (click)="fermerModalAffectation()" aria-label="Fermer">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <!-- SÉLECTEUR DE TYPE DE DON -->
+    <div class="barre-onglets modal-type-tabs">
+      <button
+        type="button"
+        class="onglet"
+        [class.actif]="typeDonAAttribuer === 'FINANCIER'"
+        (click)="changerTypeDon('FINANCIER')">
+        <mat-icon>payments</mat-icon>
+        Don financier
+      </button>
+
+      <button
+        type="button"
+        class="onglet"
+        [class.actif]="typeDonAAttribuer === 'MATERIEL'"
+        (click)="changerTypeDon('MATERIEL')">
+        <mat-icon>inventory_2</mat-icon>
+        Don matériel
+      </button>
+    </div>
+
+    <!-- SÉLECTION DU DON FINANCIER -->
+    <div *ngIf="typeDonAAttribuer === 'FINANCIER'" class="form-champ">
+      <label for="donFinancierSelect">
+        Sélectionner le don financier disponible : <span class="requis">*</span>
+      </label>
+      <select
+        id="donFinancierSelect"
+        [(ngModel)]="donFinancierSelectionneId"
+        (change)="onDonSelectionChange()"
+        class="select-input">
+        <option [ngValue]="null">-- Choisir un don financier disponible --</option>
+        <option
+          *ngFor="let don of donsFinanciersSpontanes"
+          [ngValue]="don.id"
+          [disabled]="don.montantRestant <= 0">
+          Don #{{ don.id }} — Solde restant : {{ don.montantRestant | number:'1.0-0' }} FCFA (Total initial : {{ don.montant | number:'1.0-0' }} FCFA)
+        </option>
+      </select>
+    </div>
+
+    <!-- SÉLECTION DU DON MATÉRIEL -->
+    <div *ngIf="typeDonAAttribuer === 'MATERIEL'" class="form-champ">
+      <label for="donMaterielSelect">
+        Sélectionner le don matériel disponible : <span class="requis">*</span>
+      </label>
+      <select
+        id="donMaterielSelect"
+        [(ngModel)]="donMaterielSelectionneId"
+        (change)="onDonSelectionChange()"
+        class="select-input">
+        <option [ngValue]="null">-- Choisir un don matériel disponible --</option>
+        <option
+          *ngFor="let don of donsMaterielsSpontanes"
+          [ngValue]="don.id"
+          [disabled]="don.quantiteRestante <= 0">
+          Don #{{ don.id }} : {{ don.designation }} — Stock disponible : {{ don.quantiteRestante }} {{ don.unite || 'unités' }}
+        </option>
+      </select>
+    </div>
+
+    <!-- RÉCAPITULATIF DU DON SÉLECTIONNÉ -->
+    <div *ngIf="typeDonAAttribuer === 'FINANCIER' && donFinancierSelectionne" class="resume-don-selectionne">
+      <div class="resume-ligne">
+        <span>Donateur :</span>
+        <strong>{{ donFinancierSelectionne.anonyme ? 'Anonyme' : 'Donateur enregistré' }}</strong>
+      </div>
+      <div class="resume-ligne">
+        <span>Mode de paiement :</span>
+        <strong>{{ donFinancierSelectionne.modePaiement || 'Orange Money' }}</strong>
+      </div>
+      <div class="resume-ligne">
+        <span>Solde disponible :</span>
+        <strong class="texte-vert">{{ donFinancierSelectionne.montantRestant | number:'1.0-0' }} FCFA</strong>
+      </div>
+    </div>
+
+    <div *ngIf="typeDonAAttribuer === 'MATERIEL' && donMaterielSelectionne" class="resume-don-selectionne">
+      <div class="resume-ligne">
+        <span>Désignation :</span>
+        <strong>{{ donMaterielSelectionne.designation }}</strong>
+      </div>
+      <div class="resume-ligne">
+        <span>Donateur :</span>
+        <strong>{{ donMaterielSelectionne.anonyme ? 'Anonyme' : 'Donateur enregistré' }}</strong>
+      </div>
+      <div class="resume-ligne">
+        <span>Stock disponible :</span>
+        <strong class="texte-jaune">{{ donMaterielSelectionne.quantiteRestante }} {{ donMaterielSelectionne.unite || 'unités' }}</strong>
+      </div>
+    </div>
+
+    <!-- RECOMMANDATION INTELLIGENTE DU SYSTÈME -->
+    <div *ngIf="isFetchingPriority" class="banniere-recommandation chargement">
+      <mat-icon class="rotation">hourglass_empty</mat-icon>
+      <span>Analyse des priorités du terrain par le système...</span>
+    </div>
+
+    <div *ngIf="organisationRecommandee" class="banniere-recommandation success">
+      <div class="recommandation-icone">
+        <mat-icon>emoji_events</mat-icon>
+      </div>
+      <div class="recommandation-texte">
+        <span class="recommandation-titre">Organisation prioritaire recommandée</span>
+        <strong>{{ organisationRecommandee.nomOrganisation }}</strong>
+        <p>Besoins urgents validés sur le terrain (Score : {{ organisationRecommandee.scorePriorite | number:'1.0-0' }}/100)</p>
+      </div>
+      <button
+        type="button"
+        class="btn-choisir-recommandation"
+        (click)="appliquerOrganisationRecommandee()"
+        [disabled]="organisationId === organisationRecommandee.organisationPartenaireId">
+        {{ organisationId === organisationRecommandee.organisationPartenaireId ? '✓ Sélectionnée' : 'Sélectionner' }}
+      </button>
+    </div>
+
+    <div *ngIf="erreurRecommandation && !organisationRecommandee && (donFinancierSelectionneId || donMaterielSelectionneId)" class="banniere-recommandation info">
+      <mat-icon>info</mat-icon>
+      <span>{{ erreurRecommandation }}</span>
+    </div>
+
+    <!-- CHOIX DE L'ORGANISATION PARTENAIRE -->
+    <div class="form-champ">
+      <label for="orgSelect">
+        Organisation partenaire attributaire : <span class="requis">*</span>
+      </label>
+      <select
+        id="orgSelect"
+        [(ngModel)]="organisationId"
+        class="select-input">
+        <option [ngValue]="null">-- Sélectionner l'organisation partenaire --</option>
+        <option *ngFor="let org of organisations" [ngValue]="org.id">
+          {{ org.nomOrganisation }} ({{ org.typeOrganisation || 'ONG' }})
+          {{ organisationRecommandee && organisationRecommandee.organisationPartenaireId === org.id ? '★ [Recommandée - Priorité Terrain]' : '' }}
+        </option>
+      </select>
+      <small
+        *ngIf="organisationRecommandee && organisationId && organisationId !== organisationRecommandee.organisationPartenaireId"
+        class="texte-aide"
+        style="color: #DC2626; font-weight: 600; margin-top: 6px; display: block;">
+        ⚠️ Règle d'attribution : Selon l'analyse des priorités du terrain, ce don libre doit être attribué à l'organisation recommandée ({{ organisationRecommandee.nomOrganisation }}).
+      </small>
+    </div>
+
+    <!-- MONTANT FINANCIER -->
+    <div *ngIf="typeDonAAttribuer === 'FINANCIER'" class="form-champ">
+      <div class="champ-entete-avec-action">
+        <label for="montantInput">
+          Montant à attribuer (FCFA) : <span class="requis">*</span>
+        </label>
+        <button
+          *ngIf="donFinancierSelectionne && donFinancierSelectionne.montantRestant > 0"
+          type="button"
+          class="btn-lien-solde"
+          (click)="attribuerToutLeSolde()">
+          Attribuer tout le solde ({{ donFinancierSelectionne.montantRestant | number:'1.0-0' }} FCFA)
+        </button>
+      </div>
+      <div class="champ-input-suffix">
+        <input
+          id="montantInput"
+          type="number"
+          [(ngModel)]="montantAAttribuer"
+          [max]="donFinancierSelectionne?.montantRestant || 0"
+          min="1"
+          placeholder="Ex: 50000"
+          class="select-input" />
+        <span class="suffix-texte">FCFA</span>
+      </div>
+      <small *ngIf="donFinancierSelectionne" class="texte-aide">
+        Solde maximal disponible : {{ donFinancierSelectionne.montantRestant | number:'1.0-0' }} FCFA
+      </small>
+    </div>
+
+    <!-- QUANTITÉ MATÉRIELLE -->
+    <div *ngIf="typeDonAAttribuer === 'MATERIEL'" class="form-champ">
+      <div class="champ-entete-avec-action">
+        <label for="quantiteInput">
+          Quantité à attribuer : <span class="requis">*</span>
+        </label>
+        <button
+          *ngIf="donMaterielSelectionne && donMaterielSelectionne.quantiteRestante > 0"
+          type="button"
+          class="btn-lien-solde"
+          (click)="attribuerToutLeSolde()">
+          Attribuer tout le stock ({{ donMaterielSelectionne.quantiteRestante }} {{ donMaterielSelectionne.unite || 'unités' }})
+        </button>
+      </div>
+      <div class="champ-input-suffix">
+        <input
+          id="quantiteInput"
+          type="number"
+          [(ngModel)]="quantiteAAttribuer"
+          [max]="donMaterielSelectionne?.quantiteRestante || 0"
+          min="1"
+          placeholder="Ex: 10"
+          class="select-input" />
+        <span class="suffix-texte">{{ donMaterielSelectionne?.unite || 'Unités' }}</span>
+      </div>
+      <small *ngIf="donMaterielSelectionne" class="texte-aide">
+        Stock maximal disponible : {{ donMaterielSelectionne.quantiteRestante }} {{ donMaterielSelectionne.unite || 'unités' }}
+      </small>
+    </div>
+
+    <!-- ACTIONS DU FORMULAIRE -->
+    <div class="actions-modal modal-form-actions">
+      <button
+        type="button"
+        class="btn-annuler"
+        (click)="fermerModalAffectation()"
+        [disabled]="isSubmitting">
+        Annuler
+      </button>
+
+      <button
+        type="button"
+        class="btn-valider"
+        (click)="soumettreAffectation()"
+        [disabled]="isSubmitting">
+        <mat-icon *ngIf="!isSubmitting">check</mat-icon>
+        <span>{{ isSubmitting ? 'Attribution en cours...' : "Confirmer l'attribution" }}</span>
+      </button>
+    </div>
+  </section>
+</div>

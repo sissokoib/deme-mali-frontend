@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { retry } from 'rxjs/operators';
 import { OrganisationService } from '../../../services/organisation';
 import {
   OrganisationPartenaireRequestDTO,
@@ -26,12 +27,15 @@ export interface PartenaireItem {
   ville?: string;
   documentJustificatif?: string;
   rawStatutValidation?: string;
+  description?: string;
 }
+
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-partenaires-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './partenaires-admin.html',
   styleUrl: './partenaires-admin.css',
 })
@@ -53,21 +57,27 @@ export class PartenairesAdmin implements OnInit {
     prenom: '',
     nom: '',
     telephone: '',
+    description: '',
     motDePasse: '123456'
   };
 
   selectedFile: File | null = null;
   partenaires: PartenaireItem[] = [];
 
-  constructor(private organisationService: OrganisationService) {}
+  constructor(
+    private organisationService: OrganisationService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.chargerOrganisations();
   }
 
-  chargerOrganisations() {
+  chargerOrganisations(tentative = 1) {
     this.isLoading = true;
-    this.organisationService.getAllOrganisations().subscribe({
+    this.organisationService.getAllOrganisations().pipe(
+      retry({ count: 2, delay: 1000 })
+    ).subscribe({
       next: (data: OrganisationPartenaireResponseDTO[]) => {
         this.isLoading = false;
         if (data && data.length > 0) {
@@ -98,17 +108,25 @@ export class PartenairesAdmin implements OnInit {
               adresse: org.adresse,
               ville: org.ville || 'Bamako',
               documentJustificatif: org.documentJustificatif,
-              rawStatutValidation: org.statutValidation
+              rawStatutValidation: org.statutValidation,
+              description: org.description
             };
           });
         } else {
           this.partenaires = [];
+          if (tentative <= 2) {
+            setTimeout(() => this.chargerOrganisations(tentative + 1), 2000);
+          }
         }
+        this.cdr.detectChanges();
       },
       error: (err: any) => {
         this.isLoading = false;
-        this.partenaires = [];
         console.warn('Erreur chargement des partenaires depuis le backend', err);
+        if (tentative <= 3) {
+          setTimeout(() => this.chargerOrganisations(tentative + 1), 2000);
+        }
+        this.cdr.detectChanges();
       }
     });
   }
@@ -138,8 +156,55 @@ export class PartenairesAdmin implements OnInit {
     });
   }
 
+  // Pagination (10 par page)
+  pageActuelle: number = 1;
+  elementsParPage: number = 10;
+
+  get totalPages(): number {
+    return Math.ceil(this.partenairesFiltres.length / this.elementsParPage) || 1;
+  }
+
+  get pages(): number[] {
+    const arr: number[] = [];
+    for (let i = 1; i <= this.totalPages; i++) {
+      arr.push(i);
+    }
+    return arr;
+  }
+
+  get partenairesPaginees(): PartenaireItem[] {
+    const startIndex = (this.pageActuelle - 1) * this.elementsParPage;
+    return this.partenairesFiltres.slice(startIndex, startIndex + this.elementsParPage);
+  }
+
+  allerPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.pageActuelle = page;
+      this.cdr.detectChanges();
+    }
+  }
+
+  pagePrecedente() {
+    if (this.pageActuelle > 1) {
+      this.pageActuelle--;
+      this.cdr.detectChanges();
+    }
+  }
+
+  pageSuivante() {
+    if (this.pageActuelle < this.totalPages) {
+      this.pageActuelle++;
+      this.cdr.detectChanges();
+    }
+  }
+
   setFilterStatus(status: string) {
+    this.pageActuelle = 1;
     this.filterStatus = status;
+  }
+
+  onSearchChange() {
+    this.pageActuelle = 1;
   }
 
   getCount(status: string): number {
@@ -176,6 +241,7 @@ export class PartenairesAdmin implements OnInit {
       prenom: '',
       nom: '',
       telephone: '',
+      description: '',
       motDePasse: '123456'
     };
     this.selectedFile = null;
@@ -240,6 +306,7 @@ export class PartenairesAdmin implements OnInit {
       prenom: this.nouveauPartenaire.prenom.trim() || 'Représentant',
       nom: this.nouveauPartenaire.nom.trim() || this.nouveauPartenaire.nomOrganisation.trim(),
       telephone: this.nouveauPartenaire.telephone.trim() || this.nouveauPartenaire.telephoneOrganisation.trim(),
+      description: this.nouveauPartenaire.description.trim() || undefined,
       motDePasse: this.nouveauPartenaire.motDePasse || '123456'
     };
 

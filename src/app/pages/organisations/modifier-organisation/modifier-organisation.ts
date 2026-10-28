@@ -29,7 +29,8 @@ export class ModifierOrganisation implements OnInit {
     adresse: '',
     ville: '',
     dateCreation: '',
-    statut: ''
+    statut: '',
+    description: ''
   };
 
   chargement = true;

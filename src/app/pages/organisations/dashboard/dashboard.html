@@ -2,7 +2,7 @@
 
   <header class="page-top mb-4">
     <div>
-      <h1 class="page-title">Bonjour, Fondation</h1>
+      <h1 class="page-title">Bonjour{{ user ? ', ' + (user.prenom || user.nom) : '' }}</h1>
       <p class="page-sub">Voici un aperçu de l'activité de votre organisation.</p>
     </div>
   </header>
@@ -184,7 +184,12 @@
               </span>
             </td>
             <td style="text-align: right; padding-right: 0;">
-              <a href="#" class="db-btn-action" style="text-decoration: none;">Voir</a>
+              <a [routerLink]="['/organisation/demandes-aide', demande.id]" class="db-btn-action" style="text-decoration: none; cursor: pointer;">Voir</a>
+            </td>
+          </tr>
+          <tr *ngIf="recentDemandes.length === 0">
+            <td colspan="6" style="text-align: center; color: #888; padding: 28px 0; font-size: 14px;">
+              Aucune demande d'aide enregistrée pour vos bénéficiaires pour le moment.
             </td>
           </tr>
         </tbody>
