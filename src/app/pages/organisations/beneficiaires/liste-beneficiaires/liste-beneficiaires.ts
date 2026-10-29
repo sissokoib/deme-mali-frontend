@@ -40,7 +40,7 @@ private router = inject(Router);
   recherche = '';
   traitementId: number | null = null;
 
- taillePage = 5;
+  taillePage = 10;
   pageActuelle = 1;
 
   ngOnInit(): void {

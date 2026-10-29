@@ -1,4 +1,3 @@
-
 export interface DonFinancier {
   id: number;
   montant: number;
@@ -26,6 +25,33 @@ export interface DonMateriel {
   donateurId: number | null;
   demandeAideId: number | null;
   titreDemandeAide?: string;
+}
+
+export interface DonResponseDTO {
+  id: number;
+  montant?: number;
+  modePaiement?: string;
+  typeDon?: string;
+  statut?: string;
+  dateDon?: string;
+  anonyme?: boolean;
+  donateurId?: number | null;
+  donateurNom?: string;
+  donateurPrenom?: string;
+  demandeAideId?: number | null;
+  titreDemandeAide?: string;
+  designation?: string;
+  quantite?: number;
+  unite?: string;
+  statutReception?: string;
+}
+
+export interface ComptabiliteDonsResponseDTO {
+  totalDonsCollectes?: number;
+  totalDonsAffectes?: number;
+  totalDonsDisponibles?: number;
+  nombreDonsFinanciers?: number;
+  nombreDonsMateriels?: number;
 }
 
 export interface DonAffiche {

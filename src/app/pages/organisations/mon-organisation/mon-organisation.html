@@ -1,4 +1,4 @@
-
+﻿
 <div class="page-organisation">
 
   <div class="titre-page">
@@ -72,6 +72,13 @@
         <div class="information-simple">
           <span>Numéro d'identification / enregistrement</span>
           <strong>{{ org.nif || 'Non renseigné' }}</strong>
+        </div>
+
+        <div class="information-simple">
+          <span>Description</span>
+          <strong style="font-weight: 500; font-size: 0.88rem; line-height: 1.45; color: #374151; white-space: pre-line;">
+            {{ org.description || 'Non renseigné' }}
+          </strong>
         </div>
       </div>
 

@@ -31,23 +31,49 @@ export class JwtInterceptor implements HttpInterceptor {
     // Récupérer l'access token
     const token = this.authService.getAccessToken();
 
-    // Ajouter le token à la requête si disponible
+    // Si le token stocké est expiré ou invalide, nettoyer la session
+    if (token && this.authService.isTokenExpired(token)) {
+      console.warn('[JwtInterceptor] Jeton JWT expiré ou invalide détecté. Nettoyage de la session locale.');
+      this.authService.clearSession();
+    }
+
+    const validToken = this.authService.getAccessToken();
     let authReq = req;
 
-    if (token) {
+    if (validToken) {
       authReq = req.clone({
         setHeaders: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${validToken}`
         }
       });
     }
 
-    // Envoyer la requête et gérer les erreurs
+    // Envoyer la requête et gérer les erreurs de rejet du token (401 ou 500 dû à signature JWT invalide)
     return next.handle(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
+        // Le backend Spring Boot renvoie 500 quand un Bearer token possède une signature invalide suite à un redémarrage
+        if (validToken && (error.status === 401 || error.status === 500)) {
+          console.warn(`[JwtInterceptor] Erreur ${error.status} reçue avec le Bearer token. Nettoyage de la session et tentative de secours sans Authorization...`);
 
-        // Si le token est expiré ou invalide
-        if (error.status === 401 && token) {
+          // Supprimer la session invalide pour ne plus polluer les futures requêtes
+          this.authService.clearSession();
+
+          // Réessayer la requête sans l'en-tête Authorization
+          const fallbackReq = req.clone({
+            headers: req.headers.delete('Authorization')
+          });
+
+          return next.handle(fallbackReq).pipe(
+            catchError((retryErr: HttpErrorResponse) => {
+              if (error.status === 401) {
+                this.authService.logout();
+              }
+              return throwError(() => retryErr);
+            })
+          );
+        }
+
+        if (error.status === 401 && validToken) {
           this.authService.logout();
         }
 

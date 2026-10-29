@@ -139,13 +139,13 @@
     Aucun bénéficiaire trouvé.
   </div>
 
-  <!-- Pagination -->
+  <!-- Pagination (si > 10 éléments) -->
 <div
   class="pagination"
   *ngIf="
     !chargement &&
     !erreur &&
-    beneficiairesFiltres().length > 0
+    beneficiairesFiltres().length > taillePage
   "
 >
   <span class="pagination-info">
@@ -159,17 +159,21 @@
   <div class="pagination-boutons">
     <button
       type="button"
-      class="bouton-pagination"
+      class="bouton-pagination page-item"
       (click)="pagePrecedente()"
       [disabled]="pageActuelle === 1"
+      title="Page précédente"
+      aria-label="Page précédente"
     >
-      Précédent
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
     </button>
 
     <button
       *ngFor="let page of pagesDisponibles()"
       type="button"
-      class="numero-page"
+      class="numero-page page-item"
       [class.active]="pageActuelle === page"
       (click)="changerPage(page)"
     >
@@ -178,11 +182,15 @@
 
     <button
       type="button"
-      class="bouton-pagination"
+      class="bouton-pagination page-item"
       (click)="pageSuivante()"
       [disabled]="pageActuelle === nombrePages()"
+      title="Page suivante"
+      aria-label="Page suivante"
     >
-      Suivant
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
     </button>
   </div>
 </div>

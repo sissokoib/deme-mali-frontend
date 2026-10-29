@@ -412,7 +412,7 @@
 }
 
 .btn-cancel {
-  border: 1px solid #F7B500;
+  border: 1px solid #F7F3EA;
   background: #FFFFFF;
   color: #1F1F1F;
 }
@@ -420,8 +420,8 @@
 .btn-delete {
   min-height: auto;
   padding: 7px 10px;
-  background: #F7B500;
-  color: #1F1F1F;
+  background: #0F7A4B;
+  color: #F7F3EA;
 }
 
 button:disabled {

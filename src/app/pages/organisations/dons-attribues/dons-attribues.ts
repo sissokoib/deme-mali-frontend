@@ -28,7 +28,7 @@ export class DonsAttribues implements OnInit {
   erreur = false;
 
   pageActuelle = 1;
-  taillePage = 5;
+  taillePage = 10;
 
   attributionSelectionnee: AttributionDonLibre | null = null;
 

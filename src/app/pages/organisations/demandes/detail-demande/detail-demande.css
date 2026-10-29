@@ -710,3 +710,53 @@ textarea:focus-visible {
     width: 100%;
   }
 }
+
+/* Image illustrative */
+.section-image-demande h3 { display: flex; align-items: center; gap: 10px; }
+.section-image-demande h3 mat-icon { color: #0F7A4B; }
+.actions-detail { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+
+.btn-ajouter-image { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 18px; background: #0F7A4B; color: #FFFFFF; border: 1px solid #0F7A4B; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btn-ajouter-image mat-icon { width: 20px; height: 20px; font-size: 20px; }
+
+/* Formulaire */
+.formulaire-image { width: 100%; margin-top: 18px; padding: 22px; background: #FFFFFF; border: 1px solid #E3E7E3; border-radius: 10px; box-sizing: border-box; }
+.formulaire-image .sous-description { margin: 0 0 18px; color: #555555; font-size: 14px; line-height: 1.6; }
+.formulaire-image label { display: block; margin-bottom: 9px; color: #1F1F1F; font-size: 14px; font-weight: 600; }
+.formulaire-image input[type="file"] { display: block; width: 100%; padding: 12px; background: #F7F3EA; color: #1F1F1F; border: 1px solid #D8DED8; border-radius: 8px; font-family: inherit; font-size: 13px; box-sizing: border-box; }
+
+/* Aperçu */
+.apercu-image { display: flex; justify-content: center; align-items: center; width: 100%; margin-top: 18px; padding: 12px; background: #F7F3EA; border: 1px solid #E3E7E3; border-radius: 8px; box-sizing: border-box; }
+.apercu-image img { display: block; max-width: 100%; max-height: 320px; object-fit: contain; border-radius: 6px; }
+
+/* Boutons du formulaire */
+.actions-image { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.btn-annuler-image { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 10px 18px; background: #FFFFFF; color: #1F1F1F; border: 1px solid #D0D5D0; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btn-enregistrer-image { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 42px; padding: 10px 18px; background: #0F7A4B; color: #FFFFFF; border: 1px solid #0F7A4B; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btn-enregistrer-image mat-icon { width: 20px; height: 20px; font-size: 20px; }
+.btn-annuler-image:disabled, .btn-enregistrer-image:disabled, .btn-supprimer-image:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* Messages */
+.erreur-image { margin: 12px 0 0; padding: 10px 12px; background: #FFF1F0; color: #B42318; border: 1px solid #F2C6C3; border-radius: 6px; font-size: 13px; line-height: 1.5; }
+.message-vide { margin-top: 14px; padding: 18px; background: #F7F3EA; border: 1px solid #E8E1D5; border-radius: 8px; text-align: center; }
+.message-vide p { margin: 0; color: #555555; font-size: 14px; line-height: 1.6; }
+.texte-secondaire { color: #666666; font-size: 13px; }
+
+/* Image enregistrée */
+.image-demande-existante { width: 100%; margin-top: 18px; }
+.conteneur-image-enregistree { position: relative; display: flex; justify-content: center; align-items: center; min-height: 180px; padding: 16px; background: #FFFFFF; border: 1px solid #E3E7E3; border-radius: 10px; box-sizing: border-box; }
+.conteneur-image-enregistree img { display: block; max-width: 100%; max-height: 380px; object-fit: contain; border-radius: 6px; }
+.btn-supprimer-image { position: absolute; top: 12px; right: 12px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; background: #FFFFFF; color: #B42318; border: 1px solid #E5B8B5; border-radius: 8px; cursor: pointer; }
+.btn-supprimer-image mat-icon { width: 22px; height: 22px; font-size: 22px; }
+.nom-image { margin: 10px 0 0; color: #1F1F1F; font-size: 13px; overflow-wrap: anywhere; }
+
+/* Adaptation mobile */
+@media (max-width: 600px) {
+  .actions-detail { align-items: stretch; flex-direction: column; }
+  .btn-ajouter-image, .actions-detail .btn-principal { width: 100%; justify-content: center; box-sizing: border-box; }
+  .formulaire-image { padding: 15px; }
+  .actions-image { flex-direction: column-reverse; }
+  .btn-annuler-image, .btn-enregistrer-image { width: 100%; box-sizing: border-box; }
+  .conteneur-image-enregistree { min-height: 140px; padding: 12px; }
+  .conteneur-image-enregistree img { max-height: 260px; }
+}

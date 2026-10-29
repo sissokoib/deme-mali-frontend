@@ -94,6 +94,29 @@ form {
   box-shadow: 0 0 0 3px rgba(15, 122, 75, 0.10);
 }
 
+.form-group.full-width {
+  flex: 1 1 100%;
+}
+
+.form-group textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 11px 12px;
+  border: 1px solid #D5CFC3;
+  border-radius: 5px;
+  background-color: #FFFFFF;
+  color: #1F1F1F;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  resize: vertical;
+}
+
+.form-group textarea:focus {
+  border-color: #0F7A4B;
+  box-shadow: 0 0 0 3px rgba(15, 122, 75, 0.10);
+}
+
 .message {
   max-width: 1000px;
   margin: 15px auto;

@@ -19,6 +19,7 @@ export interface RepartitionItem {
 }
 
 export interface RecentDemande {
+  id: number;
   nom: string;
   beneficiaire: string;
   categorie: string;

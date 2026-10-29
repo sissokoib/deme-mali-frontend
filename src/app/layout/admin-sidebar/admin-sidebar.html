@@ -85,27 +85,27 @@
 
     <ul class="nav-list">
 
-      <!-- Dons -->
+      <!-- Dons reçus -->
       <li>
         <a
           class="nav-item-link"
           routerLink="/admin/dons"
           routerLinkActive="is-active">
 
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true">
+          <mat-icon>card_giftcard</mat-icon>
+          <span class="nav-label">Dons reçus</span>
+        </a>
+      </li>
 
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      <!-- Attribution des dons -->
+      <li>
+        <a
+          class="nav-item-link"
+          routerLink="/admin/affectations-dons"
+          routerLinkActive="is-active">
 
-          </svg>
-
-          <span class="nav-label">Dons</span>
+          <mat-icon>assignment_ind</mat-icon>
+          <span class="nav-label">Attribution des dons</span>
         </a>
       </li>
 
@@ -125,16 +125,18 @@
             stroke-linejoin="round"
             aria-hidden="true">
 
-            <line x1="9" y1="20" x2="9" y2="13"/>
-            <line x1="15" y1="20" x2="15" y2="6"/>
-
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <line x1="10" y1="9" x2="8" y2="9"/>
           </svg>
 
           <span class="nav-label">Rapports</span>
         </a>
       </li>
 
-      <!-- Membres -->
+      <!-- Membres (Bénéficiaires & Organisations Partenaires) -->
       <li>
         <a
           class="nav-item-link"
@@ -161,11 +163,11 @@
         </a>
       </li>
 
-      <!-- Partenaires -->
+      <!-- Donateurs -->
       <li>
         <a
           class="nav-item-link"
-          routerLink="/admin/partenaires"
+          routerLink="/admin/donateurs"
           routerLinkActive="is-active">
 
           <svg
@@ -177,14 +179,16 @@
             stroke-linejoin="round"
             aria-hidden="true">
 
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
 
           </svg>
 
-          <span class="nav-label">Partenaires</span>
+          <span class="nav-label">Donateurs</span>
         </a>
       </li>
 
+      <!-- Fin de la liste de gestion -->
     </ul>
 
     <!-- COMPTE -->

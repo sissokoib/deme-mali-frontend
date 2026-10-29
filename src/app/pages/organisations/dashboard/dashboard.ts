@@ -14,7 +14,7 @@ Chart.register(...registerables);
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    // RouterLink,
+    RouterLink,
     CommonModule
   ],
   templateUrl: './dashboard.html',
@@ -32,64 +32,75 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   // Dynamic Stats initialized with default/mock values while loading
   kpiStats: KpiStats = {
-    demandes: 20,
-    demandesRefusees: 5,
-    demandesAttente: 12,
-    demandesTraitees: 18
+    demandes: 0,
+    demandesRefusees: 0,
+    demandesAttente: 0,
+    demandesTraitees: 0
   };
 
   impactStats: ImpactStats = {
-    beneficiaires: 156,
-    demandesTraitees: 42,
-    projets: 12,
-    montantFCFA: '4,8M'
+    beneficiaires: 0,
+    demandesTraitees: 0,
+    projets: 0,
+    montantFCFA: '0 FCFA'
   };
 
-  repartition: RepartitionItem[] = [
-    { label: 'Alimentaire', percent: 32, color: '#117b48' },
-    { label: 'Médical', percent: 24, color: '#117b48' },
-    { label: 'Scolaire', percent: 18, color: '#fdba12' },
-    { label: 'Logement', percent: 14, color: '#fdba12' }
-  ];
+  repartition: RepartitionItem[] = [];
 
-  recentDemandes: RecentDemande[] = [
-    { nom: 'Aide alimentaire pour famille', beneficiaire: 'Famille Traoré', categorie: 'Alimentaire', urgence: 'Élevée', urgenceClass: 'db-badge-warning', statut: 'En attente', statutClass: 'db-badge-light-warning' },
-    { nom: 'Matériel scolaire', beneficiaire: 'École Espoir', categorie: 'Éducation', urgence: 'Moyenne', urgenceClass: 'db-badge-secondary', statut: 'Validée', statutClass: 'db-badge-success' },
-    { nom: 'Équipement médical', beneficiaire: 'Centre de santé', categorie: 'Santé', urgence: 'Élevée', urgenceClass: 'db-badge-warning', statut: 'En attente', statutClass: 'db-badge-light-warning' }
-  ];
+  recentDemandes: RecentDemande[] = [];
 
+  chartLabels: string[] = ['Mai', 'Juin', 'Juil', 'Août', 'Sept.', 'Oct'];
+  chartDataCollecte: number[] = [0, 0, 0, 0, 0, 0];
+  chartDataDistribue: number[] = [0, 0, 0, 0, 0, 0];
   chartInstance: any;
 
   ngOnInit(): void {
     this.sub = this.authService.currentUser$.subscribe(utilisateur => {
       this.user = utilisateur;
+      if (utilisateur?.id) {
+        this.loadDashboardData(utilisateur.id);
+      }
       this.cdr.detectChanges();
     });
 
-    this.loadDashboardData();
+    const userActuel = this.authService.getCurrentUser();
+    if (userActuel?.id) {
+      this.loadDashboardData(userActuel.id);
+    }
   }
 
-  loadDashboardData(): void {
-    this.dashboardSub = this.dashboardService.getDashboardStats(this.user?.id || 1).subscribe({
+  loadDashboardData(organisationId?: number): void {
+    const orgId = organisationId || this.user?.id;
+    if (!orgId) {
+      return;
+    }
+
+    if (this.dashboardSub) {
+      this.dashboardSub.unsubscribe();
+    }
+
+    this.dashboardSub = this.dashboardService.getDashboardStats(orgId).subscribe({
       next: (data) => {
         this.kpiStats = data.kpiStats;
         this.impactStats = data.impactStats;
         this.repartition = data.repartition;
         this.recentDemandes = data.recentDemandes;
+        this.chartLabels = data.chartLabels;
+        this.chartDataCollecte = data.chartDataCollecte;
+        this.chartDataDistribue = data.chartDataDistribue;
         
         // Update Chart Data if chart is already initialized
         if (this.chartInstance) {
-          this.chartInstance.data.labels = data.chartLabels;
-          this.chartInstance.data.datasets[0].data = data.chartDataCollecte;
-          this.chartInstance.data.datasets[1].data = data.chartDataDistribue;
+          this.chartInstance.data.labels = this.chartLabels;
+          this.chartInstance.data.datasets[0].data = this.chartDataCollecte;
+          this.chartInstance.data.datasets[1].data = this.chartDataDistribue;
           this.chartInstance.update();
         }
         
         this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Erreur lors du chargement des statistiques', error);
-        // On error, the dashboard will just keep displaying the default placeholder data
+        console.error('Erreur lors du chargement des statistiques de l\'organisation', error);
       }
     });
   }
@@ -105,18 +116,18 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     this.chartInstance = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept.', 'Oct'],
+        labels: this.chartLabels,
         datasets: [
           {
             label: 'Collecté',
-            data: [250000, 500000, 750000, 1050000, 900000, 1300000, 1600000],
+            data: this.chartDataCollecte,
             borderColor: '#117b48',
             backgroundColor: '#117b48',
             borderWidth: 3
           },
           {
             label: 'Distribué',
-            data: [100000, 200000, 350000, 600000, 480000, 800000, 1000000],
+            data: this.chartDataDistribue,
             borderColor: '#fdba12',
             backgroundColor: '#fdba12',
             borderWidth: 3

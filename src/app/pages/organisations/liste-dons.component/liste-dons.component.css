@@ -256,7 +256,16 @@
   gap: 26px;
   padding: 0 24px;
   overflow-x: auto;
+  overflow-y: hidden;
   border-bottom: 1px solid #E8E3DA;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.onglets-dons::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .onglet {
@@ -507,42 +516,60 @@
   gap: 6px;
 }
 
-.btn-page {
+.btn-page,
+.page-item {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  min-width: 35px;
-  height: 35px;
-  padding: 0 9px;
-  border: 1px solid #DED9D0;
-  border-radius: 6px;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid #E8E1D5;
+  border-radius: 10px;
   background: #FFFFFF;
-  color: #0F7A4B;
-  font-family: inherit;
-  font-size: 12px;
+  color: #1F1F1F;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-  transition: none;
+  transition: all 0.2s ease;
+  user-select: none;
+  outline: none;
 }
 
-/* Aucun effet hover sur les numéros de pagination */
-.btn-page:hover {
-  border-color: #DED9D0;
-  background: #FFFFFF;
+.btn-page svg,
+.page-item svg {
+  color: #1F1F1F;
+  transition: color 0.2s ease;
+}
+
+.btn-page:hover:not(:disabled):not(.active),
+.page-item:hover:not(:disabled):not(.active) {
+  border-color: #0F7A4B;
+  color: #0F7A4B;
+  background: #E2F2E9;
+}
+
+.btn-page:hover:not(:disabled):not(.active) svg,
+.page-item:hover:not(:disabled):not(.active) svg {
   color: #0F7A4B;
 }
 
 .btn-page.active,
-.btn-page.active:hover {
-  border-color: #0F7A4B;
-  background: #0F7A4B;
-  color: #FFFFFF;
+.btn-page.active:hover,
+.page-item.active {
+  border-color: #0F7A4B !important;
+  background: #0F7A4B !important;
+  color: #FFFFFF !important;
   font-weight: 700;
+  cursor: default;
+  box-shadow: 0 2px 6px rgba(15, 122, 75, 0.25);
 }
 
-.btn-page:disabled {
-  opacity: 0.4;
+.btn-page:disabled,
+.page-item:disabled {
+  opacity: 0.35;
   cursor: not-allowed;
+  pointer-events: none;
 }
 
 .btn-page mat-icon {

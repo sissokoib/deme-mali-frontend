@@ -52,7 +52,7 @@ export class ListDemandes implements OnInit {
   demandesTraitees = 0;
 
   // Pagination
-  demandesParPage = 5;
+  demandesParPage = 10;
   pageActuelle = 1;
   pages: number[] = [];
   nombrePages = 1;
@@ -66,7 +66,17 @@ export class ListDemandes implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.chargerDemandes();
+    const userActuel = this.authService.getCurrentUser();
+    if (userActuel?.id) {
+      this.chargerDemandes(userActuel.id);
+    }
+
+    this.authService.currentUser$.subscribe(utilisateur => {
+      if (utilisateur?.id) {
+        this.chargerDemandes(utilisateur.id);
+      }
+    });
+
     this.chargerCategories();
   }
 
@@ -87,10 +97,10 @@ export class ListDemandes implements OnInit {
   }
 
   // Charger les demandes de l'organisation connectée
-  chargerDemandes(): void {
-    const utilisateur = this.authService.getCurrentUser();
+  chargerDemandes(organisationId?: number): void {
+    const orgId = organisationId || this.authService.getCurrentUser()?.id;
 
-    if (!utilisateur?.id) {
+    if (!orgId) {
       console.error(
         'Aucun utilisateur connecté ou identifiant absent'
       );
@@ -98,11 +108,11 @@ export class ListDemandes implements OnInit {
     }
 
     this.demandeAideService
-      .getDemandesParOrganisation(utilisateur.id)
+      .getDemandesParOrganisation(orgId)
       .subscribe({
         next: (data) => {
           // Trier les demandes de la plus récente à la plus ancienne
-          this.demandes = [...data].sort(
+          this.demandes = [...(data || [])].sort(
             (a, b) =>
               new Date(b.dateCreation).getTime() -
               new Date(a.dateCreation).getTime()

@@ -23,10 +23,12 @@ export interface EtapeItem {
   statut: 'Planifié' | 'En cours' | 'Confirmé';
 }
 
+import { MatIconModule } from '@angular/material/icon';
+
 @Component({
   selector: 'app-projets-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatIconModule],
   templateUrl: './projets-admin.html',
   styleUrl: './projets-admin.css',
 })
@@ -129,6 +131,42 @@ export class ProjetsAdmin implements OnInit {
 
   setFilterStatus(status: string) {
     this.filterStatus = status;
+    this.pageActuelle = 1;
+  }
+
+  // Pagination (10 éléments par page)
+  pageActuelle = 1;
+  elementsParPage = 10;
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.projetsFiltres.length / this.elementsParPage));
+  }
+
+  get pages(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  get projetsPagines(): ProjetItem[] {
+    const debut = (this.pageActuelle - 1) * this.elementsParPage;
+    return this.projetsFiltres.slice(debut, debut + this.elementsParPage);
+  }
+
+  allerPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.pageActuelle = page;
+    }
+  }
+
+  pagePrecedente(): void {
+    if (this.pageActuelle > 1) {
+      this.pageActuelle--;
+    }
+  }
+
+  pageSuivante(): void {
+    if (this.pageActuelle < this.totalPages) {
+      this.pageActuelle++;
+    }
   }
 
   getCountByStatut(statut: string): number {

@@ -1,17 +1,12 @@
 
 <div class="detail-page">
-
   <!-- En-tête -->
   <header class="page-header">
     <div>
       <h1>Détail de la demande d’aide</h1>
       <p>Consultez les informations et les besoins du bénéficiaire.</p>
     </div>
-
-    <a routerLink="/organisation/demandes-aide" class="btn-retour">
-      
-      Retour aux demandes
-    </a>
+    <a routerLink="/organisation/demandes-aide" class="btn-retour">Retour aux demandes</a>
   </header>
 
   <!-- Chargement -->
@@ -22,122 +17,113 @@
 
   <!-- Erreur de chargement -->
   <div class="message-erreur" *ngIf="erreur && !chargement">
-
     <span>{{ erreur }}</span>
   </div>
 
   <ng-container *ngIf="!chargement && demande as d">
-
     <div class="carte-detail">
-
       <!-- En-tête de la demande -->
       <div class="detail-header">
         <div class="titre-demande">
-        
-
           <h2 class="title">{{ d.titre }}</h2>
-
-          <span
-            class="badge-statut"
-            [ngClass]="(d.statut || '').toLowerCase()">
-            {{ d.statut || 'Statut non renseigné' }}
-          </span>
+          <span class="badge-statut" [ngClass]="(d.statut || '').toLowerCase()">{{ d.statut || 'Statut non renseigné' }}</span>
         </div>
-
-        <button
-          type="button"
-          class="btn-principal"
-          *ngIf="d.statut === 'EN_ATTENTE'"
-          (click)="ouvrirDecision()">
-         
-          Traiter la demande
-        </button>
+        <div class="actions-detail">
+          <button type="button" class="btn-ajouter-image" *ngIf="!imageDemande" (click)="ouvrirFormulaireImage()">
+          
+            Ajouter une image
+          </button>
+          <button type="button" class="btn-principal" *ngIf="d.statut === 'EN_ATTENTE'" (click)="ouvrirDecision()">Traiter la demande</button>
+        </div>
       </div>
 
       <!-- Informations générales -->
       <section class="section">
-        <h3>
-         
-          Informations générales
-        </h3>
-
+        <h3>Informations générales</h3>
         <div class="grille-informations">
-
           <div class="info-item">
             <span>Identifiant</span>
             <strong>{{ d.id }}</strong>
           </div>
-
           <div class="info-item">
             <span>Type de demande d’aide</span>
             <strong>{{ d.typeDemandeAide || 'Non renseigné' }}</strong>
           </div>
-
           <div class="info-item">
             <span>Type de bénéficiaire</span>
             <strong>{{ d.typeDemande || 'Non renseigné' }}</strong>
           </div>
-
           <div class="info-item">
             <span>Date de création</span>
-            <strong>
-              {{
-                d.dateCreation
-                  ? (d.dateCreation | date:'dd/MM/yyyy')
-                  : 'Non renseignée'
-              }}
-            </strong>
+            <strong>{{ d.dateCreation ? (d.dateCreation | date:'dd/MM/yyyy') : 'Non renseignée' }}</strong>
           </div>
-
           <div class="info-item">
             <span>Prénom du bénéficiaire</span>
             <strong>{{ d.beneficiairePrenom || 'Non renseigné' }}</strong>
           </div>
-
           <div class="info-item">
             <span>Nom du bénéficiaire</span>
             <strong>{{ d.beneficiaireNom || 'Non renseigné' }}</strong>
           </div>
-
           <div class="info-item">
             <span>Nombre de personnes</span>
             <strong>{{ d.nombrePersonne ?? 'Non renseigné' }}</strong>
           </div>
-
           <div class="info-item">
             <span>Niveau d’urgence</span>
             <strong>{{ d.niveauUrgence || 'Non renseigné' }}</strong>
           </div>
-
           <div class="info-item info-large">
             <span>Motif</span>
             <p>{{ d.motif || 'Aucun motif renseigné.' }}</p>
           </div>
-
           <div class="info-item info-large">
             <span>Description de la situation</span>
-            <p>
-              {{ d.descriptionSituation || 'Aucune description renseignée.' }}
-            </p>
+            <p>{{ d.descriptionSituation || 'Aucune description renseignée.' }}</p>
           </div>
-
         </div>
+      </section>
+
+      <!-- Image illustrative de la demande -->
+      <section class="section section-image-demande">
+        <h3><mat-icon>image</mat-icon> Image illustrative de la demande</h3>
+        <div class="formulaire-image" *ngIf="afficherFormulaireImage">
+          <p class="sous-description">Sélectionnez une image pour illustrer cette demande d’aide.</p>
+          <label for="fichierImage">Choisir une image (JPG, PNG ou WEBP)</label>
+          <input id="fichierImage" type="file" accept="image/jpeg,image/png,image/webp" (change)="selectionnerImage($event)">
+          <div class="apercu-image" *ngIf="apercuImage">
+            <img [src]="apercuImage" alt="Aperçu de l’image à ajouter">
+          </div>
+          <p class="erreur-image" *ngIf="erreurImage">{{ erreurImage }}</p>
+          <div class="actions-image">
+            <button type="button" class="btn-annuler-image" (click)="annulerAjoutImage()" [disabled]="uploadEnCours">Annuler</button>
+            <button type="button" class="btn-enregistrer-image" (click)="ajouterImage()" [disabled]="!fichierImageSelectionne || uploadEnCours">
+              <mat-icon>save</mat-icon>
+              {{ uploadEnCours ? 'Enregistrement...' : 'Enregistrer l’image' }}
+            </button>
+          </div>
+        </div>
+        <div class="image-demande-existante" *ngIf="imageDemande as image">
+          <div class="conteneur-image-enregistree">
+            <img [src]="obtenirUrlImage(image.cheminFichier)" [alt]="image.nomFichier || 'Image illustrative de la demande'">
+            <button type="button" class="btn-supprimer-image" aria-label="Supprimer l’image de la demande" title="Supprimer l’image" (click)="supprimerImageDemande()" [disabled]="suppressionImageEnCours">
+              <mat-icon>{{ suppressionImageEnCours ? 'hourglass_empty' : 'delete' }}</mat-icon>
+            </button>
+          </div>
+          <p class="nom-image">{{ image.nomFichier }}</p>
+        </div>
+        <div class="message-vide" *ngIf="!imageDemande && !afficherFormulaireImage && !chargementImage">
+          <p>Aucune image illustrative n’est associée à cette demande.</p>
+        </div>
+        <p class="texte-secondaire" *ngIf="chargementImage">Chargement de l’image...</p>
+        <p class="erreur-image" *ngIf="erreurImage && !afficherFormulaireImage && !imageDemande">{{ erreurImage }}</p>
       </section>
 
       <!-- Articles de la demande matérielle -->
       <section class="section" *ngIf="estDemandeMaterielle">
-        <h3>
-          Articles nécessaires
-        </h3>
-
-        <p class="sous-description">
-          Liste des articles demandés et coût des besoins matériels.
-        </p>
-
-        <div
-          class="table-responsive"
-          *ngIf="articles.length > 0; else aucunArticle">
-
+        <h3>Articles nécessaires</h3>
+        <p class="sous-description">Liste des articles demandés et coût des besoins matériels.</p>
+        <div class="table-responsive" *ngIf="articles.length > 0; else aucunArticle">
           <table class="table-articles">
             <thead>
               <tr>
@@ -148,311 +134,133 @@
                 <th>Total estimé</th>
               </tr>
             </thead>
-
             <tbody>
               <tr *ngFor="let article of articles">
-                <td class="designation">
-                  {{ article.designation || 'Non renseignée' }}
-                </td>
-
+                <td class="designation">{{ article.designation || 'Non renseignée' }}</td>
+                <td>{{ article.quantiteDemandee ?? 0 }}</td>
+                <td>{{ article.unite || '—' }}</td>
                 <td>
-                  {{ article.quantiteDemandee ?? 0 }}
-                </td>
-
-                <td>
-                  {{ article.unite || '—' }}
-                </td>
-
-                <td>
-                  <ng-container
-                    *ngIf="article.prixUnitaireEstime != null; else prixNonEstime">
+                  <ng-container *ngIf="article.prixUnitaireEstime != null; else prixNonEstime">
                     {{ article.prixUnitaireEstime | number:'1.0-0' }} FCFA
                   </ng-container>
-
                   <ng-template #prixNonEstime>
                     <span class="texte-secondaire">Non estimé</span>
                   </ng-template>
                 </td>
-
                 <td class="montant-article">
-                  <ng-container
-                    *ngIf="article.prixUnitaireEstime != null; else totalNonEstime">
-                    {{
-                      (
-                        (article.quantiteDemandee ?? 0)
-                        * article.prixUnitaireEstime
-                      ) | number:'1.0-0'
-                    }} FCFA
+                  <ng-container *ngIf="article.prixUnitaireEstime != null; else totalNonEstime">
+                    {{ ((article.quantiteDemandee ?? 0) * article.prixUnitaireEstime) | number:'1.0-0' }} FCFA
                   </ng-container>
-
-                  <ng-template #totalNonEstime>
-                    —
-                  </ng-template>
+                  <ng-template #totalNonEstime>—</ng-template>
                 </td>
               </tr>
             </tbody>
-
             <tfoot>
               <tr>
-                <td colspan="4">Montal Total  des articles</td>
-                <td class="montant-article">
-                  {{ totalEstimeArticles | number:'1.0-0' }} FCFA
-                </td>
+                <td colspan="4">Montant total des articles</td>
+                <td class="montant-article">{{ totalEstimeArticles | number:'1.0-0' }} FCFA</td>
               </tr>
             </tfoot>
           </table>
         </div>
-
         <ng-template #aucunArticle>
           <div class="message-vide">
             <mat-icon>inventory_2</mat-icon>
-            <p>
-              Aucun article n’est associé à cette demande matérielle.
-            </p>
+            <p>Aucun article n’est associé à cette demande matérielle.</p>
           </div>
         </ng-template>
       </section>
 
       <!-- Budget de la demande financière -->
       <section class="section" *ngIf="estDemandeFinanciere">
-        <h3>
-          Budget et collecte
-        </h3>
-
+        <h3>Budget et collecte</h3>
         <div class="grille-budget">
-
           <div class="carte-budget">
-         
-
             <span>Montant nécessaire</span>
-
-            <strong>
-              {{ d.montantNecessaire ?? 0 | number:'1.0-0' }} FCFA
-            </strong>
+            <strong>{{ d.montantNecessaire ?? 0 | number:'1.0-0' }} FCFA</strong>
           </div>
-
           <div class="carte-budget">
-          
-
             <span>Montant collecté</span>
-
-            <strong>
-              {{ d.montantCollecte ?? 0 | number:'1.0-0' }} FCFA
-            </strong>
+            <strong>{{ d.montantCollecte ?? 0 | number:'1.0-0' }} FCFA</strong>
           </div>
-
           <div class="carte-budget">
-          
-
             <span>Montant restant</span>
-
-            <strong>
-              {{ montantRestant | number:'1.0-0' }} FCFA
-            </strong>
+            <strong>{{ montantRestant | number:'1.0-0' }} FCFA</strong>
           </div>
-
         </div>
-
       </section>
-
-      
 
       <!-- Justificatifs -->
       <section class="section">
-        <h3>
-          Justificatifs
-        </h3>
-
-        <p class="sous-description">
-          Documents et images fournis pour justifier la demande.
-        </p>
-
-        <div
-          class="liste-justificatifs"
-          *ngIf="justificatifs.length > 0; else aucunJustificatif">
-
-          <div
-            class="carte-justificatif"
-            *ngFor="let justificatif of justificatifs">
-
+        <h3>Justificatifs</h3>
+        <p class="sous-description">Documents et images fournis pour justifier la demande.</p>
+        <div class="liste-justificatifs" *ngIf="justificatifs.length > 0; else aucunJustificatif">
+          <div class="carte-justificatif" *ngFor="let justificatif of justificatifs">
             <!-- Image -->
-            <ng-container
-              *ngIf="
-                estUneImage(justificatif.cheminFichier);
-                else documentJustificatif
-              ">
-
-              <a
-                class="lien-image"
-                [href]="obtenirUrlJustificatif(justificatif.cheminFichier)"
-                target="_blank"
-                rel="noopener noreferrer">
-
-                <img
-                  [src]="obtenirUrlJustificatif(justificatif.cheminFichier)"
-                  [alt]="justificatif.nomFichier || 'Justificatif'"
-                  class="image-justificatif">
+            <ng-container *ngIf="estUneImage(justificatif.cheminFichier); else documentJustificatif">
+              <a class="lien-image" [href]="obtenirUrlJustificatif(justificatif.cheminFichier)" target="_blank" rel="noopener noreferrer">
+                <img [src]="obtenirUrlJustificatif(justificatif.cheminFichier)" [alt]="justificatif.nomFichier || 'Justificatif'" class="image-justificatif">
               </a>
-
-           
             </ng-container>
-
             <!-- Document -->
             <ng-template #documentJustificatif>
               <mat-icon class="icone-document">description</mat-icon>
-
-              <a
-                [href]="obtenirUrlJustificatif(justificatif.cheminFichier)"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="lien-document">
-
-                {{
-                  justificatif.nomFichier
-                  || justificatif.cheminFichier
-                  || 'Consulter le document'
-                }}
+              <a [href]="obtenirUrlJustificatif(justificatif.cheminFichier)" target="_blank" rel="noopener noreferrer" class="lien-document">
+                {{ justificatif.nomFichier || justificatif.cheminFichier || 'Consulter le document' }}
               </a>
             </ng-template>
-
           </div>
         </div>
-
         <ng-template #aucunJustificatif>
           <div class="message-vide">
-           
-            <p>
-              Aucun justificatif n’est associé à cette demande.
-            </p>
+            <p>Aucun justificatif n’est associé à cette demande.</p>
           </div>
         </ng-template>
       </section>
-
     </div>
   </ng-container>
 </div>
 
 <!-- Fenêtre de validation ou de rejet -->
-<div
-  class="overlay-decision"
-  *ngIf="popupDecision"
-  (click)="fermerDecision()">
-
-  <div
-    class="popup-decision"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="titreDecision"
-    (click)="$event.stopPropagation()">
-
+<div class="overlay-decision" *ngIf="popupDecision" (click)="fermerDecision()">
+  <div class="popup-decision" role="dialog" aria-modal="true" aria-labelledby="titreDecision" (click)="$event.stopPropagation()">
     <!-- En-tête de la fenêtre -->
     <div class="popup-header">
       <div>
         <h3 id="titreDecision">Traiter la demande</h3>
       </div>
-
-      <button
-        type="button"
-        class="btn-fermer"
-        aria-label="Fermer"
-        (click)="fermerDecision()"
-        [disabled]="traitementEnCours">
-
+      <button type="button" class="btn-fermer" aria-label="Fermer" (click)="fermerDecision()" [disabled]="traitementEnCours">
         <mat-icon>close</mat-icon>
       </button>
     </div>
-
-    <p class="description-popup">
-      Choisissez la décision à appliquer à cette demande.
-    </p>
+    <p class="description-popup">Choisissez la décision à appliquer à cette demande.</p>
 
     <!-- Choix de la décision -->
     <div class="choix-decision">
-
-      <label
-        class="option-decision"
-        [class.option-selectionnee]="decisionChoisie === 'VALIDEE'">
-
-        <input
-          type="radio"
-          name="decision"
-          value="VALIDEE"
-          [(ngModel)]="decisionChoisie">
-
-       
-
-        <span>
-          <strong>Valider la demande</strong>
-       
-        </span>
+      <label class="option-decision" [class.option-selectionnee]="decisionChoisie === 'VALIDEE'">
+        <input type="radio" name="decision" value="VALIDEE" [(ngModel)]="decisionChoisie">
+        <span><strong>Valider la demande</strong></span>
       </label>
-
-      <label
-        class="option-decision"
-        [class.option-selectionnee]="decisionChoisie === 'REJETEE'">
-
-        <input
-          type="radio"
-          name="decision"
-          value="REJETEE"
-          [(ngModel)]="decisionChoisie">
-
-        
-
-        <span>
-          <strong>Rejeter la demande</strong>
-          
-        </span>
+      <label class="option-decision" [class.option-selectionnee]="decisionChoisie === 'REJETEE'">
+        <input type="radio" name="decision" value="REJETEE" [(ngModel)]="decisionChoisie">
+        <span><strong>Rejeter la demande</strong></span>
       </label>
-
     </div>
 
     <!-- Avertissement pour la validation -->
-    <div
-      class="avertissement-decision"
-      *ngIf="
-        decisionChoisie === 'VALIDEE'
-        && !relationsCompletes
-      ">
-
-
-      <span>
-        Impossible de valider : l'étude de terrain doit être terminée
-        et le rapport de besoin ainsi que le rapport technique doivent
-        être conformes.
-      </span>
+    <div class="avertissement-decision" *ngIf="decisionChoisie === 'VALIDEE' && !relationsCompletes">
+      <span>Impossible de valider : l'étude de terrain doit être terminée et le rapport de besoin ainsi que le rapport technique doivent être conformes.</span>
     </div>
 
     <!-- Avertissement pour le rejet -->
-    <div
-      class="avertissement-decision"
-      *ngIf="
-        decisionChoisie === 'REJETEE'
-        && !etudeTerminee
-      ">
-
-    
-
-      <span>
-        Une étude de terrain terminée est nécessaire avant de rejeter
-        cette demande.
-      </span>
+    <div class="avertissement-decision" *ngIf="decisionChoisie === 'REJETEE' && !etudeTerminee">
+      <span>Une étude de terrain terminée est nécessaire avant de rejeter cette demande.</span>
     </div>
 
     <!-- Motif obligatoire en cas de rejet -->
-    <div
-      class="champ-motif"
-      *ngIf="decisionChoisie === 'REJETEE'">
-
+    <div class="champ-motif" *ngIf="decisionChoisie === 'REJETEE'">
       <label for="motifDecision">Motif du rejet *</label>
-
-      <textarea
-        id="motifDecision"
-        name="motifDecision"
-        [(ngModel)]="motifDecision"
-        rows="4"
-        placeholder="Expliquez pourquoi la demande est rejetée...">
-      </textarea>
+      <textarea id="motifDecision" name="motifDecision" [(ngModel)]="motifDecision" rows="4" placeholder="Expliquez pourquoi la demande est rejetée..."></textarea>
     </div>
 
     <!-- Message d'erreur -->
@@ -463,36 +271,10 @@
 
     <!-- Actions -->
     <div class="popup-actions">
-
-      <button
-        type="button"
-        class="btn-annuler"
-        (click)="fermerDecision()"
-        [disabled]="traitementEnCours">
-
-        Annuler
+      <button type="button" class="btn-annuler" (click)="fermerDecision()" [disabled]="traitementEnCours">Annuler</button>
+      <button type="button" class="btn-principal" (click)="confirmerDecision()" [disabled]="traitementEnCours || !decisionChoisie || (decisionChoisie === 'VALIDEE' && !peutValider) || (decisionChoisie === 'REJETEE' && !peutRejeter)">
+        {{ traitementEnCours ? 'Traitement...' : 'Confirmer la décision' }}
       </button>
-
-      <button
-        type="button"
-        class="btn-principal"
-        (click)="confirmerDecision()"
-        [disabled]="
-          traitementEnCours
-          || !decisionChoisie
-          || (decisionChoisie === 'VALIDEE' && !peutValider)
-          || (decisionChoisie === 'REJETEE' && !peutRejeter)
-        ">
-
-
-        {{
-          traitementEnCours
-            ? 'Traitement...'
-            : 'Confirmer la décision'
-        }}
-      </button>
-
     </div>
-
   </div>
 </div>

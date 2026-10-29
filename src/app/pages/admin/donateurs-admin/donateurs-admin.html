@@ -1,0 +1,206 @@
+<div class="donateurs-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Gestion des Donateurs</h1>
+      <p class="page-subtitle">Consultez et administrez les donateurs de la communauté Dèmè Mali.</p>
+    </div>
+  </div>
+
+  <!-- Statistiques des Donateurs Uniformes -->
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-icon vert">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+          <!-- Poignet / Manchette -->
+          <rect x="2" y="10.5" width="2.8" height="8.5" rx="1.2" />
+          <!-- Main ouverte -->
+          <path d="M6.5 12c0-.6.4-1.1 1-1.2l2.6-.5c.9-.2 1.7.5 1.7 1.4v1.1h4.4c1.4 0 2.5 1.1 2.5 2.5 0 .4-.1.8-.3 1.1l-2.2 4.1c-.4.6-1.1 1-1.9 1H7.3c-.5 0-.8-.4-.8-.8V12z" />
+          <!-- Cœur flottant -->
+          <path d="M14.8 2.8c-1-.9-2.4-.8-3.3.2-.2.2-.4.5-.6.8-.2-.3-.4-.6-.6-.8-.9-1-2.3-1.1-3.3-.2-1.1 1-1.1 2.7 0 3.7l3.9 3.9 3.9-3.9c1.1-1 1.1-2.7 0-3.7z" />
+        </svg>
+      </div>
+      <div class="stat-details">
+        <span class="stat-title">Total Donateurs</span>
+        <span class="stat-number">{{ getCount() }}</span>
+      </div>
+    </div>
+
+    <div class="stat-box">
+      <div class="stat-icon jaune">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 12 20 22 4 22 4 12"></polyline>
+          <rect x="2" y="7" width="20" height="5" rx="1"></rect>
+          <line x1="12" y1="22" x2="12" y2="7"></line>
+          <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+          <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+        </svg>
+      </div>
+      <div class="stat-details">
+        <span class="stat-title">Dons Enregistrés</span>
+        <span class="stat-number">{{ getTotalDons() }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Liste des donateurs enregistrés</h2>
+        <p class="section-subtitle">Retrouvez les donateurs soutenant les collectes d'aides et projets humanitaires.</p>
+      </div>
+
+      <div class="search-box-row" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+        <div class="search-input-wrapper">
+          <mat-icon>search</mat-icon>
+          <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="pageActuelle = 1" placeholder="Rechercher par nom, téléphone, pays...">
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>ID DONATEUR</th>
+            <th>DONATEUR</th>
+            <th>TÉLÉPHONE & EMAIL</th>
+            <th>PAYS DE RÉSIDENCE</th>
+            <th>STATUT</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of donateursPagines">
+            <td><strong class="text-id">{{ d.id }}</strong></td>
+            <td>
+              <div class="partner-name-cell">
+                <strong class="partner-title">{{ d.nomComplet }}</strong>
+              </div>
+            </td>
+            <td>
+              <div class="contact-info">
+                <span class="contact-phone">{{ d.telephone }}</span>
+                <span style="font-size: 11px; color: #6B7280;">{{ d.email }}</span>
+              </div>
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <mat-icon style="font-size: 16px; width: 16px; height: 16px; color: #0F7A4B;">public</mat-icon>
+                <strong>{{ d.paysNom }}</strong>
+              </div>
+            </td>
+            <td>
+              <span class="status-badge status-valide">Donateur Actif</span>
+            </td>
+            <td class="actions-cell">
+              <div class="actions-group">
+                <button
+                  type="button"
+                  class="action-icone"
+                  (click)="ouvrirDetails(d)"
+                  title="Consulter le profil du donateur"
+                  aria-label="Consulter">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="donateursFiltres.length === 0">
+            <td colspan="6" class="empty-cell">
+              <div style="padding: 24px 0;">
+                <mat-icon style="font-size: 36px; width: 36px; height: 36px; color: #9CA3AF; margin-bottom: 8px;">volunteer_activism</mat-icon>
+                <p style="margin: 0; color: #6B7280; font-weight: 500;">Aucun donateur trouvé pour ces critères.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination mode défilement (si > 10 éléments, modèle Image 3) -->
+    <div class="pagination" *ngIf="donateursFiltres.length > elementsParPage">
+      <button
+        type="button"
+        class="page-item"
+        [class.disabled]="pageActuelle === 1"
+        [disabled]="pageActuelle === 1"
+        (click)="pagePrecedente()"
+        title="Page précédente"
+        aria-label="Page précédente">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        class="page-item"
+        *ngFor="let p of pages"
+        [class.active]="p === pageActuelle"
+        (click)="allerPage(p)"
+        [attr.aria-label]="'Page ' + p">
+        {{ p }}
+      </button>
+
+      <button
+        type="button"
+        class="page-item"
+        [class.disabled]="pageActuelle === totalPages"
+        [disabled]="pageActuelle === totalPages"
+        (click)="pageSuivante()"
+        title="Page suivante"
+        aria-label="Page suivante">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal Détails du Donateur -->
+  <div class="fond-modal" *ngIf="donateurSelectionne" (click)="fermerDetails()">
+    <div class="modal-form-card" (click)="$event.stopPropagation()" style="max-width: 540px;">
+      <div class="modal-entete">
+        <div>
+          <span class="surtitre">DÈMÈ MALI • FICHE DONATEUR</span>
+          <h2>{{ donateurSelectionne.nomComplet }}</h2>
+        </div>
+        <button type="button" class="btn-fermer" (click)="fermerDetails()" aria-label="Fermer">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-detail-body" style="padding: 20px 0;">
+        <div class="detail-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Identifiant</span>
+            <p style="font-weight: 700; color: #0F7A4B; margin-top: 2px;">{{ donateurSelectionne.id }}</p>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Statut du compte</span>
+            <p style="font-weight: 600; color: #0F7A4B; margin-top: 2px;">{{ donateurSelectionne.statut }}</p>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Téléphone</span>
+            <p style="font-weight: 600; color: #1F1F1F; margin-top: 2px;">{{ donateurSelectionne.telephone }}</p>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Pays de résidence</span>
+            <p style="font-weight: 600; color: #1F1F1F; margin-top: 2px;">{{ donateurSelectionne.paysNom }}</p>
+          </div>
+          <div class="detail-item" style="grid-column: span 2;">
+            <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Adresse Email</span>
+            <p style="font-weight: 600; color: #1F1F1F; margin-top: 2px;">{{ donateurSelectionne.email || 'Non renseigné' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions-pied" style="margin-top: 20px; display: flex; justify-content: flex-end;">
+        <button type="button" class="btn-fermer-modal" (click)="fermerDetails()">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
