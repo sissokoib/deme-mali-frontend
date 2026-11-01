@@ -443,7 +443,7 @@
     <div class="modal-form-header">
       <div>
         <h2 id="titreNouvelleAffectation">Nouvelle attribution de don libre</h2>
-        <p class="modal-description">Attribuez un don libre (spontané) à l'organisation partenaire prioritaire selon les besoins du terrain.</p>
+        <p class="modal-description">Choisissez le don à mobiliser, indiquez le montant de votre choix et affectez-le librement à l'organisation partenaire.</p>
       </div>
       <button type="button" class="btn-fermer-x" (click)="fermerModalAffectation()" aria-label="Fermer">
         <mat-icon>close</mat-icon>
@@ -471,59 +471,88 @@
       </button>
     </div>
 
+    <!-- BARRE DE RECHERCHE ET DE TRI DES DONS -->
+    <div class="barre-filtres-dons">
+      <div class="champ-recherche-don">
+        <mat-icon class="icone-recherche">search</mat-icon>
+        <input
+          type="text"
+          [(ngModel)]="rechercheDon"
+          placeholder="Rechercher par N° de don, donateur..."
+          class="input-recherche-don" />
+        <button *ngIf="rechercheDon" type="button" class="btn-vider-recherche" (click)="rechercheDon = ''" aria-label="Effacer">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <div class="champ-tri-don">
+        <mat-icon class="icone-tri">sort</mat-icon>
+        <select [(ngModel)]="triDons" class="select-tri-don" aria-label="Trier les dons">
+          <option value="RECENT">Plus récent d'abord</option>
+          <option value="ANCIEN">Plus ancien d'abord</option>
+          <option value="SOLDE_MAX">Solde le plus élevé</option>
+          <option value="SOLDE_MIN">Solde le plus faible</option>
+        </select>
+      </div>
+    </div>
+
     <!-- SÉLECTION DU DON FINANCIER -->
     <div *ngIf="typeDonAAttribuer === 'FINANCIER'" class="form-champ">
       <label for="donFinancierSelect">
-        Sélectionner le don financier libre disponible : <span class="requis">*</span>
+        Sélectionner le don financier à mobiliser : <span class="requis">*</span>
       </label>
       <select
         id="donFinancierSelect"
         [(ngModel)]="donFinancierSelectionneId"
         (change)="onDonSelectionChange()"
         class="select-input">
-        <option [ngValue]="null">-- Choisir un don financier disponible --</option>
+        <option [ngValue]="null">-- Choisir un don libre dans la liste ({{ donsFinanciersFiltres.length }} disponible{{ donsFinanciersFiltres.length > 1 ? 's' : '' }}) --</option>
         <option
-          *ngFor="let don of donsFinanciersSpontanes"
+          *ngFor="let don of donsFinanciersFiltres"
           [ngValue]="don.id">
-          Don {{ don.id }} — Solde : {{ don.montantRestant | number:'1.0-0' }} FCFA (Total initial : {{ don.montant | number:'1.0-0' }} FCFA)
+          Don {{ don.id }} — Solde : {{ don.montantRestant | number:'1.0-0' }} FCFA (Initial : {{ don.montant | number:'1.0-0' }} FCFA) — {{ don.dateDon ? (don.dateDon | date:'dd/MM/yyyy') : 'Date libre' }} — {{ don.anonyme ? 'Anonyme' : (don.modePaiement || 'Paiement direct') }}
         </option>
       </select>
-      <small *ngIf="donsFinanciersSpontanes.length === 0" class="texte-aide" style="color: #D97706;">
-        Aucun don financier libre avec un solde restant à attribuer.
+      <small *ngIf="donsFinanciersFiltres.length === 0" class="texte-aide" style="color: #D97706;">
+        Aucun don financier libre ne correspond à votre recherche.
       </small>
     </div>
 
     <!-- SÉLECTION DU DON MATÉRIEL -->
     <div *ngIf="typeDonAAttribuer === 'MATERIEL'" class="form-champ">
       <label for="donMaterielSelect">
-        Sélectionner le don matériel libre disponible : <span class="requis">*</span>
+        Sélectionner le don matériel à mobiliser : <span class="requis">*</span>
       </label>
       <select
         id="donMaterielSelect"
         [(ngModel)]="donMaterielSelectionneId"
         (change)="onDonSelectionChange()"
         class="select-input">
-        <option [ngValue]="null">-- Choisir un don matériel disponible --</option>
+        <option [ngValue]="null">-- Choisir un don libre dans la liste ({{ donsMaterielsFiltres.length }} disponible{{ donsMaterielsFiltres.length > 1 ? 's' : '' }}) --</option>
         <option
-          *ngFor="let don of donsMaterielsSpontanes"
+          *ngFor="let don of donsMaterielsFiltres"
           [ngValue]="don.id">
-          Don {{ don.id }} : {{ don.designation }} — Stock : {{ don.quantiteRestante }} {{ don.unite || 'unités' }}
+          Don {{ don.id }} : {{ don.designation }} — Stock : {{ don.quantiteRestante }} {{ don.unite || 'unités' }} — {{ don.dateDon ? (don.dateDon | date:'dd/MM/yyyy') : 'Date libre' }}
         </option>
       </select>
-      <small *ngIf="donsMaterielsSpontanes.length === 0" class="texte-aide" style="color: #D97706;">
-        Aucun don matériel libre avec un stock restant à attribuer.
+      <small *ngIf="donsMaterielsFiltres.length === 0" class="texte-aide" style="color: #D97706;">
+        Aucun don matériel libre ne correspond à votre recherche.
       </small>
     </div>
 
     <!-- RÉCAPITULATIF DU DON SÉLECTIONNÉ -->
     <div *ngIf="typeDonAAttribuer === 'FINANCIER' && donFinancierSelectionne" class="resume-don-selectionne">
       <div class="resume-ligne">
-        <span>Donateur :</span>
-        <strong>{{ donFinancierSelectionne.anonyme ? 'Anonyme' : 'Donateur enregistré' }}</strong>
+        <span>N° du don :</span>
+        <strong>Don {{ donFinancierSelectionne.id }}</strong>
       </div>
       <div class="resume-ligne">
-        <span>Mode de paiement :</span>
-        <strong>{{ donFinancierSelectionne.modePaiement || 'Orange Money' }}</strong>
+        <span>Donateur & Mode :</span>
+        <strong>{{ donFinancierSelectionne.anonyme ? 'Anonyme' : 'Donateur enregistré' }} ({{ donFinancierSelectionne.modePaiement || 'Orange Money' }})</strong>
+      </div>
+      <div class="resume-ligne">
+        <span>Date du don :</span>
+        <strong>{{ donFinancierSelectionne.dateDon ? (donFinancierSelectionne.dateDon | date:'dd/MM/yyyy') : 'Non renseignée' }}</strong>
       </div>
       <div class="resume-ligne">
         <span>Montant total initial :</span>
@@ -541,12 +570,16 @@
 
     <div *ngIf="typeDonAAttribuer === 'MATERIEL' && donMaterielSelectionne" class="resume-don-selectionne">
       <div class="resume-ligne">
+        <span>N° du don :</span>
+        <strong>Don {{ donMaterielSelectionne.id }}</strong>
+      </div>
+      <div class="resume-ligne">
         <span>Désignation :</span>
         <strong>{{ donMaterielSelectionne.designation }}</strong>
       </div>
       <div class="resume-ligne">
-        <span>Donateur :</span>
-        <strong>{{ donMaterielSelectionne.anonyme ? 'Anonyme' : 'Donateur enregistré' }}</strong>
+        <span>Date du don :</span>
+        <strong>{{ donMaterielSelectionne.dateDon ? (donMaterielSelectionne.dateDon | date:'dd/MM/yyyy') : 'Non renseignée' }}</strong>
       </div>
       <div class="resume-ligne">
         <span>Stock initial :</span>
@@ -562,119 +595,159 @@
       </div>
     </div>
 
-    <!-- RECOMMANDATION INTELLIGENTE DU SYSTÈME -->
-    <div *ngIf="isFetchingPriority" class="banniere-recommandation chargement">
-      <span>Analyse des priorités du terrain par le système...</span>
-    </div>
-
-    <div *ngIf="organisationRecommandee" class="banniere-recommandation success">
-      <div class="recommandation-icone">
-        <mat-icon>emoji_events</mat-icon>
-      </div>
-      <div class="recommandation-texte">
-        <span class="recommandation-titre">Organisation prioritaire recommandée</span>
-        <strong>{{ organisationRecommandee.nomOrganisation }}</strong>
-        <p>Besoins urgents validés sur le terrain (Score : {{ organisationRecommandee.scorePriorite | number:'1.0-0' }}/100)</p>
-      </div>
-      <button
-        type="button"
-        class="btn-choisir-recommandation"
-        (click)="appliquerOrganisationRecommandee()"
-        [disabled]="organisationId === organisationRecommandee.organisationPartenaireId">
-        {{ organisationId === organisationRecommandee.organisationPartenaireId ? '✓ Sélectionnée' : 'Sélectionner' }}
-      </button>
-    </div>
-
-    <div *ngIf="erreurRecommandation && !organisationRecommandee && (donFinancierSelectionneId || donMaterielSelectionneId)" class="banniere-recommandation info">
-      <mat-icon>info</mat-icon>
-      <span>{{ erreurRecommandation }}</span>
-    </div>
-
-    <!-- CHOIX DE L'ORGANISATION PARTENAIRE -->
-    <div class="form-champ">
-      <label for="orgSelect">
-        Organisation partenaire attributaire (ordonnée par priorité) : <span class="requis">*</span>
-      </label>
-      <select
-        id="orgSelect"
-        [(ngModel)]="organisationId"
-        class="select-input">
-        <option [ngValue]="null">-- Sélectionner l'organisation partenaire --</option>
-        <option *ngFor="let org of organisationsTrieesParPriorite" [ngValue]="org.id">
-          {{ org.estPrioritaire ? '★ [Priorité N°1 - Score: ' + (org.score | number:'1.0-0') + '/100] ' : '' }}{{ org.nomOrganisation }} ({{ org.typeOrganisation || 'ONG' }})
-        </option>
-      </select>
-      <small
-        *ngIf="organisationRecommandee && organisationId && organisationId !== organisationRecommandee.organisationPartenaireId"
-        class="texte-aide"
-        style="color: #D97706; font-weight: 600; margin-top: 6px; display: block;">
-        ⚠️ Attention : Le système exige d'attribuer ce don à l'organisation prioritaire ({{ organisationRecommandee.nomOrganisation }}).
-      </small>
-    </div>
-
-    <!-- MONTANT FINANCIER -->
-    <div *ngIf="typeDonAAttribuer === 'FINANCIER'" class="form-champ">
+    <!-- MONTANT FINANCIER LIBREMENT CHOISI PAR L'ADMIN -->
+    <div *ngIf="typeDonAAttribuer === 'FINANCIER' && donFinancierSelectionne" class="form-champ section-montant-libre">
       <div class="champ-entete-avec-action">
         <label for="montantInput">
           Montant à attribuer (FCFA) : <span class="requis">*</span>
         </label>
-        <button
-          *ngIf="donFinancierSelectionne && donFinancierSelectionne.montantRestant > 0"
-          type="button"
-          class="btn-lien-solde"
-          (click)="attribuerToutLeSolde()">
-          Attribuer tout le solde ({{ donFinancierSelectionne.montantRestant | number:'1.0-0' }} FCFA)
+        <span class="badge-solde-dispo">
+          Solde max : {{ donFinancierSelectionne.montantRestant | number:'1.0-0' }} FCFA
+        </span>
+      </div>
+
+      <!-- Raccourcis de pourcentage pour choisir facilement le montant -->
+      <div class="boutons-raccourcis-montant">
+        <button type="button" class="btn-raccourci" (click)="definirPourcentage(25)">25%</button>
+        <button type="button" class="btn-raccourci" (click)="definirPourcentage(50)">50%</button>
+        <button type="button" class="btn-raccourci" (click)="definirPourcentage(75)">75%</button>
+        <button type="button" class="btn-raccourci btn-tout-solde" (click)="definirPourcentage(100)">
+          100% (Tout attribuer)
         </button>
       </div>
+
       <div class="champ-input-suffix">
         <input
           id="montantInput"
           type="number"
           [(ngModel)]="montantAAttribuer"
-          [max]="donFinancierSelectionne?.montantRestant || 0"
+          [max]="donFinancierSelectionne.montantRestant"
           min="1"
           placeholder="Ex: 50000"
           class="select-input" />
         <span class="suffix-texte">FCFA</span>
       </div>
-      <small *ngIf="donFinancierSelectionne" class="texte-aide">
-        Solde maximal disponible : {{ donFinancierSelectionne.montantRestant | number:'1.0-0' }} FCFA
-      </small>
-      <small *ngIf="montantAAttribuer && donFinancierSelectionne && montantAAttribuer > donFinancierSelectionne.montantRestant" class="texte-aide" style="color: #DC2626; font-weight: 600;">
-        ⚠️ Le montant saisi ({{ montantAAttribuer | number:'1.0-0' }} FCFA) dépasse le solde disponible de ce don ({{ donFinancierSelectionne.montantRestant | number:'1.0-0' }} FCFA). Vous devez sélectionner un don disposant d'un montant suffisant ou réduire le montant.
+
+      <!-- Simulation en direct du solde restant -->
+      <div class="simulation-solde-bar">
+        <div class="sim-bloc">
+          <span class="sim-titre">Solde actuel</span>
+          <strong class="sim-valeur">{{ donFinancierSelectionne.montantRestant | number:'1.0-0' }} FCFA</strong>
+        </div>
+        <div class="sim-separateur">−</div>
+        <div class="sim-bloc attribué">
+          <span class="sim-titre">Attribution</span>
+          <strong class="sim-valeur">{{ (montantAAttribuer || 0) | number:'1.0-0' }} FCFA</strong>
+        </div>
+        <div class="sim-separateur">=</div>
+        <div class="sim-bloc reste">
+          <span class="sim-titre">Nouveau solde</span>
+          <strong class="sim-valeur">{{ soldeRestantApresAttribution | number:'1.0-0' }} FCFA</strong>
+        </div>
+      </div>
+
+      <small *ngIf="montantAAttribuer && donFinancierSelectionne && montantAAttribuer > donFinancierSelectionne.montantRestant" class="texte-aide" style="color: #DC2626; font-weight: 600; margin-top: 6px; display: block;">
+        ⚠️ Le montant saisi ({{ montantAAttribuer | number:'1.0-0' }} FCFA) dépasse le solde disponible ({{ donFinancierSelectionne.montantRestant | number:'1.0-0' }} FCFA).
       </small>
     </div>
 
-    <!-- QUANTITÉ MATÉRIELLE -->
-    <div *ngIf="typeDonAAttribuer === 'MATERIEL'" class="form-champ">
+    <!-- QUANTITÉ MATÉRIELLE LIBREMENT CHOISIE PAR L'ADMIN -->
+    <div *ngIf="typeDonAAttribuer === 'MATERIEL' && donMaterielSelectionne" class="form-champ section-montant-libre">
       <div class="champ-entete-avec-action">
         <label for="quantiteInput">
           Quantité à attribuer : <span class="requis">*</span>
         </label>
-        <button
-          *ngIf="donMaterielSelectionne && donMaterielSelectionne.quantiteRestante > 0"
-          type="button"
-          class="btn-lien-solde"
-          (click)="attribuerToutLeSolde()">
-          Attribuer tout le stock ({{ donMaterielSelectionne.quantiteRestante }} {{ donMaterielSelectionne.unite || 'unités' }})
+        <span class="badge-solde-dispo">
+          Stock max : {{ donMaterielSelectionne.quantiteRestante }} {{ donMaterielSelectionne.unite || 'unités' }}
+        </span>
+      </div>
+
+      <!-- Raccourcis de pourcentage pour choisir facilement la quantité -->
+      <div class="boutons-raccourcis-montant">
+        <button type="button" class="btn-raccourci" (click)="definirPourcentage(25)">25%</button>
+        <button type="button" class="btn-raccourci" (click)="definirPourcentage(50)">50%</button>
+        <button type="button" class="btn-raccourci" (click)="definirPourcentage(75)">75%</button>
+        <button type="button" class="btn-raccourci btn-tout-solde" (click)="definirPourcentage(100)">
+          Tout attribuer ({{ donMaterielSelectionne.quantiteRestante }})
         </button>
       </div>
+
       <div class="champ-input-suffix">
         <input
           id="quantiteInput"
           type="number"
           [(ngModel)]="quantiteAAttribuer"
-          [max]="donMaterielSelectionne?.quantiteRestante || 0"
+          [max]="donMaterielSelectionne.quantiteRestante"
           min="1"
           placeholder="Ex: 10"
           class="select-input" />
-        <span class="suffix-texte">{{ donMaterielSelectionne?.unite || 'Unités' }}</span>
+        <span class="suffix-texte">{{ donMaterielSelectionne.unite || 'Unités' }}</span>
       </div>
-      <small *ngIf="donMaterielSelectionne" class="texte-aide">
-        Stock maximal disponible : {{ donMaterielSelectionne.quantiteRestante }} {{ donMaterielSelectionne.unite || 'unités' }}
-      </small>
-      <small *ngIf="quantiteAAttribuer && donMaterielSelectionne && quantiteAAttribuer > donMaterielSelectionne.quantiteRestante" class="texte-aide" style="color: #DC2626; font-weight: 600;">
+
+      <!-- Simulation en direct du stock restant -->
+      <div class="simulation-solde-bar">
+        <div class="sim-bloc">
+          <span class="sim-titre">Stock actuel</span>
+          <strong class="sim-valeur">{{ donMaterielSelectionne.quantiteRestante }} {{ donMaterielSelectionne.unite || 'unités' }}</strong>
+        </div>
+        <div class="sim-separateur">−</div>
+        <div class="sim-bloc attribué">
+          <span class="sim-titre">Attribution</span>
+          <strong class="sim-valeur">{{ (quantiteAAttribuer || 0) }} {{ donMaterielSelectionne.unite || 'unités' }}</strong>
+        </div>
+        <div class="sim-separateur">=</div>
+        <div class="sim-bloc reste">
+          <span class="sim-titre">Nouveau stock</span>
+          <strong class="sim-valeur">{{ stockRestantApresAttribution }} {{ donMaterielSelectionne.unite || 'unités' }}</strong>
+        </div>
+      </div>
+
+      <small *ngIf="quantiteAAttribuer && donMaterielSelectionne && quantiteAAttribuer > donMaterielSelectionne.quantiteRestante" class="texte-aide" style="color: #DC2626; font-weight: 600; margin-top: 6px; display: block;">
         ⚠️ La quantité saisie dépasse le stock disponible ({{ donMaterielSelectionne.quantiteRestante }} {{ donMaterielSelectionne.unite || 'unités' }}).
+      </small>
+    </div>
+
+    <!-- SUGGESTION DE L'ALGORITHME (INFORMATIVE ET NON BLOQUANTE) -->
+    <div *ngIf="isFetchingPriority" class="banniere-recommandation chargement">
+      <mat-icon class="rotation">sync</mat-icon>
+      <span>Analyse intelligente des besoins du terrain...</span>
+    </div>
+
+    <div *ngIf="organisationRecommandee" class="banniere-recommandation-conseil">
+      <div class="conseil-entete">
+        <mat-icon class="icone-conseil">lightbulb</mat-icon>
+        <div class="conseil-texte">
+          <span class="conseil-badge">Suggestion algorithmique</span>
+          <strong>{{ organisationRecommandee.nomOrganisation }}</strong>
+          <p>Score d'urgence terrain : {{ organisationRecommandee.scorePriorite | number:'1.0-0' }} / 100</p>
+        </div>
+      </div>
+      <button
+        type="button"
+        class="btn-appliquer-suggestion"
+        (click)="appliquerOrganisationRecommandee()"
+        [class.selectionne]="organisationId === organisationRecommandee.organisationPartenaireId">
+        <mat-icon>{{ organisationId === organisationRecommandee.organisationPartenaireId ? 'check' : 'add_task' }}</mat-icon>
+        {{ organisationId === organisationRecommandee.organisationPartenaireId ? 'Organisation sélectionnée' : 'Appliquer la suggestion' }}
+      </button>
+    </div>
+
+    <!-- CHOIX LIBRE DE L'ORGANISATION PARTENAIRE -->
+    <div class="form-champ">
+      <label for="orgSelect">
+        Organisation partenaire attributaire : <span class="requis">*</span>
+      </label>
+      <select
+        id="orgSelect"
+        [(ngModel)]="organisationId"
+        class="select-input">
+        <option [ngValue]="null">-- Choisir librement l'organisation partenaire --</option>
+        <option *ngFor="let org of organisationsTrieesParPriorite" [ngValue]="org.id">
+          {{ org.nomOrganisation }} ({{ org.typeOrganisation || 'ONG' }}){{ org.estPrioritaire ? ' — ⭐ Recommandée par le système' : '' }}
+        </option>
+      </select>
+      <small class="texte-aide">
+        L'administrateur peut sélectionner librement l'organisation partenaire de son choix dans la liste.
       </small>
     </div>
 

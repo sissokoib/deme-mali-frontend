@@ -1,4 +1,3 @@
-
 import { Injectable } from '@angular/core';
 import {
   HttpInterceptor,
@@ -7,10 +6,8 @@ import {
   HttpEvent,
   HttpErrorResponse
 } from '@angular/common/http';
-
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-
 import { AuthService } from '../services/auth.service';
 
 @Injectable()
@@ -31,10 +28,11 @@ export class JwtInterceptor implements HttpInterceptor {
     // Récupérer l'access token
     const token = this.authService.getAccessToken();
 
-    // Si le token stocké est expiré ou invalide, nettoyer la session
+    // Si le token stocké est expiré ou invalide, déconnecter proprement
     if (token && this.authService.isTokenExpired(token)) {
-      console.warn('[JwtInterceptor] Jeton JWT expiré ou invalide détecté. Nettoyage de la session locale.');
-      this.authService.clearSession();
+      console.warn('[JwtInterceptor] Jeton JWT expiré ou invalide détecté. Redirection vers la page de connexion.');
+      this.authService.logout();
+      return throwError(() => new Error('Session expirée'));
     }
 
     const validToken = this.authService.getAccessToken();
@@ -48,32 +46,18 @@ export class JwtInterceptor implements HttpInterceptor {
       });
     }
 
-    // Envoyer la requête et gérer les erreurs de rejet du token (401 ou 500 dû à signature JWT invalide)
+    // Envoyer la requête et intercepter les erreurs d'authentification
     return next.handle(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
-        // Le backend Spring Boot renvoie 500 quand un Bearer token possède une signature invalide suite à un redémarrage
-        if (validToken && (error.status === 401 || error.status === 500)) {
-          console.warn(`[JwtInterceptor] Erreur ${error.status} reçue avec le Bearer token. Nettoyage de la session et tentative de secours sans Authorization...`);
+        // Le backend Spring Boot renvoie 500 uniquement si la signature JWT est rejetée suite à un redémarrage
+        const isJwtSignatureError = error.status === 500 && (
+          (typeof error.error === 'string' && (error.error.includes('JWT') || error.error.includes('token') || error.error.includes('SignatureException') || error.error.includes('ExpiredJwtException'))) ||
+          (typeof error.error?.message === 'string' && (error.error.message.includes('JWT') || error.error.message.includes('token') || error.error.message.includes('Signature') || error.error.message.includes('expired')))
+        );
 
-          // Supprimer la session invalide pour ne plus polluer les futures requêtes
-          this.authService.clearSession();
-
-          // Réessayer la requête sans l'en-tête Authorization
-          const fallbackReq = req.clone({
-            headers: req.headers.delete('Authorization')
-          });
-
-          return next.handle(fallbackReq).pipe(
-            catchError((retryErr: HttpErrorResponse) => {
-              if (error.status === 401) {
-                this.authService.logout();
-              }
-              return throwError(() => retryErr);
-            })
-          );
-        }
-
-        if (error.status === 401 && validToken) {
+        // Une erreur HTTP 500 ordinaire (erreur serveur / base de données) ne doit JAMAIS vider la session utilisateur !
+        if (validToken && (error.status === 401 || isJwtSignatureError)) {
+          console.warn(`[JwtInterceptor] Rejet d'authentification (${error.status}). Redirection vers la page de connexion...`);
           this.authService.logout();
         }
 

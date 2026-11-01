@@ -518,7 +518,9 @@ td strong {
 ========================================= */
 
 .modal-form {
-  max-width: 580px;
+  max-width: 620px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modal-form-header {
@@ -562,6 +564,306 @@ td strong {
 .modal-type-tabs .onglet {
   flex: 1;
   padding: 12px 14px;
+}
+
+/* =========================================
+   BARRE DE FILTRES ET TRI DES DONS
+========================================= */
+
+.barre-filtres-dons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.champ-recherche-don {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  align-items: center;
+}
+
+.icone-recherche {
+  position: absolute;
+  left: 10px;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #0F7A4B;
+  pointer-events: none;
+}
+
+.input-recherche-don {
+  width: 100%;
+  padding: 9px 32px 9px 34px;
+  border: 1px solid #d4cdc3;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  color: #1F1F1F;
+  font-size: 13px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-recherche-don:focus {
+  border-color: #0F7A4B;
+  box-shadow: 0 0 0 2px rgba(15, 122, 75, 0.12);
+}
+
+.btn-vider-recherche {
+  position: absolute;
+  right: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+}
+
+.btn-vider-recherche mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.champ-tri-don {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 180px;
+}
+
+.icone-tri {
+  position: absolute;
+  left: 10px;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #0F7A4B;
+  pointer-events: none;
+}
+
+.select-tri-don {
+  width: 100%;
+  padding: 9px 12px 9px 34px;
+  border: 1px solid #d4cdc3;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  color: #1F1F1F;
+  font-size: 12px;
+  font-weight: 600;
+  box-sizing: border-box;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.select-tri-don:focus {
+  border-color: #0F7A4B;
+}
+
+/* =========================================
+   CHOIX LIBRE DU MONTANT ET SIMULATION
+========================================= */
+
+.section-montant-libre {
+  background-color: #FAF8F4;
+  border: 1px solid #EBE4D8;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+}
+
+.badge-solde-dispo {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0F7A4B;
+  background-color: rgba(15, 122, 75, 0.1);
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.boutons-raccourcis-montant {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.btn-raccourci {
+  padding: 6px 12px;
+  border: 1px solid #d4cdc3;
+  border-radius: 6px;
+  background-color: #FFFFFF;
+  color: #1F1F1F;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-raccourci:hover {
+  border-color: #0F7A4B;
+  color: #0F7A4B;
+  background-color: #F7F3EA;
+}
+
+.btn-tout-solde {
+  background-color: #F7F3EA;
+  border-color: #0F7A4B;
+  color: #0F7A4B;
+  font-weight: 700;
+}
+
+.btn-tout-solde:hover {
+  background-color: #0F7A4B;
+  color: #FFFFFF;
+}
+
+/* Barre de simulation */
+.simulation-solde-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #FFFFFF;
+  border: 1px solid #EBE4D8;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-top: 10px;
+  gap: 6px;
+}
+
+.sim-bloc {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sim-titre {
+  font-size: 11px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.sim-valeur {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1F1F1F;
+}
+
+.sim-bloc.attribué .sim-valeur {
+  color: #0F7A4B;
+}
+
+.sim-bloc.reste .sim-valeur {
+  color: #D97706;
+}
+
+.sim-separateur {
+  font-size: 14px;
+  font-weight: 700;
+  color: #888;
+}
+
+/* =========================================
+   SUGGESTION ALGORITHMIQUE (CONSEIL NON-BLOQUANT)
+========================================= */
+
+.banniere-recommandation-conseil {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 16px;
+  margin-bottom: 18px;
+  border-radius: 10px;
+  background-color: #F7F3EA;
+  border: 1px solid #E5DFD5;
+  box-sizing: border-box;
+}
+
+.conseil-entete {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.icone-conseil {
+  color: #D97706;
+  font-size: 26px;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.conseil-texte {
+  min-width: 0;
+}
+
+.conseil-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #D97706;
+  margin-bottom: 2px;
+}
+
+.conseil-texte strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1F1F1F;
+}
+
+.conseil-texte p {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: #666;
+}
+
+.btn-appliquer-suggestion {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #0F7A4B;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 7px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s, transform 0.15s;
+}
+
+.btn-appliquer-suggestion:hover {
+  background-color: #0d6840;
+  transform: translateY(-1px);
+}
+
+.btn-appliquer-suggestion.selectionne {
+  background-color: #F7F3EA;
+  border: 1px solid #0F7A4B;
+  color: #0F7A4B;
+  font-weight: 700;
+}
+
+.btn-appliquer-suggestion mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
 }
 
 .form-champ {

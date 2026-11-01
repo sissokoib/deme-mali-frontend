@@ -18,9 +18,6 @@ export class DashboardService {
 
   getDashboardStats(organisationId: number): Observable<DashboardStats> {
     return forkJoin({
-      stats: this.http.get<any>(`${this.apiUrl}/organisation/${organisationId}`).pipe(
-        catchError(() => of({}))
-      ),
       demandes: this.http.get<any[]>(`http://localhost:8080/api/demandes-aide/organisation/${organisationId}`).pipe(
         catchError(() => of([]))
       ),
@@ -31,7 +28,7 @@ export class DashboardService {
         catchError(() => of([]))
       )
     }).pipe(
-      map(({ stats, demandes, dons, aides }) => {
+      map(({ demandes, dons, aides }) => {
         const toutesDemandes = demandes || [];
         const totalDemandes = toutesDemandes.length;
 
@@ -41,7 +38,7 @@ export class DashboardService {
         const refusees = toutesDemandes.filter(d => d.statut === 'REFUSEE' || d.statut === 'REJETEE' || d.statut === 'Refusée').length;
 
         // Montant total collecté réel pour l'organisation
-        const totalCollecte = stats.montantTotalCollecte ?? (dons || []).reduce((acc, d) => acc + (d.montant || 0), 0);
+        const totalCollecte = (dons || []).reduce((acc, d) => acc + (d.montant || 0), 0);
         const montantStr = totalCollecte >= 1000000
           ? (totalCollecte / 1000000).toFixed(1) + 'M'
           : (totalCollecte >= 1000 ? (totalCollecte / 1000).toFixed(0) + 'K' : totalCollecte.toString());
@@ -105,15 +102,15 @@ export class DashboardService {
 
         return {
           kpiStats: {
-            demandes: stats.totalDemandesAide ?? totalDemandes,
-            demandesRefusees: stats.demandesRefusees ?? refusees,
-            demandesAttente: stats.demandesEnAttente ?? enAttente,
-            demandesTraitees: stats.demandesValidees ?? validees
+            demandes: totalDemandes,
+            demandesRefusees: refusees,
+            demandesAttente: enAttente,
+            demandesTraitees: validees
           },
           impactStats: {
-            beneficiaires: stats.totalBeneficiaires ?? new Set(toutesDemandes.map(d => d.beneficiaireId).filter(Boolean)).size,
-            demandesTraitees: stats.demandesValidees ?? validees,
-            projets: stats.totalDemandesAide ?? totalDemandes,
+            beneficiaires: new Set(toutesDemandes.map(d => d.beneficiaireId).filter(Boolean)).size,
+            demandesTraitees: validees,
+            projets: totalDemandes,
             montantFCFA: montantStr + ' FCFA'
           },
           repartition: repartitionDynamique.length > 0 ? repartitionDynamique : (
