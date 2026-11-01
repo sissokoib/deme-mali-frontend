@@ -53,7 +53,7 @@ export class DashboardService {
           catMap.set(cat, (catMap.get(cat) || 0) + 1);
         });
 
-        const paletteCouleurs = ['#0F7A4B', '#16A34A', '#FDBA12', '#D97706', '#3B82F6', '#8B5CF6'];
+        const paletteCouleurs = ['#0F7A4B', '#16A34A', '#FDBA12', '#D97706', '#047857', '#B45309', '#E5A823'];
         let colorIdx = 0;
         const repartitionDynamique: RepartitionItem[] = Array.from(catMap.entries()).map(([label, count]) => {
           const percent = totalDemandes > 0 ? Math.round((count / totalDemandes) * 100) : 0;

@@ -137,8 +137,7 @@
               <td>
                 <span
                   class="type-badge"
-                  [style.background-color]="m.categorieMembre === 'ORGANISATION' ? '#E2F2E9' : (m.typeBeneficiaire === 'STRUCTURE' ? '#EFF6FF' : '#E2F2E9')"
-                  [style.color]="m.categorieMembre === 'ORGANISATION' ? '#0F7A4B' : (m.typeBeneficiaire === 'STRUCTURE' ? '#1D4ED8' : '#0F7A4B')"
+                  style="background-color: #E2F2E9; color: #0F7A4B;"
                 >
                   {{ m.type }}
                 </span>
@@ -261,7 +260,7 @@
       <div class="detail-hero-content">
         <span
           class="detail-avatar-large"
-          [style.background-color]="membreSelectionne.categorieMembre === 'ORGANISATION' ? '#0F7A4B' : (membreSelectionne.typeBeneficiaire === 'STRUCTURE' ? '#2563EB' : '#0F7A4B')"
+          style="background-color: #0F7A4B;"
         >
           {{ membreSelectionne.nom.charAt(0) }}
         </span>
@@ -377,7 +376,7 @@
       <!-- SECTION 2B : SPÉCIFIQUE BÉNÉFICIAIRE STRUCTURE -->
       <div class="detail-card" *ngIf="membreSelectionne.categorieMembre === 'BENEFICIAIRE' && membreSelectionne.typeBeneficiaire === 'STRUCTURE'">
         <div class="card-section-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="color: #2563EB;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="color: #0F7A4B;">
             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
           </svg>
@@ -654,11 +653,10 @@
           </div>
         </div>
         <div class="preview-actions-top">
-          <a
-            [href]="justificatifApercuUrl"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
             class="btn-open-external"
+            (click)="ouvrirEnPleinEcran()"
             title="Ouvrir dans un nouvel onglet"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
@@ -667,7 +665,7 @@
               <line x1="10" y1="14" x2="21" y2="3"></line>
             </svg>
             Plein écran
-          </a>
+          </button>
           <button type="button" class="btn-fermer" (click)="fermerJustificatifModal()" aria-label="Fermer l'aperçu">
             <mat-icon>close</mat-icon>
           </button>
@@ -676,11 +674,19 @@
 
       <!-- Corps de l'aperçu -->
       <div class="preview-modal-body">
-        <!-- Image preview -->
-        <div class="preview-image-container" *ngIf="justificatifEstImage; else documentEmbed">
+
+        <!-- Indicateur de chargement -->
+        <div *ngIf="chargementJustificatif" class="justificatif-fallback-card" style="padding: 40px 20px;">
+          <div style="font-size: 14px; color: #0F7A4B; font-weight: 600;">
+            Chargement sécurisé du document officiel...
+          </div>
+        </div>
+
+        <!-- Aperçu Image -->
+        <div class="preview-image-container" *ngIf="justificatifEstImage && !chargementJustificatif">
           <img
             *ngIf="!imageErreurChargement"
-            [src]="justificatifApercuUrl"
+            [src]="justificatifBlobUrl || justificatifApercuUrl"
             [alt]="'Justificatif officiel de ' + membreSelectionne?.nom"
             class="justificatif-full-image"
             (error)="surErreurChargementImage($event)"
@@ -692,34 +698,91 @@
               <line x1="12" y1="18" x2="12" y2="12"></line>
               <line x1="12" y1="9" x2="12.01" y2="9"></line>
             </svg>
-            <h4>Impossible d'afficher le fichier directement</h4>
-            <p>Le document est enregistré au nom de <strong>{{ extraireNomFichier(justificatifApercuUrl) }}</strong>.</p>
-            <a
-              [href]="justificatifApercuUrl"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn-ouvrir-onglet"
-              style="margin-top: 14px; display: inline-flex;"
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                <polyline points="15 3 21 3 21 9"></polyline>
-                <line x1="10" y1="14" x2="21" y2="3"></line>
-              </svg>
-              Télécharger ou ouvrir dans un nouvel onglet
-            </a>
+            <h4>Impossible d'afficher l'image directement</h4>
+            <p>Le document est enregistré sous le nom : <strong>{{ extraireNomFichier(justificatifApercuUrl) }}</strong>.</p>
+            <div style="display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; justify-content: center;">
+              <button
+                type="button"
+                class="btn-ouvrir-onglet"
+                (click)="ouvrirEnPleinEcran()"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+                Ouvrir dans un nouvel onglet
+              </button>
+              <button
+                type="button"
+                class="btn-ouvrir-onglet"
+                (click)="telechargerFichier()"
+                style="background-color: #F7F3EA; color: #1F1F1F; border: 1px solid #d4cdc3;"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Télécharger
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Document non image preview -->
-        <ng-template #documentEmbed>
+        <!-- Aperçu Document non image (PDF / Bureautique) -->
+        <div class="preview-document-container" *ngIf="!justificatifEstImage && !chargementJustificatif">
+          <!-- Si le Blob a été généré avec succès depuis le backend -->
           <iframe
-            *ngIf="justificatifApercuUrlSanitized"
+            *ngIf="justificatifApercuUrlSanitized && !erreurChargementDocument"
             [src]="justificatifApercuUrlSanitized"
             class="justificatif-iframe"
             title="Aperçu du document officiel"
           ></iframe>
-        </ng-template>
+
+          <!-- Si le document physique n'est pas accessible directement -->
+          <div *ngIf="erreurChargementDocument || !justificatifApercuUrlSanitized" class="justificatif-fallback-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="52" height="52" style="color: #0F7A4B; margin-bottom: 14px;">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <line x1="10" y1="9" x2="8" y2="9"></line>
+            </svg>
+            <h4>{{ extraireNomFichier(justificatifApercuUrl) }}</h4>
+            <p>Document justificatif officiel associé à <strong>{{ membreSelectionne?.nom }}</strong>.</p>
+            <div style="display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; justify-content: center;">
+              <button
+                type="button"
+                class="btn-ouvrir-onglet"
+                (click)="ouvrirEnPleinEcran()"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+                Ouvrir dans un nouvel onglet
+              </button>
+              <button
+                type="button"
+                class="btn-ouvrir-onglet"
+                (click)="telechargerFichier()"
+                style="background-color: #F7F3EA; color: #1F1F1F; border: 1px solid #d4cdc3;"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Télécharger
+              </button>
+            </div>
+            <small style="margin-top: 14px; font-size: 11px; color: #9CA3AF;">
+              Emplacement : {{ extraireNomFichier(justificatifApercuUrl) }}
+            </small>
+          </div>
+        </div>
       </div>
 
       <!-- Pied de modal -->

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -71,7 +71,8 @@ export class DonsAdmin implements OnInit {
     private donService: DonService,
     private categorieDemandeService: CategorieDemandeService,
     private demandeService: demandeAideService,
-    private http: HttpClient
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -99,6 +100,7 @@ export class DonsAdmin implements OnInit {
             this.nouveauDon.categorie = cats[0].nom;
           }
         }
+        this.cdr.detectChanges();
       }
     });
   }
@@ -109,6 +111,7 @@ export class DonsAdmin implements OnInit {
         if (total !== null && total !== undefined) {
           this.totalMontantStat = total;
         }
+        this.cdr.detectChanges();
       }
     });
   }
@@ -120,9 +123,10 @@ export class DonsAdmin implements OnInit {
       donateurs: this.http.get<any[]>('http://localhost:8080/api/donateurs').pipe(catchError(() => of([]))),
       demandes: this.demandeService.getDemandes().pipe(catchError(() => of([]))),
       financiers: this.donService.getAllDonsFinanciers().pipe(catchError(() => of([]))),
+      materiels: this.donService.getAllDonsMateriels().pipe(catchError(() => of([]))),
       globaux: this.donService.getAllDons().pipe(catchError(() => of([])))
     }).subscribe({
-      next: ({ donateurs, demandes, financiers, globaux }) => {
+      next: ({ donateurs, demandes, financiers, materiels, globaux }) => {
         this.isLoading = false;
 
         // 1. Dictionnaires donateurs & demandes
@@ -142,6 +146,7 @@ export class DonsAdmin implements OnInit {
 
         const listeDons: DonItem[] = [];
         const seenFinancierIds = new Set<number>();
+        const seenMaterielIds = new Set<number>();
 
         // 2. Traitement des Dons Financiers
         (financiers || []).forEach((df: any) => {
@@ -189,10 +194,63 @@ export class DonsAdmin implements OnInit {
           });
         });
 
-        // 3. Traitement des Dons Matériels ou autres depuis les dons globaux
+        // 3. Traitement des Dons Matériels dédiés (/api/dons-materiels)
+        (materiels || []).forEach((dm: any) => {
+          if (dm && dm.id) {
+            seenMaterielIds.add(dm.id);
+          }
+
+          const nomDonateur = (dm.donateurId && donateurMap.has(dm.donateurId))
+            ? donateurMap.get(dm.donateurId)!
+            : (dm.nomDonateur || (dm.anonyme ? 'Donateur anonyme' : 'Bienfaiteur Dèmè'));
+
+          const statut = (dm.statut === 'VALIDEE' || dm.statut === 'RECUE' || dm.statut === 'Terminé' || dm.statutReception === 'CONFIRME')
+            ? 'Terminé'
+            : (dm.statut === 'REFUSEE' ? 'Refusé' : 'En attente');
+
+          let categorieNom = 'Alimentation';
+          let titreDemande = dm.titreDemandeAide || 'Don direct';
+
+          if (dm.demandeAideId && demandeMap.has(dm.demandeAideId)) {
+            const dem = demandeMap.get(dm.demandeAideId)!;
+            categorieNom = dem.categorieDemandeNom || categorieNom;
+            titreDemande = dem.titre || titreDemande;
+          } else if (dm.categorie) {
+            categorieNom = dm.categorie;
+          }
+
+          const designationPropre = (dm.designation || 'Don matériel').replace(/lot\(s\)/gi, '').replace(/\blots?\b/gi, '').trim() || 'Don matériel';
+          const unitePropre = (dm.unite && !dm.unite.toLowerCase().includes('lot')) ? ` ${dm.unite}` : '';
+          const quantitePropre = dm.quantite ? `${dm.quantite}` : '1';
+          const montantAffiche = `${quantitePropre}${unitePropre} • ${designationPropre}`;
+
+          listeDons.push({
+            id: 'DON-MAT-' + String(dm.id).padStart(3, '0'),
+            rawId: dm.id,
+            typeDon: 'MATERIEL',
+            donateur: nomDonateur,
+            montant: montantAffiche,
+            montantValue: 0,
+            quantite: dm.quantite || 1,
+            unite: (dm.unite && !dm.unite.toLowerCase().includes('lot')) ? dm.unite : '',
+            designation: designationPropre,
+            categorie: categorieNom,
+            demandeAideId: dm.demandeAideId || null,
+            titreDemandeAide: titreDemande,
+            mode: dm.adresseLivraison || 'Dépôt Siège',
+            statut: statut,
+            statutClass: statut === 'Terminé' ? 'status-termine' : (statut === 'Refusé' ? 'status-refuse' : 'status-attente'),
+            date: dm.dateDon ? new Date(dm.dateDon).toLocaleDateString('fr-FR') : 'Aujourd\'hui'
+          });
+        });
+
+        // 4. Traitement des Dons depuis les dons globaux (/api/dons)
         (globaux || []).forEach((g: any) => {
           if (g.typeDon === 'FINANCIER' && seenFinancierIds.has(g.id)) {
-            return; // Déjà traité avec les détails financiers complets
+            return; // Déjà traité
+          }
+          if (g.typeDon === 'MATERIEL' && seenMaterielIds.has(g.id)) {
+            return; // Déjà traité
           }
 
           const isMateriel = g.typeDon === 'MATERIEL' || g.quantite || g.designation;
@@ -215,8 +273,11 @@ export class DonsAdmin implements OnInit {
             categorieNom = g.categorie;
           }
 
+          const designationPropre = (g.designation || 'Don matériel').replace(/lot\(s\)/gi, '').replace(/\blots?\b/gi, '').trim() || 'Don matériel';
+          const unitePropre = (g.unite && !g.unite.toLowerCase().includes('lot')) ? ` ${g.unite}` : '';
+          const quantitePropre = g.quantite ? `${g.quantite}` : '1';
           const montantAffiche = isMateriel
-            ? `${g.quantite || 1} ${g.unite || 'lot(s)'} (${g.designation || 'Don matériel'})`
+            ? `${quantitePropre}${unitePropre} • ${designationPropre}`
             : `${(g.montant || 0).toLocaleString('fr-FR')} FCFA`;
 
           listeDons.push({
@@ -227,8 +288,8 @@ export class DonsAdmin implements OnInit {
             montant: montantAffiche,
             montantValue: isMateriel ? 0 : (g.montant || 0),
             quantite: g.quantite || 1,
-            unite: g.unite || 'lot(s)',
-            designation: g.designation || (isMateriel ? 'Matériel de secours' : ''),
+            unite: (g.unite && !g.unite.toLowerCase().includes('lot')) ? g.unite : '',
+            designation: designationPropre,
             categorie: categorieNom,
             demandeAideId: g.demandeAideId || null,
             titreDemandeAide: titreDemande,
@@ -239,53 +300,16 @@ export class DonsAdmin implements OnInit {
           });
         });
 
-        // Don d'exemple matériel si la liste matérielle est vide afin d'illustrer la cohérence
-        const materielsCount = listeDons.filter(d => d.typeDon === 'MATERIEL').length;
-        if (materielsCount === 0) {
-          listeDons.push({
-            id: 'DON-MAT-001',
-            rawId: 101,
-            typeDon: 'MATERIEL',
-            donateur: 'Fondation Solidarité Mali',
-            montant: '25 Sacs de riz (50kg)',
-            quantite: 25,
-            unite: 'sacs',
-            designation: 'Sacs de riz 50kg',
-            categorie: 'Alimentation',
-            demandeAideId: 15,
-            titreDemandeAide: 'Distribution de vivres réfugiés',
-            mode: 'Livraison Directe Siège',
-            statut: 'Terminé',
-            statutClass: 'status-termine',
-            date: new Date().toLocaleDateString('fr-FR')
-          });
-          listeDons.push({
-            id: 'DON-MAT-002',
-            rawId: 102,
-            typeDon: 'MATERIEL',
-            donateur: 'Collectif Santé Plus',
-            montant: '5 Cartons de matériel médical',
-            quantite: 5,
-            unite: 'cartons',
-            designation: 'Kits premiers secours & compresses',
-            categorie: 'Santé',
-            demandeAideId: null,
-            titreDemandeAide: 'Aide dispensaires ruraux',
-            mode: 'Dépôt Siège Bamako',
-            statut: 'En attente',
-            statutClass: 'status-attente',
-            date: new Date().toLocaleDateString('fr-FR')
-          });
-        }
-
         this.dons = listeDons;
         this.nombreDonsFinanciers = this.dons.filter(d => d.typeDon === 'FINANCIER').length;
         this.nombreDonsMateriels = this.dons.filter(d => d.typeDon === 'MATERIEL').length;
+        this.cdr.detectChanges();
       },
       error: (err: any) => {
         this.isLoading = false;
         this.dons = [];
         console.warn('Erreur chargement des dons depuis le backend', err);
+        this.cdr.detectChanges();
       }
     });
   }
@@ -474,7 +498,7 @@ export class DonsAdmin implements OnInit {
       const dto = {
         designation: this.nouveauDon.montant.trim(),
         quantite: 1,
-        unite: 'lot',
+        unite: 'unité',
         etatMateriel: 'BON_ETAT',
         anonyme: false,
         nomDonateur: this.nouveauDon.donateur.trim()

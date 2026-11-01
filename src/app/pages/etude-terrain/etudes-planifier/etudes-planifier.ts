@@ -56,10 +56,14 @@ export class EtudesPlanifier implements OnInit {
       this.route.snapshot.queryParamMap.get('demandeId')
     );
 
-    if (
-      !utilisateur ||
-      utilisateur.role !== 'ORGANISATIONPARTENAIRE'
-    ) {
+    const rawRole = (this.authService.getRole() || (utilisateur as any)?.role || '')
+      .toUpperCase()
+      .replace('ROLE_', '')
+      .replace(/_/g, '')
+      .trim();
+    const estOrganisation = rawRole === 'ORGANISATIONPARTENAIRE' || rawRole.includes('ORGANISATION');
+
+    if (!utilisateur || !estOrganisation) {
       this.erreurChargement =
         'Organisation connectée introuvable.';
       this.chargement = false;

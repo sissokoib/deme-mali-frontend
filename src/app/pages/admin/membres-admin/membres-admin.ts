@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { MatIconModule } from '@angular/material/icon';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { BeneficiaireService } from '../../../services/beneficiaire';
@@ -85,14 +86,19 @@ export class MembresAdmin implements OnInit {
   // Modal d'aperçu du justificatif officiel
   isJustificatifModalOpen = false;
   justificatifApercuUrl = '';
+  justificatifBlobUrl = '';
   justificatifEstImage = false;
+  justificatifEstPdf = false;
   justificatifApercuUrlSanitized: SafeResourceUrl | null = null;
   imageErreurChargement = false;
+  chargementJustificatif = false;
+  erreurChargementDocument = false;
 
   notificationMessage = '';
   membres: MembreItem[] = [];
 
   private sanitizer = inject(DomSanitizer);
+  private http = inject(HttpClient);
 
   constructor(
     private beneficiaireService: BeneficiaireService,
@@ -233,7 +239,7 @@ export class MembresAdmin implements OnInit {
             responsableTelephone: org.telephone,
             telephoneOrganisation: org.telephoneOrganisation,
             nif: org.nif,
-            documentJustificatif: org.documentJustificatif,
+            documentJustificatif: org.documentJustificatif || (org as any).justificatif || (org as any).fichier || (org as any).agrement || (org as any).document,
             description: org.description
           };
         });
@@ -547,15 +553,42 @@ export class MembresAdmin implements OnInit {
     return nom || 'Document justificatif';
   }
 
-  // URL absolue vers le fichier sur le backend
-  obtenirUrlJustificatif(chemin: string | undefined): string {
-    if (!chemin) return '';
+  // Générer la liste ordonnée des URLs candidates où le justificatif peut se trouver sur le backend
+  obtenirCandidatsUrl(chemin: string | undefined): string[] {
+    if (!chemin) return [];
     if (chemin.startsWith('http://') || chemin.startsWith('https://')) {
-      return chemin;
+      return [chemin];
     }
-    const nomFichier = chemin.split(/[\\/]/).pop();
-    if (!nomFichier) return '';
-    return `http://localhost:8080/uploads/justificatifs/${encodeURIComponent(nomFichier)}`;
+    const clean = chemin.replace(/\\/g, '/').replace(/^\/+/, '');
+    const nomFichier = clean.split('/').pop() || clean;
+    const encoded = encodeURIComponent(nomFichier);
+
+    const candidates: string[] = [];
+    if (clean.startsWith('uploads/')) {
+      candidates.push(`http://localhost:8080/${clean}`);
+    }
+
+    // Si le membre sélectionné est une organisation partenaire, son fichier est dans uploads/organisations/
+    if (this.membreSelectionne?.categorieMembre === 'ORGANISATION') {
+      candidates.push(`http://localhost:8080/uploads/organisations/${encoded}`);
+      candidates.push(`http://localhost:8080/uploads/${encoded}`);
+      candidates.push(`http://localhost:8080/uploads/justificatifs/${encoded}`);
+      candidates.push(`http://localhost:8080/uploads/documents/${encoded}`);
+    } else {
+      candidates.push(`http://localhost:8080/uploads/justificatifs/${encoded}`);
+      candidates.push(`http://localhost:8080/uploads/structures/${encoded}`);
+      candidates.push(`http://localhost:8080/uploads/beneficiaires/${encoded}`);
+      candidates.push(`http://localhost:8080/uploads/${encoded}`);
+      candidates.push(`http://localhost:8080/uploads/documents/${encoded}`);
+      candidates.push(`http://localhost:8080/uploads/organisations/${encoded}`);
+    }
+    return Array.from(new Set(candidates));
+  }
+
+  // URL principale vers le justificatif
+  obtenirUrlJustificatif(chemin: string | undefined): string {
+    const candidates = this.obtenirCandidatsUrl(chemin);
+    return candidates.length > 0 ? candidates[0] : '';
   }
 
   // Vérifier si le fichier est un format image
@@ -564,29 +597,119 @@ export class MembresAdmin implements OnInit {
     return /\.(jpg|jpeg|png|gif|webp|svg|bmp)$/i.test(chemin);
   }
 
+  // Vérifier si le fichier est un PDF
+  estPdf(chemin: string | undefined): boolean {
+    if (!chemin) return false;
+    return /\.pdf$/i.test(chemin);
+  }
+
   // Ouvrir la fenêtre d'aperçu du justificatif
   ouvrirJustificatif(chemin: string | undefined) {
     if (!chemin) return;
-    const url = this.obtenirUrlJustificatif(chemin);
-    this.justificatifApercuUrl = url;
-    this.justificatifEstImage = this.estImage(chemin);
-    this.justificatifApercuUrlSanitized = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+
+    if (this.justificatifBlobUrl) {
+      URL.revokeObjectURL(this.justificatifBlobUrl);
+      this.justificatifBlobUrl = '';
+    }
+
     this.imageErreurChargement = false;
+    this.erreurChargementDocument = false;
+    this.chargementJustificatif = true;
+    this.justificatifEstImage = this.estImage(chemin);
+    this.justificatifEstPdf = this.estPdf(chemin);
+
+    const candidates = this.obtenirCandidatsUrl(chemin);
+    this.justificatifApercuUrl = candidates[0] || '';
+    this.justificatifApercuUrlSanitized = null;
     this.isJustificatifModalOpen = true;
     this.cdr.detectChanges();
+
+    if (this.justificatifEstImage) {
+      this.chargementJustificatif = false;
+      this.justificatifApercuUrlSanitized = this.sanitizer.bypassSecurityTrustResourceUrl(this.justificatifApercuUrl);
+      this.cdr.detectChanges();
+      return;
+    }
+
+    // Pour les documents (PDF) : on télécharge les octets en Blob via HttpClient.
+    // Cela résout le problème "localhost a refusé de se connecter" dans l'iframe,
+    // car le blob:http://localhost:4200/... est du même domaine que l'application Angular
+    // et contourne ainsi les blocages X-Frame-Options/CORS entre localhost:4200 et localhost:8080 !
+    this.chargerDocumentBlob(candidates, 0);
+  }
+
+  private chargerDocumentBlob(candidates: string[], index: number) {
+    if (index >= candidates.length) {
+      this.chargementJustificatif = false;
+      this.erreurChargementDocument = true;
+      this.cdr.detectChanges();
+      return;
+    }
+
+    const url = candidates[index];
+    this.justificatifApercuUrl = url;
+
+    this.http.get(url, { responseType: 'blob' }).subscribe({
+      next: (blob) => {
+        this.justificatifBlobUrl = URL.createObjectURL(blob);
+        this.justificatifApercuUrlSanitized = this.sanitizer.bypassSecurityTrustResourceUrl(this.justificatifBlobUrl);
+        this.chargementJustificatif = false;
+        this.erreurChargementDocument = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.warn(`Tentative de chargement du document sur ${url} échouée`, err);
+        // Tenter l'URL candidate suivante
+        this.chargerDocumentBlob(candidates, index + 1);
+      }
+    });
   }
 
   // Fermer la fenêtre d'aperçu
   fermerJustificatifModal() {
     this.isJustificatifModalOpen = false;
+    if (this.justificatifBlobUrl) {
+      URL.revokeObjectURL(this.justificatifBlobUrl);
+      this.justificatifBlobUrl = '';
+    }
     this.justificatifApercuUrl = '';
     this.justificatifApercuUrlSanitized = null;
     this.imageErreurChargement = false;
+    this.erreurChargementDocument = false;
+    this.chargementJustificatif = false;
     this.cdr.detectChanges();
+  }
+
+  ouvrirEnPleinEcran() {
+    const url = this.justificatifBlobUrl || this.justificatifApercuUrl;
+    if (url) {
+      window.open(url, '_blank');
+    }
+  }
+
+  telechargerFichier() {
+    const url = this.justificatifBlobUrl || this.justificatifApercuUrl;
+    if (!url) return;
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = this.extraireNomFichier(this.justificatifApercuUrl) || 'justificatif';
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 
   surErreurChargementImage(event: any) {
     console.warn('Erreur chargement image justificatif', event);
+    const nomFichier = this.extraireNomFichier(this.justificatifApercuUrl);
+    const candidates = this.obtenirCandidatsUrl(nomFichier);
+    const currentIndex = candidates.indexOf(this.justificatifApercuUrl);
+    if (currentIndex >= 0 && currentIndex < candidates.length - 1) {
+      this.justificatifApercuUrl = candidates[currentIndex + 1];
+      this.justificatifApercuUrlSanitized = this.sanitizer.bypassSecurityTrustResourceUrl(this.justificatifApercuUrl);
+      this.cdr.detectChanges();
+      return;
+    }
     this.imageErreurChargement = true;
     this.cdr.detectChanges();
   }

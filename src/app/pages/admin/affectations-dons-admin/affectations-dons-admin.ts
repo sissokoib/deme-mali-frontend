@@ -128,6 +128,12 @@ export class AffectationsDonsAdmin implements OnInit {
           return of([] as DonMateriel[]);
         })
       ),
+      globaux: this.donService.getAllDons().pipe(
+        catchError(err => {
+          console.warn('Erreur chargement dons globaux', err);
+          return of([] as any[]);
+        })
+      ),
       orgs: this.organisationService.getAllOrganisations().pipe(
         catchError(err => {
           console.warn('Erreur chargement organisations partenaires', err);
@@ -136,9 +142,33 @@ export class AffectationsDonsAdmin implements OnInit {
       )
     }).subscribe({
       next: (res) => {
-        this.attributions = res.attributions || [];
-        this.financieres = this.attributions.filter(a => a.donFinancierId != null);
-        this.materielles = this.attributions.filter(a => a.donMaterielId != null);
+        // Parsing robuste des attributions
+        this.attributions = (res.attributions || []).map((a: any) => {
+          const donFinId = a.donFinancierId ?? a.donFinancier?.id ?? (a.typeDon === 'FINANCIER' || a.montantAttribue != null || a.montant != null ? (a.donId ?? a.don?.id) : null);
+          const donMatId = a.donMaterielId ?? a.donMateriel?.id ?? (a.typeDon === 'MATERIEL' || a.quantiteAttribuee != null || a.quantite != null ? (a.donId ?? a.don?.id) : null);
+          const mnt = a.montantAttribue ?? a.montant ?? null;
+          const qte = a.quantiteAttribuee ?? a.quantite ?? null;
+          const orgId = a.organisationPartenaireId ?? a.organisationId ?? a.organisationPartenaire?.id ?? null;
+          const orgNom = a.nomOrganisation || a.organisationPartenaireNom || a.organisationPartenaire?.nomOrganisation || (orgId ? `Organisation ${orgId}` : 'Organisation Partenaire');
+
+          return {
+            ...a,
+            id: a.id,
+            donFinancierId: donFinId,
+            donMaterielId: donMatId,
+            montantAttribue: mnt != null ? Number(mnt) : null,
+            quantiteAttribuee: qte != null ? Number(qte) : null,
+            organisationPartenaireId: orgId,
+            nomOrganisation: orgNom,
+            designation: a.designation || a.donMateriel?.designation || 'Don matériel',
+            unite: (a.unite && !a.unite.toLowerCase().includes('lot')) ? a.unite : 'unités',
+            scorePriorite: a.scorePriorite ?? null,
+            dateAttribution: a.dateAttribution || ''
+          };
+        });
+
+        this.financieres = this.attributions.filter(a => a.donFinancierId != null || (a.montantAttribue != null && a.donMaterielId == null));
+        this.materielles = this.attributions.filter(a => a.donMaterielId != null || (a.quantiteAttribuee != null && a.donFinancierId == null));
 
         // Ne garder que les organisations partenaires validées
         this.organisations = (res.orgs || []).filter(o =>
@@ -153,40 +183,108 @@ export class AffectationsDonsAdmin implements OnInit {
         this.attributions.forEach(a => {
           if (a.donFinancierId != null && a.montantAttribue != null) {
             const actuel = totalAttribueParFinancier.get(a.donFinancierId) || 0;
-            totalAttribueParFinancier.set(a.donFinancierId, actuel + a.montantAttribue);
+            totalAttribueParFinancier.set(a.donFinancierId, actuel + Number(a.montantAttribue));
           }
           if (a.donMaterielId != null && a.quantiteAttribuee != null) {
             const actuel = totalAttribueParMateriel.get(a.donMaterielId) || 0;
-            totalAttribueParMateriel.set(a.donMaterielId, actuel + a.quantiteAttribuee);
+            totalAttribueParMateriel.set(a.donMaterielId, actuel + Number(a.quantiteAttribuee));
           }
         });
 
-        // Filtrer les dons financiers spontanés (non liés à une demande d'aide)
-        this.donsFinanciersSpontanes = (res.financiers || [])
-          .filter(d => d.demandeAideId == null)
+        // Détection stricte des dons liés à une demande d'aide
+        const estLieADemande = (d: any): boolean => {
+          if (d.demandeAideId != null && d.demandeAideId !== 0) return true;
+          if (d.demandeAide != null) return true;
+          if (d.demande != null) return true;
+          if (d.demandeId != null && d.demandeId !== 0) return true;
+          if (d.titreDemandeAide &&
+              d.titreDemandeAide !== 'Don direct' &&
+              d.titreDemandeAide !== 'Aide solidaire' &&
+              !d.titreDemandeAide.toLowerCase().includes('libre') &&
+              !d.titreDemandeAide.toLowerCase().includes('direct')) {
+            return true;
+          }
+          return false;
+        };
+
+        // 1. Dons financiers spontanés (strictement non liés à une demande d'aide)
+        const tousFinanciers = [...(res.financiers || [])];
+        const seenFinIds = new Set(tousFinanciers.map(f => f.id));
+        (res.globaux || []).forEach((g: any) => {
+          if ((g.typeDon === 'FINANCIER' || (!g.typeDon && g.montant)) && !seenFinIds.has(g.id)) {
+            tousFinanciers.push({
+              id: g.id,
+              montant: g.montant || 0,
+              modePaiement: g.modePaiement || 'Orange Money',
+              dateDon: g.dateDon || '',
+              anonyme: !!g.anonyme,
+              typeDon: 'FINANCIER',
+              statut: g.statut || 'Terminé',
+              donateurId: g.donateurId || null,
+              demandeAideId: g.demandeAideId || g.demandeAide?.id || g.demande?.id || null,
+              titreDemandeAide: g.titreDemandeAide || g.demandeAide?.titre || g.demande?.titre || null
+            });
+            seenFinIds.add(g.id);
+          }
+        });
+
+        // Retirer complètement les dons déjà attribués (ne garder que ceux dont le solde restant > 0)
+        this.donsFinanciersSpontanes = tousFinanciers
+          .filter(d => !estLieADemande(d))
           .map(d => {
             const deja = totalAttribueParFinancier.get(d.id) || 0;
-            const restant = Math.max(0, (d.montant || 0) - deja);
+            const montantInitial = Number(d.montant) || 0;
+            const restant = Math.max(0, montantInitial - deja);
             return {
               ...d,
+              montant: montantInitial,
               totalAttribue: deja,
               montantRestant: restant
             };
-          });
+          })
+          .filter(d => d.montantRestant > 0);
 
-        // Filtrer les dons matériels spontanés (non liés à une demande d'aide)
-        this.donsMaterielsSpontanes = (res.materiels || [])
-          .filter(d => d.demandeAideId == null)
+        // 2. Dons matériels spontanés (strictement non liés à une demande d'aide)
+        const tousMateriels = [...(res.materiels || [])];
+        const seenMatIds = new Set(tousMateriels.map(m => m.id));
+        (res.globaux || []).forEach((g: any) => {
+          if (g.typeDon === 'MATERIEL' && !seenMatIds.has(g.id)) {
+            tousMateriels.push({
+              id: g.id,
+              designation: g.designation || 'Don matériel',
+              quantite: g.quantite || 1,
+              unite: (g.unite && !g.unite.toLowerCase().includes('lot')) ? g.unite : 'unités',
+              etatMateriel: 'BON',
+              statutReception: g.statut || 'RECUE',
+              quantiteRecue: g.quantite || 1,
+              adresseLivraison: g.adresseLivraison || 'Dépôt Siège',
+              dateDon: g.dateDon || '',
+              anonyme: !!g.anonyme,
+              donateurId: g.donateurId || null,
+              demandeAideId: g.demandeAideId || g.demandeAide?.id || g.demande?.id || null,
+              titreDemandeAide: g.titreDemandeAide || g.demandeAide?.titre || g.demande?.titre || null
+            });
+            seenMatIds.add(g.id);
+          }
+        });
+
+        // Retirer complètement les dons matériels déjà attribués (ne garder que stock restant > 0)
+        this.donsMaterielsSpontanes = tousMateriels
+          .filter(d => !estLieADemande(d))
           .map(d => {
-            const qteInitiale = d.quantiteRecue != null && d.quantiteRecue > 0 ? d.quantiteRecue : (d.quantite || 0);
+            const qteInitiale = Number(d.quantiteRecue != null && d.quantiteRecue > 0 ? d.quantiteRecue : (d.quantite || 0));
             const deja = totalAttribueParMateriel.get(d.id) || 0;
             const restant = Math.max(0, qteInitiale - deja);
+            const unitePropre = (d.unite && !d.unite.toLowerCase().includes('lot')) ? d.unite : 'unités';
             return {
               ...d,
+              quantite: qteInitiale,
+              unite: unitePropre,
               totalAttribue: deja,
               quantiteRestante: restant
             };
-          });
+          })
+          .filter(d => d.quantiteRestante > 0);
 
         this.chargement = false;
         this.cdr.detectChanges();
@@ -315,17 +413,24 @@ export class AffectationsDonsAdmin implements OnInit {
     if (preselectedDonId != null) {
       if (this.typeDonAAttribuer === 'FINANCIER') {
         this.donFinancierSelectionneId = preselectedDonId;
-        const d = this.donFinancierSelectionne;
-        if (d) this.montantAAttribuer = d.montantRestant;
       } else {
         this.donMaterielSelectionneId = preselectedDonId;
-        const d = this.donMaterielSelectionne;
-        if (d) this.quantiteAAttribuer = d.quantiteRestante;
       }
-      this.rechercherOrganisationPrioritaire();
+    } else {
+      // Pré-sélectionner automatiquement le premier don libre disponible
+      if (this.typeDonAAttribuer === 'FINANCIER' && this.donsFinanciersSpontanes.length > 0) {
+        this.donFinancierSelectionneId = this.donsFinanciersSpontanes[0].id;
+      } else if (this.typeDonAAttribuer === 'MATERIEL' && this.donsMaterielsSpontanes.length > 0) {
+        this.donMaterielSelectionneId = this.donsMaterielsSpontanes[0].id;
+      }
+    }
+
+    if (this.donFinancierSelectionneId != null || this.donMaterielSelectionneId != null) {
+      this.onDonSelectionChange();
     }
 
     this.isModalAffectationOpen = true;
+    this.cdr.detectChanges();
   }
 
   fermerModalAffectation(): void {
@@ -342,6 +447,15 @@ export class AffectationsDonsAdmin implements OnInit {
       this.quantiteAAttribuer = null;
       this.organisationRecommandee = null;
       this.erreurRecommandation = '';
+
+      // Pré-sélectionner le premier don disponible du type sélectionné
+      if (type === 'FINANCIER' && this.donsFinanciersSpontanes.length > 0) {
+        this.donFinancierSelectionneId = this.donsFinanciersSpontanes[0].id;
+        this.onDonSelectionChange();
+      } else if (type === 'MATERIEL' && this.donsMaterielsSpontanes.length > 0) {
+        this.donMaterielSelectionneId = this.donsMaterielsSpontanes[0].id;
+        this.onDonSelectionChange();
+      }
     }
   }
 
@@ -351,6 +465,24 @@ export class AffectationsDonsAdmin implements OnInit {
 
   get donMaterielSelectionne(): DonMaterielSpontane | undefined {
     return this.donsMaterielsSpontanes.find(d => d.id === this.donMaterielSelectionneId);
+  }
+
+  // Liste ordonnée selon l'algorithme de priorité du backend (Priorité N°1 en tête)
+  get organisationsTrieesParPriorite(): (OrganisationPartenaireResponseDTO & { estPrioritaire?: boolean; score?: number })[] {
+    if (!this.organisations || this.organisations.length === 0) return [];
+
+    const prioriteId = this.organisationRecommandee?.organisationPartenaireId;
+    const score = this.organisationRecommandee?.scorePriorite;
+
+    return [...this.organisations].sort((a, b) => {
+      if (a.id === prioriteId) return -1;
+      if (b.id === prioriteId) return 1;
+      return (a.nomOrganisation || '').localeCompare(b.nomOrganisation || '');
+    }).map(org => ({
+      ...org,
+      estPrioritaire: org.id === prioriteId,
+      score: org.id === prioriteId ? score : undefined
+    }));
   }
 
   onDonSelectionChange(): void {
@@ -376,7 +508,7 @@ export class AffectationsDonsAdmin implements OnInit {
     this.rechercherOrganisationPrioritaire();
   }
 
-  // Recommandation intelligente de l'organisation prioritaire par le backend
+  // Algorithme de priorisation du backend : trouve l'organisation partenaire ayant le meilleur score
   rechercherOrganisationPrioritaire(): void {
     const finId = this.typeDonAAttribuer === 'FINANCIER' ? this.donFinancierSelectionneId : null;
     const matId = this.typeDonAAttribuer === 'MATERIEL' ? this.donMaterielSelectionneId : null;
@@ -393,6 +525,7 @@ export class AffectationsDonsAdmin implements OnInit {
         this.isFetchingPriority = false;
         this.organisationRecommandee = recommandation;
         if (recommandation && recommandation.organisationPartenaireId) {
+          // Présélection automatique de l'organisation prioritaire déterminée par le backend
           this.organisationId = recommandation.organisationPartenaireId;
         }
         this.cdr.detectChanges();
@@ -425,10 +558,10 @@ export class AffectationsDonsAdmin implements OnInit {
     const adminUser = this.authService.getCurrentUser();
     const adminId = adminUser?.id || 1;
 
-    // Validation Don Financier
+    // 1. Validation Don Financier
     if (this.typeDonAAttribuer === 'FINANCIER') {
       if (!this.donFinancierSelectionneId) {
-        this.afficherNotification('Veuillez sélectionner un don financier spontané.', 'error');
+        this.afficherNotification('Veuillez sélectionner un don financier libre disponible.', 'error');
         return;
       }
       const don = this.donFinancierSelectionne;
@@ -436,20 +569,24 @@ export class AffectationsDonsAdmin implements OnInit {
         this.afficherNotification('Don financier introuvable.', 'error');
         return;
       }
-      if (!this.montantAAttribuer || this.montantAAttribuer <= 0) {
+      const montantSaisi = Number(this.montantAAttribuer);
+      if (isNaN(montantSaisi) || montantSaisi <= 0) {
         this.afficherNotification('Le montant à attribuer doit être supérieur à zéro.', 'error');
         return;
       }
-      if (this.montantAAttribuer > don.montantRestant) {
-        this.afficherNotification(`Le montant ne peut pas dépasser le solde disponible (${don.montantRestant} FCFA).`, 'error');
+      if (montantSaisi > don.montantRestant) {
+        this.afficherNotification(
+          `Le montant demandé (${montantSaisi.toLocaleString('fr-FR')} FCFA) dépasse le solde disponible de ce don (${don.montantRestant.toLocaleString('fr-FR')} FCFA).`,
+          'error'
+        );
         return;
       }
     }
 
-    // Validation Don Matériel
+    // 2. Validation Don Matériel
     if (this.typeDonAAttribuer === 'MATERIEL') {
       if (!this.donMaterielSelectionneId) {
-        this.afficherNotification('Veuillez sélectionner un don matériel spontané.', 'error');
+        this.afficherNotification('Veuillez sélectionner un don matériel libre disponible.', 'error');
         return;
       }
       const don = this.donMaterielSelectionne;
@@ -457,48 +594,54 @@ export class AffectationsDonsAdmin implements OnInit {
         this.afficherNotification('Don matériel introuvable.', 'error');
         return;
       }
-      if (!this.quantiteAAttribuer || this.quantiteAAttribuer <= 0) {
+      const qteSaisie = Number(this.quantiteAAttribuer);
+      if (isNaN(qteSaisie) || qteSaisie <= 0) {
         this.afficherNotification('La quantité à attribuer doit être supérieure à zéro.', 'error');
         return;
       }
-      if (this.quantiteAAttribuer > don.quantiteRestante) {
-        this.afficherNotification(`La quantité ne peut pas dépasser le stock disponible (${don.quantiteRestante} ${don.unite || ''}).`, 'error');
+      if (qteSaisie > don.quantiteRestante) {
+        this.afficherNotification(
+          `La quantité demandée (${qteSaisie}) dépasse le stock disponible (${don.quantiteRestante} ${don.unite || 'unités'}).`,
+          'error'
+        );
         return;
       }
     }
 
-    // Validation Organisation
+    // 3. Validation Organisation
     if (!this.organisationId) {
-      this.afficherNotification('Veuillez choisir une organisation partenaire de destination.', 'error');
+      this.afficherNotification('Veuillez sélectionner une organisation partenaire attributaire.', 'error');
       return;
     }
 
+    // 4. Règle stricte du backend : L'organisation choisie DOIT être l'organisation prioritaire
     if (this.organisationRecommandee && this.organisationId !== this.organisationRecommandee.organisationPartenaireId) {
       this.afficherNotification(
-        `Selon la règle d'attribution du système, vous devez choisir l'organisation prioritaire recommandée : ${this.organisationRecommandee.nomOrganisation}.`,
+        `Vous devez choisir l'organisation prioritaire (${this.organisationRecommandee.nomOrganisation}) selon les règles du système.`,
         'error'
       );
+      this.organisationId = this.organisationRecommandee.organisationPartenaireId;
       return;
     }
 
     const dto: AttributionDonLibreRequest = {
-      donFinancierId: this.typeDonAAttribuer === 'FINANCIER' ? this.donFinancierSelectionneId : null,
-      donMaterielId: this.typeDonAAttribuer === 'MATERIEL' ? this.donMaterielSelectionneId : null,
-      montantAttribue: this.typeDonAAttribuer === 'FINANCIER' ? this.montantAAttribuer : null,
-      quantiteAttribuee: this.typeDonAAttribuer === 'MATERIEL' ? this.quantiteAAttribuer : null,
-      organisationPartenaireId: this.organisationId
+      donFinancierId: this.typeDonAAttribuer === 'FINANCIER' ? Number(this.donFinancierSelectionneId) : null,
+      donMaterielId: this.typeDonAAttribuer === 'MATERIEL' ? Number(this.donMaterielSelectionneId) : null,
+      montantAttribue: this.typeDonAAttribuer === 'FINANCIER' ? Number(this.montantAAttribuer) : null,
+      quantiteAttribuee: this.typeDonAAttribuer === 'MATERIEL' ? Math.floor(Number(this.quantiteAAttribuer)) : null,
+      organisationPartenaireId: Number(this.organisationId)
     };
 
     this.isSubmitting = true;
 
-    this.attributionService.attribuer(dto, adminId).subscribe({
+    this.attributionService.attribuer(dto, Number(adminId)).subscribe({
       next: (nouvelleAttribution) => {
         this.isSubmitting = false;
         this.fermerModalAffectation();
 
-        const orgNom = nouvelleAttribution.nomOrganisation || 'l\'organisation partenaire';
+        const orgNom = nouvelleAttribution.nomOrganisation || this.organisationRecommandee?.nomOrganisation || 'l\'organisation partenaire';
         const msg = this.typeDonAAttribuer === 'FINANCIER'
-          ? `Attribution financière de ${this.montantAAttribuer?.toLocaleString()} FCFA enregistrée avec succès pour ${orgNom}.`
+          ? `Attribution financière de ${Number(this.montantAAttribuer).toLocaleString('fr-FR')} FCFA enregistrée avec succès pour ${orgNom}.`
           : `Attribution matérielle de ${this.quantiteAAttribuer} ${nouvelleAttribution.unite || 'unités'} enregistrée avec succès pour ${orgNom}.`;
 
         this.afficherNotification(msg, 'success');
@@ -507,7 +650,7 @@ export class AffectationsDonsAdmin implements OnInit {
       error: (err) => {
         this.isSubmitting = false;
         console.error('Erreur lors de l\'attribution du don libre', err);
-        const detail = err.error?.message || err.error?.detail || err.error || '';
+        const detail = err.error?.message || err.error?.detail || (typeof err.error === 'string' ? err.error : '') || err.message || '';
         const msg = typeof detail === 'string' && detail.length > 0
           ? detail
           : 'Une erreur est survenue lors de l\'enregistrement de l\'attribution.';
