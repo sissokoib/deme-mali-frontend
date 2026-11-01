@@ -1,3 +1,5 @@
+/* Styles spécifiques pour le topbar de l'interface Organisation - Charte Dèmè Mali */
+
 :host {
   display: block;
   position: sticky;
@@ -34,3 +36,49 @@
   color: #0B633D;
 }
 
+.notif-count {
+  background-color: #D97706;
+  color: #FFFFFF;
+  border-color: #FFFFFF;
+}
+
+.topbar-date {
+  background-color: #E2F2E9;
+  color: #0F7A4B;
+}
+
+.user-btn:hover svg {
+  color: #0F7A4B;
+}
+
+.dropdown-item svg {
+  color: #0F7A4B;
+  transition: transform 0.15s ease;
+}
+
+.dropdown-item:hover svg {
+  color: #0B633D;
+  transform: translateX(2px);
+}
+
+.dropdown-item.text-danger svg {
+  color: #DC2626;
+}
+
+.dropdown-item.text-danger:hover svg {
+  color: #B91C1C;
+}
+
+.notif-icon.tone-info {
+  background: #E2F2E9;
+  color: #0F7A4B;
+}
+
+.notif-icon.tone-warning {
+  background: #FFF9E6;
+  color: #D97706;
+}
+
+.notif.is-unread::after {
+  background: #0F7A4B;
+}
