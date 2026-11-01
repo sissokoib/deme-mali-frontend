@@ -107,7 +107,7 @@ export class PartenairesAdmin implements OnInit {
               nif: org.nif,
               adresse: org.adresse,
               ville: org.ville || 'Bamako',
-              documentJustificatif: org.documentJustificatif,
+              documentJustificatif: org.documentJustificatif || (org as any).justificatif || (org as any).fichier || (org as any).agrement || (org as any).document || (org as any).accordCadre,
               rawStatutValidation: org.statutValidation,
               description: org.description
             };
@@ -264,6 +264,38 @@ export class PartenairesAdmin implements OnInit {
 
   fermerDetails() {
     this.partenaireSelectionne = null;
+  }
+
+  extraireNomFichier(chemin: string | undefined): string {
+    if (!chemin) return 'Document justificatif';
+    return chemin.split(/[\\/]/).pop() || 'Document justificatif';
+  }
+
+  obtenirCandidatsUrl(chemin: string | undefined): string[] {
+    if (!chemin) return [];
+    if (chemin.startsWith('http://') || chemin.startsWith('https://')) {
+      return [chemin];
+    }
+    const clean = chemin.replace(/\\/g, '/').replace(/^\/+/, '');
+    const nomFichier = clean.split('/').pop() || clean;
+    const encoded = encodeURIComponent(nomFichier);
+
+    const candidates: string[] = [];
+    if (clean.startsWith('uploads/')) {
+      candidates.push(`http://localhost:8080/${clean}`);
+    }
+    candidates.push(`http://localhost:8080/uploads/organisations/${encoded}`);
+    candidates.push(`http://localhost:8080/uploads/${encoded}`);
+    candidates.push(`http://localhost:8080/uploads/justificatifs/${encoded}`);
+    candidates.push(`http://localhost:8080/uploads/documents/${encoded}`);
+    return Array.from(new Set(candidates));
+  }
+
+  ouvrirJustificatif(chemin: string | undefined): void {
+    if (!chemin) return;
+    const candidates = this.obtenirCandidatsUrl(chemin);
+    const url = candidates[0] || chemin;
+    window.open(url, '_blank');
   }
 
   changerStatut(p: PartenaireItem, nouveauStatutValidation: 'VALIDEE' | 'EN_ATTENTE' | 'REJETEE') {

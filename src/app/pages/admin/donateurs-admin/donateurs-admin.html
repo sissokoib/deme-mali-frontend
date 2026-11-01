@@ -63,9 +63,9 @@
           <tr>
             <th>ID DONATEUR</th>
             <th>DONATEUR</th>
-            <th>TÉLÉPHONE & EMAIL</th>
+            <th>TÉLÉPHONE</th>
+            <th>EMAIL</th>
             <th>PAYS DE RÉSIDENCE</th>
-            <th>STATUT</th>
             <th>ACTIONS</th>
           </tr>
         </thead>
@@ -78,19 +78,13 @@
               </div>
             </td>
             <td>
-              <div class="contact-info">
-                <span class="contact-phone">{{ d.telephone }}</span>
-                <span style="font-size: 11px; color: #6B7280;">{{ d.email }}</span>
-              </div>
+              <span class="contact-phone">{{ d.telephone || 'Non renseigné' }}</span>
             </td>
             <td>
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <mat-icon style="font-size: 16px; width: 16px; height: 16px; color: #0F7A4B;">public</mat-icon>
-                <strong>{{ d.paysNom }}</strong>
-              </div>
+              <span style="font-size: 13px; color: #374151;">{{ d.email || 'Non renseigné' }}</span>
             </td>
             <td>
-              <span class="status-badge status-valide">Donateur Actif</span>
+              <strong>{{ d.paysNom }}</strong>
             </td>
             <td class="actions-cell">
               <div class="actions-group">
@@ -162,7 +156,6 @@
     <div class="modal-form-card" (click)="$event.stopPropagation()" style="max-width: 540px;">
       <div class="modal-entete">
         <div>
-          <span class="surtitre">DÈMÈ MALI • FICHE DONATEUR</span>
           <h2>{{ donateurSelectionne.nomComplet }}</h2>
         </div>
         <button type="button" class="btn-fermer" (click)="fermerDetails()" aria-label="Fermer">

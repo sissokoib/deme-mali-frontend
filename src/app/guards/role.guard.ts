@@ -1,4 +1,3 @@
-
 import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
@@ -34,6 +33,14 @@ export class RoleGuard implements CanActivate {
 
     // Vérifier si le rôle correspond.
     if (roleUtilisateur === roleAutorise) {
+      if (roleUtilisateur === 'ORGANISATIONPARTENAIRE') {
+        const user = this.authService.getCurrentUser() as any;
+        const statut = (user?.statutValidation || user?.statut || '').toUpperCase();
+        if (statut === 'EN_ATTENTE' || statut === 'REJETEE' || statut === 'REFUSEE') {
+          this.authService.clearSession();
+          return this.router.createUrlTree(['/login']);
+        }
+      }
       return true;
     }
 

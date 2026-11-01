@@ -19,17 +19,9 @@
     <div class="stat-card clickable" [style.border]="ongletActif === 'MATERIEL' ? '2px solid #0F7A4B' : '1px solid #E8E1D5'" (click)="changerOnglet('MATERIEL')">
       <div class="stat-info">
         <span class="stat-label">Contributions Matérielles</span>
-        <span class="stat-value">{{ nombreDonsMateriels }} lots enregistrés</span>
+        <span class="stat-value">{{ nombreDonsMateriels }} enregistrés</span>
       </div>
       <div class="stat-count count-bg-light">{{ nombreDonsMateriels }}</div>
-    </div>
-    
-    <div class="stat-card clickable" [style.border]="selectedStatut === 'En attente' ? '2px solid #D97706' : '1px solid #E8E1D5'" (click)="setStatutFilter('En attente')">
-      <div class="stat-info">
-        <span class="stat-label">Dons en Attente de Traitement</span>
-        <span class="stat-value">Dons financiers & matériels</span>
-      </div>
-      <div class="stat-count count-bg-warning">{{ getCountByStatut('En attente') }}</div>
     </div>
   </div>
 
@@ -252,7 +244,6 @@
     <div class="modal-form-card" (click)="$event.stopPropagation()">
       <div class="modal-entete">
         <div>
-          <span class="surtitre">DÈMÈ MALI • REÇU DU DON ({{ donSelectionne.typeDon === 'FINANCIER' ? 'FINANCIER' : 'MATÉRIEL' }})</span>
           <h2>{{ donSelectionne.donateur }}</h2>
         </div>
         <button type="button" class="btn-fermer" (click)="fermerDetails()" aria-label="Fermer la boîte de dialogue">
@@ -317,7 +308,6 @@
     <div class="modal-form-card" (click)="$event.stopPropagation()">
       <div class="modal-entete">
         <div>
-          <span class="surtitre">DÈMÈ MALI • ADMINISTRATION</span>
           <h2>Nouveau Don</h2>
         </div>
         <button type="button" class="btn-fermer" (click)="fermerModal()" aria-label="Fermer la boîte de dialogue">
