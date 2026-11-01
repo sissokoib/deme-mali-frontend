@@ -773,97 +773,250 @@ td strong {
 }
 
 /* =========================================
-   SUGGESTION ALGORITHMIQUE (CONSEIL NON-BLOQUANT)
+   ORGANISATION PRIORITAIRE GÉRÉE PAR L'ALGORITHME
 ========================================= */
 
-.banniere-recommandation-conseil {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 12px 16px;
-  margin-bottom: 18px;
-  border-radius: 10px;
-  background-color: #F7F3EA;
-  border: 1px solid #E5DFD5;
-  box-sizing: border-box;
+.section-organisation-algo {
+  margin-top: 6px;
+  margin-bottom: 20px;
 }
 
-.conseil-entete {
+.badge-algo-auto {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background-color: #E7F4EE;
+  color: #0F7A4B;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid rgba(15, 122, 75, 0.2);
+}
+
+.badge-algo-auto mat-icon {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+}
+
+.carte-organisation-prioritaire {
+  background-color: #FFFFFF;
+  border: 1.5px solid #0F7A4B;
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 3px 10px rgba(15, 122, 75, 0.08);
+  margin-top: 4px;
+}
+
+.org-prioritaire-header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+}
+
+.org-icone-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background-color: #E7F4EE;
+  color: #0F7A4B;
+  flex-shrink: 0;
+}
+
+.org-icone-badge mat-icon {
+  font-size: 26px;
+  width: 26px;
+  height: 26px;
+}
+
+.org-titre-bloc {
   flex: 1;
   min-width: 0;
 }
 
-.icone-conseil {
-  color: #D97706;
-  font-size: 26px;
-  width: 26px;
-  height: 26px;
-  flex-shrink: 0;
+.org-nom-ligne {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 3px;
 }
 
-.conseil-texte {
-  min-width: 0;
-}
-
-.conseil-badge {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #D97706;
-  margin-bottom: 2px;
-}
-
-.conseil-texte strong {
-  display: block;
-  font-size: 14px;
+.org-nom-texte {
+  font-size: 16px;
   font-weight: 700;
   color: #1F1F1F;
 }
 
-.conseil-texte p {
-  margin: 2px 0 0;
+.badge-org-type {
   font-size: 11px;
-  color: #666;
+  font-weight: 700;
+  color: #0F7A4B;
+  background-color: #E7F4EE;
+  padding: 2px 7px;
+  border-radius: 5px;
 }
 
-.btn-appliquer-suggestion {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+.badge-org-ville {
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  background-color: #F7F3EA;
+  padding: 2px 7px;
+  border-radius: 5px;
+}
+
+.org-selection-note {
+  display: block;
+  font-size: 11px;
+  color: #0F7A4B;
+  font-weight: 600;
+}
+
+.score-priorite-badge {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
   background-color: #0F7A4B;
   color: #FFFFFF;
-  border: none;
-  border-radius: 7px;
-  padding: 8px 12px;
-  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.score-label {
+  font-size: 10px;
+  text-transform: uppercase;
   font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background-color 0.2s, transform 0.15s;
+  opacity: 0.85;
+  margin-right: 2px;
 }
 
-.btn-appliquer-suggestion:hover {
-  background-color: #0d6840;
-  transform: translateY(-1px);
+.score-chiffre {
+  font-size: 18px;
+  font-weight: 800;
+  color: #FFFFFF;
 }
 
-.btn-appliquer-suggestion.selectionne {
-  background-color: #F7F3EA;
-  border: 1px solid #0F7A4B;
-  color: #0F7A4B;
+.score-max {
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+/* Jauge visuelle de priorité */
+.jauge-priorite-conteneur {
+  width: 100%;
+  height: 6px;
+  background-color: #E5DFD5;
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 14px 0 16px;
+}
+
+.jauge-priorite-barre {
+  height: 100%;
+  background: linear-gradient(90deg, #F7B500 0%, #0F7A4B 100%);
+  border-radius: 3px;
+  transition: width 0.4s ease-in-out;
+}
+
+/* Section explicative des critères */
+.criteres-algo-section {
+  border-top: 1px dashed #E5DFD5;
+  padding-top: 12px;
+}
+
+.criteres-algo-titre {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
   font-weight: 700;
+  color: #4A4A4A;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 10px;
 }
 
-.btn-appliquer-suggestion mat-icon {
+.criteres-algo-titre mat-icon {
   font-size: 16px;
   width: 16px;
   height: 16px;
+  color: #0F7A4B;
+}
+
+.grille-criteres-algo {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 600px) {
+  .grille-criteres-algo {
+    grid-template-columns: 1fr;
+  }
+}
+
+.item-critere {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background-color: #FAF8F4;
+  border: 1px solid #EBE4D8;
+}
+
+.critere-icone-rond {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.critere-icone-rond mat-icon {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+}
+
+.critere-icone-rond.urgence {
+  background-color: rgba(217, 119, 6, 0.15);
+  color: #D97706;
+}
+
+.critere-icone-rond.equite {
+  background-color: rgba(15, 122, 75, 0.15);
+  color: #0F7A4B;
+}
+
+.critere-icone-rond.conformite {
+  background-color: rgba(15, 122, 75, 0.15);
+  color: #0F7A4B;
+}
+
+.critere-texte strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #1F1F1F;
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+
+.critere-texte p {
+  margin: 0;
+  font-size: 10px;
+  color: #666;
+  line-height: 1.3;
 }
 
 .form-champ {

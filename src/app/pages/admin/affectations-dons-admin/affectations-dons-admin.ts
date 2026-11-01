@@ -603,12 +603,21 @@ export class AffectationsDonsAdmin implements OnInit {
     this.rechercherOrganisationPrioritaire();
   }
 
-  // Algorithme de priorisation du backend : suggère l'organisation ayant le meilleur score
+  // Détails complets de l'organisation retenue par l'algorithme
+  get organisationSelectionneeDetails(): OrganisationPartenaireResponseDTO | undefined {
+    const orgId = this.organisationId || this.organisationRecommandee?.organisationPartenaireId;
+    if (!orgId) return undefined;
+    return this.organisations.find(o => o.id === orgId);
+  }
+
+  // Algorithme de priorisation du backend : détermine l'organisation prioritaire selon les besoins du terrain
   rechercherOrganisationPrioritaire(): void {
     const finId = this.typeDonAAttribuer === 'FINANCIER' ? this.donFinancierSelectionneId : null;
     const matId = this.typeDonAAttribuer === 'MATERIEL' ? this.donMaterielSelectionneId : null;
 
     if (!finId && !matId) {
+      this.organisationRecommandee = null;
+      this.organisationId = null;
       return;
     }
 
@@ -619,8 +628,8 @@ export class AffectationsDonsAdmin implements OnInit {
       next: (recommandation) => {
         this.isFetchingPriority = false;
         this.organisationRecommandee = recommandation;
-        // On propose l'organisation recommandée comme choix initial uniquement si l'admin n'a pas encore fait son choix
-        if (!this.organisationId && recommandation && recommandation.organisationPartenaireId) {
+        // L'algorithme sélectionne automatiquement l'organisation prioritaire
+        if (recommandation && recommandation.organisationPartenaireId) {
           this.organisationId = recommandation.organisationPartenaireId;
         }
         this.cdr.detectChanges();
@@ -629,7 +638,7 @@ export class AffectationsDonsAdmin implements OnInit {
         this.isFetchingPriority = false;
         console.warn('Aucune organisation prioritaire identifiée automatiquement', err);
         const detail = err.error?.message || err.error?.detail || '';
-        this.erreurRecommandation = detail || 'Aucune recommandation automatique disponible pour ce don.';
+        this.erreurRecommandation = detail || 'Aucune organisation prioritaire identifiée par l\'algorithme pour ce don.';
         this.cdr.detectChanges();
       }
     });
@@ -703,13 +712,17 @@ export class AffectationsDonsAdmin implements OnInit {
       }
     }
 
-    // 3. Validation Organisation
+    // 3. Organisation partenaire déterminée par l'algorithme
     if (!this.organisationId) {
-      this.afficherNotification('Veuillez sélectionner une organisation partenaire attributaire.', 'error');
-      return;
+      if (this.organisationRecommandee && this.organisationRecommandee.organisationPartenaireId) {
+        this.organisationId = this.organisationRecommandee.organisationPartenaireId;
+      } else {
+        this.afficherNotification('Veuillez patienter pendant que l\'algorithme identifie l\'organisation partenaire prioritaire.', 'error');
+        return;
+      }
     }
 
-    // L'administrateur a le plein pouvoir de choisir librement n'importe quelle organisation partenaire validée
+    // Envoi de l'attribution avec l'organisation sélectionnée par l'algorithme
     const dto: AttributionDonLibreRequest = {
       donFinancierId: this.typeDonAAttribuer === 'FINANCIER' ? Number(this.donFinancierSelectionneId) : null,
       donMaterielId: this.typeDonAAttribuer === 'MATERIEL' ? Number(this.donMaterielSelectionneId) : null,

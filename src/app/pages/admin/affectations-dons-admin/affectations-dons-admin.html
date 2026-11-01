@@ -707,48 +707,106 @@
       </small>
     </div>
 
-    <!-- SUGGESTION DE L'ALGORITHME (INFORMATIVE ET NON BLOQUANTE) -->
-    <div *ngIf="isFetchingPriority" class="banniere-recommandation chargement">
-      <mat-icon class="rotation">sync</mat-icon>
-      <span>Analyse intelligente des besoins du terrain...</span>
-    </div>
+    <!-- ORGANISATION PARTENAIRE SÉLECTIONNÉE PAR L'ALGORITHME ET CRITÈRES -->
+    <div class="form-champ section-organisation-algo">
+      <div class="champ-entete-avec-action">
+        <label>
+          Organisation partenaire attributaire : <span class="requis">*</span>
+        </label>
+        <span class="badge-algo-auto">
+          <mat-icon>auto_awesome</mat-icon>
+          Choix géré par l'algorithme
+        </span>
+      </div>
 
-    <div *ngIf="organisationRecommandee" class="banniere-recommandation-conseil">
-      <div class="conseil-entete">
-        <mat-icon class="icone-conseil">lightbulb</mat-icon>
-        <div class="conseil-texte">
-          <span class="conseil-badge">Suggestion algorithmique</span>
-          <strong>{{ organisationRecommandee.nomOrganisation }}</strong>
-          <p>Score d'urgence terrain : {{ organisationRecommandee.scorePriorite | number:'1.0-0' }} / 100</p>
+      <!-- Chargement de l'algorithme -->
+      <div *ngIf="isFetchingPriority" class="banniere-recommandation chargement">
+        <mat-icon class="rotation">sync</mat-icon>
+        <span>Analyse des critères de priorisation terrain par l'algorithme...</span>
+      </div>
+
+      <!-- Carte de l'organisation retenue par l'algorithme -->
+      <div *ngIf="organisationRecommandee && !isFetchingPriority" class="carte-organisation-prioritaire">
+        <div class="org-prioritaire-header">
+          <div class="org-icone-badge">
+            <mat-icon>verified</mat-icon>
+          </div>
+          <div class="org-titre-bloc">
+            <div class="org-nom-ligne">
+              <strong class="org-nom-texte">{{ organisationRecommandee.nomOrganisation }}</strong>
+              <span class="badge-org-type" *ngIf="organisationSelectionneeDetails?.typeOrganisation">
+                {{ organisationSelectionneeDetails?.typeOrganisation }}
+              </span>
+              <span class="badge-org-ville" *ngIf="organisationSelectionneeDetails?.ville">
+                📍 {{ organisationSelectionneeDetails?.ville }}
+              </span>
+            </div>
+            <span class="org-selection-note">Sélectionnée par l'algorithme comme organisation prioritaire</span>
+          </div>
+          <div class="score-priorite-badge">
+            <span class="score-label">Score</span>
+            <strong class="score-chiffre">{{ organisationRecommandee.scorePriorite | number:'1.0-0' }}</strong>
+            <span class="score-max">/ 100</span>
+          </div>
+        </div>
+
+        <!-- Jauge visuelle de priorité -->
+        <div class="jauge-priorite-conteneur">
+          <div class="jauge-priorite-barre" [style.width.%]="organisationRecommandee.scorePriorite"></div>
+        </div>
+
+        <!-- Informations détaillées sur les critères de choix de l'algorithme -->
+        <div class="criteres-algo-section">
+          <div class="criteres-algo-titre">
+            <mat-icon>analytics</mat-icon>
+            <span>Critères d'évaluation retenus par l'algorithme :</span>
+          </div>
+
+          <div class="grille-criteres-algo">
+            <div class="item-critere">
+              <div class="critere-icone-rond urgence">
+                <mat-icon>priority_high</mat-icon>
+              </div>
+              <div class="critere-texte">
+                <strong>Besoins urgents non couverts</strong>
+                <p>Volume élevé de demandes d'aide prioritaires en attente de soutien sur le terrain.</p>
+              </div>
+            </div>
+
+            <div class="item-critere">
+              <div class="critere-icone-rond equite">
+                <mat-icon>balance</mat-icon>
+              </div>
+              <div class="critere-texte">
+                <strong>Indice d'équité solidaire</strong>
+                <p>Structure moins dotée en attributions récentes, garantissant un rééquilibrage équitable.</p>
+              </div>
+            </div>
+
+            <div class="item-critere">
+              <div class="critere-icone-rond conformite">
+                <mat-icon>verified_user</mat-icon>
+              </div>
+              <div class="critere-texte">
+                <strong>Capacité terrain et conformité</strong>
+                <p>Organisation partenaire active et validée par Dèmè Mali pour une distribution directe.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <button
-        type="button"
-        class="btn-appliquer-suggestion"
-        (click)="appliquerOrganisationRecommandee()"
-        [class.selectionne]="organisationId === organisationRecommandee.organisationPartenaireId">
-        <mat-icon>{{ organisationId === organisationRecommandee.organisationPartenaireId ? 'check' : 'add_task' }}</mat-icon>
-        {{ organisationId === organisationRecommandee.organisationPartenaireId ? 'Organisation sélectionnée' : 'Appliquer la suggestion' }}
-      </button>
-    </div>
 
-    <!-- CHOIX LIBRE DE L'ORGANISATION PARTENAIRE -->
-    <div class="form-champ">
-      <label for="orgSelect">
-        Organisation partenaire attributaire : <span class="requis">*</span>
-      </label>
-      <select
-        id="orgSelect"
-        [(ngModel)]="organisationId"
-        class="select-input">
-        <option [ngValue]="null">-- Choisir librement l'organisation partenaire --</option>
-        <option *ngFor="let org of organisationsTrieesParPriorite" [ngValue]="org.id">
-          {{ org.nomOrganisation }} ({{ org.typeOrganisation || 'ONG' }}){{ org.estPrioritaire ? ' — ⭐ Recommandée par le système' : '' }}
-        </option>
-      </select>
-      <small class="texte-aide">
-        L'administrateur peut sélectionner librement l'organisation partenaire de son choix dans la liste.
-      </small>
+      <!-- Message si aucun don n'a encore été sélectionné -->
+      <div *ngIf="!donFinancierSelectionneId && !donMaterielSelectionneId && !isFetchingPriority" class="banniere-recommandation info">
+        <mat-icon>info</mat-icon>
+        <span>Veuillez sélectionner un don ci-dessus pour que l'algorithme détermine l'organisation partenaire prioritaire.</span>
+      </div>
+
+      <!-- Erreur éventuelle -->
+      <div *ngIf="erreurRecommandation && !organisationRecommandee && (donFinancierSelectionneId || donMaterielSelectionneId) && !isFetchingPriority" class="banniere-recommandation info">
+        <mat-icon>info</mat-icon>
+        <span>{{ erreurRecommandation }}</span>
+      </div>
     </div>
 
     <!-- ACTIONS DU FORMULAIRE -->
