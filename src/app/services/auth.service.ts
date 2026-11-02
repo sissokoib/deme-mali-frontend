@@ -140,10 +140,10 @@ export class AuthService {
           )
         );
 
-        const role = payload.role;
+        let rawRole: string | null = typeof payload.role === 'string' ? payload.role : (Array.isArray(payload.roles) ? payload.roles[0] : (Array.isArray(payload.authorities) ? (typeof payload.authorities[0] === 'string' ? payload.authorities[0] : payload.authorities[0]?.authority) : null));
 
-        if (role && typeof role === 'string') {
-          return role.replace('ROLE_', '');
+        if (rawRole && typeof rawRole === 'string') {
+          return rawRole.replace(/^ROLE_/i, '').replace(/[\s_-]/g, '').toUpperCase();
         }
       }
     } catch {
@@ -152,7 +152,7 @@ export class AuthService {
 
     const user = this.getCurrentUser();
     if (user?.role) {
-      return user.role.replace('ROLE_', '');
+      return user.role.replace(/^ROLE_/i, '').replace(/[\s_-]/g, '').toUpperCase();
     }
 
     return null;

@@ -1,4 +1,3 @@
-
 import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
@@ -26,14 +25,17 @@ export class RoleGuard implements CanActivate {
       return this.router.createUrlTree(['/login']);
     }
 
-    // Récupérer le rôle autorisé pour la route.
-    const roleAutorise = route.data['role'];
+    // Récupérer le rôle autorisé pour la route (normalisé).
+    const rawRoleAutorise = route.data['role'];
+    const roleAutorise = rawRoleAutorise
+      ? String(rawRoleAutorise).replace(/^ROLE_/i, '').replace(/[\s_-]/g, '').toUpperCase()
+      : '';
 
-    // Récupérer le rôle de l'utilisateur connecté.
+    // Récupérer le rôle normalisé de l'utilisateur connecté.
     const roleUtilisateur = this.authService.getRole();
 
     // Vérifier si le rôle correspond.
-    if (roleUtilisateur === roleAutorise) {
+    if (roleUtilisateur && roleUtilisateur === roleAutorise) {
       return true;
     }
 
@@ -46,6 +48,8 @@ export class RoleGuard implements CanActivate {
       return this.router.createUrlTree(['/admin/dashboard']);
     }
 
+    // Rôle non autorisé ou session invalide : nettoyer la session et renvoyer vers login
+    this.authService.clearSession();
     return this.router.createUrlTree(['/login']);
   }
 }
