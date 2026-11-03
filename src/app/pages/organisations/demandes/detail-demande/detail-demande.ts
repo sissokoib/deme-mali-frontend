@@ -448,18 +448,16 @@ export class DetailDemande implements OnInit {
 
   // Ouvrir le formulaire d'ajout
   ouvrirFormulaireImage(): void {
-      console.log('1. Bouton Ajouter une image cliqué');
-  console.log('2. Image existante :', this.imageDemande);
     if (this.imageDemande) {
-      console.log('Une image existe déjà.');
-
       return;
     }
 
     this.erreurImage = '';
+    this.fichierImageSelectionne = null;
+    this.libererApercuImage();
     this.afficherFormulaireImage = true;
+    this.cdr.detectChanges();
   }
-
   // Sélectionner une image et afficher son aperçu
   selectionnerImage(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -534,9 +532,15 @@ export class DetailDemande implements OnInit {
   }
 
   // Annuler l'ajout
+  // Fermer le modal
   annulerAjoutImage(): void {
+    if (this.uploadEnCours) {
+      return;
+    }
+
     this.afficherFormulaireImage = false;
     this.fichierImageSelectionne = null;
+    this.erreurImage = '';
     this.libererApercuImage();
   }
 
@@ -549,39 +553,35 @@ export class DetailDemande implements OnInit {
   }
 
   // Supprimer l'image enregistrée
-  supprimerImageDemande(): void {
-    const imageId = this.imageDemande?.id;
+  // Supprimer l'image enregistrée
+supprimerImageDemande(): void {
+  const imageId = this.imageDemande?.id;
 
-    if (imageId == null || this.suppressionImageEnCours) {
-      return;
-    }
-
-    if (!confirm('Voulez-vous vraiment supprimer cette image ?')) {
-      return;
-    }
-
-    this.suppressionImageEnCours = true;
-    this.erreurImage = '';
-
-    this.imageDemandeService.supprimerImage(imageId).subscribe({
-      next: () => {
-        this.imageDemande = null;
-        this.suppressionImageEnCours = false;
-        this.cdr.detectChanges();
-      },
-      error: (err: any) => {
-        console.error('Erreur suppression image :', err);
-        this.suppressionImageEnCours = false;
-
-        this.erreurImage =
-          err?.error?.message ||
-          'Impossible de supprimer l’image.';
-
-        this.cdr.detectChanges();
-      }
-    });
+  if (imageId == null || this.suppressionImageEnCours) {
+    return;
   }
 
+  this.suppressionImageEnCours = true;
+  this.erreurImage = '';
+
+  this.imageDemandeService.supprimerImage(imageId).subscribe({
+    next: () => {
+      this.imageDemande = null;
+      this.suppressionImageEnCours = false;
+      this.cdr.detectChanges();
+    },
+    error: (err: any) => {
+      console.error('Erreur suppression image :', err);
+      this.suppressionImageEnCours = false;
+
+      this.erreurImage =
+        err?.error?.message ||
+        'Impossible de supprimer l’image.';
+
+      this.cdr.detectChanges();
+    }
+  });
+}
   // Construire l'URL du justificatif
   obtenirUrlJustificatif(chemin: string | null): string {
     if (!chemin) {

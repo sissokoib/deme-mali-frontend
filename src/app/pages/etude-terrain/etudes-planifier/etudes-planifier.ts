@@ -127,7 +127,7 @@ export class EtudesPlanifier implements OnInit {
       demandeAideId: this.demandeId,
       organisationPartenaireId: this.organisationId,
       datePlanification: this.datePlanification,
-      heure: `${this.datePlanification}T${this.heure}:00`,
+      heure: `${this.heure}:00`,
       lieu: this.lieu.trim(),
       objectif: this.objectif.trim()
     };

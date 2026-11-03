@@ -23,7 +23,6 @@ import {
 
 import { Router } from '@angular/router';
 
-import { DonService } from '../../../services/don.service.ts';
 import { AuthService } from '../../../services/auth.service';
 import { NotificationService } from '../../../services/notification';
 
@@ -32,6 +31,8 @@ import {
   DonAffiche,
   DonMateriel
 } from '../../../models/don.model';
+
+import { DonService } from '../../../services/don.service';
 
 import { ReceptionDonDialogComponent } from '../../../dialogs/reception-don-dialog.component/reception-don-dialog.component';
 
@@ -54,10 +55,9 @@ export class ListeDonsComponent implements OnInit {
   donsMateriels: DonMateriel[] = [];
   dons: DonAffiche[] = [];
 
-  // Recherche et filtres
+  // Recherche
   ongletActif: 'FINANCIER' | 'MATERIEL' = 'FINANCIER';
   recherche = '';
-  filtreStatut = 'TOUS';
 
   // Chargement
   chargement = false;
@@ -224,11 +224,10 @@ export class ListeDonsComponent implements OnInit {
   changerOnglet(onglet: 'FINANCIER' | 'MATERIEL'): void {
     this.ongletActif = onglet;
     this.recherche = '';
-    this.filtreStatut = 'TOUS';
     this.pageActuelle = 1;
   }
 
-  // Rechercher et filtrer les dons
+  // Rechercher les dons
   get donsFiltres(): DonAffiche[] {
     const texte = this.recherche.toLowerCase().trim();
 
@@ -242,11 +241,7 @@ export class ListeDonsComponent implements OnInit {
           (don.designation ?? '').toLowerCase().includes(texte) ||
           (don.modePaiement ?? '').toLowerCase().includes(texte);
 
-        const correspondStatut =
-          this.filtreStatut === 'TOUS' ||
-          don.statut === this.filtreStatut;
-
-        return correspondRecherche && correspondStatut;
+        return correspondRecherche;
       });
   }
 
@@ -280,7 +275,7 @@ export class ListeDonsComponent implements OnInit {
     }
   }
 
-  // Revenir à la première page après une recherche ou un filtre
+  // Revenir à la première page après une recherche
   reinitialiserPagination(): void {
     this.pageActuelle = 1;
   }
@@ -378,7 +373,7 @@ export class ListeDonsComponent implements OnInit {
       PARTIELLEMENT_RECU: 'Partiellement reçu',
       RECU: 'Reçu',
       REFUSE: 'Refusé',
-    
+
       CONFIRME: 'Confirmé',
       ECHOUE: 'Échoué'
     };

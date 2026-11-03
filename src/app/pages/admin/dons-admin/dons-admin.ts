@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { DonService } from '../../../services/don.service.ts';
+import { DonService } from '../../../services/don.service';
 import { CategorieDemandeService } from '../../../services/categorie-demande';
 import { CategorieDemande } from '../../../models/categorie-demande.model';
 import { demandeAideService } from '../../../services/demande-aide';

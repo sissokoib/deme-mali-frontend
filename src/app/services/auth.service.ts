@@ -199,5 +199,25 @@ export class AuthService {
     // Initialisé dans InsererAdmin.java (Ibrahim Coulibaly / 77990488 / id=1)
     return tel.endsWith('77990488') || user.id === 1 || (user.nom === 'Coulibaly' && user.prenom === 'Ibrahim');
   }
+
+  actualiserUtilisateur(utilisateur: Partial<User>): void {
+  const utilisateurActuel = this.getCurrentUser();
+
+  if (!utilisateurActuel) {
+    return;
+  }
+
+  const utilisateurMisAJour: User = {
+    ...utilisateurActuel,
+    ...utilisateur
+  };
+
+  localStorage.setItem(
+    'current_user',
+    JSON.stringify(utilisateurMisAJour)
+  );
+
+  this.currentUserSubject.next(utilisateurMisAJour);
+}
 }
 

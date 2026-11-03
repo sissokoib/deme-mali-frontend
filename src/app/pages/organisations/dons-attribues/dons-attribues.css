@@ -8,6 +8,10 @@
   padding: 32px;
   background: #F7F3EA;
 }
+.contenu h2{
+  font-size: 25px;
+  font-weight: 700;
+}
 
 .statistiques {
   display: grid;
@@ -55,7 +59,7 @@
 
 .carte-statistique p {
   margin: 0 0 10px;
-  color: #1F1F1F;
+  color: #0B603A;
   font-size: 14px;
   opacity: 0.75;
 }

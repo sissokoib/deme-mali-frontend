@@ -7,7 +7,7 @@ import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { AttributionDonLibreService } from '../../../services/attribution-don-libre.service';
-import { DonService } from '../../../services/don.service.ts';
+import { DonService } from '../../../services/don.service';
 import { OrganisationService } from '../../../services/organisation';
 import { AuthService } from '../../../services/auth.service';
 

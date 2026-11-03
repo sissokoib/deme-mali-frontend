@@ -1,13 +1,17 @@
 :host {
   display: block;
   min-height: 100%;
-  background-color: #f7f3ea;
-  color: #1f1f1f;
+  background-color: #F7F3EA;
+  color: #1F1F1F;
 }
 
 * {
   box-sizing: border-box;
 }
+
+/* ========================================
+   PAGE
+======================================== */
 
 .page-detail {
   width: 100%;
@@ -28,22 +32,16 @@
   min-width: 240px;
 }
 
-.surtitre {
-  color: #0f7a4b;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
 .entete h1 {
   margin: 8px 0;
   font-size: 28px;
   font-weight: 700;
+  color: #1F1F1F;
 }
 
 .entete p {
   margin: 0;
-  color: #777;
+  color: #777777;
   font-size: 14px;
   line-height: 1.6;
 }
@@ -56,8 +54,8 @@
 }
 
 .bouton-retour {
-  color: #0f7a4b !important;
-  border-color: #0f7a4b !important;
+  color: #0F7A4B !important;
+  border-color: #0F7A4B !important;
   border-radius: 8px !important;
 }
 
@@ -65,21 +63,25 @@
   min-height: 44px;
   padding: 0 18px !important;
   border-radius: 8px !important;
-  background-color: #0f7a4b !important;
-  color: #fff !important;
+  background-color: #0F7A4B !important;
+  color: #FFFFFF !important;
   font-weight: 600;
 }
 
 .bouton-reception:hover {
-  background-color: #0b613b !important;
+  background-color: #0B613B !important;
 }
+
+/* ========================================
+   CARTE DE DÉTAIL
+======================================== */
 
 .carte-detail {
   max-width: 1100px;
   margin: 0 auto;
   padding: 30px;
   border-radius: 14px;
-  background-color: #fff;
+  background-color: #FFFFFF;
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
 }
 
@@ -87,24 +89,6 @@
   display: flex;
   align-items: center;
   gap: 20px;
-}
-
-.icone-don {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 72px;
-  height: 72px;
-  flex-shrink: 0;
-  border-radius: 14px;
-  background-color: #e6f3eb;
-  color: #0f7a4b;
-}
-
-.icone-don mat-icon {
-  width: 34px;
-  height: 34px;
-  font-size: 34px;
 }
 
 .identite-contenu {
@@ -115,13 +99,6 @@
   min-width: 0;
 }
 
-.type-don {
-  color: #0f7a4b;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
 .identite-contenu h2 {
   display: flex;
   flex-wrap: wrap;
@@ -129,48 +106,20 @@
   gap: 10px;
   margin: 0;
   font-size: 23px;
+  color: #1F1F1F;
   overflow-wrap: anywhere;
-}
-
-.reference {
-  color: #777;
-  font-size: 15px;
-  font-weight: 400;
-}
-
-.badge-statut {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.attente {
-  background-color: #fff2cc;
-  color: #936600;
-}
-
-.confirme {
-  background-color: #e1f4e8;
-  color: #0f7a4b;
-}
-
-.refuse,
-.echec {
-  background-color: #fde7e7;
-  color: #b42318;
 }
 
 .separateur {
   height: 1px;
   margin: 28px 0;
-  background-color: #eee;
+  background-color: #EEEEEE;
 }
 
 .carte-detail h3 {
   margin: 0 0 22px;
   font-size: 18px;
+  color: #1F1F1F;
 }
 
 .grille-informations {
@@ -187,50 +136,24 @@
 }
 
 .information span {
-  color: #777;
+  color: #777777;
   font-size: 13px;
 }
 
 .information strong {
   font-size: 15px;
+  color: #1F1F1F;
   overflow-wrap: anywhere;
 }
 
 .valeur-verte {
-  color: #0f7a4b;
+  color: #0F7A4B !important;
   font-size: 18px !important;
 }
 
-.section-reception,
-.section-financiere {
-  padding: 22px;
-  border-radius: 10px;
-  background-color: #f7f3ea;
-}
-
-.section-reception h3,
-.section-financiere h3 {
-  margin-bottom: 12px;
-}
-
-.section-reception p,
-.section-financiere p {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0;
-  color: #555;
-  font-size: 14px;
-  line-height: 1.7;
-}
-
-.texte-positif {
-  color: #0f7a4b !important;
-}
-
-.texte-negatif {
-  color: #b42318 !important;
-}
+/* ========================================
+   MESSAGES DE LA PAGE
+======================================== */
 
 .message {
   margin-bottom: 20px;
@@ -240,14 +163,381 @@
 }
 
 .chargement {
-  background-color: #fff;
-  color: #555;
+  background-color: #FFFFFF;
+  color: #555555;
 }
 
 .erreur {
-  background-color: #fde7e7;
-  color: #b42318;
+  background-color: #FDE7E7;
+  color: #B42318;
 }
+
+/* ========================================
+   MODAL DE RÉCEPTION
+======================================== */
+
+.overlay-decision {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(31, 31, 31, 0.60);
+  backdrop-filter: blur(3px);
+
+  animation: apparitionOverlay 0.25s ease;
+}
+
+.popup-decision {
+  width: 100%;
+  max-width: 540px;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  padding: 28px;
+
+  background-color: #FFFFFF;
+  border: 1px solid #1F1F1F;
+  border-radius: 16px;
+
+  box-shadow: 0 12px 40px rgba(31, 31, 31, 0.20);
+
+  animation: apparitionPopup 0.25s ease;
+}
+
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+
+  margin-bottom: 12px;
+}
+
+.popup-header h3 {
+  margin: 0;
+  color: #0F7A4B;
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.btn-fermer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+
+  border: 1px solid #1F1F1F;
+  border-radius: 50%;
+
+  background-color: #FFFFFF;
+  color: #1F1F1F;
+
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-fermer:hover {
+  background-color: #F7F3EA;
+  color: #0F7A4B;
+}
+
+.btn-fermer:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.description-popup {
+  margin: 0 0 24px;
+
+  color: #666666;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* Champs */
+.popup-decision .champ-reception {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+
+  margin-bottom: 20px;
+}
+
+.popup-decision .champ-reception label {
+  color: #1F1F1F;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.popup-decision .champ-reception strong {
+  color: #0F7A4B;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.popup-decision .champ-reception input,
+.popup-decision .champ-reception textarea {
+  width: 100%;
+  padding: 13px 14px;
+
+  background-color: #FFFFFF;
+  color: #1F1F1F;
+
+  border: 1px solid #1F1F1F;
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.popup-decision .champ-reception input:focus,
+.popup-decision .champ-reception textarea:focus {
+  border-color: #0F7A4B;
+  box-shadow: 0 0 0 3px rgba(15, 122, 75, 0.10);
+}
+
+.popup-decision .champ-reception textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.popup-decision .champ-reception input:disabled,
+.popup-decision .champ-reception textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   MESSAGE : DON DÉJÀ REÇU OU REFUSÉ
+======================================== */
+
+.message-blocage {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin: 4px 0 16px;
+  padding: 12px 14px;
+
+  background-color: rgba(247, 181, 0, 0.18);
+  color: #1F1F1F;
+  border-radius: 8px;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.message-blocage mat-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  color: #F7B500;
+}
+
+/* ========================================
+   CHOIX DE L'ACTION (RADIOS)
+======================================== */
+
+.choix-reception {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.option-choix {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 16px;
+
+  background-color: #FFFFFF;
+  color: #1F1F1F;
+  border: 1px solid #1F1F1F;
+  border-radius: 9px;
+
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.option-choix input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  flex-shrink: 0;
+  accent-color: #0F7A4B;
+  cursor: pointer;
+}
+
+.option-choix:hover {
+  background-color: #F7F3EA;
+}
+
+/* Confirmer sélectionné : vert */
+.option-choix.selectionnee {
+  background-color: rgba(15, 122, 75, 0.10);
+  border-color: #0F7A4B;
+  color: #0F7A4B;
+}
+
+/* Refuser : jaune */
+.option-refus input {
+  accent-color: #F7B500;
+}
+
+.option-refus.selectionnee {
+  background-color: rgba(247, 181, 0, 0.18);
+  border-color: #F7B500;
+  color: #1F1F1F;
+}
+
+/* Radios désactivés (don déjà reçu ou refusé) */
+.option-choix:has(input:disabled) {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.option-choix:has(input:disabled):hover {
+  background-color: #FFFFFF;
+}
+
+/* Navigation au clavier */
+.option-choix:has(input:focus-visible) {
+  outline: 2px solid #0F7A4B;
+  outline-offset: 2px;
+}
+
+.option-refus:has(input:focus-visible) {
+  outline-color: #F7B500;
+}
+
+/* ========================================
+   ERREUR DANS LA POPUP
+======================================== */
+
+.erreur-decision {
+  margin-bottom: 18px;
+  padding: 12px 14px;
+
+  background-color: #FDE7E7;
+  color: #B42318;
+
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ========================================
+   BOUTONS DU BAS DE LA POPUP
+======================================== */
+
+.popup-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  margin-top: 25px;
+  padding-top: 18px;
+
+  border-top: 1px solid #EEEEEE;
+}
+
+/* Annuler */
+.popup-actions .btn-annuler {
+  color: #1F1F1F !important;
+  border: 1px solid #1F1F1F !important;
+  border-radius: 8px !important;
+  font-weight: 500;
+}
+
+.popup-actions .btn-annuler:hover {
+  background-color: #F7F3EA;
+}
+
+/* Valider la réception */
+.popup-actions .btn-principal {
+  min-height: 42px;
+  padding: 0 18px !important;
+
+  background-color: #0F7A4B !important;
+  color: #FFFFFF !important;
+
+  border-radius: 8px !important;
+  font-weight: 600;
+  box-shadow: none !important;
+}
+
+.popup-actions .btn-principal:hover {
+  background-color: #0B613B !important;
+}
+
+/* Confirmer le refus */
+.popup-actions .btn-refuser {
+  min-height: 42px;
+  padding: 0 18px !important;
+
+  background-color: #F7B500 !important;
+  color: #1F1F1F !important;
+  border: 1px solid #1F1F1F !important;
+  border-radius: 8px !important;
+  font-weight: 600;
+}
+
+.popup-actions .btn-refuser:hover {
+  background-color: #D99E00 !important;
+}
+
+.popup-actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   ANIMATIONS
+======================================== */
+
+@keyframes apparitionOverlay {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes apparitionPopup {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
 
 @media (max-width: 768px) {
   .page-detail {
@@ -277,6 +567,35 @@
   }
 }
 
+@media (max-width: 600px) {
+  .overlay-decision {
+    padding: 12px;
+  }
+
+  .popup-decision {
+    max-height: 92vh;
+    padding: 20px;
+    border-radius: 13px;
+  }
+
+  .popup-header h3 {
+    font-size: 18px;
+  }
+
+  .popup-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .popup-actions button {
+    width: 100%;
+  }
+
+  .option-choix {
+    padding: 12px 14px;
+  }
+}
+
 @media (max-width: 480px) {
   .actions-entete {
     flex-direction: column;
@@ -290,14 +609,5 @@
   .identite-don {
     align-items: flex-start;
     gap: 12px;
-  }
-
-  .icone-don {
-    width: 52px;
-    height: 52px;
-  }
-
-  .icone-don mat-icon {
-    font-size: 27px;
   }
 }

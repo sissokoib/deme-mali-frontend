@@ -2,7 +2,6 @@
 
   <header class="entete">
     <div class="titre-page">
-   
       <h1>Détail du don</h1>
       <p>Consultez les informations de la contribution reçue par votre organisation.</p>
     </div>
@@ -18,39 +17,34 @@
       </button>
 
       <button
-        *ngIf="peutConfirmerReception"
+        *ngIf="estMateriel && don"
         mat-flat-button
         type="button"
         class="bouton-reception"
         (click)="ouvrirReception()">
-        
         Confirmer la réception
       </button>
     </div>
   </header>
 
+  <!-- CHARGEMENT -->
   <div *ngIf="chargement" class="message chargement">
     Chargement du don...
   </div>
 
-  <div *ngIf="erreur" class="message erreur">
+  <!-- MESSAGE D'ERREUR HORS POPUP -->
+  <div *ngIf="erreur && !popupReception" class="message erreur">
     {{ erreur }}
   </div>
 
   <section class="carte-detail" *ngIf="don && !chargement">
 
+    <!-- IDENTITÉ DU DON -->
     <div class="identite-don">
-    
-
       <div class="identite-contenu">
-       
-
         <h2>
           {{ estMateriel ? (don.designation || 'Don matériel') : 'Don financier' }}
-        
         </h2>
-
-      
       </div>
     </div>
 
@@ -65,14 +59,18 @@
         <strong>{{ don.id }}</strong>
       </div>
 
+      <!-- Don lié à une demande -->
       <div class="information" *ngIf="don.demandeAideId">
         <span>Demande associée</span>
-        <strong>{{ don.demandeAideId }}</strong>
+        <strong>
+          {{ don.titreDemandeAide || ('Demande ' + don.demandeAideId) }}
+        </strong>
       </div>
 
+      <!-- Don direct à l'organisation -->
       <div class="information" *ngIf="!don.demandeAideId">
         <span>Affectation</span>
-        <strong>Don général</strong>
+        <strong>Don direct à l'organisation</strong>
       </div>
 
       <div class="information">
@@ -81,6 +79,8 @@
           {{ don.date ? (don.date | date:'dd/MM/yyyy') : 'Non renseignée' }}
         </strong>
       </div>
+
+      <!-- INFORMATIONS DU DON MATÉRIEL -->
 
       <div class="information" *ngIf="estMateriel">
         <span>Désignation</span>
@@ -99,6 +99,18 @@
         </strong>
       </div>
 
+      <div class="information" *ngIf="estMateriel">
+        <span>Statut</span>
+        <strong>{{ afficherStatut(statutActuel) }}</strong>
+      </div>
+
+      <div class="information" *ngIf="estMateriel && don.motifRefus">
+        <span>Motif du refus</span>
+        <strong>{{ don.motifRefus }}</strong>
+      </div>
+
+      <!-- INFORMATIONS DU DON FINANCIER -->
+
       <div class="information" *ngIf="!estMateriel">
         <span>Montant du don</span>
         <strong class="valeur-verte">
@@ -111,32 +123,173 @@
         <strong>{{ don.modePaiement || 'Non renseigné' }}</strong>
       </div>
 
+      <div class="information" *ngIf="!estMateriel && don.statut">
+        <span>Statut du paiement</span>
+        <strong>{{ afficherStatut(don.statut) }}</strong>
+      </div>
+
     </div>
 
-    <!--<div class="separateur"></div>
-
-    <section *ngIf="estMateriel" class="section-reception">
-      <h3>État de la réception</h3>
-
-      <p *ngIf="don.statut === 'EN_ATTENTE'">
-        La réception de ce don matériel est en attente.
-        Utilisez le bouton situé en haut de la page pour confirmer
-        la quantité reçue ou refuser le don avec un motif.
-      </p>
-
-      <p *ngIf="don.statut === 'RECU'" class="texte-positif">
-        <mat-icon>check_circle</mat-icon>
-        La réception a été confirmée.
-      </p>
-
-      <p *ngIf="don.statut === 'REFUSE'" class="texte-negatif">
-        <mat-icon>cancel</mat-icon>
-        Ce don a été refusé.
-      </p>
-    </section>-->
-
- 
-
   </section>
+
+  <!-- POPUP DE RÉCEPTION DU DON -->
+
+  <div
+    class="overlay-decision"
+    *ngIf="popupReception && don"
+    (click)="annulerReception()">
+
+    <div
+      class="popup-decision"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="titreReception"
+      (click)="$event.stopPropagation()">
+
+      <!-- EN-TÊTE -->
+      <div class="popup-header">
+        <div>
+          <h3 id="titreReception">Réception du don</h3>
+        </div>
+
+        <button
+          type="button"
+          class="btn-fermer"
+          (click)="annulerReception()"
+          [disabled]="traitementEnCours">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <!-- QUANTITÉ ANNONCÉE -->
+      <div class="champ-reception">
+        <label>Quantité annoncée</label>
+        <strong>{{ don.quantite ?? '—' }} {{ don.unite || '' }}</strong>
+      </div>
+
+      <!-- QUANTITÉ RESTANTE -->
+      <div class="champ-reception">
+        <label>Quantité restante à réceptionner</label>
+        <strong>{{ quantiteRestanteDuDon }} {{ don.unite || '' }}</strong>
+      </div>
+
+      <!-- MESSAGE SI LE DON N'EST PLUS RÉCEPTIONNABLE -->
+      <div class="message-blocage" *ngIf="!peutConfirmerReception">
+      
+        <span>{{ messageDonNonReceptionnable }}</span>
+      </div>
+
+      <!-- CHOIX DE L'ACTION -->
+      <div class="choix-reception" role="radiogroup" aria-label="Action à effectuer">
+
+        <label class="option-choix" [class.selectionnee]="choixReception === 'CONFIRMER'">
+          <input
+            type="radio"
+            name="actionReception"
+            value="CONFIRMER"
+            [checked]="choixReception === 'CONFIRMER'"
+            (change)="choisirAction('CONFIRMER')"
+            [disabled]="traitementEnCours || !peutConfirmerReception">
+          <span>Confirmer la réception</span>
+        </label>
+
+        <label class="option-choix option-refus" [class.selectionnee]="choixReception === 'REFUSER'">
+          <input
+            type="radio"
+            name="actionReception"
+            value="REFUSER"
+            [checked]="choixReception === 'REFUSER'"
+            (change)="choisirAction('REFUSER')"
+            [disabled]="traitementEnCours || !peutConfirmerReception">
+          <span>Refuser le don</span>
+        </label>
+
+      </div>
+
+      <!-- FORMULAIRE : CONFIRMATION DE LA RÉCEPTION -->
+      <div *ngIf="choixReception === 'CONFIRMER'">
+
+        <p class="description-popup">
+          Indiquez la quantité réellement reçue par votre organisation.
+        </p>
+
+        <div class="champ-reception">
+          <label for="quantiteRecue">Quantité réellement reçue</label>
+
+          <input
+            id="quantiteRecue"
+            type="number"
+            min="1"
+            step="1"
+            [max]="quantiteRestanteDuDon"
+            [(ngModel)]="quantiteRecue"
+            [disabled]="traitementEnCours">
+        </div>
+
+      </div>
+
+      <!-- FORMULAIRE : REFUS DU DON -->
+      <div *ngIf="choixReception === 'REFUSER'">
+
+        <p class="description-popup">
+          Veuillez préciser pourquoi votre organisation refuse ce don.
+        </p>
+
+        <div class="champ-reception">
+          <label for="motifRefus">Motif du refus</label>
+
+          <textarea
+            id="motifRefus"
+            rows="3"
+            [(ngModel)]="motifRefus"
+            [disabled]="traitementEnCours"
+            placeholder="Précisez le motif du refus...">
+          </textarea>
+        </div>
+
+      </div>
+
+      <!-- MESSAGE D'ERREUR DANS LA POPUP -->
+      <div *ngIf="erreur" class="erreur-decision">
+        {{ erreur }}
+      </div>
+
+      <!-- ACTIONS DE LA POPUP -->
+      <div class="popup-actions">
+
+        <button
+          mat-button
+          type="button"
+          class="btn-annuler"
+          (click)="annulerReception()"
+          [disabled]="traitementEnCours">
+          Annuler
+        </button>
+
+        <button
+          *ngIf="choixReception === 'CONFIRMER'"
+          mat-flat-button
+          type="button"
+          class="btn-principal"
+          (click)="confirmerReception()"
+          [disabled]="traitementEnCours">
+          {{ traitementEnCours ? 'Traitement...' : 'Valider la réception' }}
+        </button>
+
+        <button
+          *ngIf="choixReception === 'REFUSER'"
+          mat-stroked-button
+          type="button"
+          class="btn-refuser"
+          (click)="refuserDon()"
+          [disabled]="traitementEnCours">
+          {{ traitementEnCours ? 'Traitement...' : 'Confirmer le refus' }}
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
 
 </div>

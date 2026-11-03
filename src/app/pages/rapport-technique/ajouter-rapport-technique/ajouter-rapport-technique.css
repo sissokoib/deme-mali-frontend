@@ -450,15 +450,6 @@
 .budget-total strong {
   text-align: right;
 }
-.budget-total strong::before {
-  content: "";
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  margin: 0 8px 2px 0;
-  background: #F7B500;
-  border-radius: 50%;
-}
 
 
 .actions-page {
