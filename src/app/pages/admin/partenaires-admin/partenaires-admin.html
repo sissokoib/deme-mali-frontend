@@ -1,4 +1,4 @@
-﻿<div class="partenaires-container">
+<div class="partenaires-container">
   <div class="page-header">
     <div>
       <h1 class="page-title">Gestion des Partenaires</h1>
@@ -120,12 +120,6 @@
             <td><strong class="text-id">{{ p.id }}</strong></td>
             <td>
               <div class="partner-name-cell">
-                <span class="partner-icon" style="background-color: #E0F2FE; color: #0284C7;">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                  </svg>
-                </span>
                 <div>
                   <strong class="partner-title">{{ p.nom }}</strong>
                   <div style="font-size: 11px; color: #6B7280;">{{ p.ville }} • NIF: {{ p.nif || 'En cours' }}</div>
@@ -133,7 +127,7 @@
               </div>
             </td>
             <td>
-              <span class="secteur-badge" [style.background-color]="p.typeOrganisation === 'ONG' ? '#E0F2FE' : (p.typeOrganisation === 'FONDATION' ? '#FEF3C7' : '#DCFCE7')" [style.color]="p.typeOrganisation === 'ONG' ? '#0369A1' : (p.typeOrganisation === 'FONDATION' ? '#B45309' : '#15803D')">
+              <span class="secteur-badge" [style.background-color]="p.typeOrganisation === 'ONG' ? '#E2F2E9' : (p.typeOrganisation === 'FONDATION' ? '#FEF3C7' : '#DCFCE7')" [style.color]="p.typeOrganisation === 'ONG' ? '#0F7A4B' : (p.typeOrganisation === 'FONDATION' ? '#B45309' : '#15803D')">
                 {{ p.typeOrganisation }}
               </span>
             </td>
@@ -233,7 +227,6 @@
     <div class="modal-form-card" (click)="$event.stopPropagation()" style="max-width: 600px;">
       <div class="modal-entete">
         <div>
-          <span class="surtitre">DÈMÈ MALI • CONVENTION PARTENAIRE</span>
           <h2>{{ partenaireSelectionne.nom }}</h2>
         </div>
         <button type="button" class="btn-fermer" (click)="fermerDetails()" aria-label="Fermer">
@@ -262,7 +255,7 @@
           </div>
           <div class="detail-item">
             <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Numéro NIF</span>
-            <p style="margin-top: 2px; font-weight: 600; color: #1E40AF;">{{ partenaireSelectionne.nif || 'Non renseigné' }}</p>
+            <p style="margin-top: 2px; font-weight: 600; color: #1F1F1F;">{{ partenaireSelectionne.nif || 'Non renseigné' }}</p>
           </div>
           <div class="detail-item">
             <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Représentant / Point focal</span>
@@ -286,11 +279,20 @@
           </div>
           <div class="detail-item" style="grid-column: span 2;" *ngIf="partenaireSelectionne.documentJustificatif">
             <span class="detail-label" style="font-size: 11px; color: #6B7280; text-transform: uppercase;">Justificatif d'Accréditation</span>
-            <p style="margin-top: 4px;">
+            <div style="margin-top: 6px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
               <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: #F3F4F6; border-radius: 6px; font-size: 12px; color: #374151;">
-                📄 {{ partenaireSelectionne.documentJustificatif }}
+                📄 {{ extraireNomFichier(partenaireSelectionne.documentJustificatif) }}
               </span>
-            </p>
+              <button
+                type="button"
+                class="btn-primary"
+                (click)="ouvrirJustificatif(partenaireSelectionne.documentJustificatif)"
+                style="padding: 6px 12px; font-size: 12px; display: inline-flex; align-items: center; gap: 6px;"
+              >
+                <mat-icon style="font-size: 16px; width: 16px; height: 16px;">visibility</mat-icon>
+                Consulter le justificatif
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -325,7 +327,6 @@
     <div class="modal-form-card" (click)="$event.stopPropagation()">
       <div class="modal-entete">
         <div>
-          <span class="surtitre">DÈMÈ MALI • ADMINISTRATION</span>
           <h2>Nouveau Partenaire</h2>
         </div>
         <button type="button" class="btn-fermer" (click)="fermerModal()" aria-label="Fermer">

@@ -1,11 +1,11 @@
 <header class="topbar">
 
+  <!-- Bouton mobile pour ouvrir le menu -->
   <button
     type="button"
     class="icon-btn d-lg-none"
     aria-label="Ouvrir le menu"
-    (click)="ouvrirSidebar()"
-  >
+    (click)="ouvrirSidebar()">
     <svg
       viewBox="0 0 24 24"
       fill="none"
@@ -14,12 +14,12 @@
       stroke-linecap="round"
       stroke-linejoin="round"
       aria-hidden="true"
-      focusable="false"
-    >
+      focusable="false">
       <path d="M4 6h16M4 12h16M4 18h16"/>
     </svg>
   </button>
 
+  <!-- Bouton desktop pour réduire ou agrandir le menu latéral -->
   <button
     type="button"
     class="icon-btn d-none d-lg-inline-flex"
@@ -27,9 +27,8 @@
     aria-controls="sidebar"
     aria-expanded="true"
     aria-label="Toggle sidebar"
-    title="Collapse or expand the sidebar"
-    (click)="toggleSidebarCollapse()"
-  >
+    title="Réduire ou agrandir le menu"
+    (click)="toggleSidebarCollapse()">
     <svg
       viewBox="0 0 24 24"
       fill="none"
@@ -38,8 +37,7 @@
       stroke-linecap="round"
       stroke-linejoin="round"
       aria-hidden="true"
-      focusable="false"
-    >
+      focusable="false">
       <rect x="3" y="3" width="18" height="18" rx="2"/>
       <path d="M9 3v18"/>
       <path d="m15 10-2 2 2 2"/>
@@ -48,65 +46,68 @@
 
   <div class="topbar-actions">
 
+    <!-- Date courante -->
     <span class="topbar-date">
       {{ obtenirDate() }}
     </span>
 
     <div class="dropdown">
 
-      @if (currentUser$ | async; as user) {
-
+      <ng-container *ngIf="currentUser$ | async as user; else defaultOrg">
         <button
           type="button"
           class="user-btn"
           data-bs-toggle="dropdown"
           aria-expanded="false"
-          aria-label="Account menu"
-        >
+          aria-label="Menu du compte organisation">
 
-          <span
-            class="avatar av-2"
-            aria-hidden="true"
-          >
+          <span class="avatar av-2" aria-hidden="true">
             {{ obtenirInitiales(user.prenom, user.nom) }}
           </span>
 
           <span class="user-text">
-
             <span class="user-name">
               {{ user.prenom }} {{ user.nom }}
             </span>
-
             <span class="user-role">
-              {{ user.typeOrganisation }}
+              {{ obtenirLibelleRole(user) }}
             </span>
-
           </span>
 
         </button>
 
-        <!-- <ul class="dropdown-menu dropdown-menu-end user-menu">
+        <ul class="dropdown-menu dropdown-menu-end user-menu">
+
           <li class="user-menu-head">
-            <span
-              class="avatar av-2 avatar-lg"
-              aria-hidden="true"
-            >
+            <span class="avatar av-2 avatar-lg" aria-hidden="true">
               {{ obtenirInitiales(user.prenom, user.nom) }}
             </span>
-
             <span>
               <span class="user-name">
                 {{ user.prenom }} {{ user.nom }}
               </span>
-
               <span class="user-role">
-                {{ user.typeOrganisation }}
+                {{ obtenirLibelleRole(user) }}
               </span>
             </span>
           </li>
-        </ul> -->
+        </ul> 
 
-      }
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+
+          <li>
+            <button type="button" class="dropdown-item text-danger" (click)="logout()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+              </svg>
+              Se déconnecter
+            </button>
+          </li>
+
+        </ul>
+      </ng-template>
 
     </div>
 

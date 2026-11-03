@@ -13,6 +13,10 @@ export class EtudeTerrainService {
 
   constructor(private http: HttpClient) {}
 
+  getAll(): Observable<EtudeTerrain[]> {
+    return this.http.get<EtudeTerrain[]>(this.apiUrl);
+  }
+
   getEtudesParOrganisation(
     organisationId: number
   ): Observable<EtudeTerrain[]> {

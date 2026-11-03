@@ -469,8 +469,8 @@ export class DashboardAdmin implements OnInit {
       'SANTÉ & MÉDICAL': '#0F7A4B',
       'ÉDUCATION': '#16A34A',
       'SCOLAIRE': '#16A34A',
-      'SOCIAL': '#2563EB',
-      'SOCIAL & SOLIDARITÉ': '#2563EB'
+      'SOCIAL': '#047857',
+      'SOCIAL & SOLIDARITÉ': '#047857'
     };
 
     const counts: { [cat: string]: number } = {};
@@ -500,7 +500,7 @@ export class DashboardAdmin implements OnInit {
         else if (upper.includes('LOG')) color = '#D97706';
         else if (upper.includes('SANT')) color = '#0F7A4B';
         else if (upper.includes('EDUC') || upper.includes('ÉDUC')) color = '#16A34A';
-        else color = '#2563EB';
+        else color = '#0F7A4B';
       }
 
       items.push({

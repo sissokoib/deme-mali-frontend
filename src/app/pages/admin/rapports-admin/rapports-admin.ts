@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -45,7 +45,8 @@ export class RapportsAdmin implements OnInit {
   constructor(
     private rapportBesoinService: RapportBesoinService,
     private rapportTechniqueService: RapportTechniqueService,
-    private http: HttpClient
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -117,11 +118,13 @@ export class RapportsAdmin implements OnInit {
         }));
 
         this.rapports = [...rapportsBesoins, ...rapportsTech, ...rapportsEtudes];
+        this.cdr.detectChanges();
       },
       error: (err: any) => {
         this.isLoading = false;
         this.rapports = [];
         console.warn('Erreur chargement des rapports backend', err);
+        this.cdr.detectChanges();
       }
     });
   }
