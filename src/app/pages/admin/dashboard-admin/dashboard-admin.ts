@@ -5,7 +5,7 @@ import { DashboardService } from '../../../services/dashboard.service';
 import { demandeAideService } from '../../../services/demande-aide';
 import { OrganisationService } from '../../../services/organisation';
 import { BeneficiaireService } from '../../../services/beneficiaire';
-import { DonService } from '../../../services/don.service.ts';
+import { DonService } from '../../../services/don.service';
 import { CategorieDemandeService } from '../../../services/categorie-demande';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';

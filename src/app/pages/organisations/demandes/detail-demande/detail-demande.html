@@ -11,7 +11,6 @@
 
   <!-- Chargement -->
   <div class="message-chargement" *ngIf="chargement">
-    <mat-icon>hourglass_empty</mat-icon>
     <span>Chargement des informations...</span>
   </div>
 
@@ -85,39 +84,26 @@
       </section>
 
       <!-- Image illustrative de la demande -->
-      <section class="section section-image-demande">
-        <h3><mat-icon>image</mat-icon> Image illustrative de la demande</h3>
-        <div class="formulaire-image" *ngIf="afficherFormulaireImage">
-          <p class="sous-description">Sélectionnez une image pour illustrer cette demande d’aide.</p>
-          <label for="fichierImage">Choisir une image (JPG, PNG ou WEBP)</label>
-          <input id="fichierImage" type="file" accept="image/jpeg,image/png,image/webp" (change)="selectionnerImage($event)">
-          <div class="apercu-image" *ngIf="apercuImage">
-            <img [src]="apercuImage" alt="Aperçu de l’image à ajouter">
-          </div>
-          <p class="erreur-image" *ngIf="erreurImage">{{ erreurImage }}</p>
-          <div class="actions-image">
-            <button type="button" class="btn-annuler-image" (click)="annulerAjoutImage()" [disabled]="uploadEnCours">Annuler</button>
-            <button type="button" class="btn-enregistrer-image" (click)="ajouterImage()" [disabled]="!fichierImageSelectionne || uploadEnCours">
-              <mat-icon>save</mat-icon>
-              {{ uploadEnCours ? 'Enregistrement...' : 'Enregistrer l’image' }}
-            </button>
-          </div>
-        </div>
-        <div class="image-demande-existante" *ngIf="imageDemande as image">
-          <div class="conteneur-image-enregistree">
-            <img [src]="obtenirUrlImage(image.cheminFichier)" [alt]="image.nomFichier || 'Image illustrative de la demande'">
-            <button type="button" class="btn-supprimer-image" aria-label="Supprimer l’image de la demande" title="Supprimer l’image" (click)="supprimerImageDemande()" [disabled]="suppressionImageEnCours">
-              <mat-icon>{{ suppressionImageEnCours ? 'hourglass_empty' : 'delete' }}</mat-icon>
-            </button>
-          </div>
-          <p class="nom-image">{{ image.nomFichier }}</p>
-        </div>
-        <div class="message-vide" *ngIf="!imageDemande && !afficherFormulaireImage && !chargementImage">
-          <p>Aucune image illustrative n’est associée à cette demande.</p>
-        </div>
-        <p class="texte-secondaire" *ngIf="chargementImage">Chargement de l’image...</p>
-        <p class="erreur-image" *ngIf="erreurImage && !afficherFormulaireImage && !imageDemande">{{ erreurImage }}</p>
-      </section>
+  
+<section class="section section-image-demande">
+  <h3><mat-icon>image</mat-icon> Image illustrative de la demande</h3>
+
+  <div class="image-demande-existante" *ngIf="imageDemande as image">
+    <div class="conteneur-image-enregistree">
+      <img [src]="obtenirUrlImage(image.cheminFichier)" [alt]="image.nomFichier || 'Image illustrative de la demande'">
+      <button type="button" class="btn-supprimer-image" aria-label="Supprimer l’image de la demande" title="Supprimer l’image" (click)="supprimerImageDemande()" [disabled]="suppressionImageEnCours">
+        <mat-icon>{{ suppressionImageEnCours ? 'hourglass_empty' : 'delete' }}</mat-icon>
+      </button>
+    </div>
+    <p class="nom-image">{{ image.nomFichier }}</p>
+  </div>
+
+  <div class="message-vide" *ngIf="!imageDemande && !chargementImage">
+    <p>Aucune image illustrative n’est associée à cette demande.</p>
+  </div>
+  <p class="texte-secondaire" *ngIf="chargementImage">Chargement de l’image...</p>
+  <p class="erreur-image" *ngIf="erreurImage && !afficherFormulaireImage">{{ erreurImage }}</p>
+</section>
 
       <!-- Articles de la demande matérielle -->
       <section class="section" *ngIf="estDemandeMaterielle">
@@ -274,6 +260,42 @@
       <button type="button" class="btn-annuler" (click)="fermerDecision()" [disabled]="traitementEnCours">Annuler</button>
       <button type="button" class="btn-principal" (click)="confirmerDecision()" [disabled]="traitementEnCours || !decisionChoisie || (decisionChoisie === 'VALIDEE' && !peutValider) || (decisionChoisie === 'REJETEE' && !peutRejeter)">
         {{ traitementEnCours ? 'Traitement...' : 'Confirmer la décision' }}
+      </button>
+    </div>
+  </div>
+</div>
+<!-- Modal d'ajout d'image -->
+<div class="overlay-decision" *ngIf="afficherFormulaireImage" (click)="annulerAjoutImage()">
+  <div class="popup-decision" role="dialog" aria-modal="true" aria-labelledby="titreImage" (click)="$event.stopPropagation()">
+    <div class="popup-header">
+      <div>
+        <h3 id="titreImage">Ajouter une image</h3>
+      </div>
+      <button type="button" class="btn-fermer" aria-label="Fermer" (click)="annulerAjoutImage()" [disabled]="uploadEnCours">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <p class="description-popup">Sélectionnez une image pour illustrer cette demande d’aide.</p>
+
+    <div class="formulaire-image">
+      <label for="fichierImage">Choisir une image (JPG, PNG ou WEBP)</label>
+      <input id="fichierImage" type="file" accept="image/jpeg,image/png,image/webp" (change)="selectionnerImage($event)">
+
+      <div class="apercu-image" *ngIf="apercuImage">
+        <img [src]="apercuImage" alt="Aperçu de l’image à ajouter">
+      </div>
+    </div>
+
+    <p class="erreur-decision" *ngIf="erreurImage">
+      <mat-icon>error_outline</mat-icon>
+      {{ erreurImage }}
+    </p>
+
+    <div class="popup-actions">
+      <button type="button" class="btn-annuler" (click)="annulerAjoutImage()" [disabled]="uploadEnCours">Annuler</button>
+      <button type="button" class="btn-principal" (click)="ajouterImage()" [disabled]="!fichierImageSelectionne || uploadEnCours">
+        {{ uploadEnCours ? 'Enregistrement...' : 'Enregistrer l’image' }}
       </button>
     </div>
   </div>

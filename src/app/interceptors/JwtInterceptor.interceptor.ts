@@ -31,15 +31,23 @@ export class JwtInterceptor implements HttpInterceptor {
     // Récupérer l'access token
     const token = this.authService.getAccessToken();
 
-    // Si le token stocké est expiré ou invalide, nettoyer la session
+    // Vérifier si le token est expiré ou invalide localement
     if (token && this.authService.isTokenExpired(token)) {
-      console.warn('[JwtInterceptor] Jeton JWT expiré ou invalide détecté. Nettoyage de la session locale.');
+      console.warn(
+        '[JwtInterceptor] Jeton JWT expiré ou invalide. Nettoyage de la session.'
+      );
+
       this.authService.clearSession();
+      this.authService.logout();
+
+      return throwError(() => new Error('Session expirée. Veuillez vous reconnecter.'));
     }
 
     const validToken = this.authService.getAccessToken();
+
     let authReq = req;
 
+    // Ajouter le Bearer token si disponible
     if (validToken) {
       authReq = req.clone({
         setHeaders: {
@@ -48,33 +56,34 @@ export class JwtInterceptor implements HttpInterceptor {
       });
     }
 
-    // Envoyer la requête et gérer les erreurs de rejet du token (401 ou 500 dû à signature JWT invalide)
+    // Envoyer la requête et gérer les erreurs
     return next.handle(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
-        // Le backend Spring Boot renvoie 500 quand un Bearer token possède une signature invalide suite à un redémarrage
-        if (validToken && (error.status === 401 || error.status === 500)) {
-          console.warn(`[JwtInterceptor] Erreur ${error.status} reçue avec le Bearer token. Nettoyage de la session et tentative de secours sans Authorization...`);
 
-          // Supprimer la session invalide pour ne plus polluer les futures requêtes
-          this.authService.clearSession();
+        // Uniquement 401 : problème d'authentification
+        if (error.status === 401 && validToken) {
 
-          // Réessayer la requête sans l'en-tête Authorization
-          const fallbackReq = req.clone({
-            headers: req.headers.delete('Authorization')
-          });
+          console.warn(
+            '[JwtInterceptor] Erreur 401. Session à renouveler.'
+          );
 
-          return next.handle(fallbackReq).pipe(
-            catchError((retryErr: HttpErrorResponse) => {
-              if (error.status === 401) {
-                this.authService.logout();
-              }
-              return throwError(() => retryErr);
-            })
+          this.authService.logout();
+        }
+
+        // Erreur 403 : accès interdit, vérifier les rôles et permissions
+        if (error.status === 403) {
+          console.warn(
+            '[JwtInterceptor] Accès interdit. Vérifier les autorisations.'
           );
         }
 
-        if (error.status === 401 && validToken) {
-          this.authService.logout();
+        // Erreur 500 : problème interne du backend.
+        // Ne pas supprimer le token et ne pas réessayer sans Authorization.
+        if (error.status === 500) {
+          console.error(
+            '[JwtInterceptor] Erreur interne du serveur Spring Boot.',
+            error.error
+          );
         }
 
         return throwError(() => error);

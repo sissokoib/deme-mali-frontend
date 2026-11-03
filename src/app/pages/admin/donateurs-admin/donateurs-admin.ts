@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { of } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
 import { DonateurService } from '../../../services/donateur.service';
-import { DonService } from '../../../services/don.service.ts';
+import { DonService } from '../../../services/don.service';
 import { DonateurResponseDTO } from '../../../models/donateur.model';
 
 export interface DonateurItem {

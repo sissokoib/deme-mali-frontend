@@ -7,6 +7,7 @@ import { User } from '../../../models/utilisateur.model';
 import { DashboardStats, KpiStats, ImpactStats, RepartitionItem, RecentDemande } from '../../../models/dashboard.model';
 import { Subscription } from 'rxjs';
 import { Chart, registerables } from 'chart.js';
+import { MatIconModule } from '@angular/material/icon';
 
 Chart.register(...registerables);
 
@@ -15,7 +16,8 @@ Chart.register(...registerables);
   standalone: true,
   imports: [
     RouterLink,
-    CommonModule
+    CommonModule,
+    MatIconModule
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'

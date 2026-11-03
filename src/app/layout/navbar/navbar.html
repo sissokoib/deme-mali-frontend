@@ -51,94 +51,6 @@
       {{ obtenirDate() }}
     </span>
 
-    <!-- Menu Notifications -->
-    <div class="dropdown">
-
-      <button
-        type="button"
-        class="icon-btn"
-        id="notifToggle"
-        data-bs-toggle="dropdown"
-        data-bs-auto-close="outside"
-        aria-expanded="false"
-        aria-label="Notifications">
-
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"
-          focusable="false">
-          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
-          <path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>
-        </svg>
-
-        <span class="notif-count" aria-hidden="true">
-          2
-        </span>
-
-      </button>
-
-      <div class="dropdown-menu dropdown-menu-end notif-menu">
-
-        <div class="notif-head">
-          <p class="notif-heading">
-            Notifications Organisation
-          </p>
-          <button type="button" class="link-btn">
-            Tout marquer comme lu
-          </button>
-        </div>
-
-        <ul class="notif-list">
-          <li>
-            <a class="notif is-unread" routerLink="/organisation/etudes-terrain">
-              <span class="notif-icon tone-info">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                </svg>
-              </span>
-              <span class="notif-text">
-                <span class="notif-title">
-                  Nouvelle visite de terrain programmée
-                </span>
-                <span class="notif-meta">
-                  Aujourd'hui, 09:30
-                </span>
-              </span>
-            </a>
-          </li>
-
-          <li>
-            <a class="notif is-unread" routerLink="/organisation/dons-attribues">
-              <span class="notif-icon tone-warning">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="8" x2="12" y2="12"></line>
-                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-              </span>
-              <span class="notif-text">
-                <span class="notif-title">
-                  Nouveau don attribué à votre structure
-                </span>
-                <span class="notif-meta">
-                  Hier, 16:15
-                </span>
-              </span>
-            </a>
-          </li>
-        </ul>
-
-      </div>
-
-    </div>
-
-    <!-- Menu Profil Utilisateur Organisation -->
     <div class="dropdown">
 
       <ng-container *ngIf="currentUser$ | async as user; else defaultOrg">
@@ -161,6 +73,7 @@
               {{ obtenirLibelleRole(user) }}
             </span>
           </span>
+
         </button>
 
         <ul class="dropdown-menu dropdown-menu-end user-menu">
@@ -178,124 +91,7 @@
               </span>
             </span>
           </li>
-
-          <li>
-            <a class="dropdown-item" routerLink="/organisation/dashboard">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="9" rx="1.5"/>
-                <rect x="14" y="3" width="7" height="5" rx="1.5"/>
-                <rect x="14" y="12" width="7" height="9" rx="1.5"/>
-                <rect x="3" y="16" width="7" height="5" rx="1.5"/>
-              </svg>
-              Tableau de bord
-            </a>
-          </li>
-
-          <li>
-            <a class="dropdown-item" routerLink="/organisation/mon-organisation">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-              </svg>
-              Mon organisation
-            </a>
-          </li>
-
-          <li>
-            <a class="dropdown-item" routerLink="/organisation/etudes-terrain">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"/>
-                <polyline points="12 7 12 12 8.5 12"/>
-              </svg>
-              Études de terrain
-            </a>
-          </li>
-
-          <li>
-            <hr class="dropdown-divider">
-          </li>
-
-          <li>
-            <button type="button" class="dropdown-item text-danger" (click)="logout()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
-              </svg>
-              Se déconnecter
-            </button>
-          </li>
-
-        </ul>
-      </ng-container>
-
-      <ng-template #defaultOrg>
-        <button
-          type="button"
-          class="user-btn"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-          aria-label="Menu du compte organisation">
-
-          <span class="avatar av-2" aria-hidden="true">
-            OP
-          </span>
-
-          <span class="user-text">
-            <span class="user-name">
-              Organisation Partenaire
-            </span>
-            <span class="user-role">
-              Partenaire Dèmè Mali
-            </span>
-          </span>
-        </button>
-
-        <ul class="dropdown-menu dropdown-menu-end user-menu">
-
-          <li class="user-menu-head">
-            <span class="avatar av-2 avatar-lg" aria-hidden="true">
-              OP
-            </span>
-            <span>
-              <span class="user-name">
-                Organisation Partenaire
-              </span>
-              <span class="user-role">
-                Partenaire Dèmè Mali
-              </span>
-            </span>
-          </li>
-
-          <li>
-            <a class="dropdown-item" routerLink="/organisation/dashboard">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="9" rx="1.5"/>
-                <rect x="14" y="3" width="7" height="5" rx="1.5"/>
-                <rect x="14" y="12" width="7" height="9" rx="1.5"/>
-                <rect x="3" y="16" width="7" height="5" rx="1.5"/>
-              </svg>
-              Tableau de bord
-            </a>
-          </li>
-
-          <li>
-            <a class="dropdown-item" routerLink="/organisation/mon-organisation">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-              </svg>
-              Mon organisation
-            </a>
-          </li>
-
-          <li>
-            <a class="dropdown-item" routerLink="/organisation/etudes-terrain">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"/>
-                <polyline points="12 7 12 12 8.5 12"/>
-              </svg>
-              Études de terrain
-            </a>
-          </li>
+        </ul> 
 
           <li>
             <hr class="dropdown-divider">

@@ -397,3 +397,52 @@ app-admin-navbar {
   cursor: not-allowed !important;
 }
 
+/* ==========================================================================
+   Notifications (MatSnackBar)
+   ========================================================================== */
+
+/* Notification de succès */
+.mat-mdc-snack-bar-container.snackbar-success {
+  --mdc-snackbar-container-color: #0F7A4B;
+  --mdc-snackbar-supporting-text-color: #FFFFFF;
+  --mat-snack-bar-container-color: #0F7A4B;
+  --mat-snack-bar-supporting-text-color: #FFFFFF;
+  --mat-snack-bar-button-color: #F7B500;
+}
+
+/* Notification d'erreur */
+.mat-mdc-snack-bar-container.snackbar-error {
+  --mdc-snackbar-container-color: #C62828;
+  --mdc-snackbar-supporting-text-color: #FFFFFF;
+  --mat-snack-bar-container-color: #C62828;
+  --mat-snack-bar-supporting-text-color: #FFFFFF;
+  --mat-snack-bar-button-color: #FFFFFF;
+}
+
+/* Notification d'information */
+.mat-mdc-snack-bar-container.snackbar-info {
+  --mdc-snackbar-container-color: #1F1F1F;
+  --mdc-snackbar-supporting-text-color: #FFFFFF;
+  --mat-snack-bar-container-color: #1F1F1F;
+  --mat-snack-bar-supporting-text-color: #FFFFFF;
+  --mat-snack-bar-button-color: #F7B500;
+}
+
+/* Secours : force la couleur si les variables ne suffisent pas */
+.mat-mdc-snack-bar-container.snackbar-success .mdc-snackbar__surface {
+  background-color: #0F7A4B !important;
+}
+
+.mat-mdc-snack-bar-container.snackbar-error .mdc-snackbar__surface {
+  background-color: #C62828 !important;
+}
+
+.mat-mdc-snack-bar-container.snackbar-info .mdc-snackbar__surface {
+  background-color: #1F1F1F !important;
+}
+
+.mat-mdc-snack-bar-container.snackbar-success .mdc-snackbar__label,
+.mat-mdc-snack-bar-container.snackbar-error .mdc-snackbar__label,
+.mat-mdc-snack-bar-container.snackbar-info .mdc-snackbar__label {
+  color: #FFFFFF !important;
+}

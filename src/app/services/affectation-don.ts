@@ -23,21 +23,18 @@ export class AffectationDonService {
 
   constructor(private http: HttpClient) {}
 
-  // Récupérer les affectations financières
-  getAffectationsFinancieres():
-    Observable<AffectationFinanciere[]> {
-    return this.http.get<AffectationFinanciere[]>(
-      this.apiFinancier
-    );
-  }
-
+  // Récupérer les affectations financières de l'organisation
+ getAffectationsFinancieres(): Observable<AffectationFinanciere[]> {
+  return this.http.get<AffectationFinanciere[]>(
+    `${this.apiFinancier}/mes-affectations`
+  );
+}
   // Récupérer les affectations matérielles
-  getAffectationsMaterielles():
-    Observable<AffectationMaterielle[]> {
-    return this.http.get<AffectationMaterielle[]>(
-      this.apiMateriel
-    );
-  }
+ getAffectationsMaterielles(): Observable<AffectationMaterielle[]> {
+  return this.http.get<AffectationMaterielle[]>(
+    `${this.apiMateriel}/mes-affectations`
+  );
+}
 
   // Créer une affectation financière
   creer(
@@ -60,4 +57,6 @@ export class AffectationDonService {
       demande
     );
   }
+
+  
 }

@@ -1,4 +1,3 @@
-
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -6,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { Organisation } from '../../../models/organisation.model';
 import { OrganisationService } from '../../../services/organisation';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-modifier-organisation',
@@ -46,6 +46,7 @@ export class ModifierOrganisation implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private organisationService: OrganisationService,
+    private authService: AuthService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -159,8 +160,17 @@ export class ModifierOrganisation implements OnInit {
       this.organisation
     ).subscribe({
       next: (data: Organisation) => {
+
         this.organisation = data;
+
+        // Actualiser les informations dans le header
+        this.authService.actualiserUtilisateur({
+          nom: data.nom,
+          prenom: data.prenom
+        });
+
         this.enregistrement = false;
+
         this.messageSucces =
           'Les modifications ont été enregistrées.';
 

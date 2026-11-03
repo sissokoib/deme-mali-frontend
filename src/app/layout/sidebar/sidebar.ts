@@ -21,6 +21,7 @@ export class Sidebar {
   logout(): void {
     this.authService.logout();
   }
+  
   fermerSidebar(): void {
     document.body.classList.remove('sidebar-open');
     if (window.innerWidth >= 992) {

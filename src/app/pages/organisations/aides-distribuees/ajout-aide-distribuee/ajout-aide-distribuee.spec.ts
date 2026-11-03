@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AjoutAideDistribuee } from './ajout-aide-distribuee';
 
+
 describe('AjoutAideDistribuee', () => {
   let component: AjoutAideDistribuee;
   let fixture: ComponentFixture<AjoutAideDistribuee>;

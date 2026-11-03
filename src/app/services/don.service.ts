@@ -147,4 +147,22 @@ export class DonService {
   getAllDonsMateriels(): Observable<DonMateriel[]> {
     return this.http.get<DonMateriel[]>(this.materielUrl);
   }
+
+// Dons matériels directement attribués à l'organisation
+getDonsAffectablesParOrganisation(
+  organisationId: number
+): Observable<DonMateriel[]> {
+  return this.http.get<DonMateriel[]>(
+    `${this.materielUrl}/affectables/organisation/${organisationId}`
+  );
+}
+
+// Dons financiers directement attribués à l'organisation
+getDonsAffectablesParOrganisationFinancier(
+  organisationId: number
+): Observable<DonFinancier[]> {
+  return this.http.get<DonFinancier[]>(
+    `${this.financierUrl}/affectables/organisation/${organisationId}`
+  );
+}
 }

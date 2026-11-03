@@ -22,6 +22,7 @@ import { EtudeTerrain } from '../../../models/etude-terrain.model';
   styleUrl: './etudes-terminer.css'
 })
 export class EtudesTerminer implements OnInit {
+
   readonly dateDuJour = this.formaterDate(new Date());
 
   etude: EtudeTerrain | null = null;
@@ -51,13 +52,21 @@ export class EtudesTerminer implements OnInit {
     if (!Number.isInteger(id) || id <= 0) {
       this.erreurChargement = 'Identifiant de l’étude invalide.';
       this.chargement = false;
+      this.cdr.markForCheck();
       return;
     }
 
     this.etudeId = id;
 
     this.etudeService.getEtudeById(id).subscribe({
+
       next: etude => {
+
+        console.log('ETUDE RECUPEREE :', etude);
+        console.log('STATUT :', etude.status);
+        console.log('LIEU :', etude.lieu);
+        console.log('HEURE :', etude.heure);
+
         this.etude = etude;
 
         if (etude.status !== 'PLANIFIEE') {
@@ -66,15 +75,21 @@ export class EtudesTerminer implements OnInit {
         }
 
         this.chargement = false;
-        this.cdr.detectChanges();
+
+        // Demande à Angular de mettre à jour l'affichage.
+        this.cdr.markForCheck();
       },
+
       error: err => {
+
         console.error('Erreur de chargement de l’étude :', err);
 
         this.erreurChargement =
           'Impossible de charger cette étude.';
+
         this.chargement = false;
-        this.cdr.detectChanges();
+
+        this.cdr.markForCheck();
       }
     });
   }
@@ -105,9 +120,12 @@ export class EtudesTerminer implements OnInit {
     };
 
     this.enregistrement = true;
+    this.cdr.markForCheck();
 
     this.etudeService.terminerEtude(this.etudeId, dto).subscribe({
+
       next: () => {
+
         this.enregistrement = false;
 
         this.snackBar.open(
@@ -121,14 +139,16 @@ export class EtudesTerminer implements OnInit {
           }
         );
 
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
 
         this.router.navigate([
           '/organisation/etudes-terrain/detail',
           this.etudeId
         ]);
       },
+
       error: err => {
+
         console.error('Erreur lors de la terminaison :', err);
 
         const message =
@@ -144,7 +164,7 @@ export class EtudesTerminer implements OnInit {
         });
 
         this.enregistrement = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       }
     });
   }
