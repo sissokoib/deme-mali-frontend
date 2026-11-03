@@ -1,3 +1,4 @@
+
 <header class="topbar">
 
   <!-- Bouton mobile pour ouvrir le menu -->
@@ -54,6 +55,7 @@
     <div class="dropdown">
 
       <ng-container *ngIf="currentUser$ | async as user; else defaultOrg">
+
         <button
           type="button"
           class="user-btn"
@@ -82,6 +84,7 @@
             <span class="avatar av-2 avatar-lg" aria-hidden="true">
               {{ obtenirInitiales(user.prenom, user.nom) }}
             </span>
+
             <span>
               <span class="user-name">
                 {{ user.prenom }} {{ user.nom }}
@@ -91,22 +94,53 @@
               </span>
             </span>
           </li>
-        </ul> 
 
           <li>
             <hr class="dropdown-divider">
           </li>
 
           <li>
-            <button type="button" class="dropdown-item text-danger" (click)="logout()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <button
+              type="button"
+              class="dropdown-item text-danger"
+              (click)="logout()">
+
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
               </svg>
+
               Se déconnecter
             </button>
           </li>
 
         </ul>
+
+      </ng-container>
+
+      <!-- Affichage par défaut si aucun utilisateur n'est disponible -->
+      <ng-template #defaultOrg>
+        <button
+          type="button"
+          class="user-btn"
+          aria-label="Compte utilisateur">
+
+          <span class="avatar av-2" aria-hidden="true">
+            ?
+          </span>
+
+          <span class="user-text">
+            <span class="user-name">
+              Utilisateur
+            </span>
+          </span>
+
+        </button>
       </ng-template>
 
     </div>
