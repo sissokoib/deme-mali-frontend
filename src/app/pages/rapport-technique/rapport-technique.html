@@ -1,0 +1,41 @@
+<div class="container mt-4">
+  <h2>Rapport Technique</h2>
+  <form (ngSubmit)="creerRapport()">
+    <div class="mb-3">
+      <label>Description Technique</label>
+      <textarea class="form-control" [(ngModel)]="rapport.descriptionTechnique" name="descriptionTechnique"></textarea>
+    </div>
+    
+    <h4>Détails du rapport</h4>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Désignation</th>
+          <th>Quantité</th>
+          <th>Prix unitaire</th>
+          <th>Montant</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let detail of rapport.details; let i = index">
+          <td>{{ detail.designation }}</td>
+          <td>{{ detail.quantite }}</td>
+          <td>{{ detail.prixUnitaire }}</td>
+          <td>{{ detail.montant }}</td>
+          <td>
+            <button type="button" class="btn btn-sm btn-info" (click)="effectuerDetail(i)">Effectuer</button>
+            <button type="button" class="btn btn-sm btn-success ms-1" (click)="confirmerDetail(i)">Confirmer</button>
+            <button type="button" class="btn btn-sm btn-danger ms-1" (click)="annulerDetail(i)">Annuler</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="mb-3">
+      <strong>Coût total calculé : {{ calculerCoutTotal() }} FCFA</strong>
+    </div>
+    <button type="submit" class="btn btn-primary">Créer Rapport</button>
+    <button type="button" class="btn btn-warning ms-2" (click)="modifierRapport()">Modifier</button>
+    <button type="button" class="btn btn-success ms-2" (click)="validerRapport()">Valider</button>
+  </form>
+</div>

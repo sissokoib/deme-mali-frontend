@@ -315,24 +315,26 @@ export class ModifierDemandesAide implements OnInit {
     );
   }
 
-  urlFichier(fichier: FichierJustificatif): string {
-    const chemin =
-      fichier.url || fichier.cheminFichier || '';
+urlFichier(fichier: FichierJustificatif): string {
+  const chemin = fichier.url || fichier.cheminFichier || '';
 
-    if (!chemin) {
-      return '';
-    }
-
-    if (
-      chemin.startsWith('http://') ||
-      chemin.startsWith('https://')
-    ) {
-      return chemin;
-    }
-
-    return `http://localhost:8080/${chemin.replace(/^\/+/, '')}`;
+  if (!chemin) {
+    return '';
   }
 
+  if (chemin.startsWith('http://') || chemin.startsWith('https://')) {
+    return chemin;
+  }
+
+  const nomFichier = chemin.split(/[\\/]/).pop();
+
+  if (!nomFichier) {
+    return '';
+  }
+
+  return 'http://localhost:8080/uploads/justificatifs/'
+    + encodeURIComponent(nomFichier);
+}
   // Détecter les formats d'image pris en charge.
   estUneImage(chemin: string | null): boolean {
     return !!chemin &&

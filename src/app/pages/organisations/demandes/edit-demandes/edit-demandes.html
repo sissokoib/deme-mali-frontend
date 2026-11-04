@@ -396,11 +396,9 @@
               *ngFor="let fichier of fichiersExistants"
               [class.to-delete]="fichierMarque(fichier)">
 
-              <div class="file-symbol">Document fourni</div>
 
               <div class="file-info">
                 <strong>{{ nomFichier(fichier) }}</strong>
-                <small>{{ nomTypeFichier(fichier) }}</small>
 
                 <!-- IMAGE : cliquer sur la miniature pour l'agrandir -->
                 <button

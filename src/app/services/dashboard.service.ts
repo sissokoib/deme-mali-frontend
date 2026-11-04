@@ -24,10 +24,10 @@ export class DashboardService {
       demandes: this.http.get<any[]>(`http://localhost:8080/api/demandes-aide/organisation/${organisationId}`).pipe(
         catchError(() => of([]))
       ),
-      dons: this.http.get<any[]>('http://localhost:8080/api/dons-financiers').pipe(
+      dons: this.http.get<any[]>(  `http://localhost:8080/api/dons-financiers/organisation/${organisationId}`).pipe(
         catchError(() => of([]))
       ),
-      aides: this.http.get<any[]>('http://localhost:8080/api/aides-distribuees').pipe(
+      aides: this.http.get<any[]>(  `http://localhost:8080/api/aides-distribuees/organisation/${organisationId}`).pipe(
         catchError(() => of([]))
       )
     }).pipe(

@@ -122,7 +122,7 @@ export class EtudesDetail implements OnInit {
             catchError(err => {
 
               // Aucun rapport technique ou erreur serveur
-              if (err.status === 404 || err.status === 500) {
+              if (err.status === 404 ) {
                 this.rapportTechnique = null;
                 return of(null);
               }
